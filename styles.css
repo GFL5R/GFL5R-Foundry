@@ -1,59 +1,46 @@
 /* =========================
-   GFL5R — Near-future MilSci
-   Scoped to GFL5R actor sheet
+   GFL5R — Unified Sheet Theme
+   Near-future / Military Sci-Fi
    ========================= */
 
-/* -------------------------
-   Design tokens (scoped)
-   ------------------------- */
-.gfl5r.sheet.actor {
-  --gfl-accent: #47d1ff;       /* cyan accent */
-  --gfl-accent-2: #7cffd6;     /* mint accent */
+.gfl5r.sheet {
+  /* -------- Theme Tokens -------- */
+  --gfl-accent: #47d1ff;
+  --gfl-accent-2: #7cffd6;
   --gfl-surface: rgba(255, 255, 255, 0.03);
   --gfl-surface-2: rgba(255, 255, 255, 0.06);
   --gfl-border: rgba(255, 255, 255, 0.12);
   --gfl-text-dim: rgba(255, 255, 255, 0.75);
-  --gfl-shadow: 0 1px 0 rgba(0, 0, 0, 0.4), 0 0 0 1px var(--gfl-border) inset;
   --gfl-radius: 8px;
   --gfl-gap: 10px;
   --gfl-gap-lg: 14px;
-  --gfl-chip-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
-  --gfl-chip-br: 10px;
-
-  /* slightly denser layout than default */
-  --font-size-14: 13px;
+  --gfl-shadow: 0 1px 0 rgba(0, 0, 0, 0.4), 0 0 0 1px var(--gfl-border) inset;
+  font-size: 13px;
 }
 
-/* -------------------------
-   Glassy app background
-   (single source of truth)
-   ------------------------- */
-.gfl5r.sheet.actor .window-content {
-  /* Base painted background */
+/* -------- Background / Glass -------- */
+.gfl5r.sheet .window-content {
   background:
     radial-gradient(1200px 600px at 120% -10%, rgba(71, 209, 255, 0.10), transparent 60%),
     radial-gradient(1000px 600px at -20% 110%, rgba(124, 255, 214, 0.08), transparent 60%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.015), rgba(255, 255, 255, 0.03)),
-    rgba(20, 30, 40, 0.35); /* translucent dark base */
+    rgba(20, 30, 40, 0.35);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 0 24px rgba(0, 0, 0, 0.6) inset;
   border-radius: 10px;
   padding: 10px 12px;
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.6) inset;
 }
 
-/* Hardware-accelerated blur/saturation where supported */
 @supports ((backdrop-filter: blur(18px)) or (-webkit-backdrop-filter: blur(18px))) {
-  .gfl5r.sheet.actor .window-content {
+  .gfl5r.sheet .window-content {
     backdrop-filter: blur(18px) saturate(160%) contrast(105%);
     -webkit-backdrop-filter: blur(18px) saturate(160%) contrast(105%);
   }
 }
 
-/* -------------------------
-   Headings
-   ------------------------- */
-.gfl5r.sheet.actor h1,
-.gfl5r.sheet.actor h2 {
+/* -------- Headings -------- */
+.gfl5r.sheet h1,
+.gfl5r.sheet h2 {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   font-weight: 700;
@@ -61,242 +48,125 @@
   color: var(--gfl-accent);
   text-shadow: 0 0 8px rgba(71, 209, 255, 0.35);
 }
-
-.gfl5r.sheet.actor h2 {
+.gfl5r.sheet h2 {
   font-size: 13px;
   border-bottom: 1px solid var(--gfl-border);
   padding-bottom: 4px;
 }
 
-/* -------------------------
-   Shared “card” pattern
-   ------------------------- */
-.gfl5r.sheet.actor .sheet-header,
-.gfl5r.sheet.actor .derived-section,
-.gfl5r.sheet.actor .tab .grid,
-.gfl5r.sheet.actor .sheet-tabs,
-.gfl5r.sheet.actor .tab[data-tab="skills"] .grid {
+/* -------- Shared "card" containers -------- */
+.gfl5r.sheet .card,
+.gfl5r.sheet .sheet-header,
+.gfl5r.sheet .sheet-tabs,
+.gfl5r.sheet .tab .grid {
   background: var(--gfl-surface);
   border: 1px solid var(--gfl-border);
   border-radius: var(--gfl-radius);
   box-shadow: var(--gfl-shadow);
-}
-
-.gfl5r.sheet.actor .sheet-header,
-.gfl5r.sheet.actor .derived-section,
-.gfl5r.sheet.actor .tab .grid,
-.gfl5r.sheet.actor .sheet-tabs,
-.gfl5r.sheet.actor .tab[data-tab="skills"] .grid {
   padding: 8px;
 }
 
-/* Sub-card glass tint blocks */
-.gfl5r.sheet.actor .derived-section,
-.gfl5r.sheet.actor .approaches-section,
-.gfl5r.sheet.actor .tab .grid {
-  background: rgba(255, 255, 255, 0.05);
+.gfl5r.sheet .sub-card {
+  background: var(--gfl-surface-2);
+  border: 1px solid var(--gfl-border);
+  border-radius: var(--gfl-radius);
+  padding: 6px;
 }
 
-@supports ((backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px))) {
-  .gfl5r.sheet.actor .derived-section,
-  .gfl5r.sheet.actor .approaches-section,
-  .gfl5r.sheet.actor .tab .grid {
-    backdrop-filter: blur(12px) saturate(140%);
-    -webkit-backdrop-filter: blur(12px) saturate(140%);
-  }
-  .gfl5r.sheet.actor .derived-section,
-  .gfl5r.sheet.actor .approaches-section,
-  .gfl5r.sheet.actor .tab .grid {
-    border: 1px solid var(--gfl-border);
-  }
-}
-
-/* -------------------------
-   Header (image / identity)
-   ------------------------- */
-.gfl5r.sheet.actor .sheet-header { padding: 8px; }
-
-.gfl5r.sheet.actor .profile-img {
-  border: 1px solid var(--gfl-border) !important;
-  box-shadow: 0 0 0 2px rgba(71, 209, 255, 0.12);
+/* -------- Profile image -------- */
+.gfl5r.sheet .profile-img {
+  border: 1px solid var(--gfl-border);
   border-radius: calc(var(--gfl-radius) - 2px);
+  box-shadow: 0 0 0 2px rgba(71, 209, 255, 0.12);
 }
 
-/* -------------------------
-   Form layout & inputs
-   ------------------------- */
-.gfl5r.sheet.actor .form-group {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.gfl5r.sheet.actor .form-group > label {
-  flex: 1 1 auto;
-  color: var(--gfl-text-dim);
-  font-size: var(--font-size-14);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.gfl5r.sheet.actor input[type="text"],
-.gfl5r.sheet.actor input[type="number"] {
+/* -------- Inputs -------- */
+.gfl5r.sheet input[type="text"],
+.gfl5r.sheet input[type="number"],
+.gfl5r.sheet select,
+.gfl5r.sheet textarea {
   background: var(--gfl-surface-2);
   border: 1px solid var(--gfl-border);
   border-radius: 6px;
   color: #fff;
   padding: 4px 6px;
-  height: 26px;
   box-shadow: var(--gfl-shadow);
+  width: 100%;
 }
-
-.gfl5r.sheet.actor input[type="text"]:focus-visible,
-.gfl5r.sheet.actor input[type="number"]:focus-visible {
+.gfl5r.sheet textarea {
+  resize: vertical;
+}
+.gfl5r.sheet input:focus-visible,
+.gfl5r.sheet select:focus-visible,
+.gfl5r.sheet textarea:focus-visible {
   outline: none;
   border-color: var(--gfl-accent);
   box-shadow: 0 0 0 2px rgba(71, 209, 255, 0.35);
 }
 
-.gfl5r.sheet.actor input[disabled] { opacity: 0.8; }
-
-/* Number input spinners */
-.gfl5r.sheet.actor input[type="number"]::-webkit-outer-spin-button,
-.gfl5r.sheet.actor input[type="number"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-.gfl5r.sheet.actor input[type="number"] { -moz-appearance: textfield; }
-
-/* -------------------------
-   Approaches row (chips)
-   ------------------------- */
-.gfl5r.sheet.actor .approaches-section .form-group {
-  background: var(--gfl-chip-bg);
-  border: 1px solid var(--gfl-border);
-  border-radius: var(--gfl-chip-br);
-  padding: 6px 8px;
-  min-width: 150px;
-}
-
-.gfl5r.sheet.actor .approaches-section label {
-  color: #d9f7ff;
-}
-
-/* -------------------------
-   Derived / state area
-   ------------------------- */
-.gfl5r.sheet.actor .derived-section .flexrow span {
-  color: var(--gfl-text-dim);
-}
-
-/* -------------------------
-   Tabs
-   ------------------------- */
-.gfl5r.sheet.actor .sheet-tabs {
-  padding: 4px;
+/* -------- Tabs -------- */
+.gfl5r.sheet .sheet-tabs {
   display: flex;
   gap: 4px;
+  padding: 4px;
 }
-
-.gfl5r.sheet.actor .sheet-tabs .item {
-  position: relative;
+.gfl5r.sheet .sheet-tabs .item {
   padding: 6px 10px;
-  text-transform: uppercase;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  color: var(--gfl-text-dim);
   border-radius: 6px;
   border: 1px solid transparent;
-  background: transparent;
+  color: var(--gfl-text-dim);
+  text-transform: uppercase;
+  font-weight: 600;
   cursor: pointer;
 }
-
-.gfl5r.sheet.actor .sheet-tabs .item:hover {
+.gfl5r.sheet .sheet-tabs .item:hover {
   color: #fff;
   border-color: var(--gfl-border);
   background: var(--gfl-surface-2);
 }
-
-.gfl5r.sheet.actor .sheet-tabs .item:focus-visible {
-  outline: none;
-  border-color: var(--gfl-accent);
-  box-shadow: 0 0 0 2px rgba(71, 209, 255, 0.35);
-}
-
-.gfl5r.sheet.actor .sheet-tabs .item.active {
+.gfl5r.sheet .sheet-tabs .item.active {
   color: #001a22;
   background: linear-gradient(180deg, var(--gfl-accent), var(--gfl-accent-2));
-  border-color: transparent;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25) inset;
 }
 
-/* -------------------------
-   Skills tab
-   ------------------------- */
-.gfl5r.sheet.actor .tab[data-tab="skills"] > h2 { margin-top: 10px; }
-
-/* -------------------------
-   Body grid
-   ------------------------- */
-.gfl5r.sheet.actor .sheet-body {
+/* -------- Grids & Layout -------- */
+.gfl5r.sheet .grid {
+  display: grid;
+  gap: var(--gfl-gap);
+}
+.gfl5r.sheet .flexrow {
+  display: flex;
+  align-items: center;
+  gap: var(--gfl-gap);
+}
+.gfl5r.sheet .sheet-body {
   margin-top: 8px;
   display: grid;
   gap: var(--gfl-gap);
 }
 
-/* -------------------------
-   Responsive
-   ------------------------- */
-@media (max-width: 740px) {
-  .gfl5r.sheet.actor .approach-state-wrapper {
-    flex-direction: column;
-    gap: var(--gfl-gap-lg);
-  }
-  .gfl5r.sheet.actor .derived-section {
-    text-align: left !important;
-  }
-}
-
-/* Two-column layout tweaks */
-.gfl5r.sheet.actor .gfl-skill-ability-grid .gfl-abilities-col {
-  position: relative;
-}
-
-/* Drop zone */
-.gfl5r.sheet.actor .gfl-drop-zone {
-  background: rgba(255,255,255,0.05);
+/* -------- Drop zones & ability lists (for actor sheets) -------- */
+.gfl5r.sheet .gfl-drop-zone {
+  background: rgba(255, 255, 255, 0.05);
   border: 1px dashed var(--gfl-border);
   border-radius: var(--gfl-radius);
   padding: 12px;
   text-align: center;
   color: var(--gfl-text-dim);
-  margin-bottom: 10px;
   transition: border-color 120ms ease, box-shadow 120ms ease, background 120ms ease;
 }
-@supports (backdrop-filter: blur(10px)) or (-webkit-backdrop-filter: blur(10px)) {
-  .gfl5r.sheet.actor .gfl-drop-zone {
-    backdrop-filter: blur(10px) saturate(140%);
-    -webkit-backdrop-filter: blur(10px) saturate(140%);
-  }
-}
-.gfl5r.sheet.actor .gfl-drop-zone:hover {
+.gfl5r.sheet .gfl-drop-zone:hover {
   border-color: var(--gfl-accent);
-  box-shadow: 0 0 0 2px rgba(71,209,255,0.25) inset;
+  box-shadow: 0 0 0 2px rgba(71, 209, 255, 0.25) inset;
 }
-.gfl5r.sheet.actor .gfl-drop-zone__hint {
-  font-size: 12px;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
-/* Visual “drop ok” flash */
-.gfl5r.sheet.actor .gfl-drop-zone.gfl-drop-ok {
-  background: linear-gradient(180deg, rgba(71,209,255,0.18), rgba(124,255,214,0.12));
+.gfl5r.sheet .gfl-drop-zone.gfl-drop-ok {
+  background: linear-gradient(180deg, rgba(71, 209, 255, 0.18), rgba(124, 255, 214, 0.12));
   border-color: var(--gfl-accent);
 }
 
-/* Ability list */
-.gfl5r.sheet.actor .gfl-ability-list {
+/* -------- Ability list -------- */
+.gfl5r.sheet .gfl-ability-list {
   background: var(--gfl-surface);
   border: 1px solid var(--gfl-border);
   border-radius: var(--gfl-radius);
@@ -307,7 +177,7 @@
   max-height: 420px;
   overflow: auto;
 }
-.gfl5r.sheet.actor .gfl-ability-row {
+.gfl5r.sheet .gfl-ability-row {
   display: grid;
   grid-template-columns: 22px 1fr auto;
   gap: 8px;
@@ -317,26 +187,29 @@
   border-radius: 6px;
   padding: 4px 6px;
 }
-.gfl5r.sheet.actor .gfl-ability-row img {
-  width: 22px; height: 22px; border-radius: 4px; border: 1px solid var(--gfl-border);
+.gfl5r.sheet .gfl-ability-row img {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  border: 1px solid var(--gfl-border);
 }
-.gfl5r.sheet.actor .gfl-ability-name {
+.gfl5r.sheet .gfl-ability-name {
   color: #fff;
   font-weight: 600;
-  letter-spacing: 0.02em;
 }
-.gfl5r.sheet.actor .gfl-ability-delete {
+.gfl5r.sheet .gfl-ability-delete {
   color: var(--gfl-text-dim);
-  padding: 2px 6px;
   border-radius: 4px;
+  padding: 2px 6px;
 }
-.gfl5r.sheet.actor .gfl-ability-delete:hover {
+.gfl5r.sheet .gfl-ability-delete:hover {
   color: #fff;
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
 }
-.gfl5r.sheet.actor .gfl-ability-empty {
-  color: var(--gfl-text-dim);
-  font-size: 12px;
-  text-align: center;
-  padding: 6px 0;
+
+/* -------- Responsive tweaks -------- */
+@media (max-width: 740px) {
+  .gfl5r.sheet .flexrow {
+    flex-direction: column;
+  }
 }
