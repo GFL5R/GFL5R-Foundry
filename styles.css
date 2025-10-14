@@ -1,45 +1,57 @@
 /* =========================
    GFL5R — Near-future MilSci
-   Scoped to your sheet only
+   Scoped to GFL5R actor sheet
    ========================= */
 
-/* === Glassy background for GFL5R sheets === */
-.gfl5r.sheet.actor .window-content {
-  background: rgba(20, 30, 40, 0.35); /* translucent dark glass */
-  backdrop-filter: blur(18px) saturate(160%) contrast(105%);
-  -webkit-backdrop-filter: blur(18px) saturate(160%) contrast(105%);
-  border: 1px solid rgba(255,255,255,0.08);
-  box-shadow: 0 0 24px rgba(0,0,0,0.6) inset;
-  border-radius: 10px;
-}
-
+/* -------------------------
+   Design tokens (scoped)
+   ------------------------- */
 .gfl5r.sheet.actor {
-  --gfl-accent: #47d1ff;     /* cyan accent */
-  --gfl-accent-2: #7cffd6;   /* mint accent */
-  --gfl-surface: rgba(255,255,255,0.03);
-  --gfl-surface-2: rgba(255,255,255,0.06);
-  --gfl-border: rgba(255,255,255,0.12);
-  --gfl-text-dim: rgba(255,255,255,0.75);
-  --gfl-shadow: 0 1px 0 rgba(0,0,0,0.4), 0 0 0 1px var(--gfl-border) inset;
+  --gfl-accent: #47d1ff;       /* cyan accent */
+  --gfl-accent-2: #7cffd6;     /* mint accent */
+  --gfl-surface: rgba(255, 255, 255, 0.03);
+  --gfl-surface-2: rgba(255, 255, 255, 0.06);
+  --gfl-border: rgba(255, 255, 255, 0.12);
+  --gfl-text-dim: rgba(255, 255, 255, 0.75);
+  --gfl-shadow: 0 1px 0 rgba(0, 0, 0, 0.4), 0 0 0 1px var(--gfl-border) inset;
   --gfl-radius: 8px;
   --gfl-gap: 10px;
   --gfl-gap-lg: 14px;
-  --gfl-chip-bg: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  --gfl-chip-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
   --gfl-chip-br: 10px;
 
   /* slightly denser layout than default */
   --font-size-14: 13px;
 }
 
-/* Base layout polish */
+/* -------------------------
+   Glassy app background
+   (single source of truth)
+   ------------------------- */
 .gfl5r.sheet.actor .window-content {
+  /* Base painted background */
   background:
-    radial-gradient(1200px 600px at 120% -10%, rgba(71,209,255,0.10), transparent 60%),
-    radial-gradient(1000px 600px at -20% 110%, rgba(124,255,214,0.08), transparent 60%),
-    linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.03));
+    radial-gradient(1200px 600px at 120% -10%, rgba(71, 209, 255, 0.10), transparent 60%),
+    radial-gradient(1000px 600px at -20% 110%, rgba(124, 255, 214, 0.08), transparent 60%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.015), rgba(255, 255, 255, 0.03)),
+    rgba(20, 30, 40, 0.35); /* translucent dark base */
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.6) inset;
+  border-radius: 10px;
   padding: 10px 12px;
 }
 
+/* Hardware-accelerated blur/saturation where supported */
+@supports ((backdrop-filter: blur(18px)) or (-webkit-backdrop-filter: blur(18px))) {
+  .gfl5r.sheet.actor .window-content {
+    backdrop-filter: blur(18px) saturate(160%) contrast(105%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%) contrast(105%);
+  }
+}
+
+/* -------------------------
+   Headings
+   ------------------------- */
 .gfl5r.sheet.actor h1,
 .gfl5r.sheet.actor h2 {
   letter-spacing: 0.06em;
@@ -47,7 +59,7 @@
   font-weight: 700;
   margin: 0 0 6px 0;
   color: var(--gfl-accent);
-  text-shadow: 0 0 8px rgba(71,209,255,0.35);
+  text-shadow: 0 0 8px rgba(71, 209, 255, 0.35);
 }
 
 .gfl5r.sheet.actor h2 {
@@ -56,21 +68,63 @@
   padding-bottom: 4px;
 }
 
-/* Header: image / identity block */
-.gfl5r.sheet.actor .sheet-header {
+/* -------------------------
+   Shared “card” pattern
+   ------------------------- */
+.gfl5r.sheet.actor .sheet-header,
+.gfl5r.sheet.actor .derived-section,
+.gfl5r.sheet.actor .tab .grid,
+.gfl5r.sheet.actor .sheet-tabs,
+.gfl5r.sheet.actor .tab[data-tab="skills"] .grid {
   background: var(--gfl-surface);
   border: 1px solid var(--gfl-border);
   border-radius: var(--gfl-radius);
-  padding: 8px;
   box-shadow: var(--gfl-shadow);
 }
 
-.gfl5r.sheet.actor .profile-img {
-  border: 1px solid var(--gfl-border) !important;
-  box-shadow: 0 0 0 2px rgba(71,209,255,0.12);
+.gfl5r.sheet.actor .sheet-header,
+.gfl5r.sheet.actor .derived-section,
+.gfl5r.sheet.actor .tab .grid,
+.gfl5r.sheet.actor .sheet-tabs,
+.gfl5r.sheet.actor .tab[data-tab="skills"] .grid {
+  padding: 8px;
 }
 
-/* Inputs, groups, labels */
+/* Sub-card glass tint blocks */
+.gfl5r.sheet.actor .derived-section,
+.gfl5r.sheet.actor .approaches-section,
+.gfl5r.sheet.actor .tab .grid {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+@supports ((backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px))) {
+  .gfl5r.sheet.actor .derived-section,
+  .gfl5r.sheet.actor .approaches-section,
+  .gfl5r.sheet.actor .tab .grid {
+    backdrop-filter: blur(12px) saturate(140%);
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
+  }
+  .gfl5r.sheet.actor .derived-section,
+  .gfl5r.sheet.actor .approaches-section,
+  .gfl5r.sheet.actor .tab .grid {
+    border: 1px solid var(--gfl-border);
+  }
+}
+
+/* -------------------------
+   Header (image / identity)
+   ------------------------- */
+.gfl5r.sheet.actor .sheet-header { padding: 8px; }
+
+.gfl5r.sheet.actor .profile-img {
+  border: 1px solid var(--gfl-border) !important;
+  box-shadow: 0 0 0 2px rgba(71, 209, 255, 0.12);
+  border-radius: calc(var(--gfl-radius) - 2px);
+}
+
+/* -------------------------
+   Form layout & inputs
+   ------------------------- */
 .gfl5r.sheet.actor .form-group {
   display: flex;
   align-items: center;
@@ -96,18 +150,26 @@
   box-shadow: var(--gfl-shadow);
 }
 
-.gfl5r.sheet.actor input[disabled] {
-  opacity: 0.8;
+.gfl5r.sheet.actor input[type="text"]:focus-visible,
+.gfl5r.sheet.actor input[type="number"]:focus-visible {
+  outline: none;
+  border-color: var(--gfl-accent);
+  box-shadow: 0 0 0 2px rgba(71, 209, 255, 0.35);
 }
 
-/* remove spin buttons for a cleaner HUD vibe (Chrome) */
-.gfl5r.sheet.actor input[type=number]::-webkit-outer-spin-button,
-.gfl5r.sheet.actor input[type=number]::-webkit-inner-spin-button {
-  -webkit-appearance: none; margin: 0;
-}
-.gfl5r.sheet.actor input[type=number] { -moz-appearance: textfield; }
+.gfl5r.sheet.actor input[disabled] { opacity: 0.8; }
 
-/* Approaches row: chip-like */
+/* Number input spinners */
+.gfl5r.sheet.actor input[type="number"]::-webkit-outer-spin-button,
+.gfl5r.sheet.actor input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.gfl5r.sheet.actor input[type="number"] { -moz-appearance: textfield; }
+
+/* -------------------------
+   Approaches row (chips)
+   ------------------------- */
 .gfl5r.sheet.actor .approaches-section .form-group {
   background: var(--gfl-chip-bg);
   border: 1px solid var(--gfl-border);
@@ -116,33 +178,24 @@
   min-width: 150px;
 }
 
-.gfl5r.sheet.actor .approaches label {
+.gfl5r.sheet.actor .approaches-section label {
   color: #d9f7ff;
 }
 
-/* State card (right column) */
-.gfl5r.sheet.actor .derived-section {
-  background: var(--gfl-surface);
-  border: 1px solid var(--gfl-border);
-  border-radius: var(--gfl-radius);
-  padding: 8px;
-  box-shadow: var(--gfl-shadow);
-}
-
-/* Fatigue/Strife paired layout */
+/* -------------------------
+   Derived / state area
+   ------------------------- */
 .gfl5r.sheet.actor .derived-section .flexrow span {
   color: var(--gfl-text-dim);
 }
 
-/* Tabs bar */
+/* -------------------------
+   Tabs
+   ------------------------- */
 .gfl5r.sheet.actor .sheet-tabs {
-  background: var(--gfl-surface);
-  border: 1px solid var(--gfl-border);
-  border-radius: var(--gfl-radius);
   padding: 4px;
   display: flex;
   gap: 4px;
-  box-shadow: var(--gfl-shadow);
 }
 
 .gfl5r.sheet.actor .sheet-tabs .item {
@@ -154,6 +207,8 @@
   color: var(--gfl-text-dim);
   border-radius: 6px;
   border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
 }
 
 .gfl5r.sheet.actor .sheet-tabs .item:hover {
@@ -162,34 +217,36 @@
   background: var(--gfl-surface-2);
 }
 
+.gfl5r.sheet.actor .sheet-tabs .item:focus-visible {
+  outline: none;
+  border-color: var(--gfl-accent);
+  box-shadow: 0 0 0 2px rgba(71, 209, 255, 0.35);
+}
+
 .gfl5r.sheet.actor .sheet-tabs .item.active {
   color: #001a22;
   background: linear-gradient(180deg, var(--gfl-accent), var(--gfl-accent-2));
   border-color: transparent;
-  box-shadow: 0 0 0 1px rgba(0,0,0,0.25) inset;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25) inset;
 }
 
-/* Skills grid: carded sections */
-.gfl5r.sheet.actor .tab[data-tab="skills"] > h2 {
-  margin-top: 10px;
-}
+/* -------------------------
+   Skills tab
+   ------------------------- */
+.gfl5r.sheet.actor .tab[data-tab="skills"] > h2 { margin-top: 10px; }
 
-.gfl5r.sheet.actor .tab[data-tab="skills"] .grid {
-  background: var(--gfl-surface);
-  border: 1px solid var(--gfl-border);
-  border-radius: var(--gfl-radius);
-  padding: 8px;
-  box-shadow: var(--gfl-shadow);
-}
-
-/* Sheet body spacing */
+/* -------------------------
+   Body grid
+   ------------------------- */
 .gfl5r.sheet.actor .sheet-body {
   margin-top: 8px;
   display: grid;
   gap: var(--gfl-gap);
 }
 
-/* Responsive: stack columns under ~740px */
+/* -------------------------
+   Responsive
+   ------------------------- */
 @media (max-width: 740px) {
   .gfl5r.sheet.actor .approach-state-wrapper {
     flex-direction: column;
