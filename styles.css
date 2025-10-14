@@ -3,6 +3,16 @@
    Scoped to your sheet only
    ========================= */
 
+/* === Glassy background for GFL5R sheets === */
+.gfl5r.sheet.actor .window-content {
+  background: rgba(20, 30, 40, 0.35); /* translucent dark glass */
+  backdrop-filter: blur(18px) saturate(160%) contrast(105%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%) contrast(105%);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 0 24px rgba(0,0,0,0.6) inset;
+  border-radius: 10px;
+}
+
 .gfl5r.sheet.actor {
   --gfl-accent: #47d1ff;     /* cyan accent */
   --gfl-accent-2: #7cffd6;   /* mint accent */
