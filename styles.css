@@ -16,6 +16,7 @@
   --gfl-gap-lg: 14px;
   --gfl-shadow: 0 1px 0 rgba(0, 0, 0, 0.4), 0 0 0 1px var(--gfl-border) inset;
   font-size: 13px;
+  color: #fff; /* ✅ all text white by default */
 }
 
 /* -------- Background / Glass -------- */
@@ -48,6 +49,7 @@
   color: var(--gfl-accent);
   text-shadow: 0 0 8px rgba(71, 209, 255, 0.35);
 }
+
 .gfl5r.sheet h2 {
   font-size: 13px;
   border-bottom: 1px solid var(--gfl-border);
@@ -80,6 +82,25 @@
   box-shadow: 0 0 0 2px rgba(71, 209, 255, 0.12);
 }
 
+/* -------- Header Name Input Fix -------- */
+.gfl5r.sheet .sheet-header h1 input[name="name"] {
+  width: 90%;
+  max-width: 90%;
+  font-size: 1.2em;
+  font-weight: 700;
+  color: #fff;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--gfl-border);
+  padding: 4px 0;
+}
+
+.gfl5r.sheet .sheet-header h1 input[name="name"]:focus-visible {
+  border-color: var(--gfl-accent);
+  box-shadow: none;
+  outline: none;
+}
+
 /* -------- Inputs -------- */
 .gfl5r.sheet input[type="text"],
 .gfl5r.sheet input[type="number"],
@@ -93,9 +114,11 @@
   box-shadow: var(--gfl-shadow);
   width: 100%;
 }
+
 .gfl5r.sheet textarea {
   resize: vertical;
 }
+
 .gfl5r.sheet input:focus-visible,
 .gfl5r.sheet select:focus-visible,
 .gfl5r.sheet textarea:focus-visible {
@@ -104,12 +127,17 @@
   box-shadow: 0 0 0 2px rgba(71, 209, 255, 0.35);
 }
 
+.gfl5r.sheet .form-group > label {
+  color: var(--gfl-text-dim);
+}
+
 /* -------- Tabs -------- */
 .gfl5r.sheet .sheet-tabs {
   display: flex;
   gap: 4px;
   padding: 4px;
 }
+
 .gfl5r.sheet .sheet-tabs .item {
   padding: 6px 10px;
   border-radius: 6px;
@@ -119,11 +147,13 @@
   font-weight: 600;
   cursor: pointer;
 }
+
 .gfl5r.sheet .sheet-tabs .item:hover {
   color: #fff;
   border-color: var(--gfl-border);
   background: var(--gfl-surface-2);
 }
+
 .gfl5r.sheet .sheet-tabs .item.active {
   color: #001a22;
   background: linear-gradient(180deg, var(--gfl-accent), var(--gfl-accent-2));
@@ -135,11 +165,13 @@
   display: grid;
   gap: var(--gfl-gap);
 }
+
 .gfl5r.sheet .flexrow {
   display: flex;
   align-items: center;
   gap: var(--gfl-gap);
 }
+
 .gfl5r.sheet .sheet-body {
   margin-top: 8px;
   display: grid;
@@ -156,10 +188,12 @@
   color: var(--gfl-text-dim);
   transition: border-color 120ms ease, box-shadow 120ms ease, background 120ms ease;
 }
+
 .gfl5r.sheet .gfl-drop-zone:hover {
   border-color: var(--gfl-accent);
   box-shadow: 0 0 0 2px rgba(71, 209, 255, 0.25) inset;
 }
+
 .gfl5r.sheet .gfl-drop-zone.gfl-drop-ok {
   background: linear-gradient(180deg, rgba(71, 209, 255, 0.18), rgba(124, 255, 214, 0.12));
   border-color: var(--gfl-accent);
@@ -177,6 +211,7 @@
   max-height: 420px;
   overflow: auto;
 }
+
 .gfl5r.sheet .gfl-ability-row {
   display: grid;
   grid-template-columns: 22px 1fr auto;
@@ -187,21 +222,25 @@
   border-radius: 6px;
   padding: 4px 6px;
 }
+
 .gfl5r.sheet .gfl-ability-row img {
   width: 22px;
   height: 22px;
   border-radius: 4px;
   border: 1px solid var(--gfl-border);
 }
+
 .gfl5r.sheet .gfl-ability-name {
   color: #fff;
   font-weight: 600;
 }
+
 .gfl5r.sheet .gfl-ability-delete {
   color: var(--gfl-text-dim);
   border-radius: 4px;
   padding: 2px 6px;
 }
+
 .gfl5r.sheet .gfl-ability-delete:hover {
   color: #fff;
   background: rgba(255, 255, 255, 0.08);
