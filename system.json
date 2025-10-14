@@ -12,6 +12,7 @@
   "styles": ["styles.css"],
   "gridDistance": 1,
   "gridUnits": "meter",
+  "template": "template.json",
   "documentTypes": {
     "Actor": ["character"],
     "Item": ["ability", "generic"]
