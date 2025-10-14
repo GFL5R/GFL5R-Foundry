@@ -1,11 +1,104 @@
 <form class="actor-sheet" autocomplete="off">
-  <!-- Tabs bar: Skills first -->
+
+  <!-- ======================= HEADER + APPROACHES + STATE ======================= -->
+  <header class="sheet-header flexrow" style="gap: 8px; align-items: center; margin-bottom: 12px;">
+    <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}"
+      style="width:80px;height:80px;border:1px solid var(--color-border);border-radius:6px;object-fit:cover;" />
+
+    <div class="header-fields" style="flex:1;">
+      <h1 style="margin:0 0 6px 0;">
+        <input name="name" type="text" value="{{actor.name}}" placeholder="Character Name"/>
+      </h1>
+
+      <div class="grid" style="grid-template-columns: repeat(2, 1fr); gap: 8px;">
+        <div class="form-group">
+          <label>Humanity</label>
+          <input type="number" name="system.humanity" value="{{actor.system.humanity}}" min="0"/>
+        </div>
+        <div class="form-group">
+          <label>Fame</label>
+          <input type="number" name="system.fame" value="{{actor.system.fame}}" min="0"/>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Approaches section ABOVE tabs -->
+  <section class="approaches-section" style="margin-bottom: 12px;">
+    <h2>Approaches</h2>
+    <div class="approaches flexrow" style="display:flex; gap:10px; flex-wrap:wrap;">
+      <div class="form-group">
+        <label>Power</label>
+        <input type="number" name="system.approaches.power" value="{{actor.system.approaches.power}}" min="0"/>
+      </div>
+      <div class="form-group">
+        <label>Swiftness</label>
+        <input type="number" name="system.approaches.swiftness" value="{{actor.system.approaches.swiftness}}" min="0"/>
+      </div>
+      <div class="form-group">
+        <label>Resilience</label>
+        <input type="number" name="system.approaches.resilience" value="{{actor.system.approaches.resilience}}" min="0"/>
+      </div>
+      <div class="form-group">
+        <label>Precision</label>
+        <input type="number" name="system.approaches.precision" value="{{actor.system.approaches.precision}}" min="0"/>
+      </div>
+      <div class="form-group">
+        <label>Fortune</label>
+        <input type="number" name="system.approaches.fortune" value="{{actor.system.approaches.fortune}}" min="0"/>
+      </div>
+    </div>
+  </section>
+
+  <!-- Derived (State) section ABOVE tabs -->
+  <section class="derived-section" style="margin-bottom: 16px;">
+    <h2>State</h2>
+    <div class="grid" style="grid-template-columns: repeat(2, 1fr); gap: 10px;">
+      <div class="form-group">
+        <label>Endurance</label>
+        <input type="text" value="{{derived.endurance}}" disabled/>
+      </div>
+      <div class="form-group">
+        <label>Composure</label>
+        <input type="text" value="{{derived.composure}}" disabled/>
+      </div>
+      <div class="form-group">
+        <label>Fatigue</label>
+        <div class="flexrow" style="gap:6px; align-items:center;">
+          <input type="number" name="system.resources.fatigue" value="{{actor.system.resources.fatigue}}" min="0" style="flex:0 0 80px;"/>
+          <span>/</span>
+          <input type="text" value="{{derived.endurance}}" disabled style="flex:0 0 80px;"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Strife</label>
+        <div class="flexrow" style="gap:6px; align-items:center;">
+          <input type="number" name="system.resources.strife" value="{{actor.system.resources.strife}}" min="0" style="flex:0 0 80px;"/>
+          <span>/</span>
+          <input type="text" value="{{derived.composure}}" disabled style="flex:0 0 80px;"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Vigilance</label>
+        <input type="text" value="{{derived.vigilance}}" disabled/>
+      </div>
+      <div class="form-group">
+        <label>Focus</label>
+        <input type="text" value="{{derived.focus}}" disabled/>
+      </div>
+      <div class="form-group">
+        <label>Fortune Points</label>
+        <input type="text" value="{{derived.fortunePointsCurrent}} / {{derived.fortunePointsMax}}" disabled/>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= TABS BAR ======================= -->
   <nav class="tabs sheet-tabs" data-group="primary" style="margin-bottom:8px;">
     <a class="item" data-tab="skills">Skills</a>
-    <a class="item" data-tab="overview">Overview</a>
   </nav>
 
-  <!-- Sheet body: contains tab panels -->
+  <!-- ======================= SHEET BODY ======================= -->
   <section class="sheet-body">
 
     <!-- ======================= SKILLS TAB ======================= -->
@@ -106,89 +199,6 @@
         </div>
       </div>
     </section>
-
-    <!-- ======================= OVERVIEW TAB ======================= -->
-    <section class="tab" data-group="primary" data-tab="overview">
-      <header class="sheet-header flexrow" style="gap: 8px; align-items: center;">
-        <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}"
-          style="width:80px;height:80px;border:1px solid var(--color-border);border-radius:6px;object-fit:cover;" />
-
-        <div class="header-fields" style="flex:1;">
-          <h1 style="margin:0 0 6px 0;">
-            <input name="name" type="text" value="{{actor.name}}" placeholder="Character Name"/>
-          </h1>
-
-          <div class="grid" style="grid-template-columns: repeat(2, 1fr); gap: 8px;">
-            <div class="form-group">
-              <label>Humanity</label>
-              <input type="number" name="system.humanity" value="{{actor.system.humanity}}" min="0"/>
-            </div>
-            <div class="form-group">
-              <label>Fame</label>
-              <input type="number" name="system.fame" value="{{actor.system.fame}}" min="0"/>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <section style="margin-top:10px;">
-        <h2>Approaches</h2>
-        <div class="grid" style="grid-template-columns: repeat(5, 1fr); gap: 8px;">
-          <div class="form-group"><label>Power</label>
-            <input type="number" name="system.approaches.power" value="{{actor.system.approaches.power}}" min="0"/></div>
-          <div class="form-group"><label>Swiftness</label>
-            <input type="number" name="system.approaches.swiftness" value="{{actor.system.approaches.swiftness}}" min="0"/></div>
-          <div class="form-group"><label>Resilience</label>
-            <input type="number" name="system.approaches.resilience" value="{{actor.system.approaches.resilience}}" min="0"/></div>
-          <div class="form-group"><label>Precision</label>
-            <input type="number" name="system.approaches.precision" value="{{actor.system.approaches.precision}}" min="0"/></div>
-          <div class="form-group"><label>Fortune</label>
-            <input type="number" name="system.approaches.fortune" value="{{actor.system.approaches.fortune}}" min="0"/></div>
-        </div>
-      </section>
-
-      <section style="margin-top:12px;">
-        <h2>State</h2>
-        <div class="grid" style="grid-template-columns: repeat(2, 1fr); gap: 10px;">
-          <div class="form-group">
-            <label>Endurance</label>
-            <input type="text" value="{{derived.endurance}}" disabled/>
-          </div>
-          <div class="form-group">
-            <label>Composure</label>
-            <input type="text" value="{{derived.composure}}" disabled/>
-          </div>
-          <div class="form-group">
-            <label>Fatigue</label>
-            <div class="flexrow" style="gap:6px; align-items:center;">
-              <input type="number" name="system.resources.fatigue" value="{{actor.system.resources.fatigue}}" min="0" style="flex:0 0 80px;"/>
-              <span>/</span>
-              <input type="text" value="{{derived.endurance}}" disabled style="flex:0 0 80px;"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Strife</label>
-            <div class="flexrow" style="gap:6px; align-items:center;">
-              <input type="number" name="system.resources.strife" value="{{actor.system.resources.strife}}" min="0" style="flex:0 0 80px;"/>
-              <span>/</span>
-              <input type="text" value="{{derived.composure}}" disabled style="flex:0 0 80px;"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Vigilance</label>
-            <input type="text" value="{{derived.vigilance}}" disabled/>
-          </div>
-          <div class="form-group">
-            <label>Focus</label>
-            <input type="text" value="{{derived.focus}}" disabled/>
-          </div>
-          <div class="form-group">
-            <label>Fortune Points</label>
-            <input type="text" value="{{derived.fortunePointsCurrent}} / {{derived.fortunePointsMax}}" disabled/>
-          </div>
-        </div>
-      </section>
-    </section>
-
   </section>
+
 </form>
