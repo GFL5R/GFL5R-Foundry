@@ -42,8 +42,11 @@
     }
   },
   "Item": {
-    "types": ["generic"],
+    "types": ["ability", "generic"],
     "templates": {},
+    "ability": {
+      "description": ""
+    },
     "generic": {}
   }
 }
