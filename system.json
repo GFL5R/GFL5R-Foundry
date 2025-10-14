@@ -2,7 +2,7 @@
   "id": "gfl5r",
   "title": "GFL5R",
   "description": "We're just getting started.",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "compatibility": {
     "minimum": "12",
     "verified": "13"
