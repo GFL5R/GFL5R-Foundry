@@ -6,9 +6,4 @@ Hooks.once("init", () => {
 
   registerActorSheets();
   registerItemSheets();
-
-  CONFIG.Item.typeLabels = foundry.utils.mergeObject(CONFIG.Item.typeLabels ?? {}, {
-    ability: "Ability",
-    generic: "Generic"
-  });
 });
