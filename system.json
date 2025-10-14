@@ -12,7 +12,7 @@
   "gridDistance": 1,
   "gridUnits": "meter",
   "url": "https://github.com/GFL5R/GFL5R-Foundry",
-  "manifest": "",
+  "manifest": "https://raw.githubusercontent.com/GFL5R/GFL5R-Foundry/refs/heads/main/system.json",
   "download": "https://github.com/GFL5R/GFL5R-Foundry/archive/refs/heads/main.zip",
   "license": "https://raw.githubusercontent.com/GFL5R/GFL5R-Foundry/refs/heads/main/LICENSE.md"
 }
