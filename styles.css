@@ -1,0 +1,191 @@
+/* =========================
+   GFL5R — Near-future MilSci
+   Scoped to your sheet only
+   ========================= */
+
+.gfl5r.sheet.actor {
+  --gfl-accent: #47d1ff;     /* cyan accent */
+  --gfl-accent-2: #7cffd6;   /* mint accent */
+  --gfl-surface: rgba(255,255,255,0.03);
+  --gfl-surface-2: rgba(255,255,255,0.06);
+  --gfl-border: rgba(255,255,255,0.12);
+  --gfl-text-dim: rgba(255,255,255,0.75);
+  --gfl-shadow: 0 1px 0 rgba(0,0,0,0.4), 0 0 0 1px var(--gfl-border) inset;
+  --gfl-radius: 8px;
+  --gfl-gap: 10px;
+  --gfl-gap-lg: 14px;
+  --gfl-chip-bg: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  --gfl-chip-br: 10px;
+
+  /* slightly denser layout than default */
+  --font-size-14: 13px;
+}
+
+/* Base layout polish */
+.gfl5r.sheet.actor .window-content {
+  background:
+    radial-gradient(1200px 600px at 120% -10%, rgba(71,209,255,0.10), transparent 60%),
+    radial-gradient(1000px 600px at -20% 110%, rgba(124,255,214,0.08), transparent 60%),
+    linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.03));
+  padding: 10px 12px;
+}
+
+.gfl5r.sheet.actor h1,
+.gfl5r.sheet.actor h2 {
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin: 0 0 6px 0;
+  color: var(--gfl-accent);
+  text-shadow: 0 0 8px rgba(71,209,255,0.35);
+}
+
+.gfl5r.sheet.actor h2 {
+  font-size: 13px;
+  border-bottom: 1px solid var(--gfl-border);
+  padding-bottom: 4px;
+}
+
+/* Header: image / identity block */
+.gfl5r.sheet.actor .sheet-header {
+  background: var(--gfl-surface);
+  border: 1px solid var(--gfl-border);
+  border-radius: var(--gfl-radius);
+  padding: 8px;
+  box-shadow: var(--gfl-shadow);
+}
+
+.gfl5r.sheet.actor .profile-img {
+  border: 1px solid var(--gfl-border) !important;
+  box-shadow: 0 0 0 2px rgba(71,209,255,0.12);
+}
+
+/* Inputs, groups, labels */
+.gfl5r.sheet.actor .form-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.gfl5r.sheet.actor .form-group > label {
+  flex: 1 1 auto;
+  color: var(--gfl-text-dim);
+  font-size: var(--font-size-14);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.gfl5r.sheet.actor input[type="text"],
+.gfl5r.sheet.actor input[type="number"] {
+  background: var(--gfl-surface-2);
+  border: 1px solid var(--gfl-border);
+  border-radius: 6px;
+  color: #fff;
+  padding: 4px 6px;
+  height: 26px;
+  box-shadow: var(--gfl-shadow);
+}
+
+.gfl5r.sheet.actor input[disabled] {
+  opacity: 0.8;
+}
+
+/* remove spin buttons for a cleaner HUD vibe (Chrome) */
+.gfl5r.sheet.actor input[type=number]::-webkit-outer-spin-button,
+.gfl5r.sheet.actor input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none; margin: 0;
+}
+.gfl5r.sheet.actor input[type=number] { -moz-appearance: textfield; }
+
+/* Approaches row: chip-like */
+.gfl5r.sheet.actor .approaches-section .form-group {
+  background: var(--gfl-chip-bg);
+  border: 1px solid var(--gfl-border);
+  border-radius: var(--gfl-chip-br);
+  padding: 6px 8px;
+  min-width: 150px;
+}
+
+.gfl5r.sheet.actor .approaches label {
+  color: #d9f7ff;
+}
+
+/* State card (right column) */
+.gfl5r.sheet.actor .derived-section {
+  background: var(--gfl-surface);
+  border: 1px solid var(--gfl-border);
+  border-radius: var(--gfl-radius);
+  padding: 8px;
+  box-shadow: var(--gfl-shadow);
+}
+
+/* Fatigue/Strife paired layout */
+.gfl5r.sheet.actor .derived-section .flexrow span {
+  color: var(--gfl-text-dim);
+}
+
+/* Tabs bar */
+.gfl5r.sheet.actor .sheet-tabs {
+  background: var(--gfl-surface);
+  border: 1px solid var(--gfl-border);
+  border-radius: var(--gfl-radius);
+  padding: 4px;
+  display: flex;
+  gap: 4px;
+  box-shadow: var(--gfl-shadow);
+}
+
+.gfl5r.sheet.actor .sheet-tabs .item {
+  position: relative;
+  padding: 6px 10px;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--gfl-text-dim);
+  border-radius: 6px;
+  border: 1px solid transparent;
+}
+
+.gfl5r.sheet.actor .sheet-tabs .item:hover {
+  color: #fff;
+  border-color: var(--gfl-border);
+  background: var(--gfl-surface-2);
+}
+
+.gfl5r.sheet.actor .sheet-tabs .item.active {
+  color: #001a22;
+  background: linear-gradient(180deg, var(--gfl-accent), var(--gfl-accent-2));
+  border-color: transparent;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.25) inset;
+}
+
+/* Skills grid: carded sections */
+.gfl5r.sheet.actor .tab[data-tab="skills"] > h2 {
+  margin-top: 10px;
+}
+
+.gfl5r.sheet.actor .tab[data-tab="skills"] .grid {
+  background: var(--gfl-surface);
+  border: 1px solid var(--gfl-border);
+  border-radius: var(--gfl-radius);
+  padding: 8px;
+  box-shadow: var(--gfl-shadow);
+}
+
+/* Sheet body spacing */
+.gfl5r.sheet.actor .sheet-body {
+  margin-top: 8px;
+  display: grid;
+  gap: var(--gfl-gap);
+}
+
+/* Responsive: stack columns under ~740px */
+@media (max-width: 740px) {
+  .gfl5r.sheet.actor .approach-state-wrapper {
+    flex-direction: column;
+    gap: var(--gfl-gap-lg);
+  }
+  .gfl5r.sheet.actor .derived-section {
+    text-align: left !important;
+  }
+}
