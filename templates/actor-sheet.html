@@ -22,11 +22,14 @@
       </div>
     </div>
   </header>
+  
+<!-- ======================= APPROACHES + STATE SIDE BY SIDE ======================= -->
+<section class="approach-state-wrapper" style="display:flex; justify-content:space-between; align-items:flex-start; gap:40px; margin-bottom:16px;">
 
-  <!-- Approaches section ABOVE tabs -->
-  <section class="approaches-section" style="margin-bottom: 12px;">
+  <!-- LEFT COLUMN: Approaches -->
+  <div class="approaches-section" style="flex:1;">
     <h2>Approaches</h2>
-    <div class="approaches flexrow" style="display:flex; gap:10px; flex-wrap:wrap;">
+    <div class="approaches" style="display:flex; gap:10px; flex-wrap:wrap;">
       <div class="form-group">
         <label>Power</label>
         <input type="number" name="system.approaches.power" value="{{actor.system.approaches.power}}" min="0"/>
@@ -48,54 +51,50 @@
         <input type="number" name="system.approaches.fortune" value="{{actor.system.approaches.fortune}}" min="0"/>
       </div>
     </div>
-  </section>
+  </div>
 
-  <!-- Derived (State) section ABOVE tabs -->
-  <section class="derived-section" style="margin-bottom: 16px;">
-    <h2>State</h2>
-    <div class="grid" style="grid-template-columns: repeat(2, 1fr); gap: 10px;">
+  <!-- RIGHT COLUMN: State -->
+  <div class="derived-section" style="flex:1; text-align:right;">
+    <h2 style="text-align:right;">State</h2>
+    <div class="grid" style="display:grid; grid-template-columns: 1fr; gap:8px; justify-items:end;">
       <div class="form-group">
-        
-        <input type="text" value="{{derived.endurance}}" disabled/>
-      </div>
-      <div class="form-group">
-        
-        <input type="text" value="{{derived.composure}}" disabled/>
-      </div>
-      <div class="form-group">
-        <div class="flexrow" style="gap:6px; align-items:center;">
+        <div class="flexrow" style="display:flex; justify-content:flex-end; align-items:center; gap:6px;">
           <label>Fatigue</label>
-          <input type="number" name="system.resources.fatigue" value="{{actor.system.resources.fatigue}}" min="0" style="flex:0 0 80px;"/>
+          <input type="number" name="system.resources.fatigue" value="{{actor.system.resources.fatigue}}" min="0" style="width:70px; text-align:right;"/>
           <span>/</span>
           <label>Endurance</label>
-          <input type="text" value="{{derived.endurance}}" disabled style="flex:0 0 80px;"/>
+          <input type="text" value="{{derived.endurance}}" disabled style="width:70px; text-align:right;"/>
         </div>
       </div>
       <div class="form-group">
-        <div class="flexrow" style="gap:6px; align-items:center;">
+        <div class="flexrow" style="display:flex; justify-content:flex-end; align-items:center; gap:6px;">
           <label>Strife</label>
-          <input type="number" name="system.resources.strife" value="{{actor.system.resources.strife}}" min="0" style="flex:0 0 80px;"/>
+          <input type="number" name="system.resources.strife" value="{{actor.system.resources.strife}}" min="0" style="width:70px; text-align:right;"/>
           <span>/</span>
           <label>Composure</label>
-          <input type="text" value="{{derived.composure}}" disabled style="flex:0 0 80px;"/>
+          <input type="text" value="{{derived.composure}}" disabled style="width:70px; text-align:right;"/>
         </div>
       </div>
       <div class="form-group">
         <label>Vigilance</label>
-        <input type="text" value="{{derived.vigilance}}" disabled/>
+        <input type="text" value="{{derived.vigilance}}" disabled style="width:80px; text-align:right;"/>
       </div>
       <div class="form-group">
         <label>Focus</label>
-        <input type="text" value="{{derived.focus}}" disabled/>
+        <input type="text" value="{{derived.focus}}" disabled style="width:80px; text-align:right;"/>
       </div>
       <div class="form-group">
         <label>Fortune Points</label>
-        <input type="number" name="system.resources.fortunePoints" value="{{system.resources.fortunePoints}}" min="0" style="flex:0 0 80px;"/>
-        <span>/</span>
-        <input type="text" value="{{derived.fortunePointsMax}}" disabled/>
+        <div class="flexrow" style="display:flex; justify-content:flex-end; align-items:center; gap:6px;">
+          <input type="number" name="system.resources.fortunePoints" value="{{actor.system.resources.fortunePoints}}" min="0" style="width:70px; text-align:right;"/>
+          <span>/</span>
+          <input type="text" value="{{derived.fortunePointsMax}}" disabled style="width:70px; text-align:right;"/>
+        </div>
       </div>
     </div>
-  </section>
+  </div>
+
+</section>
 
   <!-- ======================= TABS BAR ======================= -->
   <nav class="tabs sheet-tabs" data-group="primary" style="margin-bottom:8px;">
