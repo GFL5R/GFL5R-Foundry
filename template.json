@@ -2,7 +2,16 @@
   "Actor": {
     "types": ["character"],
     "templates": {},
-    "character": {}
+    "character": {
+      "name": "",
+      "approaches": {
+        "power": 1,
+        "swiftness": 1,
+        "resilience": 1,
+        "precision": 1,
+        "fortune": 1
+      }
+    }
   },
   "Item": {
     "types": ["generic"],
