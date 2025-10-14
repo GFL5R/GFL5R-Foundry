@@ -1,0 +1,26 @@
+<form class="actor-sheet" autocomplete="off">
+  <header class="sheet-header flexrow">
+    <h1><input name="name" type="text" value="{{actor.name}}" placeholder="Character Name"/></h1>
+  </header>
+
+  <section class="approaches grid grid-2col">
+    <div>
+      <h2>Approaches</h2>
+      {{#each actor.system.approaches as |value key|}}
+      <div class="form-group">
+        <label style="text-transform:capitalize;">{{key}}</label>
+        <input type="number" name="system.approaches.{{key}}" value="{{value}}" min="0"/>
+      </div>
+      {{/each}}
+    </div>
+
+    <div>
+      <h2>Derived Attributes</h2>
+      <div class="form-group"><label>Endurance</label><input type="text" value="{{derived.endurance}}" disabled/></div>
+      <div class="form-group"><label>Composure</label><input type="text" value="{{derived.composure}}" disabled/></div>
+      <div class="form-group"><label>Vigilance</label><input type="text" value="{{derived.vigilance}}" disabled/></div>
+      <div class="form-group"><label>Focus</label><input type="text" value="{{derived.focus}}" disabled/></div>
+      <div class="form-group"><label>Fortune Points</label><input type="text" value="{{derived.fortunePointsCurrent}} / {{derived.fortunePointsMax}}" disabled/></div>
+    </div>
+  </section>
+</form>
