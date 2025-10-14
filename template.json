@@ -42,13 +42,14 @@
     }
   },
   "Item": {
-  "types": ["ability", "generic"],
-  "templates": {},
-  "ability": {
-    "activation": "passive",
-    "xpCost": 0,
-    "requiredRank": 0,
-    "description": ""
-  },
-  "generic": {}
+    "types": ["ability", "generic"],
+    "templates": {},
+    "ability": {
+      "activation": "passive",
+      "xpCost": 0,
+      "requiredRank": 0,
+      "description": ""
+    },
+    "generic": {}
+  }
 }
