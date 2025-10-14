@@ -3,6 +3,18 @@
    Near-future / Military Sci-Fi
    ========================= */
 
+.form-group.vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  /* make inputs fill their grid cell nicely */
+  .form-group.vertical input[type="number"],
+  .form-group.vertical input[type="text"] {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
 .gfl5r.sheet {
   /* -------- Theme Tokens -------- */
   --gfl-accent: #47d1ff;
