@@ -8,7 +8,7 @@
     "verified": "13"
   },
   "authors": [{ "name": "JackBinary" }],
-  "esmodules": ["index.js"],
+  "esmodules": ["module/main.js"],
   "gridDistance": 1,
   "gridUnits": "meter",
   "url": "https://github.com/GFL5R/GFL5R-Foundry",
