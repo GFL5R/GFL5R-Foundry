@@ -1,5 +1,3 @@
-// module/actors.js
-
 export class GFL5RActorSheet extends ActorSheet {
   static get defaultOptions() {
     const opts = super.defaultOptions;
@@ -59,4 +57,3 @@ export function registerActorSheets() {
   Actors.unregisterSheet("core", ActorSheet);
   Actors.registerSheet("gfl5r", GFL5RActorSheet, { makeDefault: true });
 }
-*/
