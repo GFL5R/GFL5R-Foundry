@@ -3,13 +3,18 @@
     "types": ["character"],
     "templates": {},
     "character": {
-      "name": "",
       "approaches": {
         "power": 1,
         "swiftness": 1,
         "resilience": 1,
         "precision": 1,
         "fortune": 1
+      },
+      "resources": {
+        "fatigue": 0,
+        "strife": 0,
+        "humanity": 0,
+        "fame": 0
       }
     }
   },
