@@ -256,3 +256,87 @@
     text-align: left !important;
   }
 }
+
+/* Two-column layout tweaks */
+.gfl5r.sheet.actor .gfl-skill-ability-grid .gfl-abilities-col {
+  position: relative;
+}
+
+/* Drop zone */
+.gfl5r.sheet.actor .gfl-drop-zone {
+  background: rgba(255,255,255,0.05);
+  border: 1px dashed var(--gfl-border);
+  border-radius: var(--gfl-radius);
+  padding: 12px;
+  text-align: center;
+  color: var(--gfl-text-dim);
+  margin-bottom: 10px;
+  transition: border-color 120ms ease, box-shadow 120ms ease, background 120ms ease;
+}
+@supports (backdrop-filter: blur(10px)) or (-webkit-backdrop-filter: blur(10px)) {
+  .gfl5r.sheet.actor .gfl-drop-zone {
+    backdrop-filter: blur(10px) saturate(140%);
+    -webkit-backdrop-filter: blur(10px) saturate(140%);
+  }
+}
+.gfl5r.sheet.actor .gfl-drop-zone:hover {
+  border-color: var(--gfl-accent);
+  box-shadow: 0 0 0 2px rgba(71,209,255,0.25) inset;
+}
+.gfl5r.sheet.actor .gfl-drop-zone__hint {
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Visual “drop ok” flash */
+.gfl5r.sheet.actor .gfl-drop-zone.gfl-drop-ok {
+  background: linear-gradient(180deg, rgba(71,209,255,0.18), rgba(124,255,214,0.12));
+  border-color: var(--gfl-accent);
+}
+
+/* Ability list */
+.gfl5r.sheet.actor .gfl-ability-list {
+  background: var(--gfl-surface);
+  border: 1px solid var(--gfl-border);
+  border-radius: var(--gfl-radius);
+  box-shadow: var(--gfl-shadow);
+  padding: 6px;
+  display: grid;
+  gap: 6px;
+  max-height: 420px;
+  overflow: auto;
+}
+.gfl5r.sheet.actor .gfl-ability-row {
+  display: grid;
+  grid-template-columns: 22px 1fr auto;
+  gap: 8px;
+  align-items: center;
+  background: var(--gfl-surface-2);
+  border: 1px solid var(--gfl-border);
+  border-radius: 6px;
+  padding: 4px 6px;
+}
+.gfl5r.sheet.actor .gfl-ability-row img {
+  width: 22px; height: 22px; border-radius: 4px; border: 1px solid var(--gfl-border);
+}
+.gfl5r.sheet.actor .gfl-ability-name {
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.gfl5r.sheet.actor .gfl-ability-delete {
+  color: var(--gfl-text-dim);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.gfl5r.sheet.actor .gfl-ability-delete:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.08);
+}
+.gfl5r.sheet.actor .gfl-ability-empty {
+  color: var(--gfl-text-dim);
+  font-size: 12px;
+  text-align: center;
+  padding: 6px 0;
+}
