@@ -52,7 +52,61 @@ export class GFL5RActorSheet extends ActorSheet {
   }
 }
 
-/** Register the sheet(s) */
+activateListeners(html) {
+    super.activateListeners(html);
+    console.log("GFL5R | activateListeners()");
+
+    // Delete ability
+    html.on("click", ".gfl-ability-delete", ev => {
+      const id = ev.currentTarget?.dataset?.itemId;
+      if (!id) return;
+      return this.actor.deleteEmbeddedDocuments("Item", [id]);
+    });
+  }
+
+  /** Accept dropped Items (from compendia or sidebar) into the drop zone */
+  async _onDrop(event) {
+    const data = TextEditor.getDragEventData(event);
+
+    // Only react if dropped on our drop zone (has data-drop-target)
+    const dropTarget = event.target?.closest?.("[data-drop-target='abilities']");
+    if (!dropTarget) return super._onDrop(event);
+
+    // Resolve a Document from the drop
+    let itemDoc;
+    try {
+      if (data?.uuid) {
+        const doc = await fromUuid(data.uuid);
+        if (doc?.documentName === "Item") itemDoc = doc;
+      }
+      if (!itemDoc) {
+        // Foundry v12 compat: Item.implementation.fromDropData if present
+        const fromDrop = Item.implementation?.fromDropData ?? Item.fromDropData;
+        itemDoc = await fromDrop(data);
+      }
+    } catch (err) {
+      ui.notifications?.error("Unable to import dropped item.");
+      console.error(err);
+      return;
+    }
+    if (!itemDoc) return;
+
+    // Normalize to type "ability" (clone if needed)
+    let itemData = itemDoc.toObject();
+    itemData.type = "ability"; // force type for our sheet
+    // If compendium item had a description in system, keep it; else try itemDoc.system?.description
+    if (!itemData.system) itemData.system = {};
+    itemData.system.description ??= itemDoc.system?.description ?? "";
+
+    // Create on actor (duplicates by name are allowed; up to you to dedupe later)
+    await this.actor.createEmbeddedDocuments("Item", [itemData]);
+
+    // Subtle UI feedback
+    dropTarget.classList.add("gfl-drop-ok");
+    setTimeout(() => dropTarget.classList.remove("gfl-drop-ok"), 400);
+  }
+}
+
 export function registerActorSheets() {
   Actors.unregisterSheet("core", ActorSheet);
   Actors.registerSheet("gfl5r", GFL5RActorSheet, { makeDefault: true });
