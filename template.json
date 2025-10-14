@@ -12,10 +12,10 @@
       },
       "resources": {
         "fatigue": 0,
-        "strife": 0,
-        "humanity": 0,
-        "fame": 0
-      }
+        "strife": 0
+      },
+      "humanity": 0,
+      "fame": 0
     }
   },
   "Item": {
