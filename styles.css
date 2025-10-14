@@ -252,3 +252,13 @@
     flex-direction: column;
   }
 }
+
+/* --- Brighten state section text --- */
+.gfl5r.sheet .derived-section span,
+.gfl5r.sheet .derived-section label,
+.gfl5r.sheet .derived-section .resource-label,
+.gfl5r.sheet .derived-section .value,
+.gfl5r.sheet .state-section span,
+.gfl5r.sheet .state-section label {
+  color: #fff !important; /* ensures all state labels/numbers are bright */
+}
