@@ -6,7 +6,8 @@
 /* -------------------------
    Design tokens (scoped)
    ------------------------- */
-.gfl5r.sheet.actor {
+.gfl5r.sheet.actor
+.gfl5r.sheet.item {
   --gfl-accent: #47d1ff;       /* cyan accent */
   --gfl-accent-2: #7cffd6;     /* mint accent */
   --gfl-surface: rgba(255, 255, 255, 0.03);
