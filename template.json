@@ -42,12 +42,31 @@
     }
   },
   "Item": {
-    "types": ["ability", "generic"],
+    "types": ["ability", "weaponry", "armor", "generic"],
     "templates": {},
     "ability": {
       "activation": "passive",
       "xpCost": 0,
       "requiredRank": 0,
+      "description": ""
+    },
+    "weaponry": {
+      "idealRange": 2,
+      "suppression": 0,
+      "caliber": 0,
+      "threat": 0,
+      "signature": 0,
+      "price": 0,
+      "class": "",
+      "traits": "",
+      "description": ""
+    },
+    "armor": {
+      "weight": 0,
+      "protection": 0,
+      "concealmentTN": 0,
+      "price": 0,
+      "class": "",
       "description": ""
     },
     "generic": {}
