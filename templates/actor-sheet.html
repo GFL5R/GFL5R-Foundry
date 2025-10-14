@@ -102,106 +102,143 @@
   </nav>
 
   <!-- ======================= SHEET BODY ======================= -->
-  <section class="sheet-body">
+<section class="sheet-body">
 
-    <!-- ======================= SKILLS TAB ======================= -->
-    <section class="tab" data-group="primary" data-tab="skills">
-      <h2>Combat Skills</h2>
-      <div class="grid" style="grid-template-columns: repeat(5, 1fr); gap: 8px;">
-        <div class="form-group" title="Close-range melee with knives, swords, bayonets.">
-          <label>Blades</label>
-          <input type="number" name="system.skills.blades" value="{{actor.system.skills.blades}}" min="0"/>
+  <!-- ======================= SKILLS TAB ======================= -->
+  <section class="tab" data-group="primary" data-tab="skills">
+
+    <div class="gfl-skill-ability-grid" style="display:grid; grid-template-columns: 2fr 1fr; gap: 12px; align-items:start;">
+      <!-- LEFT: SKILLS -->
+      <div class="gfl-skills-col">
+        <h2>Combat Skills</h2>
+        <div class="grid" style="grid-template-columns: repeat(5, 1fr); gap: 8px;">
+          <div class="form-group" title="Close-range melee with knives, swords, bayonets.">
+            <label>Blades</label>
+            <input type="number" name="system.skills.blades" value="{{actor.system.skills.blades}}" min="0"/>
+          </div>
+          <div class="form-group" title="Pistols, rifles, shotguns, SMGs; recoil control and accuracy.">
+            <label>Firearms</label>
+            <input type="number" name="system.skills.firearms" value="{{actor.system.skills.firearms}}" min="0"/>
+          </div>
+          <div class="form-group" title="Unarmed, grappling, improvised melee; conservation of ammo.">
+            <label>Hand-To-Hand</label>
+            <input type="number" name="system.skills.handToHand" value="{{actor.system.skills.handToHand}}" min="0"/>
+          </div>
+          <div class="form-group" title="Grenades, demo charges, rockets; placement, timing, and safety.">
+            <label>Explosives</label>
+            <input type="number" name="system.skills.explosives" value="{{actor.system.skills.explosives}}" min="0"/>
+          </div>
+          <div class="form-group" title="Plans, ambushes, maneuver; reading the battlefield.">
+            <label>Tactics</label>
+            <input type="number" name="system.skills.tactics" value="{{actor.system.skills.tactics}}" min="0"/>
+          </div>
         </div>
-        <div class="form-group" title="Pistols, rifles, shotguns, SMGs; recoil control and accuracy.">
-          <label>Firearms</label>
-          <input type="number" name="system.skills.firearms" value="{{actor.system.skills.firearms}}" min="0"/>
+
+        <h2 style="margin-top:12px;">Fieldcraft Skills</h2>
+        <div class="grid" style="grid-template-columns: repeat(5, 1fr); gap: 8px;">
+          <div class="form-group" title="Run, climb, swim, lift; sustained exertion.">
+            <label>Athletics</label>
+            <input type="number" name="system.skills.athletics" value="{{actor.system.skills.athletics}}" min="0"/>
+          </div>
+          <div class="form-group" title="Move quietly, remain unseen, avoid detection.">
+            <label>Stealth</label>
+            <input type="number" name="system.skills.stealth" value="{{actor.system.skills.stealth}}" min="0"/>
+          </div>
+          <div class="form-group" title="Forage, track, navigate, shelter; survive hostile terrain.">
+            <label>Survival</label>
+            <input type="number" name="system.skills.survival" value="{{actor.system.skills.survival}}" min="0"/>
+          </div>
+          <div class="form-group" title="Resist fear, keep focus, act decisively.">
+            <label>Centering</label>
+            <input type="number" name="system.skills.centering" value="{{actor.system.skills.centering}}" min="0"/>
+          </div>
+          <div class="form-group" title="Read emotions, body language; detect lies and intent.">
+            <label>Insight</label>
+            <input type="number" name="system.skills.insight" value="{{actor.system.skills.insight}}" min="0"/>
+          </div>
         </div>
-        <div class="form-group" title="Unarmed, grappling, improvised melee; conservation of ammo.">
-          <label>Hand-To-Hand</label>
-          <input type="number" name="system.skills.handToHand" value="{{actor.system.skills.handToHand}}" min="0"/>
+
+        <h2 style="margin-top:12px;">Technical Skills</h2>
+        <div class="grid" style="grid-template-columns: repeat(5, 1fr); gap: 8px;">
+          <div class="form-group" title="Repair machines, diagnose failures; T-Doll maintenance.">
+            <label>Mechanics</label>
+            <input type="number" name="system.skills.mechanics" value="{{actor.system.skills.mechanics}}" min="0"/>
+          </div>
+          <div class="form-group" title="Hacking, programming, intrusion; offense and defense.">
+            <label>Computers</label>
+            <input type="number" name="system.skills.computers" value="{{actor.system.skills.computers}}" min="0"/>
+          </div>
+          <div class="form-group" title="Field care, surgery, diagnosis, pharmacology.">
+            <label>Medicine</label>
+            <input type="number" name="system.skills.medicine" value="{{actor.system.skills.medicine}}" min="0"/>
+          </div>
+          <div class="form-group" title="Vehicles, drones, exosuits; evasive maneuvers.">
+            <label>Piloting</label>
+            <input type="number" name="system.skills.piloting" value="{{actor.system.skills.piloting}}" min="0"/>
+          </div>
+          <div class="form-group" title="Locks, forgery, disguises, cons; infiltration tricks.">
+            <label>Subterfuge</label>
+            <input type="number" name="system.skills.subterfuge" value="{{actor.system.skills.subterfuge}}" min="0"/>
+          </div>
         </div>
-        <div class="form-group" title="Grenades, demo charges, rockets; placement, timing, and safety.">
-          <label>Explosives</label>
-          <input type="number" name="system.skills.explosives" value="{{actor.system.skills.explosives}}" min="0"/>
-        </div>
-        <div class="form-group" title="Plans, ambushes, maneuver; reading the battlefield.">
-          <label>Tactics</label>
-          <input type="number" name="system.skills.tactics" value="{{actor.system.skills.tactics}}" min="0"/>
+
+        <h2 style="margin-top:12px;">Social & Cultural Skills</h2>
+        <div class="grid" style="grid-template-columns: repeat(5, 1fr); gap: 8px;">
+          <div class="form-group" title="Leadership; rally allies and maintain discipline.">
+            <label>Command</label>
+            <input type="number" name="system.skills.command" value="{{actor.system.skills.command}}" min="0"/>
+          </div>
+          <div class="form-group" title="Persuasion, diplomacy, bargaining.">
+            <label>Negotiation</label>
+            <input type="number" name="system.skills.negotiation" value="{{actor.system.skills.negotiation}}" min="0"/>
+          </div>
+          <div class="form-group" title="Convincing lies, misdirection, false identities.">
+            <label>Deception</label>
+            <input type="number" name="system.skills.deception" value="{{actor.system.skills.deception}}" min="0"/>
+          </div>
+          <div class="form-group" title="Spectacle: music, acting, oratory; sway audiences.">
+            <label>Performance</label>
+            <input type="number" name="system.skills.performance" value="{{actor.system.skills.performance}}" min="0"/>
+          </div>
+          <div class="form-group" title="Politics, history, religion, etiquette; context and timing.">
+            <label>Culture</label>
+            <input type="number" name="system.skills.culture" value="{{actor.system.skills.culture}}" min="0"/>
+          </div>
         </div>
       </div>
 
-      <h2 style="margin-top:12px;">Fieldcraft Skills</h2>
-      <div class="grid" style="grid-template-columns: repeat(5, 1fr); gap: 8px;">
-        <div class="form-group" title="Run, climb, swim, lift; sustained exertion.">
-          <label>Athletics</label>
-          <input type="number" name="system.skills.athletics" value="{{actor.system.skills.athletics}}" min="0"/>
-        </div>
-        <div class="form-group" title="Move quietly, remain unseen, avoid detection.">
-          <label>Stealth</label>
-          <input type="number" name="system.skills.stealth" value="{{actor.system.skills.stealth}}" min="0"/>
-        </div>
-        <div class="form-group" title="Forage, track, navigate, shelter; survive hostile terrain.">
-          <label>Survival</label>
-          <input type="number" name="system.skills.survival" value="{{actor.system.skills.survival}}" min="0"/>
-        </div>
-        <div class="form-group" title="Resist fear, keep focus, act decisively.">
-          <label>Centering</label>
-          <input type="number" name="system.skills.centering" value="{{actor.system.skills.centering}}" min="0"/>
-        </div>
-        <div class="form-group" title="Read emotions, body language; detect lies and intent.">
-          <label>Insight</label>
-          <input type="number" name="system.skills.insight" value="{{actor.system.skills.insight}}" min="0"/>
-        </div>
-      </div>
+      <!-- RIGHT: ABILITIES DROP ZONE -->
+      <aside class="gfl-abilities-col">
+        <h2>Abilities</h2>
 
-      <h2 style="margin-top:12px;">Technical Skills</h2>
-      <div class="grid" style="grid-template-columns: repeat(5, 1fr); gap: 8px;">
-        <div class="form-group" title="Repair machines, diagnose failures; T-Doll maintenance.">
-          <label>Mechanics</label>
-          <input type="number" name="system.skills.mechanics" value="{{actor.system.skills.mechanics}}" min="0"/>
+        <div class="gfl-drop-zone"
+             data-drop-target="abilities"
+             title="Drag & drop ability Items from a compendium or the Items sidebar here.">
+          <div class="gfl-drop-zone__hint">
+            Drop ability items here
+          </div>
         </div>
-        <div class="form-group" title="Hacking, programming, intrusion; offense and defense.">
-          <label>Computers</label>
-          <input type="number" name="system.skills.computers" value="{{actor.system.skills.computers}}" min="0"/>
-        </div>
-        <div class="form-group" title="Field care, surgery, diagnosis, pharmacology.">
-          <label>Medicine</label>
-          <input type="number" name="system.skills.medicine" value="{{actor.system.skills.medicine}}" min="0"/>
-        </div>
-        <div class="form-group" title="Vehicles, drones, exosuits; evasive maneuvers.">
-          <label>Piloting</label>
-          <input type="number" name="system.skills.piloting" value="{{actor.system.skills.piloting}}" min="0"/>
-        </div>
-        <div class="form-group" title="Locks, forgery, disguises, cons; infiltration tricks.">
-          <label>Subterfuge</label>
-          <input type="number" name="system.skills.subterfuge" value="{{actor.system.skills.subterfuge}}" min="0"/>
-        </div>
-      </div>
 
-      <h2 style="margin-top:12px;">Social & Cultural Skills</h2>
-      <div class="grid" style="grid-template-columns: repeat(5, 1fr); gap: 8px;">
-        <div class="form-group" title="Leadership; rally allies and maintain discipline.">
-          <label>Command</label>
-          <input type="number" name="system.skills.command" value="{{actor.system.skills.command}}" min="0"/>
+        <div class="gfl-ability-list">
+          {{#if abilities.length}}
+            {{#each abilities as |ab|}}
+              <div class="gfl-ability-row" data-item-id="{{ab.id}}">
+                <img src="{{ab.img}}" alt="" />
+                <div class="gfl-ability-meta">
+                  <div class="gfl-ability-name">{{ab.name}}</div>
+                </div>
+                <a class="gfl-ability-delete" data-item-id="{{ab.id}}" title="Remove ability">
+                  <i class="fas fa-trash"></i>
+                </a>
+              </div>
+            {{/each}}
+          {{else}}
+            <div class="gfl-ability-empty">No abilities yet.</div>
+          {{/if}}
         </div>
-        <div class="form-group" title="Persuasion, diplomacy, bargaining.">
-          <label>Negotiation</label>
-          <input type="number" name="system.skills.negotiation" value="{{actor.system.skills.negotiation}}" min="0"/>
-        </div>
-        <div class="form-group" title="Convincing lies, misdirection, false identities.">
-          <label>Deception</label>
-          <input type="number" name="system.skills.deception" value="{{actor.system.skills.deception}}" min="0"/>
-        </div>
-        <div class="form-group" title="Spectacle: music, acting, oratory; sway audiences.">
-          <label>Performance</label>
-          <input type="number" name="system.skills.performance" value="{{actor.system.skills.performance}}" min="0"/>
-        </div>
-        <div class="form-group" title="Politics, history, religion, etiquette; context and timing.">
-          <label>Culture</label>
-          <input type="number" name="system.skills.culture" value="{{actor.system.skills.culture}}" min="0"/>
-        </div>
-      </div>
-    </section>
+      </aside>
+    </div>
   </section>
+</section>
 
 </form>
