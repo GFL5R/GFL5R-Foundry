@@ -66,21 +66,15 @@ export class GFL5RActorSheet extends ActorSheet {
       return this.actor.deleteEmbeddedDocuments("Item", [id]);
     });
 
-    // Open roller when clicking a skill input
-    html.on("click", ".gfl-skills-col input[type='number']", async ev => {
-      const input = ev.currentTarget;
-      const name = input.getAttribute("name"); // e.g. system.skills.blades
-      const key = name.split(".").pop();
-      const labelMap = {
-        blades:"Blades", firearms:"Firearms", handToHand:"Hand-To-Hand", explosives:"Explosives", tactics:"Tactics",
-        athletics:"Athletics", stealth:"Stealth", survival:"Survival", centering:"Centering", insight:"Insight",
-        mechanics:"Mechanics", computers:"Computers", medicine:"Medicine", piloting:"Piloting", subterfuge:"Subterfuge",
-        command:"Command", negotiation:"Negotiation", deception:"Deception", performance:"Performance", culture:"Culture"
-      };
-      const skillLabel = labelMap[key] ?? key;
+    // Click skill NAME (label) to roll
+    html.on("click", ".gfl-skill-label", async ev => {
+      const labelEl = ev.currentTarget;
+      const key = labelEl.dataset.skill;            // e.g. "blades"
+      const skillLabel = labelEl.textContent.trim();
     
-      // Build a small dialog to choose approach/TN
       const approaches = this.actor.system?.approaches ?? {};
+    
+      // Render prompt
       const content = await renderTemplate(`systems/${game.system.id}/templates/roll-prompt.html`, {
         approaches,
         defaultTN: 2
@@ -92,8 +86,8 @@ export class GFL5RActorSheet extends ActorSheet {
         buttons: {
           roll: {
             label: "Roll",
-            callback: async (htmlDlg) => {
-              const form = htmlDlg[0].querySelector("form");
+            callback: async (dlg) => {
+              const form = dlg[0].querySelector("form");
               const approachName = form.elements["approach"].value;
               const tnHidden = form.elements["hiddenTN"].checked;
               const tnVal = Number(form.elements["tn"].value || 0);
@@ -117,6 +111,7 @@ export class GFL5RActorSheet extends ActorSheet {
         default: "roll"
       }).render(true);
     });
+
   }
 
   /** Accept dropped Items (from compendia or sidebar) into the drop zone */
