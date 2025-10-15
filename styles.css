@@ -303,3 +303,11 @@
   border-color: var(--gfl-accent);
   box-shadow: 0 0 0 2px rgba(71,209,255,0.25);
 }
+
+.gfl5r.sheet .gfl-skill-label {
+  cursor: pointer;
+  color: #fff;
+}
+.gfl5r.sheet .gfl-skill-label:hover {
+  text-shadow: 0 0 6px rgba(71,209,255,0.5);
+}
