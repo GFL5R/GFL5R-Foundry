@@ -2,7 +2,7 @@
   "id": "gfl5r",
   "title": "GFL5R",
   "description": "We're just getting started.",
-  "version": "0.0.39",
+  "version": "0.0.40",
   "compatibility": {
     "minimum": "12",
     "verified": "13"
@@ -15,7 +15,7 @@
   "template": "template.json",
   "documentTypes": {
     "Actor": ["character"],
-    "Item": ["ability", "weaponry", "armor", "generic"]
+    "Item": ["ability", "weaponry", "armor", "narrative", "item", "generic"]
   },
   "url": "https://github.com/GFL5R/GFL5R-Foundry",
   "manifest": "https://raw.githubusercontent.com/GFL5R/GFL5R-Foundry/refs/heads/main/system.json",
