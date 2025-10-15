@@ -1,5 +1,6 @@
-<form class="gfl5r">
-  <div class="grid" style="grid-template-columns:1fr 1fr; gap:8px;">
+<form class="gfl5r gfl-roll-prompt">
+  <div class="grid" style="grid-template-columns:1fr 1fr; gap:12px;">
+    <!-- Approach selector -->
     <div class="form-group vertical">
       <label>Approach</label>
       <select name="approach">
@@ -8,10 +9,13 @@
         {{/each}}
       </select>
     </div>
+
+    <!-- Target Number input -->
     <div class="form-group vertical">
       <label>TN</label>
       <input type="number" name="tn" value="{{defaultTN}}" min="0"/>
-      <label style="display:flex;gap:6px;align-items:center;margin-top:6px;">
+
+      <label style="display:flex;gap:8px;align-items:center;margin-top:8px;color:var(--gfl-text-dim);">
         <input type="checkbox" name="hiddenTN" />
         Hide TN (+1 Fortune)
       </label>
