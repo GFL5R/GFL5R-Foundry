@@ -363,3 +363,92 @@
   justify-content: flex-start;
   gap: 6px;
 }
+
+/* =========================
+   GFL5R — Roll Prompt Dialog
+   ========================= */
+.gfl5r.gfl-roll-prompt .window-content {
+  background:
+    radial-gradient(600px 400px at 100% 0%, rgba(71, 209, 255, 0.08), transparent 60%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.015), rgba(255, 255, 255, 0.03)),
+    rgba(20, 30, 40, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 12px 14px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 13px;
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.6) inset;
+}
+@supports ((backdrop-filter: blur(18px)) or (-webkit-backdrop-filter: blur(18px))) {
+  .gfl5r.gfl-roll-prompt .window-content {
+    backdrop-filter: blur(18px) saturate(160%) contrast(105%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%) contrast(105%);
+  }
+}
+
+/* Headings and labels */
+.gfl5r.gfl-roll-prompt label,
+.gfl5r.gfl-roll-prompt h1,
+.gfl5r.gfl-roll-prompt h2 {
+  color: var(--gfl-accent);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-shadow: 0 0 8px rgba(71, 209, 255, 0.35);
+}
+
+/* Inputs and selects */
+.gfl5r.gfl-roll-prompt select,
+.gfl5r.gfl-roll-prompt input[type="number"],
+.gfl5r.gfl-roll-prompt input[type="text"] {
+  background: var(--gfl-surface-2);
+  border: 1px solid var(--gfl-border);
+  border-radius: 6px;
+  color: #fff;
+  padding: 4px 6px;
+  box-shadow: var(--gfl-shadow);
+  width: 100%;
+}
+.gfl5r.gfl-roll-prompt input:focus-visible,
+.gfl5r.gfl-roll-prompt select:focus-visible {
+  outline: none;
+  border-color: var(--gfl-accent);
+  box-shadow: 0 0 0 2px rgba(71, 209, 255, 0.35);
+}
+
+/* Checkbox alignment */
+.gfl5r.gfl-roll-prompt .form-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Buttons */
+.gfl5r.gfl-roll-prompt button {
+  border: 1px solid var(--gfl-border);
+  background: var(--gfl-surface-2);
+  color: #fff;
+  border-radius: 6px;
+  padding: 6px 14px;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 100ms ease;
+}
+.gfl5r.gfl-roll-prompt button:hover {
+  border-color: var(--gfl-accent);
+  box-shadow: 0 0 0 2px rgba(71, 209, 255, 0.25);
+  color: var(--gfl-accent);
+}
+
+/* Primary "Roll" button accent */
+.gfl5r.gfl-roll-prompt button:first-of-type {
+  background: linear-gradient(180deg, var(--gfl-accent), var(--gfl-accent-2));
+  color: #001a22;
+  font-weight: 700;
+}
+.gfl5r.gfl-roll-prompt button:first-of-type:hover {
+  filter: brightness(1.15);
+}
