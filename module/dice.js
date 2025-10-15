@@ -3,14 +3,12 @@
 
 export class GFLBlackDie extends Die {
   static DENOMINATION = "b";
-  constructor(termData) {
+
+  constructor(termData = {}) {
     super({ faces: 6, ...termData });
     this.options.colorset = "dark";
   }
-  constructor(termData) {
-    super({faces: 6, ...termData});
-    this.options.colorset = "dark"; // purely cosmetic if you use dice so nice
-  }
+  
   /** Map each face to a semantic payload */
   getResultLabel(result) {
     // 1 Blank
@@ -42,14 +40,12 @@ export class GFLBlackDie extends Die {
 
 export class GFLWhiteDie extends Die {
   static DENOMINATION = "w";
-  constructor(termData) {
+
+  constructor(termData = {}) {
     super({ faces: 12, ...termData });
     this.options.colorset = "light";
   }
-  constructor(termData) {
-    super({faces: 12, ...termData});
-    this.options.colorset = "light";
-  }
+  
   getResultLabel(result) {
     // faces 1..12, per spec
     const map = {
