@@ -1,67 +1,68 @@
 // module/dice.js
-/* GFL5R Custom Dice + Roller UI */
+/* GFL5R Dice Roller — using native d6 (black) and d12 (white)
+   No custom terms, no parser issues. */
 
-export class GFLBlackDie extends Die {
-  static DENOMINATION = "B"; // can be "B" or "b"; not used in Fix A but keep it right
-  constructor(termData = {}) { super({ faces: 6, ...termData }); }
-
-  _payload(face) {
-    // face is 1..6
-    const map = {
-      1: {s:0,o:0,r:0,x:false, text:"Blank"},
-      2: {s:0,o:1,r:1,x:false, text:"Opp+Strife"},
-      3: {s:0,o:1,r:0,x:false, text:"Opportunity"},
-      4: {s:1,o:0,r:1,x:false, text:"Success+Strife"},
-      5: {s:1,o:0,r:0,x:false, text:"Success"},
-      6: {s:1,o:0,r:1,x:true,  text:"Explosive+Strife"}
-    };
-    return map[face];
-  }
-
-  roll({minimize=false, maximize=false}={}) {
-    const r = super.roll({minimize, maximize});
-    const p = this._payload(r.result);
-    r.success = p.s; r.opportunity = p.o; r.strife = p.r; r.explosive = p.x; r.label = p.text;
-    return r;
+function payloadBlack(face) {
+  // 1..6
+  switch (face) {
+    case 1: return { s:0, o:0, r:0, x:false, text:"Blank" };
+    case 2: return { s:0, o:1, r:1, x:false, text:"Opp+Strife" };
+    case 3: return { s:0, o:1, r:0, x:false, text:"Opportunity" };
+    case 4: return { s:1, o:0, r:1, x:false, text:"Success+Strife" };
+    case 5: return { s:1, o:0, r:0, x:false, text:"Success" };
+    case 6: return { s:1, o:0, r:1, x:true,  text:"Explosive+Strife" };
+    default: return { s:0, o:0, r:0, x:false, text:"Blank" };
   }
 }
 
-export class GFLWhiteDie extends Die {
-  static DENOMINATION = "W";
-  constructor(termData = {}) { super({ faces: 12, ...termData }); }
-
-  _payload(face) {
-    const map = {
-      1:  {s:0,o:0,r:0,x:false, text:"Blank"},
-      2:  {s:0,o:0,r:0,x:false, text:"Blank"},
-      3:  {s:0,o:1,r:0,x:false, text:"Opportunity"},
-      4:  {s:0,o:1,r:0,x:false, text:"Opportunity"},
-      5:  {s:0,o:1,r:0,x:false, text:"Opportunity"},
-      6:  {s:1,o:0,r:1,x:false, text:"Success+Strife"},
-      7:  {s:1,o:0,r:1,x:false, text:"Success+Strife"},
-      8:  {s:1,o:0,r:0,x:false, text:"Success"},
-      9:  {s:1,o:0,r:0,x:false, text:"Success"},
-      10: {s:1,o:1,r:0,x:false, text:"Success+Opportunity"},
-      11: {s:1,o:0,r:1,x:true,  text:"Explosive+Strife"},
-      12: {s:1,o:0,r:0,x:true,  text:"Explosive"}
-    };
-    return map[face];
-  }
-
-  roll({minimize=false, maximize=false}={}) {
-    const r = super.roll({minimize, maximize});
-    const p = this._payload(r.result);
-    r.success = p.s; r.opportunity = p.o; r.strife = p.r; r.explosive = p.x; r.label = p.text;
-    return r;
+function payloadWhite(face) {
+  // 1..12
+  switch (face) {
+    case 1:  return { s:0, o:0, r:0, x:false, text:"Blank" };
+    case 2:  return { s:0, o:0, r:0, x:false, text:"Blank" };
+    case 3:  return { s:0, o:1, r:0, x:false, text:"Opportunity" };
+    case 4:  return { s:0, o:1, r:0, x:false, text:"Opportunity" };
+    case 5:  return { s:0, o:1, r:0, x:false, text:"Opportunity" };
+    case 6:  return { s:1, o:0, r:1, x:false, text:"Success+Strife" };
+    case 7:  return { s:1, o:0, r:1, x:false, text:"Success+Strife" };
+    case 8:  return { s:1, o:0, r:0, x:false, text:"Success" };
+    case 9:  return { s:1, o:0, r:0, x:false, text:"Success" };
+    case 10: return { s:1, o:1, r:0, x:false, text:"Success+Opportunity" };
+    case 11: return { s:1, o:0, r:1, x:true,  text:"Explosive+Strife" };
+    case 12: return { s:1, o:0, r:0, x:true,  text:"Explosive" };
+    default: return { s:0, o:0, r:0, x:false, text:"Blank" };
   }
 }
 
-export function registerDiceTerms() {
-  // Keep registration anyway (useful if you ever want to parse strings):
-  CONFIG.Dice.terms.B = GFLBlackDie;
-  CONFIG.Dice.terms.W = GFLWhiteDie;
-  CONFIG.Dice.terms.b = GFLBlackDie; // aliases okay
-  CONFIG.Dice.terms.w = GFLWhiteDie;
+function mapResult(dieTerm, result) {
+  // dieTerm.faces === 6 -> black ; 12 -> white
+  const isBlack = dieTerm.faces === 6;
+  const p = isBlack ? payloadBlack(result) : payloadWhite(result);
+  return {
+    label: p.text,
+    success: p.s, opportunity: p.o, strife: p.r, explosive: p.x,
+    type: isBlack ? "B" : "W"
+  };
+}
+
+function expandRoll(roll) {
+  const out = [];
+  for (const d of roll.dice) {
+    for (const r of d.results) {
+      const m = mapResult(d, r.result);
+      out.push({
+        id: randomID(),
+        type: m.type,
+        face: r.result,
+        label: m.label,
+        success: m.success,
+        opportunity: m.opportunity,
+        strife: m.strife,
+        explosive: m.explosive
+      });
+    }
+  }
+  return out;
 }
 
 /* ============================
@@ -94,28 +95,27 @@ export class GFLRollerApp extends Application {
     this.actor = opts.actor;
     this.skillKey = opts.skillKey;
     this.skillLabel = opts.skillLabel;
-    this.approach = opts.approach;
-    this.approachName = opts.approachName;
+    this.approach = opts.approach ?? 0;
+    this.approachName = opts.approachName ?? "";
     this.tn = opts.tn;
     this.hiddenTN = !!opts.hiddenTN;
 
     // State
     this.keepLimit = this.approach;
-    this.pool = [];          // all current rolled dice for the step
-    this.kept = [];          // dice kept this step (persist across steps)
+    this.pool = [];            // current-step rolled dice
+    this.kept = [];            // accumulated kept dice (counted vs limit unless explosion bonus)
     this.discarded = [];
     this.toReroll = [];
-    this.pendingExplosions = []; // dice {type:"B"|"W"} to roll next step (do not count vs keep)
-    this.tally = {s:0, o:0, r:0};
+    this.pendingExplosions = []; // {type:"B"|"W"} to roll next
+    this.tally = { s:0, o:0, r:0 };
   }
 
-  /* ---------- RENDER ---------- */
   async getData() {
     return {
       skillLabel: this.skillLabel,
       approachName: this.approachName,
       keepLimit: this.keepLimit,
-      keptCount: this.kept.length,
+      keptCount: this.kept.filter(d => d._counted).length,
       tn: this.hiddenTN ? null : (this.tn ?? 0),
       hiddenTN: this.hiddenTN,
       pool: this.pool,
@@ -129,13 +129,17 @@ export class GFLRollerApp extends Application {
   activateListeners(html) {
     super.activateListeners(html);
 
-    // drag & drop dice chips
-    html[0].querySelectorAll(".gfl-die").forEach(node => {
-      node.addEventListener("dragstart", ev => {
-        ev.dataTransfer.setData("text/plain", node.dataset.id);
+    // Enable dragging on any existing dice
+    const enableDrag = (root) => {
+      root.querySelectorAll(".gfl-die").forEach(node => {
+        node.addEventListener("dragstart", ev => {
+          ev.dataTransfer.setData("text/plain", node.dataset.id);
+        });
       });
-    });
+    };
+    enableDrag(html[0]);
 
+    // Handle drops
     const makeDrop = (selector, dest) => {
       const el = html[0].querySelector(selector);
       if (!el) return;
@@ -146,23 +150,22 @@ export class GFLRollerApp extends Application {
         this._moveDie(id, dest);
       });
     };
-
     makeDrop(".gfl-pool", "pool");
     makeDrop(".gfl-keep", "kept");
     makeDrop(".gfl-reroll", "reroll");
     makeDrop(".gfl-discard", "discard");
 
+    // Buttons
     html.find(".gfl-continue").on("click", () => this._continue());
-    html.find(".gfl-cancel").on("click", () => this.close());
     html.find(".gfl-finish").on("click", () => this._finish());
+    html.find(".gfl-cancel").on("click", () => this.close());
   }
 
-  /* ---------- FLOW ---------- */
   async start() {
-    // Hidden TN bonus fortune
+    // Hidden TN bonus
     if (this.hiddenTN) {
       const curr = this.actor.system?.resources?.fortunePoints ?? 0;
-      await this.actor.update({"system.resources.fortunePoints": curr + 1});
+      await this.actor.update({ "system.resources.fortunePoints": curr + 1 });
       ui.notifications?.info("Hidden TN: +1 Fortune Point gained.");
     }
     await this._initialRoll();
@@ -170,106 +173,49 @@ export class GFLRollerApp extends Application {
   }
 
   async _initialRoll() {
-    const blacks = this.approach;
-    // derive skill value from actor
-    const whiteCount = foundry.utils.getProperty(this.actor.system, `skills.${this.skillKey}`) ?? 0;
+    const blacks = Math.max(0, Number(this.approach) || 0);
+    const whiteCount = Math.max(0, Number(foundry.utils.getProperty(this.actor.system, `skills.${this.skillKey}`)) || 0);
 
-    const terms = [];
-    if (blacks > 0) terms.push(new GFLBlackDie({number: blacks}));
-    if (whiteCount > 0) {
-      if (terms.length) terms.push(new OperatorTerm({operator:"+"}));
-      terms.push(new GFLWhiteDie({number: whiteCount}));
-    }
-    const roll = await Roll.fromTerms(terms).evaluate({async:true});
-    this.pool = this._expandDice(roll);
-  }
+    const expr = [
+      blacks > 0 ? `${blacks}d6` : null,
+      whiteCount > 0 ? `${whiteCount}d12` : null
+    ].filter(Boolean).join(" + ") || "0";
 
-  _expandDice(roll) {
-    // Turn into uniform objects we can render & move
-    const arr = [];
-    for (const d of roll.dice) {
-      for (const r of d.results) {
-        arr.push({
-          id: randomID(),
-          type: (d instanceof GFLBlackDie) ? "B" : "W",
-          face: r.result,
-          label: r.label ?? "",
-          success: r.success ?? 0,
-          opportunity: r.opportunity ?? 0,
-          strife: r.strife ?? 0,
-          explosive: !!r.explosive
-        });
-      }
-    }
-    return arr;
+    const roll = await (new Roll(expr)).evaluate({ async:true });
+    this.pool = expandRoll(roll);
   }
 
   _moveDie(id, dest) {
-    // move from any bucket into target
-    const pull = (list) => {
-      const i = list.findIndex(d => d.id === id);
-      if (i >= 0) return list.splice(i,1)[0];
-      return null;
+    const take = (arr) => {
+      const i = arr.findIndex(d => d.id === id);
+      return i >= 0 ? arr.splice(i,1)[0] : null;
     };
-    const die = pull(this.pool) || pull(this.kept) || pull(this.discarded) || pull(this.toReroll);
+    const die = take(this.pool) || take(this.kept) || take(this.discarded) || take(this.toReroll);
     if (!die) return;
 
     if (dest === "kept") {
-      const keptNonExplosive = this.kept.filter(d => !d._counted).length;
-      if (keptNonExplosive >= this.keepLimit) {
+      // Only non-explosion dice count against keep limit
+      const keptCounted = this.kept.filter(d => d._counted).length;
+      if (keptCounted >= this.keepLimit && !die._fromExplosion) {
         ui.notifications?.warn(`Keep limit reached (${this.keepLimit}).`);
         return;
       }
-      // count vs limit only if this die is not from explosion
-      die._counted = true;
+      die._counted = !die._fromExplosion;
       this.kept.push(die);
-      if (die.explosive) this.pendingExplosions.push({type: die.type});
-    } else if (dest === "discard") {
-      this.discarded.push(die);
+      if (die.explosive) this.pendingExplosions.push({ type: die.type });
     } else if (dest === "reroll") {
       this.toReroll.push(die);
+    } else if (dest === "discard") {
+      this.discarded.push(die);
     } else {
       this.pool.push(die);
     }
-    this.render(false);
-  }
 
-  async _continue() {
-    // Tally current kept
-    this._recomputeTally();
-
-    // Reroll dice in toReroll; keep and discarded remain
-    const b = this.toReroll.filter(d => d.type === "B").length;
-    const w = this.toReroll.filter(d => d.type === "W").length;
-    this.toReroll = [];
-
-    // Explosions generate extra dice to roll (do not count against keep limit)
-    const eb = this.pendingExplosions.filter(e => e.type === "B").length;
-    const ew = this.pendingExplosions.filter(e => e.type === "W").length;
-    this.pendingExplosions = [];
-
-    const countB = b + eb;
-    const countW = w + ew;
-    if (countB === 0 && countW === 0) {
-      // no more rolls to make, allow finish
-      return this.render(false);
-    }
-
-    const terms2 = [];
-    if (countB > 0) terms2.push(new GFLBlackDie({number: countB}));
-    if (countW > 0) {
-      if (terms2.length) terms2.push(new OperatorTerm({operator:"+"}));
-      terms2.push(new GFLWhiteDie({number: countW}));
-    }
-    const roll = await Roll.fromTerms(terms2).evaluate({async:true});
-    const next = this._expandDice(roll);
-    // New results appear back in the pool
-    this.pool.push(...next);
     this.render(false);
   }
 
   _recomputeTally() {
-    const t = {s:0,o:0,r:0};
+    const t = { s:0, o:0, r:0 };
     for (const d of this.kept) {
       t.s += d.success;
       t.o += d.opportunity;
@@ -278,8 +224,52 @@ export class GFLRollerApp extends Application {
     this.tally = t;
   }
 
+  async _continue() {
+    this._recomputeTally();
+
+    // Counts for rerolls and explosions
+    const bR = this.toReroll.filter(d => d.type === "B").length;
+    const wR = this.toReroll.filter(d => d.type === "W").length;
+    this.toReroll = [];
+
+    const bE = this.pendingExplosions.filter(e => e.type === "B").length;
+    const wE = this.pendingExplosions.filter(e => e.type === "W").length;
+    this.pendingExplosions = [];
+
+    const countB = bR + bE;
+    const countW = wR + wE;
+
+    if (countB === 0 && countW === 0) {
+      // Nothing more to roll
+      return this.render(false);
+    }
+
+    const expr = [
+      countB > 0 ? `${countB}d6` : null,
+      countW > 0 ? `${countW}d12` : null
+    ].filter(Boolean).join(" + ") || "0";
+
+    const roll = await (new Roll(expr)).evaluate({ async:true });
+    const next = expandRoll(roll);
+
+    // Mark explosion dice so they don't count against keep limit when kept
+    // (we can't tell which are from explosion vs reroll here, so tag all explosion *results* as fromExplosion=false;
+    // the rule is: "Explosives roll an additional die ... which do not count toward keep limit."
+    // We know these were bonus dice if they came from bE/wE slice; we can tag the first (bE + wE) items of 'next' by type.
+    let remainingBE = bE;
+    let remainingWE = wE;
+    for (const d of next) {
+      if (d.type === "B" && remainingBE > 0) { d._fromExplosion = true; remainingBE--; }
+      else if (d.type === "W" && remainingWE > 0) { d._fromExplosion = true; remainingWE--; }
+    }
+
+    this.pool.push(...next);
+    this.render(false);
+  }
+
   async _finish() {
     this._recomputeTally();
+
     const s = this.tally.s;
     const o = this.tally.o;
     const r = this.tally.r;
@@ -289,20 +279,26 @@ export class GFLRollerApp extends Application {
     const flavor = `<strong>${this.actor.name}</strong> rolls <em>${this.skillLabel}</em> with <em>${this.approachName}</em> — ${tnText}`;
 
     const html = `
-    <div class="gfl-roll-card">
-      <div class="gfl-roll-summary">
-        <div><b>Successes:</b> ${s}</div>
-        <div><b>Opportunity:</b> ${o}</div>
-        <div><b>Strife:</b> ${r}</div>
-        ${pass === null ? "" : `<div><b>Result:</b> ${pass ? "✅ Success" : "❌ Fail"}</div>`}
-      </div>
-    </div>`;
+      <div class="gfl-roll-card">
+        <div class="gfl-roll-summary">
+          <div><b>Successes:</b> ${s}</div>
+          <div><b>Opportunity:</b> ${o}</div>
+          <div><b>Strife:</b> ${r}</div>
+          ${pass === null ? "" : `<div><b>Result:</b> ${pass ? "✅ Success" : "❌ Fail"}</div>`}
+        </div>
+      </div>`;
 
     await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({actor: this.actor}),
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
       content: html,
       flavor
     });
+
     this.close();
   }
+}
+
+/* No custom dice to register, but leave the export for consistency */
+export function registerDiceTerms() {
+  // Intentionally empty (we use d6/d12 and map faces)
 }
