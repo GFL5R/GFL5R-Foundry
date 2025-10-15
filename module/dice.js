@@ -2,52 +2,35 @@
 /* GFL5R Custom Dice + Roller UI */
 
 export class GFLBlackDie extends Die {
-  static DENOMINATION = "b";
+  static DENOMINATION = "B"; // can be "B" or "b"; not used in Fix A but keep it right
+  constructor(termData = {}) { super({ faces: 6, ...termData }); }
 
-  constructor(termData = {}) {
-    super({ faces: 6, ...termData });
-    this.options.colorset = "dark";
-  }
-  
-  /** Map each face to a semantic payload */
-  getResultLabel(result) {
-    // 1 Blank
-    // 2 Opportunity + Strife
-    // 3 Opportunity
-    // 4 Success + Strife
-    // 5 Success
-    // 6 Explosive Success + Strife
+  _payload(face) {
+    // face is 1..6
     const map = {
-      1: {s:0, o:0, r:0, x:false, text:"Blank"},
-      2: {s:0, o:1, r:1, x:false, text:"Opp+Strife"},
-      3: {s:0, o:1, r:0, x:false, text:"Opportunity"},
-      4: {s:1, o:0, r:1, x:false, text:"Success+Strife"},
-      5: {s:1, o:0, r:0, x:false, text:"Success"},
-      6: {s:1, o:0, r:1, x:true,  text:"Explosive+Strife"}
+      1: {s:0,o:0,r:0,x:false, text:"Blank"},
+      2: {s:0,o:1,r:1,x:false, text:"Opp+Strife"},
+      3: {s:0,o:1,r:0,x:false, text:"Opportunity"},
+      4: {s:1,o:0,r:1,x:false, text:"Success+Strife"},
+      5: {s:1,o:0,r:0,x:false, text:"Success"},
+      6: {s:1,o:0,r:1,x:true,  text:"Explosive+Strife"}
     };
-    return map[result.result];
+    return map[face];
   }
-  /** Inject semantic data so the roller app can read it */
-  getResultLabelHTML(r) { return this.getResultLabel(r); }
+
   roll({minimize=false, maximize=false}={}) {
-    const rr = super.roll({minimize, maximize});
-    const info = this.getResultLabel(rr);
-    rr.success = info.s; rr.opportunity = info.o; rr.strife = info.r; rr.explosive = info.x;
-    rr.label = info.text;
-    return rr;
+    const r = super.roll({minimize, maximize});
+    const p = this._payload(r.result);
+    r.success = p.s; r.opportunity = p.o; r.strife = p.r; r.explosive = p.x; r.label = p.text;
+    return r;
   }
 }
 
 export class GFLWhiteDie extends Die {
-  static DENOMINATION = "w";
+  static DENOMINATION = "W";
+  constructor(termData = {}) { super({ faces: 12, ...termData }); }
 
-  constructor(termData = {}) {
-    super({ faces: 12, ...termData });
-    this.options.colorset = "light";
-  }
-  
-  getResultLabel(result) {
-    // faces 1..12, per spec
+  _payload(face) {
     const map = {
       1:  {s:0,o:0,r:0,x:false, text:"Blank"},
       2:  {s:0,o:0,r:0,x:false, text:"Blank"},
@@ -62,24 +45,23 @@ export class GFLWhiteDie extends Die {
       11: {s:1,o:0,r:1,x:true,  text:"Explosive+Strife"},
       12: {s:1,o:0,r:0,x:true,  text:"Explosive"}
     };
-    return map[result.result];
+    return map[face];
   }
-  getResultLabelHTML(r) { return this.getResultLabel(r); }
+
   roll({minimize=false, maximize=false}={}) {
-    const rr = super.roll({minimize, maximize});
-    const info = this.getResultLabel(rr);
-    rr.success = info.s; rr.opportunity = info.o; rr.strife = info.r; rr.explosive = info.x;
-    rr.label = info.text;
-    return rr;
+    const r = super.roll({minimize, maximize});
+    const p = this._payload(r.result);
+    r.success = p.s; r.opportunity = p.o; r.strife = p.r; r.explosive = p.x; r.label = p.text;
+    return r;
   }
 }
 
-/** Register terms */
 export function registerDiceTerms() {
-  CONFIG.Dice.terms.b = GFLBlackDie;
+  // Keep registration anyway (useful if you ever want to parse strings):
+  CONFIG.Dice.terms.B = GFLBlackDie;
+  CONFIG.Dice.terms.W = GFLWhiteDie;
+  CONFIG.Dice.terms.b = GFLBlackDie; // aliases okay
   CONFIG.Dice.terms.w = GFLWhiteDie;
-  CONFIG.Dice.terms.B = GFLBlackDie;  // usage: B
-  CONFIG.Dice.terms.W = GFLWhiteDie;  // usage: W
 }
 
 /* ============================
