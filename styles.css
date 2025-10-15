@@ -346,3 +346,10 @@
   justify-content: flex-start;
   gap: 4px;
 }
+
+/* Make sure drag starts on the .gfl-die, not the <img> */
+.gfl5r.gfl-roller .gfl-die-face {
+  pointer-events: none;       /* clicks/drag go to the parent chip */
+  -webkit-user-drag: none;    /* Safari/WebKit: don't drag the image element itself */
+  user-select: none;
+}
