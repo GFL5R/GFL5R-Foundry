@@ -196,7 +196,7 @@ export class GFLRollerApp extends Application {
     // derive skill value from actor
     const whiteCount = foundry.utils.getProperty(this.actor.system, `skills.${this.skillKey}`) ?? 0;
 
-    const roll = await (new Roll(`${blacks}B + ${whiteCount}W`)).roll({async: true});
+    const roll = await (new Roll(`${blacks}b + ${whiteCount}w`)).roll({ async: true });
     this.pool = this._expandDice(roll);
   }
 
@@ -271,7 +271,7 @@ export class GFLRollerApp extends Application {
       return this.render(false);
     }
 
-    const roll = await (new Roll(`${countB}B + ${countW}W`)).roll({async: true});
+    const roll = await (new Roll(`${countB}b + ${countW}w`)).roll({ async: true });
     const next = this._expandDice(roll);
     // New results appear back in the pool
     this.pool.push(...next);
