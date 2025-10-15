@@ -107,6 +107,7 @@
   <!-- TABS -->
   <nav class="tabs sheet-tabs" data-group="primary">
     <a class="item" data-tab="skills">Skills</a>
+    <a class="item" data-tab="narrative">Narrative</a>
   </nav>
 
   <!-- BODY -->
@@ -221,6 +222,93 @@
             </div>
           </div>
         </aside>
+
+      </div>
+    </section>
+
+    <!-- NARRATIVE TAB -->
+    <section class="tab" data-group="primary" data-tab="narrative">
+      <div class="grid" style="grid-template-columns: 1fr 1fr; gap:20px; align-items:start;">
+        
+        <!-- LEFT: NARRATIVE ITEMS -->
+        <div class="narrative-items-column">
+          
+          <!-- Distinctions and Passions -->
+          <div class="card" style="margin-bottom:20px;">
+            <h2>Distinctions and Passions</h2>
+            
+            <div class="gfl-drop-zone" data-drop-target="narrative-positive" title="Drag & drop Distinction or Passion items here">
+              <div class="gfl-drop-zone__hint">Drop Distinction/Passion items here</div>
+            </div>
+      
+            <div class="gfl-narrative-list">
+              {{#if narrativePositive.length}}
+                {{#each narrativePositive as |item|}}
+                  <div class="gfl-ability-row" data-item-id="{{item.id}}">
+                    <img src="{{item.img}}" alt="" />
+                    <div class="gfl-ability-meta">
+                      <div class="gfl-ability-name">{{item.name}}</div>
+                      <div style="font-size:0.85em; opacity:0.8;">{{item.system.approach}} - {{item.system.narrativeType}}</div>
+                    </div>
+                    <a class="gfl-ability-delete" data-item-id="{{item.id}}" title="Remove item">
+                      <i class="fas fa-trash"></i>
+                    </a>
+                  </div>
+                {{/each}}
+              {{else}}
+                <div class="gfl-ability-empty">No distinctions or passions yet.</div>
+              {{/if}}
+            </div>
+          </div>
+
+          <!-- Adversities and Anxieties -->
+          <div class="card">
+            <h2>Adversities and Anxieties</h2>
+            
+            <div class="gfl-drop-zone" data-drop-target="narrative-negative" title="Drag & drop Adversity or Anxiety items here">
+              <div class="gfl-drop-zone__hint">Drop Adversity/Anxiety items here</div>
+            </div>
+      
+            <div class="gfl-narrative-list">
+              {{#if narrativeNegative.length}}
+                {{#each narrativeNegative as |item|}}
+                  <div class="gfl-ability-row" data-item-id="{{item.id}}">
+                    <img src="{{item.img}}" alt="" />
+                    <div class="gfl-ability-meta">
+                      <div class="gfl-ability-name">{{item.name}}</div>
+                      <div style="font-size:0.85em; opacity:0.8;">{{item.system.approach}} - {{item.system.narrativeType}}</div>
+                    </div>
+                    <a class="gfl-ability-delete" data-item-id="{{item.id}}" title="Remove item">
+                      <i class="fas fa-trash"></i>
+                    </a>
+                  </div>
+                {{/each}}
+              {{else}}
+                <div class="gfl-ability-empty">No adversities or anxieties yet.</div>
+              {{/if}}
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT: BACKSTORY -->
+        <div class="backstory-column">
+          
+          <div class="card" style="margin-bottom:20px;">
+            <h2>Backstory</h2>
+            <div class="form-group">
+              <textarea name="system.backstory" rows="12" style="width:100%; resize:vertical;">{{actor.system.backstory}}</textarea>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2>Notes</h2>
+            <div class="form-group">
+              <textarea name="system.notes" rows="12" style="width:100%; resize:vertical;">{{actor.system.notes}}</textarea>
+            </div>
+          </div>
+
+        </div>
 
       </div>
     </section>
