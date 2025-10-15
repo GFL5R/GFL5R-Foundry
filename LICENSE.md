@@ -1,26 +1,55 @@
-GFL5R License
-========================
+# License
 
 Copyright (c) 2025 JackBinary
 
-Permission is granted to use, copy, modify, and distribute this software and
-its source code for any purpose, including commercial use, provided that
-proper credit is given to the original author.
+This project and all original code, text, and assets created by the author
+are licensed under the **GNU General Public License v3.0 (GPLv3)**.
 
-This software is provided "as is", without warranty of any kind, express or
-implied, including but not limited to the warranties of merchantability,
-fitness for a particular purpose, and noninfringement. In no event shall the
-authors be liable for any claim, damages, or other liability arising from,
-out of, or in connection with the software or its use.
+You are free to:
+- Use, modify, and distribute this work for any purpose.
+- Create derivative works, provided that you:
+  - Retain this license and attribution to the original author.
+  - Keep all derivative works open-source and licensed under GPLv3 (or compatible).
+  - Clearly indicate any changes made.
 
-You may:
-- Use and share this software freely.
-- Modify it for your own projects.
-- Submit improvements via pull requests or forks.
+This software is distributed **without warranty**, express or implied,
+including but not limited to the warranties of merchantability or fitness
+for a particular purpose.
 
-You may not:
-- Claim this code or derivative works as your own original creation
-  without attribution.
+---
 
-Attribution example:
-"This project includes code from the GFL5R Project by JackBinary."
+## Inspiration Acknowledgment
+
+This system’s mechanical design takes **conceptual inspiration** from several
+tabletop role-playing games, including but not limited to:
+
+- *Legend of the Five Rings* (Fantasy Flight Games / Edge Studio)  
+- *Genesys* (Fantasy Flight Games / Edge Studio)  
+- *Cities Without Number* (Sine Nomine Publishing)  
+
+No text, code, rules tables, or other copyrighted content from these systems
+has been copied, adapted, or directly reused.  
+All mechanics have been independently reimplemented and expressed in
+original form, in accordance with copyright law and fair use principles
+for unprotectable ideas and game mechanics.
+
+---
+
+## Fanwork Disclaimer
+
+This is an **unofficial, fan-made project** inspired by the universe of
+*Girls’ Frontline* by MICA Team and Sunborn Network Technology Co., Ltd.
+
+All trademarks, characters, and settings that originate from *Girls’ Frontline*
+are the property of their respective owners.  
+This project is **non-commercial**, created for entertainment and educational
+purposes only, and is **not affiliated with, endorsed by, or sponsored by**
+MICA Team or Sunborn Network Technology.
+
+No copyrighted material, code, or assets from *Girls’ Frontline* are included
+in this project.
+
+---
+
+For the full text of the GNU General Public License v3.0, see:
+https://www.gnu.org/licenses/gpl-3.0.html
