@@ -2,6 +2,11 @@
 /* GFL5R Custom Dice + Roller UI */
 
 export class GFLBlackDie extends Die {
+  static DENOMINATION = "b";
+  constructor(termData) {
+    super({ faces: 6, ...termData });
+    this.options.colorset = "dark";
+  }
   constructor(termData) {
     super({faces: 6, ...termData});
     this.options.colorset = "dark"; // purely cosmetic if you use dice so nice
@@ -36,6 +41,11 @@ export class GFLBlackDie extends Die {
 }
 
 export class GFLWhiteDie extends Die {
+  static DENOMINATION = "w";
+  constructor(termData) {
+    super({ faces: 12, ...termData });
+    this.options.colorset = "light";
+  }
   constructor(termData) {
     super({faces: 12, ...termData});
     this.options.colorset = "light";
@@ -70,6 +80,8 @@ export class GFLWhiteDie extends Die {
 
 /** Register terms */
 export function registerDiceTerms() {
+  CONFIG.Dice.terms.b = GFLBlackDie;
+  CONFIG.Dice.terms.w = GFLWhiteDie;
   CONFIG.Dice.terms.B = GFLBlackDie;  // usage: B
   CONFIG.Dice.terms.W = GFLWhiteDie;  // usage: W
 }
