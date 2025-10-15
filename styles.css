@@ -274,3 +274,32 @@
 .gfl5r.sheet .state-section label {
   color: #fff !important; /* ensures all state labels/numbers are bright */
 }
+
+/* Roller chips */
+.gfl5r.gfl-roller .gfl-die {
+  background: var(--gfl-surface-2);
+  border: 1px solid var(--gfl-border);
+  border-radius: 6px;
+  padding: 4px 6px;
+  margin: 3px;
+  min-width: 72px;
+  text-align: center;
+  cursor: grab;
+  box-shadow: var(--gfl-shadow);
+}
+.gfl5r.gfl-roller .gfl-die span {
+  font-weight: 700;
+  margin-right: 4px;
+}
+.gfl5r.gfl-roller .card h2 { margin-top: 0; }
+.gfl5r.gfl-roller header button {
+  border: 1px solid var(--gfl-border);
+  background: var(--gfl-surface-2);
+  color: #fff;
+  border-radius: 6px;
+  padding: 4px 10px;
+}
+.gfl5r.gfl-roller header button:hover {
+  border-color: var(--gfl-accent);
+  box-shadow: 0 0 0 2px rgba(71,209,255,0.25);
+}
