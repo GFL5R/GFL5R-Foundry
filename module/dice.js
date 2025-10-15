@@ -34,6 +34,27 @@ function payloadWhite(face) {
   }
 }
 
+function _dieKeyFromFlags({ success, opportunity, strife, explosive }) {
+  if (!success && !opportunity && !strife && !explosive) return "blank";
+  if (explosive && strife) return "explosive-strife";
+  if (explosive) return "explosive";
+  if (success && opportunity) return "success-opp";
+  if (success && strife) return "success-strife";
+  if (success) return "success";
+  if (opportunity && strife) return "opp-strife";
+  if (opportunity) return "opp";
+  return "blank";
+}
+
+function _iconPathForDie(type, flags) {
+  // type: "B" or "W"
+  const base = `systems/${game.system.id}/assets/dice`;
+  const folder = type === "B" ? "black" : "white";
+  const key = _dieKeyFromFlags(flags);
+  return `${base}/${folder}/${key}.png`;
+}
+
+
 function mapResult(dieTerm, result) {
   // dieTerm.faces === 6 -> black ; 12 -> white
   const isBlack = dieTerm.faces === 6;
@@ -50,16 +71,18 @@ function expandRoll(roll) {
   for (const d of roll.dice) {
     for (const r of d.results) {
       const m = mapResult(d, r.result);
-      out.push({
+      const dieObj = {
         id: randomID(),
-        type: m.type,
+        type: m.type,                   // "B" | "W"
         face: r.result,
         label: m.label,
         success: m.success,
         opportunity: m.opportunity,
         strife: m.strife,
         explosive: m.explosive
-      });
+      };
+      dieObj.icon = _iconPathForDie(dieObj.type, dieObj);
+      out.push(dieObj);
     }
   }
   return out;
