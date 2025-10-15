@@ -12,4 +12,5 @@ Hooks.once("init", () => {
 
   registerActorSheets();
   registerItemSheets();
+  registerDiceTerms();
 });
