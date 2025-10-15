@@ -1,6 +1,6 @@
 // module/dice.js
 /* GFL5R Dice Roller — using native d6 (black) and d12 (white)
-   No custom terms, no parser issues. */
+   Now updates a chat message at each step! */
 
 function payloadBlack(face) {
   // 1..6
@@ -131,6 +131,10 @@ export class GFLRollerApp extends Application {
     this.toReroll = [];
     this.pendingExplosions = []; // {type:"B"|"W"} to roll next
     this.tally = { s:0, o:0, r:0 };
+    
+    // Chat message tracking
+    this.chatMessageId = null;
+    this.stepNumber = 0;
   }
 
   async getData() {
@@ -192,10 +196,12 @@ export class GFLRollerApp extends Application {
       ui.notifications?.info("Hidden TN: +1 Fortune Point gained.");
     }
     await this._initialRoll();
+    await this._updateChatMessage(); // Create initial message
     return this.render(true);
   }
 
   async _initialRoll() {
+    this.stepNumber = 1;
     const blacks = Math.max(0, Number(this.approach) || 0);
     const whiteCount = Math.max(0, Number(foundry.utils.getProperty(this.actor.system, `skills.${this.skillKey}`)) || 0);
 
@@ -235,6 +241,7 @@ export class GFLRollerApp extends Application {
     }
 
     this.render(false);
+    this._updateChatMessage(); // Update after each move
   }
 
   _recomputeTally() {
@@ -245,6 +252,63 @@ export class GFLRollerApp extends Application {
       t.r += d.strife;
     }
     this.tally = t;
+  }
+
+  _generateChatContent() {
+    this._recomputeTally();
+    
+    const tnText = this.hiddenTN ? "(Hidden TN)" : `TN ${this.tn ?? 0}`;
+    
+    // Helper to render dice icons
+    const renderDice = (dice, label) => {
+      if (dice.length === 0) return '';
+      const icons = dice.map(d => {
+        const color = d.type === "B" ? "⚫" : "⚪";
+        const bonus = d._fromExplosion ? "✨" : "";
+        return `<span title="${d.label}">${color}${d.face}${bonus}</span>`;
+      }).join(' ');
+      return `<div><strong>${label}:</strong> ${icons}</div>`;
+    };
+
+    return `
+      <div class="gfl-roll-card">
+        <div class="gfl-roll-header">
+          <strong>${this.actor.name}</strong> rolls <em>${this.skillLabel}</em> with <em>${this.approachName}</em> — ${tnText}
+        </div>
+        <div class="gfl-roll-step">
+          <strong>Step ${this.stepNumber}</strong> | Keep Limit: ${this.keepLimit} (${this.kept.filter(d => d._counted).length} used)
+        </div>
+        ${renderDice(this.pool, "🎲 Pool")}
+        ${renderDice(this.kept, "✅ Kept")}
+        ${renderDice(this.toReroll, "🔄 To Reroll")}
+        ${renderDice(this.discarded, "❌ Discarded")}
+        ${this.pendingExplosions.length > 0 ? `<div><strong>💥 Pending Explosions:</strong> ${this.pendingExplosions.length}</div>` : ''}
+        <div class="gfl-roll-summary">
+          <div><b>Current Successes:</b> ${this.tally.s}</div>
+          <div><b>Current Opportunity:</b> ${this.tally.o}</div>
+          <div><b>Current Strife:</b> ${this.tally.r}</div>
+        </div>
+      </div>`;
+  }
+
+  async _updateChatMessage() {
+    const content = this._generateChatContent();
+    
+    if (!this.chatMessageId) {
+      // Create new message
+      const msg = await ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+        content,
+        flavor: `<strong>GFL5R Roll in Progress...</strong>`
+      });
+      this.chatMessageId = msg.id;
+    } else {
+      // Update existing message
+      const msg = game.messages.get(this.chatMessageId);
+      if (msg) {
+        await msg.update({ content });
+      }
+    }
   }
 
   async _continue() {
@@ -264,8 +328,11 @@ export class GFLRollerApp extends Application {
 
     if (countB === 0 && countW === 0) {
       // Nothing more to roll
+      await this._updateChatMessage();
       return this.render(false);
     }
+
+    this.stepNumber++;
 
     const expr = [
       countB > 0 ? `${countB}d6` : null,
@@ -276,9 +343,6 @@ export class GFLRollerApp extends Application {
     const next = expandRoll(roll);
 
     // Mark explosion dice so they don't count against keep limit when kept
-    // (we can't tell which are from explosion vs reroll here, so tag all explosion *results* as fromExplosion=false;
-    // the rule is: "Explosives roll an additional die ... which do not count toward keep limit."
-    // We know these were bonus dice if they came from bE/wE slice; we can tag the first (bE + wE) items of 'next' by type.
     let remainingBE = bE;
     let remainingWE = wE;
     for (const d of next) {
@@ -287,6 +351,7 @@ export class GFLRollerApp extends Application {
     }
 
     this.pool.push(...next);
+    await this._updateChatMessage();
     this.render(false);
   }
 
@@ -304,18 +369,21 @@ export class GFLRollerApp extends Application {
     const html = `
       <div class="gfl-roll-card">
         <div class="gfl-roll-summary">
-          <div><b>Successes:</b> ${s}</div>
-          <div><b>Opportunity:</b> ${o}</div>
-          <div><b>Strife:</b> ${r}</div>
+          <div><b>Final Successes:</b> ${s}</div>
+          <div><b>Final Opportunity:</b> ${o}</div>
+          <div><b>Final Strife:</b> ${r}</div>
           ${pass === null ? "" : `<div><b>Result:</b> ${pass ? "✅ Success" : "❌ Fail"}</div>`}
         </div>
       </div>`;
 
-    await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      content: html,
-      flavor
-    });
+    // Update the existing message with final results
+    const msg = game.messages.get(this.chatMessageId);
+    if (msg) {
+      await msg.update({
+        content: html,
+        flavor: `${flavor} — <strong>COMPLETE</strong>`
+      });
+    }
 
     this.close();
   }
