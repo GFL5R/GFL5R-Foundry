@@ -7,7 +7,6 @@ export class GFL5RAbilitySheet extends ItemSheet {
       height: 500
     });
   }
-
   get template() { return "systems/gfl5r/templates/item-ability.html"; }
 }
 
@@ -17,10 +16,9 @@ export class GFL5RWeaponSheet extends ItemSheet {
     return foundry.utils.mergeObject(opts, {
       classes: ["gfl5r", "sheet", "item"],
       width: 600,
-      height: 550
+      height: 600
     });
   }
-
   get template() { return "systems/gfl5r/templates/item-weapon.html"; }
 }
 
@@ -33,8 +31,31 @@ export class GFL5RArmorSheet extends ItemSheet {
       height: 500
     });
   }
-
   get template() { return "systems/gfl5r/templates/item-armor.html"; }
+}
+
+export class GFL5RNarrativeSheet extends ItemSheet {
+  static get defaultOptions() {
+    const opts = super.defaultOptions;
+    return foundry.utils.mergeObject(opts, {
+      classes: ["gfl5r", "sheet", "item"],
+      width: 600,
+      height: 500
+    });
+  }
+  get template() { return "systems/gfl5r/templates/item-narrative.html"; }
+}
+
+export class GFL5RItemSheet extends ItemSheet {
+  static get defaultOptions() {
+    const opts = super.defaultOptions;
+    return foundry.utils.mergeObject(opts, {
+      classes: ["gfl5r", "sheet", "item"],
+      width: 600,
+      height: 450
+    });
+  }
+  get template() { return "systems/gfl5r/templates/item-item.html"; }
 }
 
 export function registerItemSheets() {
@@ -42,4 +63,6 @@ export function registerItemSheets() {
   Items.registerSheet("gfl5r", GFL5RAbilitySheet, { types: ["ability"], makeDefault: true });
   Items.registerSheet("gfl5r", GFL5RWeaponSheet, { types: ["weaponry"], makeDefault: true });
   Items.registerSheet("gfl5r", GFL5RArmorSheet, { types: ["armor"], makeDefault: true });
+  Items.registerSheet("gfl5r", GFL5RNarrativeSheet, { types: ["narrative"], makeDefault: true });
+  Items.registerSheet("gfl5r", GFL5RItemSheet, { types: ["item"], makeDefault: true });
 }
