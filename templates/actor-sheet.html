@@ -1,206 +1,227 @@
-<form class="actor-sheet" autocomplete="off">
+<form class="gfl5r actor-sheet" autocomplete="off">
 
-  <!-- ======================= HEADER + APPROACHES + STATE ======================= -->
-  <header class="sheet-header flexrow" style="gap: 8px; align-items: center; margin-bottom: 12px;">
-    <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}"
-      style="width:80px;height:80px;border:1px solid var(--color-border);border-radius:6px;object-fit:cover;" />
+  <!-- HEADER -->
+  <header class="sheet-header">
+    <div class="flexrow">
+      <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}"
+        style="width:80px; height:80px;" />
 
-    <div class="header-fields" style="flex:1;">
-      <h1 style="margin:0 0 6px 0;">
-        <input name="name" type="text" value="{{actor.name}}" placeholder="Character Name"/>
-      </h1>
+      <div class="header-fields" style="flex:1;">
+        <h1>
+          <input name="name" type="text" value="{{actor.name}}" placeholder="Character Name"/>
+        </h1>
 
-      <div class="grid" style="grid-template-columns: repeat(2, 1fr); gap: 8px;">
-        <div class="form-group">
-          <label>Humanity</label>
-          <input type="number" name="system.humanity" value="{{actor.system.humanity}}" min="0"/>
-        </div>
-        <div class="form-group">
-          <label>Fame</label>
-          <input type="number" name="system.fame" value="{{actor.system.fame}}" min="0"/>
+        <div class="grid" style="grid-template-columns: repeat(2, 1fr);">
+          <div class="form-group">
+            <label>Humanity</label>
+            <input type="number" name="system.humanity" value="{{actor.system.humanity}}" min="0"/>
+          </div>
+          <div class="form-group">
+            <label>Fame</label>
+            <input type="number" name="system.fame" value="{{actor.system.fame}}" min="0"/>
+          </div>
         </div>
       </div>
     </div>
   </header>
   
-<!-- ======================= APPROACHES + STATE SIDE BY SIDE ======================= -->
-<section class="approach-state-wrapper" style="display:flex; justify-content:space-between; align-items:flex-start; gap:40px; margin-bottom:16px;">
+  <!-- APPROACHES + STATE -->
+  <section class="approach-state-wrapper" style="display:flex; gap:40px; margin-bottom:16px;">
 
-  <!-- LEFT COLUMN: Approaches -->
-  <div class="approaches-section" style="flex:1;">
-    <h2>Approaches</h2>
-    <div class="approaches" style="display:grid; grid-template-columns: 1fr; gap: 8px;">
-      <div class="form-group">
-        <label>Power</label>
-        <input type="number" name="system.approaches.power" value="{{actor.system.approaches.power}}" min="0"/>
-      </div>
-      <div class="form-group">
-        <label>Swiftness</label>
-        <input type="number" name="system.approaches.swiftness" value="{{actor.system.approaches.swiftness}}" min="0"/>
-      </div>
-      <div class="form-group">
-        <label>Resilience</label>
-        <input type="number" name="system.approaches.resilience" value="{{actor.system.approaches.resilience}}" min="0"/>
-      </div>
-      <div class="form-group">
-        <label>Precision</label>
-        <input type="number" name="system.approaches.precision" value="{{actor.system.approaches.precision}}" min="0"/>
-      </div>
-      <div class="form-group">
-        <label>Fortune</label>
-        <input type="number" name="system.approaches.fortune" value="{{actor.system.approaches.fortune}}" min="0"/>
-      </div>
-    </div>
-  </div>
-
-  <!-- RIGHT COLUMN: State -->
-  <div class="derived-section" style="flex:1; text-align:right;">
-    <h2 style="text-align:right;">State</h2>
-    <div class="grid" style="display:grid; grid-template-columns: 1fr; gap:8px; justify-items:end;">
-      <div class="form-group">
-        <div class="flexrow" style="display:flex; justify-content:flex-end; align-items:center; gap:6px;">
-          <label>Fatigue</label>
-          <input type="number" name="system.resources.fatigue" value="{{actor.system.resources.fatigue}}" min="0" style="width:70px; text-align:right;"/>
-          <span>/</span>
-          <label>Endurance</label>
-          <input type="text" value="{{derived.endurance}}" disabled style="width:70px; text-align:right;"/>
+    <!-- LEFT: Approaches -->
+    <div class="approaches-section card" style="flex:1;">
+      <h2>Approaches</h2>
+      <div class="grid" style="grid-template-columns: 1fr;">
+        <div class="form-group vertical">
+          <label>Power</label>
+          <input type="number" name="system.approaches.power" value="{{actor.system.approaches.power}}" min="0"/>
         </div>
-      </div>
-      <div class="form-group">
-        <div class="flexrow" style="display:flex; justify-content:flex-end; align-items:center; gap:6px;">
-          <label>Strife</label>
-          <input type="number" name="system.resources.strife" value="{{actor.system.resources.strife}}" min="0" style="width:70px; text-align:right;"/>
-          <span>/</span>
-          <label>Composure</label>
-          <input type="text" value="{{derived.composure}}" disabled style="width:70px; text-align:right;"/>
+        <div class="form-group vertical">
+          <label>Swiftness</label>
+          <input type="number" name="system.approaches.swiftness" value="{{actor.system.approaches.swiftness}}" min="0"/>
         </div>
-      </div>
-      <div class="form-group">
-        <label>Vigilance</label>
-        <input type="text" value="{{derived.vigilance}}" disabled style="width:80px; text-align:right;"/>
-      </div>
-      <div class="form-group">
-        <label>Focus</label>
-        <input type="text" value="{{derived.focus}}" disabled style="width:80px; text-align:right;"/>
-      </div>
-      <div class="form-group">
-        <label>Fortune Points</label>
-        <div class="flexrow" style="display:flex; justify-content:flex-end; align-items:center; gap:6px;">
-          <input type="number" name="system.resources.fortunePoints" value="{{actor.system.resources.fortunePoints}}" min="0" style="width:70px; text-align:right;"/>
-          <span>/</span>
-          <input type="text" value="{{derived.fortunePointsMax}}" disabled style="width:70px; text-align:right;"/>
+        <div class="form-group vertical">
+          <label>Resilience</label>
+          <input type="number" name="system.approaches.resilience" value="{{actor.system.approaches.resilience}}" min="0"/>
+        </div>
+        <div class="form-group vertical">
+          <label>Precision</label>
+          <input type="number" name="system.approaches.precision" value="{{actor.system.approaches.precision}}" min="0"/>
+        </div>
+        <div class="form-group vertical">
+          <label>Fortune</label>
+          <input type="number" name="system.approaches.fortune" value="{{actor.system.approaches.fortune}}" min="0"/>
         </div>
       </div>
     </div>
-  </div>
 
-</section>
+    <!-- RIGHT: State -->
+    <div class="state-section card" style="flex:1;">
+      <h2 style="text-align:right;">State</h2>
+      <div class="grid" style="grid-template-columns: 1fr; justify-items:end;">
+        
+        <div class="form-group">
+          <div class="flexrow" style="justify-content:flex-end;">
+            <label>Fatigue</label>
+            <input type="number" name="system.resources.fatigue" value="{{actor.system.resources.fatigue}}" min="0" style="width:70px; text-align:right;"/>
+            <span>/</span>
+            <label>Endurance</label>
+            <input type="text" value="{{derived.endurance}}" disabled style="width:70px; text-align:right;"/>
+          </div>
+        </div>
 
-  <!-- ======================= TABS BAR ======================= -->
-  <nav class="tabs sheet-tabs" data-group="primary" style="margin-bottom:8px;">
+        <div class="form-group">
+          <div class="flexrow" style="justify-content:flex-end;">
+            <label>Strife</label>
+            <input type="number" name="system.resources.strife" value="{{actor.system.resources.strife}}" min="0" style="width:70px; text-align:right;"/>
+            <span>/</span>
+            <label>Composure</label>
+            <input type="text" value="{{derived.composure}}" disabled style="width:70px; text-align:right;"/>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Vigilance</label>
+          <input type="text" value="{{derived.vigilance}}" disabled style="width:80px; text-align:right;"/>
+        </div>
+
+        <div class="form-group">
+          <label>Focus</label>
+          <input type="text" value="{{derived.focus}}" disabled style="width:80px; text-align:right;"/>
+        </div>
+
+        <div class="form-group">
+          <label>Fortune Points</label>
+          <div class="flexrow" style="justify-content:flex-end;">
+            <input type="number" name="system.resources.fortunePoints" value="{{actor.system.resources.fortunePoints}}" min="0" style="width:70px; text-align:right;"/>
+            <span>/</span>
+            <input type="text" value="{{derived.fortunePointsMax}}" disabled style="width:70px; text-align:right;"/>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </section>
+
+  <!-- TABS -->
+  <nav class="tabs sheet-tabs" data-group="primary">
     <a class="item" data-tab="skills">Skills</a>
   </nav>
 
-  <!-- ======================= SHEET BODY ======================= -->
+  <!-- BODY -->
   <section class="sheet-body">
   
-    <!-- ======================= SKILLS TAB ======================= -->
+    <!-- SKILLS TAB -->
     <section class="tab" data-group="primary" data-tab="skills">
-      <div class="gfl-skill-ability-grid" style="display:grid; grid-template-columns: 2fr 1fr; gap: 12px; align-items:start;">
+      <div class="grid" style="grid-template-columns: 2fr 1fr; align-items:start;">
     
         <!-- LEFT: SKILLS -->
-        <div class="gfl-skills-col">
+        <div class="skills-column">
     
-          {{!-- ===== COMBAT SKILLS ===== --}}
-          <h2>Combat Skills</h2>
-          <div class="grid" style="grid-template-columns: repeat(5, 1fr); gap: 8px;">
-            {{#each (object
-              "blades" "Blades"
-              "firearms" "Firearms"
-              "handToHand" "Hand-To-Hand"
-              "explosives" "Explosives"
-              "tactics" "Tactics") as |label key|}}
-              <div class="form-group vertical" title="{{label}}">
-                <label class="gfl-skill-label" data-skill="{{key}}">{{label}}</label>
-                <input type="number" name="system.skills.{{key}}" value="{{lookup ../actor.system.skills key}}" min="0"/>
-              </div>
-            {{/each}}
-          </div>
-    
-          {{!-- ===== FIELDCRAFT SKILLS ===== --}}
-          <h2 style="margin-top:12px;">Fieldcraft Skills</h2>
-          <div class="grid" style="grid-template-columns: repeat(5, 1fr); gap: 8px;">
-            {{#each (object
-              "athletics" "Athletics"
-              "stealth" "Stealth"
-              "survival" "Survival"
-              "centering" "Centering"
-              "insight" "Insight") as |label key|}}
-              <div class="form-group vertical" title="{{label}}">
-                <label class="gfl-skill-label" data-skill="{{key}}">{{label}}</label>
-                <input type="number" name="system.skills.{{key}}" value="{{lookup ../actor.system.skills key}}" min="0"/>
-              </div>
-            {{/each}}
-          </div>
-    
-          {{!-- ===== TECHNICAL SKILLS ===== --}}
-          <h2 style="margin-top:12px;">Technical Skills</h2>
-          <div class="grid" style="grid-template-columns: repeat(5, 1fr); gap: 8px;">
-            {{#each (object
-              "mechanics" "Mechanics"
-              "computers" "Computers"
-              "medicine" "Medicine"
-              "piloting" "Piloting"
-              "subterfuge" "Subterfuge") as |label key|}}
-              <div class="form-group vertical" title="{{label}}">
-                <label class="gfl-skill-label" data-skill="{{key}}">{{label}}</label>
-                <input type="number" name="system.skills.{{key}}" value="{{lookup ../actor.system.skills key}}" min="0"/>
-              </div>
-            {{/each}}
-          </div>
-    
-          {{!-- ===== SOCIAL & CULTURAL SKILLS ===== --}}
-          <h2 style="margin-top:12px;">Social & Cultural Skills</h2>
-          <div class="grid" style="grid-template-columns: repeat(5, 1fr); gap: 8px;">
-            {{#each (object
-              "command" "Command"
-              "negotiation" "Negotiation"
-              "deception" "Deception"
-              "performance" "Performance"
-              "culture" "Culture") as |label key|}}
-              <div class="form-group vertical" title="{{label}}">
-                <label class="gfl-skill-label" data-skill="{{key}}">{{label}}</label>
-                <input type="number" name="system.skills.{{key}}" value="{{lookup ../actor.system.skills key}}" min="0"/>
-              </div>
-            {{/each}}
-          </div>
-        </div>
-    
-        <!-- RIGHT: ABILITIES DROP ZONE -->
-        <aside class="gfl-abilities-col">
-          <h2>Abilities</h2>
-          <div class="gfl-drop-zone" data-drop-target="abilities" title="Drag & drop ability Items from a compendium or the Items sidebar here.">
-            <div class="gfl-drop-zone__hint">Drop ability items here</div>
-          </div>
-    
-          <div class="gfl-ability-list">
-            {{#if abilities.length}}
-              {{#each abilities as |ab|}}
-                <div class="gfl-ability-row" data-item-id="{{ab.id}}">
-                  <img src="{{ab.img}}" alt="" />
-                  <div class="gfl-ability-meta">
-                    <div class="gfl-ability-name">{{ab.name}}</div>
-                  </div>
-                  <a class="gfl-ability-delete" data-item-id="{{ab.id}}" title="Remove ability">
-                    <i class="fas fa-trash"></i>
-                  </a>
+          <!-- Combat Skills -->
+          <div class="card">
+            <h2>Combat Skills</h2>
+            <div class="grid" style="grid-template-columns: repeat(5, 1fr);">
+              {{#each (object
+                "blades" "Blades"
+                "firearms" "Firearms"
+                "handToHand" "Hand-To-Hand"
+                "explosives" "Explosives"
+                "tactics" "Tactics") as |label key|}}
+                <div class="form-group vertical" title="{{label}}">
+                  <label class="gfl-skill-label" data-skill="{{key}}">{{label}}</label>
+                  <input type="number" name="system.skills.{{key}}" value="{{lookup ../actor.system.skills key}}" min="0"/>
                 </div>
               {{/each}}
-            {{else}}
-              <div class="gfl-ability-empty" style="color: #fff">No abilities yet.</div>
-            {{/if}}
+            </div>
+          </div>
+    
+          <!-- Fieldcraft Skills -->
+          <div class="card">
+            <h2>Fieldcraft Skills</h2>
+            <div class="grid" style="grid-template-columns: repeat(5, 1fr);">
+              {{#each (object
+                "athletics" "Athletics"
+                "stealth" "Stealth"
+                "survival" "Survival"
+                "centering" "Centering"
+                "insight" "Insight") as |label key|}}
+                <div class="form-group vertical" title="{{label}}">
+                  <label class="gfl-skill-label" data-skill="{{key}}">{{label}}</label>
+                  <input type="number" name="system.skills.{{key}}" value="{{lookup ../actor.system.skills key}}" min="0"/>
+                </div>
+              {{/each}}
+            </div>
+          </div>
+    
+          <!-- Technical Skills -->
+          <div class="card">
+            <h2>Technical Skills</h2>
+            <div class="grid" style="grid-template-columns: repeat(5, 1fr);">
+              {{#each (object
+                "mechanics" "Mechanics"
+                "computers" "Computers"
+                "medicine" "Medicine"
+                "piloting" "Piloting"
+                "subterfuge" "Subterfuge") as |label key|}}
+                <div class="form-group vertical" title="{{label}}">
+                  <label class="gfl-skill-label" data-skill="{{key}}">{{label}}</label>
+                  <input type="number" name="system.skills.{{key}}" value="{{lookup ../actor.system.skills key}}" min="0"/>
+                </div>
+              {{/each}}
+            </div>
+          </div>
+    
+          <!-- Social & Cultural Skills -->
+          <div class="card">
+            <h2>Social & Cultural Skills</h2>
+            <div class="grid" style="grid-template-columns: repeat(5, 1fr);">
+              {{#each (object
+                "command" "Command"
+                "negotiation" "Negotiation"
+                "deception" "Deception"
+                "performance" "Performance"
+                "culture" "Culture") as |label key|}}
+                <div class="form-group vertical" title="{{label}}">
+                  <label class="gfl-skill-label" data-skill="{{key}}">{{label}}</label>
+                  <input type="number" name="system.skills.{{key}}" value="{{lookup ../actor.system.skills key}}" min="0"/>
+                </div>
+              {{/each}}
+            </div>
+          </div>
+
+        </div>
+    
+        <!-- RIGHT: ABILITIES -->
+        <aside class="abilities-column">
+          <div class="card">
+            <h2>Abilities</h2>
+            
+            <div class="gfl-drop-zone" data-drop-target="abilities" title="Drag & drop ability Items here">
+              <div class="gfl-drop-zone__hint">Drop ability items here</div>
+            </div>
+      
+            <div class="gfl-ability-list">
+              {{#if abilities.length}}
+                {{#each abilities as |ab|}}
+                  <div class="gfl-ability-row" data-item-id="{{ab.id}}">
+                    <img src="{{ab.img}}" alt="" />
+                    <div class="gfl-ability-meta">
+                      <div class="gfl-ability-name">{{ab.name}}</div>
+                    </div>
+                    <a class="gfl-ability-delete" data-item-id="{{ab.id}}" title="Remove ability">
+                      <i class="fas fa-trash"></i>
+                    </a>
+                  </div>
+                {{/each}}
+              {{else}}
+                <div class="gfl-ability-empty">No abilities yet.</div>
+              {{/if}}
+            </div>
           </div>
         </aside>
+
       </div>
     </section>
   
