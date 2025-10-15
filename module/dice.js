@@ -174,7 +174,13 @@ export class GFLRollerApp extends Application {
     // derive skill value from actor
     const whiteCount = foundry.utils.getProperty(this.actor.system, `skills.${this.skillKey}`) ?? 0;
 
-    const roll = await (new Roll(`${blacks}b + ${whiteCount}w`)).roll({ async: true });
+    const terms = [];
+    if (blacks > 0) terms.push(new GFLBlackDie({number: blacks}));
+    if (whiteCount > 0) {
+      if (terms.length) terms.push(new OperatorTerm({operator:"+"}));
+      terms.push(new GFLWhiteDie({number: whiteCount}));
+    }
+    const roll = await Roll.fromTerms(terms).evaluate({async:true});
     this.pool = this._expandDice(roll);
   }
 
@@ -249,7 +255,13 @@ export class GFLRollerApp extends Application {
       return this.render(false);
     }
 
-    const roll = await (new Roll(`${countB}b + ${countW}w`)).roll({ async: true });
+    const terms2 = [];
+    if (countB > 0) terms2.push(new GFLBlackDie({number: countB}));
+    if (countW > 0) {
+      if (terms2.length) terms2.push(new OperatorTerm({operator:"+"}));
+      terms2.push(new GFLWhiteDie({number: countW}));
+    }
+    const roll = await Roll.fromTerms(terms2).evaluate({async:true});
     const next = this._expandDice(roll);
     // New results appear back in the pool
     this.pool.push(...next);
