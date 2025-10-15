@@ -1,0 +1,75 @@
+<section class="gfl-roller-body">
+  <header class="flexrow" style="justify-content:space-between;align-items:center;">
+    <div>
+      <strong>{{skillLabel}}</strong> via <em>{{approachName}}</em>
+      {{#if hiddenTN}} · <span title="Hidden TN">Hidden TN</span>{{else}} · TN {{tn}}{{/if}}
+      · Keep {{kept.length}} / {{keepLimit}}
+    </div>
+    <div class="flexrow" style="gap:6px;">
+      <button type="button" class="gfl-continue">Continue</button>
+      <button type="button" class="gfl-finish">Finish</button>
+      <button type="button" class="gfl-cancel">Cancel</button>
+    </div>
+  </header>
+
+  <div class="grid" style="grid-template-columns:1fr; gap:8px; margin-top:8px;">
+    <div class="card gfl-pool">
+      <h2>Pool</h2>
+      <div class="flexrow" style="flex-wrap:wrap;">
+        {{#each pool as |d|}}
+          <div class="gfl-die" draggable="true" data-id="{{d.id}}" title="{{d.label}}">
+            <span>{{d.type}}</span>
+            <small>{{d.label}}</small>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="grid" style="grid-template-columns:repeat(3,1fr); gap:8px;">
+      <div class="card gfl-keep">
+        <h2>Keep</h2>
+        <div class="flexrow" style="flex-wrap:wrap;">
+          {{#each kept as |d|}}
+            <div class="gfl-die" draggable="true" data-id="{{d.id}}" title="{{d.label}}">
+              <span>{{d.type}}</span>
+              <small>{{d.label}}</small>
+            </div>
+          {{/each}}
+        </div>
+      </div>
+
+      <div class="card gfl-reroll">
+        <h2>Reroll</h2>
+        <div class="flexrow" style="flex-wrap:wrap;">
+          {{#each toReroll as |d|}}
+            <div class="gfl-die" draggable="true" data-id="{{d.id}}" title="{{d.label}}">
+              <span>{{d.type}}</span>
+              <small>{{d.label}}</small>
+            </div>
+          {{/each}}
+        </div>
+      </div>
+
+      <div class="card gfl-discard">
+        <h2>Discard</h2>
+        <div class="flexrow" style="flex-wrap:wrap;">
+          {{#each discarded as |d|}}
+            <div class="gfl-die" draggable="true" data-id="{{d.id}}" title="{{d.label}}">
+              <span>{{d.type}}</span>
+              <small>{{d.label}}</small>
+            </div>
+          {{/each}}
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Tally</h2>
+      <div class="flexrow" style="gap:18px;">
+        <div><b>Successes</b> {{tally.s}}</div>
+        <div><b>Opportunity</b> {{tally.o}}</div>
+        <div><b>Strife</b> {{tally.r}}</div>
+      </div>
+    </div>
+  </div>
+</section>
