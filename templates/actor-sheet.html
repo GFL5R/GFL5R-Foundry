@@ -230,6 +230,23 @@
 
     <!-- COMBAT TAB -->
     <section class="tab" data-group="primary" data-tab="combat">
+      
+      <!-- POSTURE SELECTION -->
+      <div class="card" style="margin-bottom:20px;">
+        <h2>Combat Posture</h2>
+        <div class="form-group">
+          <select name="system.posture" style="width:100%; font-size:1.1em; padding:8px;">
+            {{#select actor.system.posture}}
+              <option value="power">Power - Additional success per strife kept on successful checks</option>
+              <option value="swiftness">Swiftness - Take an additional action that doesn't require a check</option>
+              <option value="resilience">Resilience - Enemies cannot spend opportunity for critical strikes/conditions</option>
+              <option value="precision">Precision - Increase TN of attacks/schemes against you by 1 (2 if fortification 4+)</option>
+              <option value="fortune">Fortune - No strife from strife symbols on kept dice</option>
+            {{/select}}
+          </select>
+        </div>
+      </div>
+
       <div class="grid" style="grid-template-columns: 1fr 1fr; gap:20px; align-items:start;">
         
         <!-- LEFT: WEAPONS -->
