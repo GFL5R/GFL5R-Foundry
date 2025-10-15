@@ -10,6 +10,11 @@ Hooks.once("init", () => {
     return out;
   });
 
+  Handlebars.registerHelper("capitalize", (s) => {
+    s = (s ?? "").toString();
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  });
+
   registerActorSheets();
   registerItemSheets();
   registerDiceTerms();
