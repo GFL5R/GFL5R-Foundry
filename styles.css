@@ -1,78 +1,126 @@
-/* =========================
+/* ============================================================================
    GFL5R — Unified Sheet Theme
-   Near-future / Military Sci-Fi
-   ========================= */
+   Near-future Military Sci-Fi with Frosted Glass & Cyan Accents
+   ============================================================================ */
 
-.form-group.vertical {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  /* make inputs fill their grid cell nicely */
-  .form-group.vertical input[type="number"],
-  .form-group.vertical input[type="text"] {
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-.gfl5r.sheet {
-  /* -------- Theme Tokens -------- */
+/* ----------------------------------------------------------------------------
+   1. DESIGN TOKENS
+   ---------------------------------------------------------------------------- */
+.gfl5r {
+  /* Colors */
   --gfl-accent: #47d1ff;
   --gfl-accent-2: #7cffd6;
+  --gfl-text-white: #ffffff;
+  --gfl-text-dim: rgba(255, 255, 255, 0.75);
+  --gfl-text-dark: #001a22;
+  
+  /* Surfaces */
   --gfl-surface: rgba(255, 255, 255, 0.03);
   --gfl-surface-2: rgba(255, 255, 255, 0.06);
   --gfl-border: rgba(255, 255, 255, 0.12);
-  --gfl-text-dim: rgba(255, 255, 255, 0.75);
+  
+  /* Layout */
   --gfl-radius: 8px;
+  --gfl-radius-sm: 6px;
+  --gfl-radius-xs: 4px;
   --gfl-gap: 10px;
+  --gfl-gap-sm: 6px;
+  --gfl-gap-xs: 4px;
   --gfl-gap-lg: 14px;
+  
+  /* Effects */
   --gfl-shadow: 0 1px 0 rgba(0, 0, 0, 0.4), 0 0 0 1px var(--gfl-border) inset;
+  --gfl-glow: 0 0 8px rgba(71, 209, 255, 0.35);
+  
+  /* Base styles */
   font-size: 13px;
-  color: #fff; /* ✅ all text white by default */
+  color: var(--gfl-text-white);
 }
 
-/* -------- Background / Glass -------- */
-.gfl5r.sheet .window-content {
+/* ----------------------------------------------------------------------------
+   2. FROSTED GLASS BACKGROUND
+   ---------------------------------------------------------------------------- */
+.gfl5r .window-content {
   background:
     radial-gradient(1200px 600px at 120% -10%, rgba(71, 209, 255, 0.10), transparent 60%),
     radial-gradient(1000px 600px at -20% 110%, rgba(124, 255, 214, 0.08), transparent 60%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.015), rgba(255, 255, 255, 0.03)),
     rgba(20, 30, 40, 0.35);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
+  border-radius: var(--gfl-radius-lg, 10px);
   padding: 10px 12px;
   box-shadow: 0 0 24px rgba(0, 0, 0, 0.6) inset;
 }
 
-@supports ((backdrop-filter: blur(18px)) or (-webkit-backdrop-filter: blur(18px))) {
-  .gfl5r.sheet .window-content {
+@supports (backdrop-filter: blur(18px)) {
+  .gfl5r .window-content {
     backdrop-filter: blur(18px) saturate(160%) contrast(105%);
-    -webkit-backdrop-filter: blur(18px) saturate(160%) contrast(105%);
   }
 }
 
-/* -------- Headings -------- */
-.gfl5r.sheet h1,
-.gfl5r.sheet h2 {
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  font-weight: 700;
-  margin: 0 0 6px 0;
-  color: var(--gfl-accent);
-  text-shadow: 0 0 8px rgba(71, 209, 255, 0.35);
+/* Lighter variant for dialogs */
+.gfl5r.gfl-roll-prompt .window-content {
+  background:
+    radial-gradient(600px 400px at 100% 0%, rgba(71, 209, 255, 0.08), transparent 60%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.015), rgba(255, 255, 255, 0.03)),
+    rgba(20, 30, 40, 0.45);
+  padding: 12px 14px;
 }
 
-.gfl5r.sheet h2 {
+/* ----------------------------------------------------------------------------
+   3. TYPOGRAPHY
+   ---------------------------------------------------------------------------- */
+.gfl5r h1,
+.gfl5r h2 {
+  margin: 0 0 var(--gfl-gap-sm) 0;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--gfl-accent);
+  text-shadow: var(--gfl-glow);
+}
+
+.gfl5r h2 {
   font-size: 13px;
   border-bottom: 1px solid var(--gfl-border);
-  padding-bottom: 4px;
+  padding-bottom: var(--gfl-gap-xs);
 }
 
-/* -------- Shared "card" containers -------- */
-.gfl5r.sheet .card,
-.gfl5r.sheet .sheet-header,
-.gfl5r.sheet .sheet-tabs,
-.gfl5r.sheet .tab .grid {
+.gfl5r label {
+  color: var(--gfl-text-dim);
+  font-weight: 600;
+}
+
+/* Special case: header name input styling */
+.gfl5r .sheet-header h1 {
+  margin-bottom: 8px;
+}
+
+.gfl5r .sheet-header h1 input[name="name"] {
+  width: 90%;
+  max-width: 90%;
+  font-size: 1.2em;
+  font-weight: 700;
+  color: var(--gfl-text-white);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--gfl-border);
+  padding: 4px 0;
+}
+
+.gfl5r .sheet-header h1 input[name="name"]:focus-visible {
+  border-color: var(--gfl-accent);
+  box-shadow: none;
+  outline: none;
+}
+
+/* ----------------------------------------------------------------------------
+   4. CARD CONTAINERS
+   ---------------------------------------------------------------------------- */
+.gfl5r .card,
+.gfl5r .sheet-header,
+.gfl5r .sheet-tabs,
+.gfl5r .sub-card {
   background: var(--gfl-surface);
   border: 1px solid var(--gfl-border);
   border-radius: var(--gfl-radius);
@@ -80,219 +128,255 @@
   padding: 8px;
 }
 
-.gfl5r.sheet .sub-card {
+.gfl5r .sub-card {
   background: var(--gfl-surface-2);
-  border: 1px solid var(--gfl-border);
-  border-radius: var(--gfl-radius);
   padding: 6px;
 }
 
-/* -------- Profile image -------- */
-.gfl5r.sheet .profile-img {
-  border: 1px solid var(--gfl-border);
-  border-radius: calc(var(--gfl-radius) - 2px);
-  box-shadow: 0 0 0 2px rgba(71, 209, 255, 0.12);
-}
-
-/* -------- Header Name Input Fix -------- */
-.gfl5r.sheet .sheet-header h1 input[name="name"] {
-  width: 90%;
-  max-width: 90%;
-  font-size: 1.2em;
-  font-weight: 700;
-  color: #fff;
+/* Transparent card variant (for roller sections) */
+.gfl5r .card-transparent {
   background: transparent;
-  border: none;
-  border-bottom: 1px solid var(--gfl-border);
-  padding: 4px 0;
-}
-
-.gfl5r.sheet .sheet-header h1 input[name="name"]:focus-visible {
-  border-color: var(--gfl-accent);
   box-shadow: none;
-  outline: none;
 }
 
-/* -------- Inputs -------- */
-.gfl5r.sheet input[type="text"],
-.gfl5r.sheet input[type="number"],
-.gfl5r.sheet select,
-.gfl5r.sheet textarea {
+/* ----------------------------------------------------------------------------
+   5. FORM CONTROLS
+   ---------------------------------------------------------------------------- */
+.gfl5r input[type="text"],
+.gfl5r input[type="number"],
+.gfl5r select,
+.gfl5r textarea {
+  width: 100%;
   background: var(--gfl-surface-2);
   border: 1px solid var(--gfl-border);
-  border-radius: 6px;
-  color: #fff;
+  border-radius: var(--gfl-radius-sm);
+  color: var(--gfl-text-white);
   padding: 4px 6px;
   box-shadow: var(--gfl-shadow);
-  width: 100%;
 }
 
-.gfl5r.sheet textarea {
+.gfl5r textarea {
   resize: vertical;
 }
 
-.gfl5r.sheet input:focus-visible,
-.gfl5r.sheet select:focus-visible,
-.gfl5r.sheet textarea:focus-visible {
+.gfl5r input:focus-visible,
+.gfl5r select:focus-visible,
+.gfl5r textarea:focus-visible {
   outline: none;
   border-color: var(--gfl-accent);
   box-shadow: 0 0 0 2px rgba(71, 209, 255, 0.35);
 }
 
-.gfl5r.sheet .form-group > label {
-  color: var(--gfl-text-dim);
+.gfl5r input:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
-/* -------- Tabs -------- */
-.gfl5r.sheet .sheet-tabs {
+/* ----------------------------------------------------------------------------
+   6. BUTTONS
+   ---------------------------------------------------------------------------- */
+.gfl5r button {
+  border: 1px solid var(--gfl-border);
+  background: var(--gfl-surface-2);
+  color: var(--gfl-text-white);
+  border-radius: var(--gfl-radius-sm);
+  padding: 6px 14px;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 100ms ease;
+}
+
+.gfl5r button:hover {
+  border-color: var(--gfl-accent);
+  box-shadow: 0 0 0 2px rgba(71, 209, 255, 0.25);
+  color: var(--gfl-accent);
+}
+
+/* Primary button variant */
+.gfl5r button.primary,
+.gfl5r button:first-of-type {
+  background: linear-gradient(180deg, var(--gfl-accent), var(--gfl-accent-2));
+  color: var(--gfl-text-dark);
+  font-weight: 700;
+}
+
+.gfl5r button.primary:hover,
+.gfl5r button:first-of-type:hover {
+  filter: brightness(1.15);
+}
+
+/* ----------------------------------------------------------------------------
+   7. TABS
+   ---------------------------------------------------------------------------- */
+.gfl5r .sheet-tabs {
   display: flex;
-  gap: 4px;
-  padding: 4px;
+  gap: var(--gfl-gap-xs);
+  padding: var(--gfl-gap-xs);
 }
 
-.gfl5r.sheet .sheet-tabs .item {
+.gfl5r .sheet-tabs .item {
   padding: 6px 10px;
-  border-radius: 6px;
+  border-radius: var(--gfl-radius-sm);
   border: 1px solid transparent;
   color: var(--gfl-text-dim);
   text-transform: uppercase;
   font-weight: 600;
   cursor: pointer;
+  transition: all 100ms ease;
 }
 
-.gfl5r.sheet .sheet-tabs .item:hover {
-  color: #fff;
+.gfl5r .sheet-tabs .item:hover {
+  color: var(--gfl-text-white);
   border-color: var(--gfl-border);
   background: var(--gfl-surface-2);
 }
 
-.gfl5r.sheet .sheet-tabs .item.active {
-  color: #001a22;
+.gfl5r .sheet-tabs .item.active {
+  color: var(--gfl-text-dark);
   background: linear-gradient(180deg, var(--gfl-accent), var(--gfl-accent-2));
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25) inset;
 }
 
-/* -------- Grids & Layout -------- */
-.gfl5r.sheet .grid {
+/* ----------------------------------------------------------------------------
+   8. LAYOUT UTILITIES
+   ---------------------------------------------------------------------------- */
+.gfl5r .grid {
   display: grid;
   gap: var(--gfl-gap);
 }
 
-.gfl5r.sheet .flexrow {
+.gfl5r .flexrow {
   display: flex;
   align-items: center;
   gap: var(--gfl-gap);
 }
 
-.gfl5r.sheet .sheet-body {
+.gfl5r .sheet-body {
   margin-top: 8px;
   display: grid;
   gap: var(--gfl-gap);
 }
 
-/* -------- Drop zones & ability lists (for actor sheets) -------- */
-.gfl5r.sheet .gfl-drop-zone {
+.gfl5r .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gfl-gap-xs);
+}
+
+.gfl5r .form-group.vertical {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gfl-gap-xs);
+}
+
+.gfl5r .form-group input[type="number"],
+.gfl5r .form-group input[type="text"] {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ----------------------------------------------------------------------------
+   9. IMAGES & PROFILE
+   ---------------------------------------------------------------------------- */
+.gfl5r .profile-img {
+  border: 1px solid var(--gfl-border);
+  border-radius: calc(var(--gfl-radius) - 2px);
+  box-shadow: 0 0 0 2px rgba(71, 209, 255, 0.12);
+}
+
+/* ----------------------------------------------------------------------------
+   10. ABILITY SYSTEM (Drop zones & lists)
+   ---------------------------------------------------------------------------- */
+.gfl5r .gfl-drop-zone {
   background: rgba(255, 255, 255, 0.05);
   border: 1px dashed var(--gfl-border);
   border-radius: var(--gfl-radius);
   padding: 12px;
   text-align: center;
   color: var(--gfl-text-dim);
-  transition: border-color 120ms ease, box-shadow 120ms ease, background 120ms ease;
+  transition: all 120ms ease;
 }
 
-.gfl5r.sheet .gfl-drop-zone:hover {
+.gfl5r .gfl-drop-zone:hover {
   border-color: var(--gfl-accent);
   box-shadow: 0 0 0 2px rgba(71, 209, 255, 0.25) inset;
 }
 
-.gfl5r.sheet .gfl-drop-zone.gfl-drop-ok {
+.gfl5r .gfl-drop-zone.gfl-drop-ok {
   background: linear-gradient(180deg, rgba(71, 209, 255, 0.18), rgba(124, 255, 214, 0.12));
   border-color: var(--gfl-accent);
 }
 
-/* -------- Ability list -------- */
-.gfl5r.sheet .gfl-ability-list {
+.gfl5r .gfl-ability-list {
   background: var(--gfl-surface);
   border: 1px solid var(--gfl-border);
   border-radius: var(--gfl-radius);
   box-shadow: var(--gfl-shadow);
-  padding: 6px;
+  padding: var(--gfl-gap-sm);
   display: grid;
-  gap: 6px;
+  gap: var(--gfl-gap-sm);
   max-height: 420px;
   overflow: auto;
 }
 
-.gfl5r.sheet .gfl-ability-row {
+.gfl5r .gfl-ability-row {
   display: grid;
   grid-template-columns: 22px 1fr auto;
   gap: 8px;
   align-items: center;
   background: var(--gfl-surface-2);
   border: 1px solid var(--gfl-border);
-  border-radius: 6px;
+  border-radius: var(--gfl-radius-sm);
   padding: 4px 6px;
 }
 
-.gfl5r.sheet .gfl-ability-row img {
+.gfl5r .gfl-ability-row img {
   width: 22px;
   height: 22px;
-  border-radius: 4px;
+  border-radius: var(--gfl-radius-xs);
   border: 1px solid var(--gfl-border);
 }
 
-.gfl5r.sheet .gfl-ability-name {
-  color: #fff;
+.gfl5r .gfl-ability-name {
+  color: var(--gfl-text-white);
   font-weight: 600;
 }
 
-.gfl5r.sheet .gfl-ability-delete {
+.gfl5r .gfl-ability-delete {
   color: var(--gfl-text-dim);
-  border-radius: 4px;
+  border-radius: var(--gfl-radius-xs);
   padding: 2px 6px;
+  transition: all 100ms ease;
 }
 
-.gfl5r.sheet .gfl-ability-delete:hover {
-  color: #fff;
+.gfl5r .gfl-ability-delete:hover {
+  color: var(--gfl-text-white);
   background: rgba(255, 255, 255, 0.08);
 }
 
-/* -------- Responsive tweaks -------- */
-@media (max-width: 740px) {
-  .gfl5r.sheet .flexrow {
-    flex-direction: column;
-  }
+.gfl5r .gfl-ability-empty {
+  color: var(--gfl-text-white);
 }
 
-/* --- Brighten state section text --- */
-.gfl5r.sheet .derived-section span,
-.gfl5r.sheet .derived-section label,
-.gfl5r.sheet .derived-section .resource-label,
-.gfl5r.sheet .derived-section .value,
-.gfl5r.sheet .state-section span,
-.gfl5r.sheet .state-section label {
-  color: #fff !important; /* ensures all state labels/numbers are bright */
+/* ----------------------------------------------------------------------------
+   11. DICE ROLLER
+   ---------------------------------------------------------------------------- */
+/* Roller header */
+.gfl5r.gfl-roller header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--gfl-text-white);
+  margin-bottom: var(--gfl-gap);
 }
 
-/* =========================
-   GFL5R — Roller (reconciled)
-   ========================= */
-
-/* Buttons in roller header */
 .gfl5r.gfl-roller header button {
-  border: 1px solid var(--gfl-border);
-  background: var(--gfl-surface-2);
-  color: #fff;
-  border-radius: 6px;
   padding: 4px 10px;
 }
-.gfl5r.gfl-roller header button:hover {
-  border-color: var(--gfl-accent);
-  box-shadow: 0 0 0 2px rgba(71, 209, 255, 0.25);
-}
 
-/* Section cards: minimal chrome so it doesn't look like "trays" */
+/* Roller card sections */
 .gfl5r.gfl-roller .card.gfl-pool,
 .gfl5r.gfl-roller .card.gfl-keep,
 .gfl5r.gfl-roller .card.gfl-reroll,
@@ -302,37 +386,26 @@
   box-shadow: none;
   padding: 6px 8px;
 }
-.gfl5r.gfl-roller .card h2 { margin-top: 0; }
 
-/* Rows inside cards */
-.gfl5r.gfl-roller .card .flexrow {
-  flex-wrap: wrap;
-  align-items: flex-start;
-  gap: 6px;
-  min-height: 0;
+.gfl5r.gfl-roller .card h2 {
+  margin-top: 0;
 }
 
-/* Drop target highlight */
-.gfl5r.gfl-roller .card.gfl-pool.drag-over,
-.gfl5r.gfl-roller .card.gfl-keep.drag-over,
-.gfl5r.gfl-roller .card.gfl-reroll.drag-over,
-.gfl5r.gfl-roller .card.gfl-discard.drag-over {
+/* Drag-over state */
+.gfl5r.gfl-roller .card.drag-over {
   outline: 2px dashed var(--gfl-accent);
   outline-offset: 2px;
 }
 
-/* Dice as raw images — uniform size, no “slots” */
+/* Dice display */
 .gfl5r.gfl-roller .gfl-die {
-  width: 56px;            /* tweak: 48/56/64 */
+  width: 56px;
   height: 56px;
   min-width: 56px;
   min-height: 56px;
-
-  /* no slot chrome */
   border: none;
   background: transparent;
   box-shadow: none;
-
   margin: 4px;
   display: flex;
   align-items: center;
@@ -341,114 +414,44 @@
   overflow: hidden;
 }
 
-/* Image itself */
 .gfl5r.gfl-roller .gfl-die-face {
   width: 100%;
   height: 100%;
   object-fit: contain;
   object-position: center;
-
-  /* ensure dragging starts on parent chip */
   pointer-events: none;
-  -webkit-user-drag: none;
   user-select: none;
-
-  image-rendering: crisp-edges; /* sharp vectors/pixel art */
+  image-rendering: crisp-edges;
 }
 
-/* Keep flex rows sane everywhere in the roller */
 .gfl5r.gfl-roller .flexrow {
   flex-wrap: wrap;
   align-items: flex-start;
   justify-content: flex-start;
-  gap: 6px;
+  gap: var(--gfl-gap-sm);
+  min-height: 0;
 }
 
-/* =========================
-   GFL5R — Roll Prompt Dialog
-   ========================= */
-.gfl5r.gfl-roll-prompt .window-content {
-  background:
-    radial-gradient(600px 400px at 100% 0%, rgba(71, 209, 255, 0.08), transparent 60%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.015), rgba(255, 255, 255, 0.03)),
-    rgba(20, 30, 40, 0.45);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
-  padding: 12px 14px;
-  color: #fff;
-  font-family: inherit;
-  font-size: 13px;
-  box-shadow: 0 0 24px rgba(0, 0, 0, 0.6) inset;
+/* Tally display */
+.gfl5r.gfl-roller .card .flexrow {
+  color: var(--gfl-text-white);
 }
-@supports ((backdrop-filter: blur(18px)) or (-webkit-backdrop-filter: blur(18px))) {
-  .gfl5r.gfl-roll-prompt .window-content {
-    backdrop-filter: blur(18px) saturate(160%) contrast(105%);
-    -webkit-backdrop-filter: blur(18px) saturate(160%) contrast(105%);
+
+/* ----------------------------------------------------------------------------
+   12. RESPONSIVE DESIGN
+   ---------------------------------------------------------------------------- */
+@media (max-width: 740px) {
+  .gfl5r .flexrow {
+    flex-direction: column;
   }
 }
 
-/* Headings and labels */
-.gfl5r.gfl-roll-prompt label,
-.gfl5r.gfl-roll-prompt h1,
-.gfl5r.gfl-roll-prompt h2 {
-  color: var(--gfl-accent);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  text-shadow: 0 0 8px rgba(71, 209, 255, 0.35);
-}
-
-/* Inputs and selects */
-.gfl5r.gfl-roll-prompt select,
-.gfl5r.gfl-roll-prompt input[type="number"],
-.gfl5r.gfl-roll-prompt input[type="text"] {
-  background: var(--gfl-surface-2);
-  border: 1px solid var(--gfl-border);
-  border-radius: 6px;
-  color: #fff;
-  padding: 4px 6px;
-  box-shadow: var(--gfl-shadow);
-  width: 100%;
-}
-.gfl5r.gfl-roll-prompt input:focus-visible,
-.gfl5r.gfl-roll-prompt select:focus-visible {
-  outline: none;
-  border-color: var(--gfl-accent);
-  box-shadow: 0 0 0 2px rgba(71, 209, 255, 0.35);
-}
-
-/* Checkbox alignment */
-.gfl5r.gfl-roll-prompt .form-group {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-/* Buttons */
-.gfl5r.gfl-roll-prompt button {
-  border: 1px solid var(--gfl-border);
-  background: var(--gfl-surface-2);
-  color: #fff;
-  border-radius: 6px;
-  padding: 6px 14px;
-  text-transform: uppercase;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  cursor: pointer;
-  transition: all 100ms ease;
-}
-.gfl5r.gfl-roll-prompt button:hover {
-  border-color: var(--gfl-accent);
-  box-shadow: 0 0 0 2px rgba(71, 209, 255, 0.25);
-  color: var(--gfl-accent);
-}
-
-/* Primary "Roll" button accent */
-.gfl5r.gfl-roll-prompt button:first-of-type {
-  background: linear-gradient(180deg, var(--gfl-accent), var(--gfl-accent-2));
-  color: #001a22;
-  font-weight: 700;
-}
-.gfl5r.gfl-roll-prompt button:first-of-type:hover {
-  filter: brightness(1.15);
+/* ----------------------------------------------------------------------------
+   13. UTILITY OVERRIDES (ensure white text in specific areas)
+   ---------------------------------------------------------------------------- */
+.gfl5r .derived-section span,
+.gfl5r .derived-section label,
+.gfl5r .state-section span,
+.gfl5r .state-section label {
+  color: var(--gfl-text-white) !important;
 }
