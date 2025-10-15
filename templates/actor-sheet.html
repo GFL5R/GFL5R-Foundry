@@ -121,7 +121,7 @@
               "explosives" "Explosives"
               "tactics" "Tactics") as |label key|}}
               <div class="form-group vertical" title="{{label}}">
-                <label>{{label}}</label>
+                <label class="gfl-skill-label" data-skill="{{key}}">{{label}}</label>
                 <input type="number" name="system.skills.{{key}}" value="{{lookup ../actor.system.skills key}}" min="0"/>
               </div>
             {{/each}}
@@ -137,7 +137,7 @@
               "centering" "Centering"
               "insight" "Insight") as |label key|}}
               <div class="form-group vertical" title="{{label}}">
-                <label>{{label}}</label>
+                <label class="gfl-skill-label" data-skill="{{key}}">{{label}}</label>
                 <input type="number" name="system.skills.{{key}}" value="{{lookup ../actor.system.skills key}}" min="0"/>
               </div>
             {{/each}}
@@ -153,7 +153,7 @@
               "piloting" "Piloting"
               "subterfuge" "Subterfuge") as |label key|}}
               <div class="form-group vertical" title="{{label}}">
-                <label>{{label}}</label>
+                <label class="gfl-skill-label" data-skill="{{key}}">{{label}}</label>
                 <input type="number" name="system.skills.{{key}}" value="{{lookup ../actor.system.skills key}}" min="0"/>
               </div>
             {{/each}}
@@ -169,7 +169,7 @@
               "performance" "Performance"
               "culture" "Culture") as |label key|}}
               <div class="form-group vertical" title="{{label}}">
-                <label>{{label}}</label>
+                <label class="gfl-skill-label" data-skill="{{key}}">{{label}}</label>
                 <input type="number" name="system.skills.{{key}}" value="{{lookup ../actor.system.skills key}}" min="0"/>
               </div>
             {{/each}}
