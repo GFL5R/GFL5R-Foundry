@@ -109,6 +109,8 @@ export class GFL5RActorSheet extends ActorSheet {
           cancel: { label: "Cancel" }
         },
         default: "roll"
+      }, {
+        classes: ["gfl5r", "gfl-roll-prompt"]
       }).render(true);
     });
 
