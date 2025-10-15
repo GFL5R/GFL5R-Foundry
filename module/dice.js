@@ -263,27 +263,26 @@ export class GFLRollerApp extends Application {
     const renderDice = (dice, label) => {
       if (dice.length === 0) return '';
       const icons = dice.map(d => {
-        const color = d.type === "B" ? "⚫" : "⚪";
-        const bonus = d._fromExplosion ? "✨" : "";
-        return `<span title="${d.label}">${color}${d.face}${bonus}</span>`;
-      }).join(' ');
-      return `<div><strong>${label}:</strong> ${icons}</div>`;
+        const bonus = d._fromExplosion ? ' <span style="color: gold;">✨</span>' : "";
+        return `<img src="${d.icon}" alt="${d.label}" title="${d.label}${d._fromExplosion ? ' (Explosion Bonus)' : ''}" style="width: 32px; height: 32px; vertical-align: middle; margin: 2px;">${bonus}`;
+      }).join('');
+      return `<div style="margin: 8px 0;"><strong>${label}:</strong><br/>${icons}</div>`;
     };
 
     return `
-      <div class="gfl-roll-card">
-        <div class="gfl-roll-header">
+      <div class="gfl-roll-card" style="padding: 10px; border: 1px solid #999; border-radius: 5px; background: rgba(0,0,0,0.1);">
+        <div class="gfl-roll-header" style="margin-bottom: 8px;">
           <strong>${this.actor.name}</strong> rolls <em>${this.skillLabel}</em> with <em>${this.approachName}</em> — ${tnText}
         </div>
-        <div class="gfl-roll-step">
+        <div class="gfl-roll-step" style="margin-bottom: 8px; font-style: italic;">
           <strong>Step ${this.stepNumber}</strong> | Keep Limit: ${this.keepLimit} (${this.kept.filter(d => d._counted).length} used)
         </div>
         ${renderDice(this.pool, "🎲 Pool")}
         ${renderDice(this.kept, "✅ Kept")}
         ${renderDice(this.toReroll, "🔄 To Reroll")}
         ${renderDice(this.discarded, "❌ Discarded")}
-        ${this.pendingExplosions.length > 0 ? `<div><strong>💥 Pending Explosions:</strong> ${this.pendingExplosions.length}</div>` : ''}
-        <div class="gfl-roll-summary">
+        ${this.pendingExplosions.length > 0 ? `<div style="margin: 8px 0;"><strong>💥 Pending Explosions:</strong> ${this.pendingExplosions.length}</div>` : ''}
+        <div class="gfl-roll-summary" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #666;">
           <div><b>Current Successes:</b> ${this.tally.s}</div>
           <div><b>Current Opportunity:</b> ${this.tally.o}</div>
           <div><b>Current Strife:</b> ${this.tally.r}</div>
