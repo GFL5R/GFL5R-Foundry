@@ -43,11 +43,55 @@ export class GFL5RActorSheet extends ActorSheet {
       fortunePointsCurrent: fpCurrent
     };
 
-    // Expose skills & abilities
+    // Expose skills
     context.skills = data.skills ?? {};
+
+    // Filter items by type
     context.abilities = this.actor.items.filter(i => i.type === "ability").map(i => ({
       id: i.id,
       name: i.name,
+      img: i.img,
+      system: i.system ?? {}
+    }));
+
+    // Narrative items - split by type
+    const narrativeItems = this.actor.items.filter(i => i.type === "narrative");
+    context.narrativePositive = narrativeItems
+      .filter(i => i.system.narrativeType === "distinction" || i.system.narrativeType === "passion")
+      .map(i => ({
+        id: i.id,
+        name: i.name,
+        img: i.img,
+        system: i.system ?? {}
+      }));
+    context.narrativeNegative = narrativeItems
+      .filter(i => i.system.narrativeType === "adversity" || i.system.narrativeType === "anxiety")
+      .map(i => ({
+        id: i.id,
+        name: i.name,
+        img: i.img,
+        system: i.system ?? {}
+      }));
+
+    // Combat tab - weapons and armor
+    context.weapons = this.actor.items.filter(i => i.type === "weaponry").map(i => ({
+      id: i.id,
+      name: i.name,
+      img: i.img,
+      system: i.system ?? {}
+    }));
+    context.armor = this.actor.items.filter(i => i.type === "armor").map(i => ({
+      id: i.id,
+      name: i.name,
+      img: i.img,
+      system: i.system ?? {}
+    }));
+
+    // Inventory - all items
+    context.inventory = this.actor.items.map(i => ({
+      id: i.id,
+      name: i.name,
+      type: i.type,
       img: i.img,
       system: i.system ?? {}
     }));
@@ -59,11 +103,19 @@ export class GFL5RActorSheet extends ActorSheet {
     super.activateListeners(html);
     console.log("GFL5R | activateListeners()");
 
-    // Delete ability
+    // Delete item (works for abilities and any other items)
     html.on("click", ".gfl-ability-delete", ev => {
       const id = ev.currentTarget?.dataset?.itemId;
       if (!id) return;
       return this.actor.deleteEmbeddedDocuments("Item", [id]);
+    });
+
+    // Edit item
+    html.on("click", ".gfl-item-edit", ev => {
+      const id = ev.currentTarget?.dataset?.itemId;
+      if (!id) return;
+      const item = this.actor.items.get(id);
+      if (item) item.sheet.render(true);
     });
 
     // Click skill NAME (label) to roll
@@ -116,12 +168,17 @@ export class GFL5RActorSheet extends ActorSheet {
 
   }
 
-  /** Accept dropped Items (from compendia or sidebar) into the drop zone */
+  /** Accept dropped Items (from compendia or sidebar) into the drop zones */
   async _onDrop(event) {
     const data = TextEditor.getDragEventData(event);
 
-    // Only react if dropped on our drop zone (has data-drop-target)
-    const dropTarget = event.target?.closest?.("[data-drop-target='abilities']");
+    // Check which drop zone was targeted
+    const dropAbilities = event.target?.closest?.("[data-drop-target='abilities']");
+    const dropNarrativePos = event.target?.closest?.("[data-drop-target='narrative-positive']");
+    const dropNarrativeNeg = event.target?.closest?.("[data-drop-target='narrative-negative']");
+    const dropInventory = event.target?.closest?.("[data-drop-target='inventory']");
+    
+    const dropTarget = dropAbilities || dropNarrativePos || dropNarrativeNeg || dropInventory;
     if (!dropTarget) return super._onDrop(event);
 
     // Resolve a Document from the drop
@@ -143,14 +200,31 @@ export class GFL5RActorSheet extends ActorSheet {
     }
     if (!itemDoc) return;
 
-    // Normalize to type "ability" (clone if needed)
+    // Clone the item data
     let itemData = itemDoc.toObject();
-    itemData.type = "ability"; // force type for our sheet
-    // If compendium item had a description in system, keep it; else try itemDoc.system?.description
     if (!itemData.system) itemData.system = {};
-    itemData.system.description ??= itemDoc.system?.description ?? "";
 
-    // Create on actor (duplicates by name are allowed; up to you to dedupe later)
+    // Handle different drop zones
+    if (dropAbilities) {
+      // Force type to ability
+      itemData.type = "ability";
+      itemData.system.description ??= itemDoc.system?.description ?? "";
+    } else if (dropNarrativePos || dropNarrativeNeg) {
+      // Force type to narrative
+      itemData.type = "narrative";
+      itemData.system.description ??= itemDoc.system?.description ?? "";
+      // Set narrative type based on drop zone
+      if (dropNarrativePos && !itemData.system.narrativeType) {
+        itemData.system.narrativeType = "distinction";
+      } else if (dropNarrativeNeg && !itemData.system.narrativeType) {
+        itemData.system.narrativeType = "adversity";
+      }
+    } else if (dropInventory) {
+      // Keep original type for inventory (accepts all types)
+      itemData.system.description ??= itemDoc.system?.description ?? "";
+    }
+
+    // Create on actor
     await this.actor.createEmbeddedDocuments("Item", [itemData]);
 
     // Subtle UI feedback
