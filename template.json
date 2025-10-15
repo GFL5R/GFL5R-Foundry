@@ -17,6 +17,8 @@
       },
       "humanity": 0,
       "fame": 0,
+      "backstory": "",
+      "notes": "",
       "skills": {
         "blades": 0,
         "firearms": 0,
@@ -42,7 +44,7 @@
     }
   },
   "Item": {
-    "types": ["ability", "weaponry", "armor", "generic"],
+    "types": ["ability", "weaponry", "armor", "narrative", "generic"],
     "templates": {},
     "ability": {
       "activation": "passive",
@@ -67,6 +69,12 @@
       "concealmentTN": 0,
       "price": 0,
       "class": "",
+      "description": ""
+    },
+    "narrative": {
+      "approach": "power",
+      "narrativeType": "distinction",
+      "tags": "",
       "description": ""
     },
     "generic": {}
