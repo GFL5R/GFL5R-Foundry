@@ -44,7 +44,7 @@
     }
   },
   "Item": {
-    "types": ["ability", "weaponry", "armor", "narrative", "generic"],
+    "types": ["ability", "weaponry", "armor", "narrative", "item", "generic"],
     "templates": {},
     "ability": {
       "activation": "passive",
@@ -53,11 +53,14 @@
       "description": ""
     },
     "weaponry": {
+      "weaponType": "ranged",
+      "skill": "firearms",
       "idealRange": 2,
       "suppression": 0,
       "caliber": 0,
       "threat": 0,
       "signature": 0,
+      "rarity": "common",
       "price": 0,
       "class": "",
       "traits": "",
@@ -75,6 +78,11 @@
       "approach": "power",
       "narrativeType": "distinction",
       "tags": "",
+      "description": ""
+    },
+    "item": {
+      "price": 0,
+      "rarity": "common",
       "description": ""
     },
     "generic": {}
