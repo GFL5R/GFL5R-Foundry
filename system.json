@@ -2,12 +2,12 @@
   "id": "gfl5r",
   "title": "GFL5R",
   "description": "A shoddy attempt to port L5R's dice system and techniques to a near-future setting.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "compatibility": {
     "minimum": "12",
     "verified": "13"
   },
-  "authors": [{ "name": "JackBinary" }],
+  "authors": [{ "name": "GFL5R Team" }],
   "esmodules": ["module/main.js"],
   "styles": ["styles.css"],
   "gridDistance": 1,
