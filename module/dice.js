@@ -211,7 +211,18 @@ export class GFLRollerApp extends Application {
     ].filter(Boolean).join(" + ") || "0";
 
     const roll = await (new Roll(expr)).evaluate({ async:true });
-    this.pool = expandRoll(roll);
+    const dice = expandRoll(roll);
+    
+    // Separate explosion dice - they go to kept, others to pool
+    for (const d of dice) {
+      if (d.explosive) {
+        d._counted = false; // Explosions don't count against keep limit
+        this.kept.push(d);
+        this.pendingExplosions.push({ type: d.type });
+      } else {
+        this.pool.push(d);
+      }
+    }
   }
 
   _moveDie(id, dest) {
@@ -313,17 +324,19 @@ export class GFLRollerApp extends Application {
   async _continue() {
     this._recomputeTally();
 
-    // Counts for rerolls and explosions
-    const bR = this.toReroll.filter(d => d.type === "B").length;
-    const wR = this.toReroll.filter(d => d.type === "W").length;
+    // Track rerolls that were originally explosions
+    const bR = this.toReroll.filter(d => d.type === "B" && !d._fromExplosion).length;
+    const wR = this.toReroll.filter(d => d.type === "W" && !d._fromExplosion).length;
+    const bRE = this.toReroll.filter(d => d.type === "B" && d._fromExplosion).length;
+    const wRE = this.toReroll.filter(d => d.type === "W" && d._fromExplosion).length;
     this.toReroll = [];
 
     const bE = this.pendingExplosions.filter(e => e.type === "B").length;
     const wE = this.pendingExplosions.filter(e => e.type === "W").length;
     this.pendingExplosions = [];
 
-    const countB = bR + bE;
-    const countW = wR + wE;
+    const countB = bR + bRE + bE;
+    const countW = wR + wRE + wE;
 
     if (countB === 0 && countW === 0) {
       // Nothing more to roll
@@ -342,14 +355,30 @@ export class GFLRollerApp extends Application {
     const next = expandRoll(roll);
 
     // Mark explosion dice so they don't count against keep limit when kept
-    let remainingBE = bE;
-    let remainingWE = wE;
+    // This includes both new explosions and rerolled explosions
+    let remainingBE = bE + bRE;
+    let remainingWE = wE + wRE;
     for (const d of next) {
-      if (d.type === "B" && remainingBE > 0) { d._fromExplosion = true; remainingBE--; }
-      else if (d.type === "W" && remainingWE > 0) { d._fromExplosion = true; remainingWE--; }
+      if (d.type === "B" && remainingBE > 0) { 
+        d._fromExplosion = true; 
+        remainingBE--; 
+      } else if (d.type === "W" && remainingWE > 0) { 
+        d._fromExplosion = true; 
+        remainingWE--; 
+      }
     }
 
-    this.pool.push(...next);
+    // Separate explosion results - they go to kept automatically, others to pool
+    for (const d of next) {
+      if (d.explosive) {
+        d._counted = false; // Explosions don't count against keep limit
+        this.kept.push(d);
+        this.pendingExplosions.push({ type: d.type });
+      } else {
+        this.pool.push(d);
+      }
+    }
+    
     await this._updateChatMessage();
     this.render(false);
   }
