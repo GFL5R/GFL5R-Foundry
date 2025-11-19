@@ -323,7 +323,7 @@
 
 .gfl5r .gfl-ability-row {
   display: grid;
-  grid-template-columns: 22px 1fr auto;
+  grid-template-columns: 22px 1fr auto auto;
   gap: 8px;
   align-items: center;
   background: var(--gfl-surface-2);
@@ -344,24 +344,80 @@
   font-weight: 600;
 }
 
-.gfl5r .gfl-ability-delete {
+.gfl5r .gfl-ability-delete,
+.gfl5r .gfl-discipline-ability-remove {
   color: var(--gfl-text-dim);
   border-radius: var(--gfl-radius-xs);
   padding: 2px 6px;
   transition: all 100ms ease;
+  cursor: pointer;
 }
 
-.gfl5r .gfl-ability-delete:hover {
-  color: var(--gfl-text-white);
-  background: rgba(255, 255, 255, 0.08);
+.gfl5r .gfl-ability-delete:hover,
+.gfl5r .gfl-discipline-ability-remove:hover {
+  color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.15);
 }
 
 .gfl5r .gfl-ability-empty {
-  color: var(--gfl-text-white);
+  color: var(--gfl-text-dim);
+  text-align: center;
+  padding: 12px;
+  font-style: italic;
 }
 
 /* ----------------------------------------------------------------------------
-   11. DICE ROLLER
+   11. DISCIPLINE SYSTEM
+   ---------------------------------------------------------------------------- */
+.gfl5r .gfl-discipline-slot {
+  position: relative;
+  transition: all 120ms ease;
+}
+
+.gfl5r .gfl-discipline-slot:hover {
+  box-shadow: 0 0 0 1px var(--gfl-accent) inset, var(--gfl-shadow);
+}
+
+.gfl5r .gfl-discipline-abilities-section {
+  border-left: 2px solid var(--gfl-accent-2);
+  padding-left: 12px;
+}
+
+.gfl5r .gfl-discipline-abilities-section h3 {
+  margin: 0 0 8px 0;
+  font-size: 1em;
+  color: var(--gfl-accent-2);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.gfl5r .gfl-discipline-remove {
+  transition: all 100ms ease;
+}
+
+.gfl5r .gfl-discipline-remove:hover {
+  color: #ff4757 !important;
+  transform: scale(1.1);
+}
+
+.gfl5r .gfl-item-edit {
+  transition: all 100ms ease;
+}
+
+.gfl5r .gfl-item-edit:hover {
+  color: var(--gfl-accent) !important;
+  transform: scale(1.1);
+}
+
+/* XP Progress indicator */
+.gfl5r .gfl-discipline-xp,
+.gfl5r .gfl-discipline-rank {
+  font-weight: 600;
+  text-align: center;
+}
+
+/* ----------------------------------------------------------------------------
+   12. DICE ROLLER
    ---------------------------------------------------------------------------- */
 /* Roller header */
 .gfl5r.gfl-roller header {
@@ -438,7 +494,7 @@
 }
 
 /* ----------------------------------------------------------------------------
-   12. RESPONSIVE DESIGN
+   13. RESPONSIVE DESIGN
    ---------------------------------------------------------------------------- */
 @media (max-width: 740px) {
   .gfl5r .flexrow {
@@ -447,7 +503,7 @@
 }
 
 /* ----------------------------------------------------------------------------
-   13. UTILITY OVERRIDES (ensure white text in specific areas)
+   14. UTILITY OVERRIDES (ensure white text in specific areas)
    ---------------------------------------------------------------------------- */
 .gfl5r .derived-section span,
 .gfl5r .derived-section label,
