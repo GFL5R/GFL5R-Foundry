@@ -98,12 +98,23 @@ export class GFL5RActorSheet extends ActorSheet {
     }
 
     // Filter items by type
-    context.abilities = this.actor.items.filter(i => i.type === "ability").map(i => ({
-      id: i.id,
-      name: i.name,
-      img: i.img,
-      system: i.system ?? {}
-    }));
+    // Get all discipline ability IDs to exclude from general abilities
+    const disciplineAbilityIds = new Set();
+    context.disciplineSlots.forEach(slot => {
+      if (slot.abilities) {
+        slot.abilities.forEach(ability => disciplineAbilityIds.add(ability.id));
+      }
+    });
+    
+    // Only show abilities that are NOT assigned to any discipline
+    context.abilities = this.actor.items
+      .filter(i => i.type === "ability" && !disciplineAbilityIds.has(i.id))
+      .map(i => ({
+        id: i.id,
+        name: i.name,
+        img: i.img,
+        system: i.system ?? {}
+      }));
 
     // Narrative items - split by type
     const narrativeItems = this.actor.items.filter(i => i.type === "narrative");
@@ -138,14 +149,26 @@ export class GFL5RActorSheet extends ActorSheet {
       system: i.system ?? {}
     }));
 
-    // Inventory - all items
-    context.inventory = this.actor.items.map(i => ({
-      id: i.id,
-      name: i.name,
-      type: i.type,
-      img: i.img,
-      system: i.system ?? {}
-    }));
+    // Inventory - exclude disciplines and their abilities
+    const disciplineIds = new Set(
+      context.disciplineSlots
+        .filter(slot => slot.discipline)
+        .map(slot => slot.discipline.id)
+    );
+    
+    context.inventory = this.actor.items
+      .filter(i => 
+        i.type !== "discipline" && 
+        !disciplineIds.has(i.id) && 
+        !disciplineAbilityIds.has(i.id)
+      )
+      .map(i => ({
+        id: i.id,
+        name: i.name,
+        type: i.type,
+        img: i.img,
+        system: i.system ?? {}
+      }));
 
     return context;
   }
@@ -176,15 +199,27 @@ export class GFL5RActorSheet extends ActorSheet {
       
       const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
       if (disciplines[slotKey]) {
+        const toDelete = [];
         const disciplineId = disciplines[slotKey].disciplineId;
         
-        // Delete the discipline item and all its abilities
-        const toDelete = [disciplineId];
-        if (disciplines[slotKey].abilities?.length) {
-          toDelete.push(...disciplines[slotKey].abilities);
+        // Check if discipline exists before adding to delete list
+        if (disciplineId && this.actor.items.get(disciplineId)) {
+          toDelete.push(disciplineId);
         }
         
-        await this.actor.deleteEmbeddedDocuments("Item", toDelete.filter(id => id));
+        // Check if abilities exist before adding to delete list
+        if (disciplines[slotKey].abilities?.length) {
+          for (const abilityId of disciplines[slotKey].abilities) {
+            if (this.actor.items.get(abilityId)) {
+              toDelete.push(abilityId);
+            }
+          }
+        }
+        
+        // Delete all items that exist
+        if (toDelete.length > 0) {
+          await this.actor.deleteEmbeddedDocuments("Item", toDelete);
+        }
         
         // Reset slot
         disciplines[slotKey] = {
@@ -233,9 +268,14 @@ export class GFL5RActorSheet extends ActorSheet {
       
       const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
       if (disciplines[slotKey]?.abilities) {
+        // Remove from abilities list
         disciplines[slotKey].abilities = disciplines[slotKey].abilities.filter(id => id !== abilityId);
         await this.actor.update({ "system.disciplines": disciplines });
-        await this.actor.deleteEmbeddedDocuments("Item", [abilityId]);
+        
+        // Delete the ability if it exists
+        if (this.actor.items.get(abilityId)) {
+          await this.actor.deleteEmbeddedDocuments("Item", [abilityId]);
+        }
       }
     });
 
@@ -334,9 +374,6 @@ export class GFL5RActorSheet extends ActorSheet {
       let itemData = itemDoc.toObject();
       itemData.type = "discipline";
       
-      // Create the discipline item
-      const [createdItem] = await this.actor.createEmbeddedDocuments("Item", [itemData]);
-      
       // Update disciplines data
       const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
       if (!disciplines[slotKey]) {
@@ -345,10 +382,34 @@ export class GFL5RActorSheet extends ActorSheet {
       
       // Remove old discipline if exists
       if (disciplines[slotKey].disciplineId) {
-        await this.actor.deleteEmbeddedDocuments("Item", [disciplines[slotKey].disciplineId]);
+        const oldDiscipline = this.actor.items.get(disciplines[slotKey].disciplineId);
+        const toDelete = [];
+        
+        // Add discipline to delete list if it exists
+        if (oldDiscipline) {
+          toDelete.push(disciplines[slotKey].disciplineId);
+        }
+        
+        // Add abilities to delete list if they exist
+        if (disciplines[slotKey].abilities?.length) {
+          for (const abilityId of disciplines[slotKey].abilities) {
+            if (this.actor.items.get(abilityId)) {
+              toDelete.push(abilityId);
+            }
+          }
+        }
+        
+        // Delete all items that exist
+        if (toDelete.length > 0) {
+          await this.actor.deleteEmbeddedDocuments("Item", toDelete);
+        }
       }
       
+      // Create the discipline item
+      const [createdItem] = await this.actor.createEmbeddedDocuments("Item", [itemData]);
+      
       disciplines[slotKey].disciplineId = createdItem.id;
+      disciplines[slotKey].abilities = []; // Reset abilities list
       await this.actor.update({ "system.disciplines": disciplines });
       
       dropTarget.classList.add("gfl-drop-ok");
