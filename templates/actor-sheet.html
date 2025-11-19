@@ -295,10 +295,11 @@
               <div class="flexrow" style="gap:12px; align-items:start; margin-bottom:12px;">
                 <img src="{{slot.discipline.img}}" alt="" class="profile-img" style="width:64px; height:64px;"/>
                 <div style="flex:1;">
-                  <div style="font-size:0.9em; color:var(--gfl-text-dim); margin-bottom:8px;">
-                    {{#if slot.discipline.system.approach}}Approach: <span style="color:var(--gfl-accent-2);">{{slot.discipline.system.approach}}</span>{{/if}}
-                    {{#if slot.discipline.system.category}} • Category: {{slot.discipline.system.category}}{{/if}}
-                  </div>
+                  {{#if slot.discipline.system.category}}
+                    <div style="font-size:0.9em; color:var(--gfl-text-dim); margin-bottom:8px;">
+                      Category: <span style="color:var(--gfl-accent-2);">{{slot.discipline.system.category}}</span>
+                    </div>
+                  {{/if}}
                   
                   <!-- XP and Rank -->
                   <div class="grid" style="grid-template-columns: 1fr 1fr; gap:10px; max-width:300px;">
@@ -311,9 +312,9 @@
                       <input type="number" class="gfl-discipline-rank" data-slot-key="{{slot.slotKey}}" value="{{slot.rank}}" min="1"/>
                     </div>
                   </div>
-                  {{#if slot.xpForNext}}
+                  {{#if slot.xpRemaining}}
                     <div style="font-size:0.85em; color:var(--gfl-text-dim); margin-top:6px;">
-                      <i class="fas fa-arrow-up" style="color:var(--gfl-accent-2);"></i> Next rank at {{slot.xpForNext}} XP
+                      <i class="fas fa-arrow-up" style="color:var(--gfl-accent-2);"></i> {{slot.xpRemaining}} XP until Rank {{add slot.rank 1}}
                     </div>
                   {{/if}}
                 </div>
