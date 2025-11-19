@@ -415,4 +415,29 @@ export class GFL5RActorSheet extends ActorSheet {
 export function registerActorSheets() {
   Actors.unregisterSheet("core", ActorSheet);
   Actors.registerSheet("gfl5r", GFL5RActorSheet, { makeDefault: true });
+  
+  // Register Handlebars helpers for discipline logic
+  Handlebars.registerHelper('some', function(array, key) {
+    if (!Array.isArray(array)) return false;
+    return array.some(item => item[key]);
+  });
+  
+  Handlebars.registerHelper('count', function(array, key) {
+    if (!Array.isArray(array)) return 0;
+    return array.filter(item => item[key]).length;
+  });
+  
+  Handlebars.registerHelper('lt', function(a, b) {
+    return a < b;
+  });
+  
+  Handlebars.registerHelper('getNextEmptySlot', function(slots) {
+    if (!Array.isArray(slots)) return 'slot1';
+    for (let slot of slots) {
+      if (!slot.discipline) {
+        return slot.slotKey;
+      }
+    }
+    return 'slot1';
+  });
 }
