@@ -45,6 +45,10 @@ export class GFL5RActorSheet extends ActorSheet {
       fortunePointsCurrent: fpCurrent
     };
 
+    // Character type for modules visibility
+    context.characterType = data.characterType ?? "human";
+    context.showModules = (context.characterType === "doll" || context.characterType === "transhumanist");
+
     // Expose skills
     context.skills = data.skills ?? {};
 
@@ -149,7 +153,15 @@ export class GFL5RActorSheet extends ActorSheet {
       system: i.system ?? {}
     }));
 
-    // Inventory - exclude disciplines and their abilities
+    // Modules tab
+    context.modules = this.actor.items.filter(i => i.type === "module").map(i => ({
+      id: i.id,
+      name: i.name,
+      img: i.img,
+      system: i.system ?? {}
+    }));
+
+    // Inventory - exclude disciplines, their abilities, and narrative items
     const disciplineIds = new Set(
       context.disciplineSlots
         .filter(slot => slot.discipline)
@@ -159,6 +171,8 @@ export class GFL5RActorSheet extends ActorSheet {
     context.inventory = this.actor.items
       .filter(i => 
         i.type !== "discipline" && 
+        i.type !== "narrative" &&
+        i.type !== "module" &&
         !disciplineIds.has(i.id) && 
         !disciplineAbilityIds.has(i.id)
       )
@@ -338,12 +352,13 @@ export class GFL5RActorSheet extends ActorSheet {
     const dropNarrativePos = event.target?.closest?.("[data-drop-target='narrative-positive']");
     const dropNarrativeNeg = event.target?.closest?.("[data-drop-target='narrative-negative']");
     const dropInventory = event.target?.closest?.("[data-drop-target='inventory']");
+    const dropModules = event.target?.closest?.("[data-drop-target='modules']");
     
     // Check for discipline slot drops
     const dropDiscipline = event.target?.closest?.("[data-drop-target='discipline']");
     const dropDisciplineAbility = event.target?.closest?.("[data-drop-target='discipline-ability']");
     
-    const dropTarget = dropAbilities || dropNarrativePos || dropNarrativeNeg || dropInventory || dropDiscipline || dropDisciplineAbility;
+    const dropTarget = dropAbilities || dropNarrativePos || dropNarrativeNeg || dropInventory || dropModules || dropDiscipline || dropDisciplineAbility;
     if (!dropTarget) return super._onDrop(event);
 
     // Resolve a Document from the drop
@@ -464,6 +479,10 @@ export class GFL5RActorSheet extends ActorSheet {
       } else if (dropNarrativeNeg && !itemData.system.narrativeType) {
         itemData.system.narrativeType = "adversity";
       }
+    } else if (dropModules) {
+      // Force type to module
+      itemData.type = "module";
+      itemData.system.description ??= itemDoc.system?.description ?? "";
     } else if (dropInventory) {
       // Keep original type for inventory (accepts all types)
       itemData.system.description ??= itemDoc.system?.description ?? "";
@@ -495,6 +514,10 @@ export function registerActorSheets() {
   
   Handlebars.registerHelper('lt', function(a, b) {
     return a < b;
+  });
+  
+  Handlebars.registerHelper('eq', function(a, b) {
+    return a === b;
   });
   
   Handlebars.registerHelper('add', function(a, b) {
