@@ -71,6 +71,10 @@ export class GFL5RActorSheet extends ActorSheet {
         .map(abilityId => this.actor.items.get(abilityId))
         .filter(a => a); // Remove null entries
       
+      // Calculate XP remaining for next rank
+      const xpForNextRank = GFL5R_CONFIG.getXPForNextRank(slotData.rank ?? 1);
+      const xpRemaining = xpForNextRank ? (xpForNextRank - (slotData.xp ?? 0)) : null;
+      
       context.disciplineSlots.push({
         slotKey,
         slotNumber: i,
@@ -82,7 +86,8 @@ export class GFL5RActorSheet extends ActorSheet {
         } : null,
         xp: slotData.xp ?? 0,
         rank: slotData.rank ?? 1,
-        xpForNext: GFL5R_CONFIG.getXPForNextRank(slotData.rank ?? 1),
+        xpForNext: xpForNextRank,
+        xpRemaining: xpRemaining > 0 ? xpRemaining : null,
         abilities: disciplineAbilities.map(a => ({
           id: a.id,
           name: a.name,
@@ -429,6 +434,10 @@ export function registerActorSheets() {
   
   Handlebars.registerHelper('lt', function(a, b) {
     return a < b;
+  });
+  
+  Handlebars.registerHelper('add', function(a, b) {
+    return (a || 0) + (b || 0);
   });
   
   Handlebars.registerHelper('getNextEmptySlot', function(slots) {
