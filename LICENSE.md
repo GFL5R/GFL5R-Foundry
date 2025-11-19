@@ -1,6 +1,6 @@
 # License
 
-Copyright (c) 2025 JackBinary
+Copyright (c) 2025 GFL5R Team
 
 This project and all original code, text, and assets created by the author
 are licensed under the **GNU General Public License v3.0 (GPLv3)**.
