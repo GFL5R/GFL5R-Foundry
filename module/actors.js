@@ -1,6 +1,8 @@
 // module/actors.js
 console.log("GFL5R | actors.js loaded");
 
+import { GFL5R_CONFIG } from "./config.js";
+
 export class GFL5RActorSheet extends ActorSheet {
   static get defaultOptions() {
     const opts = super.defaultOptions;
@@ -45,6 +47,50 @@ export class GFL5RActorSheet extends ActorSheet {
 
     // Expose skills
     context.skills = data.skills ?? {};
+
+    // Process disciplines
+    const disciplinesData = data.disciplines ?? {};
+    context.disciplineSlots = [];
+    
+    for (let i = 1; i <= GFL5R_CONFIG.maxDisciplineSlots; i++) {
+      const slotKey = `slot${i}`;
+      const slotData = disciplinesData[slotKey] ?? {
+        disciplineId: null,
+        xp: 0,
+        rank: 1,
+        abilities: []
+      };
+      
+      let disciplineItem = null;
+      if (slotData.disciplineId) {
+        disciplineItem = this.actor.items.get(slotData.disciplineId);
+      }
+      
+      // Get abilities for this discipline
+      const disciplineAbilities = (slotData.abilities ?? [])
+        .map(abilityId => this.actor.items.get(abilityId))
+        .filter(a => a); // Remove null entries
+      
+      context.disciplineSlots.push({
+        slotKey,
+        slotNumber: i,
+        discipline: disciplineItem ? {
+          id: disciplineItem.id,
+          name: disciplineItem.name,
+          img: disciplineItem.img,
+          system: disciplineItem.system ?? {}
+        } : null,
+        xp: slotData.xp ?? 0,
+        rank: slotData.rank ?? 1,
+        xpForNext: GFL5R_CONFIG.getXPForNextRank(slotData.rank ?? 1),
+        abilities: disciplineAbilities.map(a => ({
+          id: a.id,
+          name: a.name,
+          img: a.img,
+          system: a.system ?? {}
+        }))
+      });
+    }
 
     // Filter items by type
     context.abilities = this.actor.items.filter(i => i.type === "ability").map(i => ({
@@ -118,6 +164,76 @@ export class GFL5RActorSheet extends ActorSheet {
       if (item) item.sheet.render(true);
     });
 
+    // Remove discipline from slot
+    html.on("click", ".gfl-discipline-remove", async ev => {
+      const slotKey = ev.currentTarget?.dataset?.slotKey;
+      if (!slotKey) return;
+      
+      const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
+      if (disciplines[slotKey]) {
+        const disciplineId = disciplines[slotKey].disciplineId;
+        
+        // Delete the discipline item and all its abilities
+        const toDelete = [disciplineId];
+        if (disciplines[slotKey].abilities?.length) {
+          toDelete.push(...disciplines[slotKey].abilities);
+        }
+        
+        await this.actor.deleteEmbeddedDocuments("Item", toDelete.filter(id => id));
+        
+        // Reset slot
+        disciplines[slotKey] = {
+          disciplineId: null,
+          xp: 0,
+          rank: 1,
+          abilities: []
+        };
+        
+        await this.actor.update({ "system.disciplines": disciplines });
+      }
+    });
+
+    // Update discipline XP
+    html.on("change", ".gfl-discipline-xp", async ev => {
+      const slotKey = ev.currentTarget?.dataset?.slotKey;
+      const xp = Number(ev.currentTarget.value) || 0;
+      if (!slotKey) return;
+      
+      const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
+      if (disciplines[slotKey]) {
+        disciplines[slotKey].xp = xp;
+        disciplines[slotKey].rank = GFL5R_CONFIG.getRankFromXP(xp);
+        await this.actor.update({ "system.disciplines": disciplines });
+      }
+    });
+
+    // Update discipline rank
+    html.on("change", ".gfl-discipline-rank", async ev => {
+      const slotKey = ev.currentTarget?.dataset?.slotKey;
+      const rank = Number(ev.currentTarget.value) || 1;
+      if (!slotKey) return;
+      
+      const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
+      if (disciplines[slotKey]) {
+        disciplines[slotKey].rank = rank;
+        await this.actor.update({ "system.disciplines": disciplines });
+      }
+    });
+
+    // Remove ability from discipline
+    html.on("click", ".gfl-discipline-ability-remove", async ev => {
+      const slotKey = ev.currentTarget?.dataset?.slotKey;
+      const abilityId = ev.currentTarget?.dataset?.abilityId;
+      if (!slotKey || !abilityId) return;
+      
+      const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
+      if (disciplines[slotKey]?.abilities) {
+        disciplines[slotKey].abilities = disciplines[slotKey].abilities.filter(id => id !== abilityId);
+        await this.actor.update({ "system.disciplines": disciplines });
+        await this.actor.deleteEmbeddedDocuments("Item", [abilityId]);
+      }
+    });
+
     // Click skill NAME (label) to roll
     html.on("click", ".gfl-skill-label", async ev => {
       const labelEl = ev.currentTarget;
@@ -178,7 +294,11 @@ export class GFL5RActorSheet extends ActorSheet {
     const dropNarrativeNeg = event.target?.closest?.("[data-drop-target='narrative-negative']");
     const dropInventory = event.target?.closest?.("[data-drop-target='inventory']");
     
-    const dropTarget = dropAbilities || dropNarrativePos || dropNarrativeNeg || dropInventory;
+    // Check for discipline slot drops
+    const dropDiscipline = event.target?.closest?.("[data-drop-target='discipline']");
+    const dropDisciplineAbility = event.target?.closest?.("[data-drop-target='discipline-ability']");
+    
+    const dropTarget = dropAbilities || dropNarrativePos || dropNarrativeNeg || dropInventory || dropDiscipline || dropDisciplineAbility;
     if (!dropTarget) return super._onDrop(event);
 
     // Resolve a Document from the drop
@@ -199,6 +319,65 @@ export class GFL5RActorSheet extends ActorSheet {
       return;
     }
     if (!itemDoc) return;
+
+    // Handle discipline slot drops
+    if (dropDiscipline) {
+      const slotKey = dropTarget.dataset.slotKey;
+      if (!slotKey) return;
+      
+      // Clone the item data
+      let itemData = itemDoc.toObject();
+      itemData.type = "discipline";
+      
+      // Create the discipline item
+      const [createdItem] = await this.actor.createEmbeddedDocuments("Item", [itemData]);
+      
+      // Update disciplines data
+      const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
+      if (!disciplines[slotKey]) {
+        disciplines[slotKey] = { disciplineId: null, xp: 0, rank: 1, abilities: [] };
+      }
+      
+      // Remove old discipline if exists
+      if (disciplines[slotKey].disciplineId) {
+        await this.actor.deleteEmbeddedDocuments("Item", [disciplines[slotKey].disciplineId]);
+      }
+      
+      disciplines[slotKey].disciplineId = createdItem.id;
+      await this.actor.update({ "system.disciplines": disciplines });
+      
+      dropTarget.classList.add("gfl-drop-ok");
+      setTimeout(() => dropTarget.classList.remove("gfl-drop-ok"), 400);
+      return;
+    }
+
+    // Handle discipline ability drops
+    if (dropDisciplineAbility) {
+      const slotKey = dropTarget.dataset.slotKey;
+      if (!slotKey) return;
+      
+      // Clone the item data
+      let itemData = itemDoc.toObject();
+      itemData.type = "ability";
+      
+      // Create the ability item
+      const [createdItem] = await this.actor.createEmbeddedDocuments("Item", [itemData]);
+      
+      // Update disciplines data
+      const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
+      if (!disciplines[slotKey]) return;
+      
+      if (!disciplines[slotKey].abilities) {
+        disciplines[slotKey].abilities = [];
+      }
+      disciplines[slotKey].abilities.push(createdItem.id);
+      
+      await this.actor.update({ "system.disciplines": disciplines });
+      
+      dropTarget.classList.add("gfl-drop-ok");
+      setTimeout(() => dropTarget.classList.remove("gfl-drop-ok"), 400);
+      return;
+    }
 
     // Clone the item data
     let itemData = itemDoc.toObject();
