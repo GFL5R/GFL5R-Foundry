@@ -70,6 +70,18 @@ export class GFL5RDisciplineSheet extends ItemSheet {
   get template() { return "systems/gfl5r/templates/item-discipline.html"; }
 }
 
+export class GFL5RModuleSheet extends ItemSheet {
+  static get defaultOptions() {
+    const opts = super.defaultOptions;
+    return foundry.utils.mergeObject(opts, {
+      classes: ["gfl5r", "sheet", "item"],
+      width: 600,
+      height: 550
+    });
+  }
+  get template() { return "systems/gfl5r/templates/item-module.html"; }
+}
+
 export function registerItemSheets() {
   Items.unregisterSheet("core", ItemSheet);
   Items.registerSheet("gfl5r", GFL5RAbilitySheet, { types: ["ability"], makeDefault: true });
@@ -78,4 +90,5 @@ export function registerItemSheets() {
   Items.registerSheet("gfl5r", GFL5RNarrativeSheet, { types: ["narrative"], makeDefault: true });
   Items.registerSheet("gfl5r", GFL5RItemSheet, { types: ["item"], makeDefault: true });
   Items.registerSheet("gfl5r", GFL5RDisciplineSheet, { types: ["discipline"], makeDefault: true });
+  Items.registerSheet("gfl5r", GFL5RModuleSheet, { types: ["module"], makeDefault: true });
 }
