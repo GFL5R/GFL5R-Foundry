@@ -3,6 +3,7 @@
     "types": ["character"],
     "templates": {},
     "character": {
+      "characterType": "human",
       "approaches": {
         "power": 1,
         "swiftness": 1,
@@ -77,7 +78,7 @@
     }
   },
   "Item": {
-    "types": ["ability", "weaponry", "armor", "narrative", "item", "generic", "discipline"],
+    "types": ["ability", "weaponry", "armor", "narrative", "item", "generic", "discipline", "module"],
     "templates": {},
     "ability": {
       "activation": "passive",
@@ -122,6 +123,11 @@
     "discipline": {
       "description": "",
       "category": ""
+    },
+    "module": {
+      "points": 0,
+      "sardisGold": 0,
+      "description": ""
     }
   }
 }
