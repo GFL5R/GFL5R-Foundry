@@ -1,8 +1,8 @@
 {
   "id": "gfl5r",
   "title": "GFL5R",
-  "description": "We're just getting started.",
-  "version": "0.0.42",
+  "description": "A shoddy attempt to port L5R's dice system and techniques to a near-future setting.",
+  "version": "0.0.43",
   "compatibility": {
     "minimum": "12",
     "verified": "13"
