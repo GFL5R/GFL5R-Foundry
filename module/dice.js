@@ -112,6 +112,7 @@ export class GFLRollerApp extends Application {
    * - approachName: string
    * - tn: number|null (null if hidden)
    * - hiddenTN: boolean
+   * - isInitiative: boolean (if this is an initiative roll)
    */
   constructor(opts) {
     super(opts);
@@ -122,6 +123,7 @@ export class GFLRollerApp extends Application {
     this.approachName = opts.approachName ?? "";
     this.tn = opts.tn;
     this.hiddenTN = !!opts.hiddenTN;
+    this.isInitiative = !!opts.isInitiative;
 
     // State
     this.keepLimit = this.approach;
@@ -403,6 +405,19 @@ export class GFLRollerApp extends Application {
         content: html,
         flavor: `${flavor} — <strong>COMPLETE</strong>`
       });
+    }
+
+    // If this is an initiative roll, update the combat tracker
+    if (this.isInitiative) {
+      const combat = game.combat;
+      if (combat) {
+        const combatant = combat.combatants.find(c => c.actorId === this.actor.id);
+        if (combatant) {
+          // Use successes as the initiative value
+          await combat.setInitiative(combatant.id, s);
+          ui.notifications?.info(`Initiative set to ${s} for ${this.actor.name}`);
+        }
+      }
     }
 
     this.close();
