@@ -468,6 +468,22 @@
   justify-content: center;
   cursor: grab;
   overflow: hidden;
+  position: relative;
+}
+
+/* Orange glow for explosion dice */
+.gfl5r.gfl-roller .gfl-die.explosion {
+  filter: drop-shadow(0 0 8px rgba(255, 140, 50, 0.6));
+}
+
+.gfl5r.gfl-roller .gfl-die.explosion::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 140, 50, 0.15), transparent 70%);
+  pointer-events: none;
+  z-index: -1;
 }
 
 .gfl5r.gfl-roller .gfl-die-face {
