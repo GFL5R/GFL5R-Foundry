@@ -5,11 +5,9 @@ export const GFL5R_CONFIG = {
   // XP required to advance to each rank
   // Index 0 = rank 1, index 1 = rank 2, etc.
   disciplineXPPerRank: [
-    100,  // Rank 1 → 2
-    200,  // Rank 2 → 3
-    300,  // Rank 3 → 4
-    400,  // Rank 4 → 5
-    500   // Rank 5 → 6
+    16,
+    20,
+    24
   ],
 
   // Maximum number of discipline slots
