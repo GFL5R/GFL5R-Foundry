@@ -20,6 +20,38 @@
       "posture": "power",
       "backstory": "",
       "notes": "",
+      "disciplines": {
+        "slot1": {
+          "disciplineId": null,
+          "xp": 0,
+          "rank": 1,
+          "abilities": []
+        },
+        "slot2": {
+          "disciplineId": null,
+          "xp": 0,
+          "rank": 1,
+          "abilities": []
+        },
+        "slot3": {
+          "disciplineId": null,
+          "xp": 0,
+          "rank": 1,
+          "abilities": []
+        },
+        "slot4": {
+          "disciplineId": null,
+          "xp": 0,
+          "rank": 1,
+          "abilities": []
+        },
+        "slot5": {
+          "disciplineId": null,
+          "xp": 0,
+          "rank": 1,
+          "abilities": []
+        }
+      },
       "skills": {
         "blades": 0,
         "firearms": 0,
@@ -45,7 +77,7 @@
     }
   },
   "Item": {
-    "types": ["ability", "weaponry", "armor", "narrative", "item", "generic"],
+    "types": ["ability", "weaponry", "armor", "narrative", "item", "generic", "discipline"],
     "templates": {},
     "ability": {
       "activation": "passive",
@@ -86,6 +118,11 @@
       "rarity": "common",
       "description": ""
     },
-    "generic": {}
+    "generic": {},
+    "discipline": {
+      "description": "",
+      "approach": "power",
+      "category": ""
+    }
   }
 }
