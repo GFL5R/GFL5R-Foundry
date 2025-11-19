@@ -107,6 +107,7 @@
   <!-- TABS -->
   <nav class="tabs sheet-tabs" data-group="primary">
     <a class="item" data-tab="skills">Skills</a>
+    <a class="item" data-tab="disciplines">Disciplines</a>
     <a class="item" data-tab="combat">Combat</a>
     <a class="item" data-tab="inventory">Inventory</a>
     <a class="item" data-tab="narrative">Narrative</a>
@@ -201,8 +202,40 @@
           <div class="card">
             <h2>Abilities</h2>
             
+            <!-- Discipline Abilities by Slot -->
+            {{#each disciplineSlots as |slot|}}
+              {{#if slot.discipline}}
+                <div class="gfl-discipline-abilities-section" style="margin-bottom:20px;">
+                  <h3 style="font-size:1.1em; margin-bottom:8px; color:#555;">
+                    {{slot.discipline.name}} (Slot {{slot.slotNumber}})
+                  </h3>
+                  
+                  {{#if slot.abilities.length}}
+                    {{#each slot.abilities as |ability|}}
+                      <div class="gfl-ability-row" data-item-id="{{ability.id}}">
+                        <img src="{{ability.img}}" alt="" />
+                        <div class="gfl-ability-meta">
+                          <div class="gfl-ability-name">{{ability.name}}</div>
+                          <div style="font-size:0.85em; opacity:0.8;">
+                            {{#if ability.system.activation}}{{ability.system.activation}}{{/if}}
+                            {{#if ability.system.xpCost}} • XP: {{ability.system.xpCost}}{{/if}}
+                          </div>
+                        </div>
+                        <a class="gfl-item-edit" data-item-id="{{ability.id}}" title="Edit ability">
+                          <i class="fas fa-edit"></i>
+                        </a>
+                      </div>
+                    {{/each}}
+                  {{else}}
+                    <div class="gfl-ability-empty" style="font-size:0.9em; opacity:0.6;">No abilities yet</div>
+                  {{/if}}
+                </div>
+              {{/if}}
+            {{/each}}
+            
+            <!-- General Abilities (not in disciplines) -->
             <div class="gfl-drop-zone" data-drop-target="abilities" title="Drag & drop ability Items here">
-              <div class="gfl-drop-zone__hint">Drop ability items here</div>
+              <div class="gfl-drop-zone__hint">Drop general abilities here</div>
             </div>
       
             <div class="gfl-ability-list">
@@ -219,12 +252,121 @@
                   </div>
                 {{/each}}
               {{else}}
-                <div class="gfl-ability-empty">No abilities yet.</div>
+                <div class="gfl-ability-empty">No general abilities yet.</div>
               {{/if}}
             </div>
           </div>
         </aside>
 
+      </div>
+    </section>
+
+    <!-- DISCIPLINES TAB -->
+    <section class="tab" data-group="primary" data-tab="disciplines">
+      <div class="card">
+        <h2>Disciplines</h2>
+        
+        {{#each disciplineSlots as |slot|}}
+          <div class="gfl-discipline-slot" style="border:2px solid #ccc; border-radius:8px; padding:16px; margin-bottom:20px; background:#fafafa;">
+            
+            <!-- Slot Header -->
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <h3 style="margin:0; font-size:1.2em;">Slot {{slot.slotNumber}}</h3>
+              {{#if slot.discipline}}
+                <a class="gfl-discipline-remove" data-slot-key="{{slot.slotKey}}" title="Remove discipline" style="color:#d32f2f; cursor:pointer;">
+                  <i class="fas fa-times-circle"></i> Remove
+                </a>
+              {{/if}}
+            </div>
+            
+            {{#if slot.discipline}}
+              <!-- Discipline Assigned -->
+              <div class="gfl-discipline-content">
+                
+                <!-- Discipline Info -->
+                <div style="display:flex; gap:12px; align-items:start; margin-bottom:16px;">
+                  <img src="{{slot.discipline.img}}" alt="" style="width:64px; height:64px; border-radius:4px;"/>
+                  <div style="flex:1;">
+                    <div style="font-size:1.3em; font-weight:bold; margin-bottom:4px;">{{slot.discipline.name}}</div>
+                    <div style="font-size:0.9em; opacity:0.8; margin-bottom:8px;">
+                      {{#if slot.discipline.system.approach}}Approach: {{slot.discipline.system.approach}}{{/if}}
+                      {{#if slot.discipline.system.category}} • Category: {{slot.discipline.system.category}}{{/if}}
+                    </div>
+                    
+                    <!-- XP and Rank -->
+                    <div class="grid" style="grid-template-columns: 1fr 1fr; gap:12px; max-width:400px;">
+                      <div class="form-group">
+                        <label>XP</label>
+                        <input type="number" class="gfl-discipline-xp" data-slot-key="{{slot.slotKey}}" value="{{slot.xp}}" min="0" style="width:100%;"/>
+                      </div>
+                      <div class="form-group">
+                        <label>Rank</label>
+                        <input type="number" class="gfl-discipline-rank" data-slot-key="{{slot.slotKey}}" value="{{slot.rank}}" min="1" style="width:100%;"/>
+                      </div>
+                    </div>
+                    {{#if slot.xpForNext}}
+                      <div style="font-size:0.85em; opacity:0.7; margin-top:4px;">
+                        Next rank at: {{slot.xpForNext}} XP
+                      </div>
+                    {{/if}}
+                  </div>
+                  <a class="gfl-item-edit" data-item-id="{{slot.discipline.id}}" title="Edit discipline" style="cursor:pointer;">
+                    <i class="fas fa-edit"></i>
+                  </a>
+                </div>
+                
+                <!-- Discipline Description -->
+                {{#if slot.discipline.system.description}}
+                  <div style="margin-bottom:16px; padding:12px; background:#fff; border-radius:4px; border:1px solid #ddd;">
+                    <div style="font-size:0.9em;">{{{slot.discipline.system.description}}}</div>
+                  </div>
+                {{/if}}
+                
+                <!-- Abilities Section -->
+                <div style="margin-top:16px;">
+                  <h4 style="font-size:1.1em; margin-bottom:8px;">Discipline Abilities</h4>
+                  
+                  <div class="gfl-drop-zone" data-drop-target="discipline-ability" data-slot-key="{{slot.slotKey}}" title="Drag & drop ability items here" style="margin-bottom:12px;">
+                    <div class="gfl-drop-zone__hint">Drop abilities for this discipline here</div>
+                  </div>
+                  
+                  <div class="gfl-discipline-abilities-list">
+                    {{#if slot.abilities.length}}
+                      {{#each slot.abilities as |ability|}}
+                        <div class="gfl-ability-row" data-item-id="{{ability.id}}" style="margin-bottom:8px;">
+                          <img src="{{ability.img}}" alt="" />
+                          <div class="gfl-ability-meta">
+                            <div class="gfl-ability-name">{{ability.name}}</div>
+                            <div style="font-size:0.85em; opacity:0.8;">
+                              {{#if ability.system.activation}}{{ability.system.activation}}{{/if}}
+                              {{#if ability.system.xpCost}} • XP: {{ability.system.xpCost}}{{/if}}
+                              {{#if ability.system.requiredRank}} • Req. Rank: {{ability.system.requiredRank}}{{/if}}
+                            </div>
+                          </div>
+                          <a class="gfl-item-edit" data-item-id="{{ability.id}}" title="Edit ability">
+                            <i class="fas fa-edit"></i>
+                          </a>
+                          <a class="gfl-discipline-ability-remove" data-slot-key="{{../slot.slotKey}}" data-ability-id="{{ability.id}}" title="Remove ability">
+                            <i class="fas fa-trash"></i>
+                          </a>
+                        </div>
+                      {{/each}}
+                    {{else}}
+                      <div class="gfl-ability-empty">No abilities assigned to this discipline yet.</div>
+                    {{/if}}
+                  </div>
+                </div>
+              </div>
+            {{else}}
+              <!-- Empty Slot -->
+              <div class="gfl-drop-zone" data-drop-target="discipline" data-slot-key="{{slot.slotKey}}" title="Drag & drop a discipline item here">
+                <div class="gfl-drop-zone__hint">Drop a discipline here to assign it to this slot</div>
+              </div>
+            {{/if}}
+            
+          </div>
+        {{/each}}
+        
       </div>
     </section>
 
