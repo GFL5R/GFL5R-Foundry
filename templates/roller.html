@@ -25,7 +25,7 @@
     <h2>Pool</h2>
     <div class="flexrow">
       {{#each pool as |d|}}
-        <div class="gfl-die type-{{d.type}}" draggable="true" data-id="{{d.id}}" title="{{d.label}}">
+        <div class="gfl-die type-{{d.type}} {{#if d._fromExplosion}}explosion{{/if}}" draggable="true" data-id="{{d.id}}" title="{{d.label}}">
           <img class="gfl-die-face" src="{{d.icon}}" alt="{{d.label}}">
         </div>
       {{/each}}
@@ -40,7 +40,7 @@
       <h2>Keep</h2>
       <div class="flexrow">
         {{#each kept as |d|}}
-          <div class="gfl-die type-{{d.type}}" draggable="true" data-id="{{d.id}}" title="{{d.label}}">
+          <div class="gfl-die type-{{d.type}} {{#if d._fromExplosion}}explosion{{/if}}" draggable="true" data-id="{{d.id}}" title="{{d.label}}">
             <img class="gfl-die-face" src="{{d.icon}}" alt="{{d.label}}">
           </div>
         {{/each}}
@@ -52,7 +52,7 @@
       <h2>Reroll</h2>
       <div class="flexrow">
         {{#each toReroll as |d|}}
-          <div class="gfl-die type-{{d.type}}" draggable="true" data-id="{{d.id}}" title="{{d.label}}">
+          <div class="gfl-die type-{{d.type}} {{#if d._fromExplosion}}explosion{{/if}}" draggable="true" data-id="{{d.id}}" title="{{d.label}}">
             <img class="gfl-die-face" src="{{d.icon}}" alt="{{d.label}}">
           </div>
         {{/each}}
@@ -64,7 +64,7 @@
       <h2>Discard</h2>
       <div class="flexrow">
         {{#each discarded as |d|}}
-          <div class="gfl-die type-{{d.type}}" draggable="true" data-id="{{d.id}}" title="{{d.label}}">
+          <div class="gfl-die type-{{d.type}} {{#if d._fromExplosion}}explosion{{/if}}" draggable="true" data-id="{{d.id}}" title="{{d.label}}">
             <img class="gfl-die-face" src="{{d.icon}}" alt="{{d.label}}">
           </div>
         {{/each}}
