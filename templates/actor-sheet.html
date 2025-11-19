@@ -11,7 +11,17 @@
           <input name="name" type="text" value="{{actor.name}}" placeholder="Character Name"/>
         </h1>
 
-        <div class="grid" style="grid-template-columns: repeat(2, 1fr);">
+        <div class="grid" style="grid-template-columns: repeat(3, 1fr);">
+          <div class="form-group">
+            <label>Type</label>
+            <select name="system.characterType" title="Character type affects available features">
+              {{#select actor.system.characterType}}
+                <option value="human">Human</option>
+                <option value="transhumanist">Transhumanist</option>
+                <option value="doll">Doll</option>
+              {{/select}}
+            </select>
+          </div>
           <div class="form-group">
             <label>Humanity</label>
             <input type="number" name="system.humanity" value="{{actor.system.humanity}}" min="0"/>
@@ -108,6 +118,9 @@
   <nav class="tabs sheet-tabs" data-group="primary">
     <a class="item" data-tab="skills">Skills</a>
     <a class="item" data-tab="disciplines">Disciplines</a>
+    {{#if showModules}}
+      <a class="item" data-tab="modules">Modules</a>
+    {{/if}}
     <a class="item" data-tab="combat">Combat</a>
     <a class="item" data-tab="inventory">Inventory</a>
     <a class="item" data-tab="narrative">Narrative</a>
@@ -353,6 +366,52 @@
         
       </div>
     </section>
+
+    <!-- MODULES TAB -->
+    {{#if showModules}}
+    <section class="tab" data-group="primary" data-tab="modules">
+      <div class="card">
+        <h2>Body Modules</h2>
+        <p style="font-size:0.9em; color:var(--gfl-text-dim); margin-bottom:12px;">
+          {{#if (eq characterType "doll")}}
+            As a Doll, you can install body modification modules to enhance your capabilities.
+          {{else}}
+            As a Transhumanist, you have embraced body modification technology.
+          {{/if}}
+        </p>
+        
+        <div class="gfl-drop-zone" data-drop-target="modules" title="Drag & drop module items here">
+          <div class="gfl-drop-zone__hint">Drop modules here</div>
+        </div>
+
+        <div class="gfl-ability-list" style="margin-top:12px;">
+          {{#if modules.length}}
+            {{#each modules as |module|}}
+              <div class="gfl-ability-row" data-item-id="{{module.id}}">
+                <img src="{{module.img}}" alt="" />
+                <div class="gfl-ability-meta">
+                  <div class="gfl-ability-name">{{module.name}}</div>
+                  <div style="font-size:0.85em; color:var(--gfl-text-dim);">
+                    {{#if module.system.type}}{{module.system.type}}{{/if}}
+                    {{#if module.system.slots}} • Slots: {{module.system.slots}}{{/if}}
+                    {{#if module.system.rarity}} • {{module.system.rarity}}{{/if}}
+                  </div>
+                </div>
+                <a class="gfl-item-edit" data-item-id="{{module.id}}" title="Edit module" style="color:var(--gfl-text-dim); cursor:pointer; padding:4px;">
+                  <i class="fas fa-edit"></i>
+                </a>
+                <a class="gfl-ability-delete" data-item-id="{{module.id}}" title="Remove module">
+                  <i class="fas fa-trash"></i>
+                </a>
+              </div>
+            {{/each}}
+          {{else}}
+            <div class="gfl-ability-empty">No modules installed.</div>
+          {{/if}}
+        </div>
+      </div>
+    </section>
+    {{/if}}
 
     <!-- COMBAT TAB -->
     <section class="tab" data-group="primary" data-tab="combat">
