@@ -211,18 +211,7 @@ export class GFLRollerApp extends Application {
     ].filter(Boolean).join(" + ") || "0";
 
     const roll = await (new Roll(expr)).evaluate({ async:true });
-    const dice = expandRoll(roll);
-    
-    // Separate explosion dice - they go to kept, others to pool
-    for (const d of dice) {
-      if (d.explosive) {
-        d._counted = false; // Explosions don't count against keep limit
-        this.kept.push(d);
-        this.pendingExplosions.push({ type: d.type });
-      } else {
-        this.pool.push(d);
-      }
-    }
+    this.pool = expandRoll(roll);
   }
 
   _moveDie(id, dest) {
@@ -368,12 +357,15 @@ export class GFLRollerApp extends Application {
       }
     }
 
-    // Separate explosion results - they go to kept automatically, others to pool
+    // Auto-keep dice that came FROM explosions, put others in pool
     for (const d of next) {
-      if (d.explosive) {
-        d._counted = false; // Explosions don't count against keep limit
+      if (d._fromExplosion) {
+        d._counted = false; // Explosion bonus dice don't count against keep limit
         this.kept.push(d);
-        this.pendingExplosions.push({ type: d.type });
+        // If this die is also explosive, add to pending explosions
+        if (d.explosive) {
+          this.pendingExplosions.push({ type: d.type });
+        }
       } else {
         this.pool.push(d);
       }
