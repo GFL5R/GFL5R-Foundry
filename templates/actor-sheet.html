@@ -232,29 +232,6 @@
                 </div>
               {{/if}}
             {{/each}}
-            
-            <!-- General Abilities (not in disciplines) -->
-            <div class="gfl-drop-zone" data-drop-target="abilities" title="Drag & drop ability Items here">
-              <div class="gfl-drop-zone__hint">Drop general abilities here</div>
-            </div>
-      
-            <div class="gfl-ability-list">
-              {{#if abilities.length}}
-                {{#each abilities as |ab|}}
-                  <div class="gfl-ability-row" data-item-id="{{ab.id}}">
-                    <img src="{{ab.img}}" alt="" />
-                    <div class="gfl-ability-meta">
-                      <div class="gfl-ability-name">{{ab.name}}</div>
-                    </div>
-                    <a class="gfl-ability-delete" data-item-id="{{ab.id}}" title="Remove ability">
-                      <i class="fas fa-trash"></i>
-                    </a>
-                  </div>
-                {{/each}}
-              {{else}}
-                <div class="gfl-ability-empty">No general abilities yet.</div>
-              {{/if}}
-            </div>
           </div>
         </aside>
 
