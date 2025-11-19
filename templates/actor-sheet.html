@@ -392,9 +392,8 @@
                 <div class="gfl-ability-meta">
                   <div class="gfl-ability-name">{{module.name}}</div>
                   <div style="font-size:0.85em; color:var(--gfl-text-dim);">
-                    {{#if module.system.type}}{{module.system.type}}{{/if}}
-                    {{#if module.system.slots}} • Slots: {{module.system.slots}}{{/if}}
-                    {{#if module.system.rarity}} • {{module.system.rarity}}{{/if}}
+                    {{#if module.system.points}}Points: {{module.system.points}}{{/if}}
+                    {{#if module.system.sardisGold}} • Sardis Gold: {{module.system.sardisGold}}¤{{/if}}
                   </div>
                 </div>
                 <a class="gfl-item-edit" data-item-id="{{module.id}}" title="Edit module" style="color:var(--gfl-text-dim); cursor:pointer; padding:4px;">
