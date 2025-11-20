@@ -70,20 +70,26 @@ Hooks.on("renderCombatTracker", (app, html, data) => {
     });
   }
   
-  // Override initiative roll buttons - use event delegation to capture clicks before Foundry
-  $html.off("click.gfl5r", 'a[data-control="rollInitiative"]');
-  $html.on("click.gfl5r", 'a[data-control="rollInitiative"]', async function(event) {
+  // Override initiative roll buttons - L5R pattern
+  // Remove default Foundry handler first
+  $html.find('.combatant a[data-control="rollInitiative"]').off('click');
+  
+  // Add custom handler
+  $html.find('.combatant a[data-control="rollInitiative"]').on('click', async function(event) {
     event.preventDefault();
     event.stopPropagation();
     event.stopImmediatePropagation();
     
-    const li = $(this).closest(".combatant");
-    const combatantId = li.data("combatant-id");
+    const li = $(this).closest('.combatant');
+    const combatantId = li.data('combatant-id');
     const combatant = combat?.combatants?.get(combatantId);
-    if (!combatant?.actor) return;
+    
+    if (!combatant?.actor) return false;
     
     // Get combat type from combat flags
     const combatType = combat.getFlag("gfl5r", "combatType") || "skirmish";
+    
+    // Call actor's custom rollInitiative
     await combatant.actor.rollInitiative({ combatType });
     
     return false;
