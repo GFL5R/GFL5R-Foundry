@@ -45,31 +45,18 @@ export class GFL5RHooks {
             html.find(".combat-tracker-header").append(tpl);
         }
 
-        // Buttons Listeners
-        html.find(".encounter-control").on("click", (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            const encounter = $(event.currentTarget).data("id");
+        // Dropdown Listeners
+        html.find("#encounter-type-select").on("change", (event) => {
+            const encounter = $(event.currentTarget).val();
             if (!encounterTypeList.includes(encounter)) {
                 return;
             }
             game.settings.set("gfl5r", "initiative-encounter", encounter);
         });
 
-        html.find(".prepared-control").on("mousedown", (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            const preparedId = $(event.currentTarget).data("id");
-            if (!Object.hasOwnProperty.call(prepared, preparedId)) {
-                return;
-            }
-            const rev = event.which === 3;
-            const nextValue = {
-                false: rev ? "true" : "actor",
-                true: rev ? "actor" : "false",
-                actor: rev ? "false" : "true",
-            };
-            game.settings.set("gfl5r", `initiative-prepared-${preparedId}`, nextValue[prepared[preparedId]]);
+        html.find("#prepared-select").on("change", (event) => {
+            const preparedValue = $(event.currentTarget).val();
+            game.settings.set("gfl5r", "initiative-prepared-character", preparedValue);
         });
     }
 }
