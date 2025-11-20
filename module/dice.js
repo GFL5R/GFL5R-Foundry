@@ -112,6 +112,8 @@ export class GFLRollerApp extends Application {
    * - approachName: string
    * - tn: number|null (null if hidden)
    * - hiddenTN: boolean
+   * - initiativeCombatantId: string (optional, for initiative rolls)
+   * - baseInitiative: number (optional, base initiative value for initiative rolls)
    */
   constructor(opts) {
     super(opts);
@@ -122,6 +124,8 @@ export class GFLRollerApp extends Application {
     this.approachName = opts.approachName ?? "";
     this.tn = opts.tn;
     this.hiddenTN = !!opts.hiddenTN;
+    this.initiativeCombatantId = opts.initiativeCombatantId;
+    this.baseInitiative = opts.baseInitiative ?? 0;
 
     // State
     this.keepLimit = this.approach;
@@ -381,6 +385,20 @@ export class GFLRollerApp extends Application {
     const s = this.tally.s;
     const o = this.tally.o;
     const r = this.tally.r;
+
+    // Handle initiative rolls
+    if (this.initiativeCombatantId) {
+      const combatant = game.combat.combatants.get(this.initiativeCombatantId);
+      if (combatant) {
+        // For initiative, add successes only if the roll meets the TN
+        const meetsTN = this.hiddenTN || s >= (this.tn ?? 0);
+        const initiativeBonus = meetsTN ? s : 0;
+        const finalInitiative = this.baseInitiative + initiativeBonus;
+        
+        // Update combatant initiative
+        await combatant.update({ initiative: finalInitiative });
+      }
+    }
 
     const tnText = this.hiddenTN ? "(Hidden TN)" : `TN ${this.tn ?? 0}`;
     const pass = this.hiddenTN ? null : (s >= (this.tn ?? 0));

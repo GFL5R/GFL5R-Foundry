@@ -56,34 +56,42 @@ export class GFL5RCombat extends Combat {
 
             // Roll only for characters
             if (combatant.actor.type === "character") {
-                // DicePicker management
-                if (!formula && !combatant.initiative) {
-                    // For now, we'll skip the DicePicker and do a simple roll
-                    // This can be enhanced later with a proper dice picker
+                // Use the full dice roller for initiative
+                const { GFLRollerApp } = await import("./dice.js");
+                
+                // Get approach for initiative
+                const isPrepared = game.settings.get("gfl5r", `initiative-prepared-${combatant.actor.type}`) || "true";
+                let approachValue = 0;
+                let approachName = "";
+                
+                if (isPrepared === "true") {
+                    // Prepared: use precision (since focus = power + precision, but we need one approach)
+                    approachValue = actorSystem.approaches?.precision || 0;
+                    approachName = "Precision";
+                } else {
+                    // Unprepared: use swiftness (since vigilance = ceil((precision + swiftness) / 2))
+                    approachValue = actorSystem.approaches?.swiftness || 0;
+                    approachName = "Swiftness";
                 }
 
-                // Roll formula
-                const createFormula = [];
-                if (!formula) {
-                    // GFL5R uses d6 system, so we'll use 1d6 + approaches
-                    createFormula.push("1d6");
-                    const skillValue = actorSystem.skills?.[skillId] || 0;
-                    if (skillValue > 0) {
-                        createFormula.push(`${skillValue}`);
-                    }
-                }
-
-                // For now, use a simple roll system
-                const roll = new Roll(formula ?? createFormula.join("+"));
-                await roll.roll();
-
-                // If the character succeeded, add bonus successes
-                const successes = roll.total >= cfg.difficulty ? 1 + Math.max(roll.total - cfg.difficulty, 0) : 0;
-                initiative += successes;
-
-                // Create a simple chat message
-                const flavor = `Initiative Roll (${isPrepared === "true" ? "Prepared" : "Unprepared"})`;
-                await roll.toMessage({ flavor });
+                const app = new GFLRollerApp({
+                    actor: combatant.actor,
+                    skillKey: skillId,
+                    skillLabel: skillId.charAt(0).toUpperCase() + skillId.slice(1),
+                    approach: approachValue,
+                    approachName,
+                    tn: cfg.difficultyHidden ? null : cfg.difficulty,
+                    hiddenTN: cfg.difficultyHidden,
+                    initiativeCombatantId: combatant.id,
+                    baseInitiative: initiative
+                });
+                await app.start();
+                
+                // Don't update initiative here - it will be updated when the dice roller finishes
+                updatedCombatants.push({
+                    _id: combatant.id,
+                    initiative: initiative, // Base initiative only, successes added later
+                });
             }
 
             updatedCombatants.push({
