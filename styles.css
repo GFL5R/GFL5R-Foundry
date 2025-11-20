@@ -67,6 +67,23 @@
   padding: 12px 14px;
 }
 
+.gfl5r.gfl-roll-prompt select {
+  width: 100%;
+  background: var(--gfl-surface-2);
+  border: 1px solid var(--gfl-border);
+  border-radius: var(--gfl-radius-sm);
+  color: var(--gfl-text-white);
+  padding: 4px 6px;
+  box-shadow: var(--gfl-shadow);
+  font-size: 13px;
+}
+
+.gfl5r.gfl-roll-prompt select:focus-visible {
+  outline: none;
+  border-color: var(--gfl-accent);
+  box-shadow: 0 0 0 2px rgba(71, 209, 255, 0.35);
+}
+
 /* ----------------------------------------------------------------------------
    3. TYPOGRAPHY
    ---------------------------------------------------------------------------- */
@@ -561,11 +578,13 @@
 }
 
 .gfl5r #gfl5r_gm_combat_tracker_bar select {
-  background: var(--gfl-surface);
+  width: 100%;
+  background: var(--gfl-surface-2);
   border: 1px solid var(--gfl-border);
-  border-radius: var(--gfl-radius-xs);
+  border-radius: var(--gfl-radius-sm);
   color: var(--gfl-text-white);
-  padding: 4px 8px;
+  padding: 4px 6px;
+  box-shadow: var(--gfl-shadow);
   font-size: 12px;
   min-width: 120px;
   cursor: pointer;
@@ -574,7 +593,6 @@
 
 .gfl5r #gfl5r_gm_combat_tracker_bar select:hover {
   border-color: var(--gfl-accent);
-  box-shadow: 0 0 0 1px rgba(71, 209, 255, 0.25);
 }
 
 .gfl5r #gfl5r_gm_combat_tracker_bar select:focus {
