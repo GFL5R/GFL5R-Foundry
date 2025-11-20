@@ -3,105 +3,6 @@ console.log("GFL5R | actors.js loaded");
 
 import { GFL5R_CONFIG } from "./config.js";
 
-/**
- * Extended Actor document to handle initiative
- */
-export class GFL5RActor extends Actor {
-  /**
-   * Override to prevent default initiative formula evaluation
-   * GFL5R uses custom Roll-and-Keep system instead
-   */
-  _getInitiativeFormula() {
-    return null;  // Bypasses formula parser entirely
-  }
-
-  async rollInitiative({ combatType = null, approach = null, createCombatants = false, rerollInitiative = false, initiativeOptions = {} } = {}) {
-    // Get combat type from combat flags if not provided
-    if (!combatType && game.combat) {
-      combatType = game.combat.getFlag("gfl5r", "combatType") || "skirmish";
-    } else if (!combatType) {
-      combatType = "skirmish";
-    }
-    
-    // Store combat type on actor for reference
-    await this.setFlag("gfl5r", "combatType", combatType);
-    
-    if (!approach) {
-      // Show dialog to choose approach only
-      return this._promptInitiativeRoll(combatType);
-    }
-    
-    // Store approach choice
-    await this.setFlag("gfl5r", "initiativeApproach", approach);
-    
-    // Find the combatant for this actor
-    const combatant = game.combat?.combatants?.find(c => c.actorId === this.id);
-    
-    // Now roll using our custom dice system
-    const skillMap = {
-      intrigue: "insight",
-      duel: "centering",
-      skirmish: "tactics",
-      massBattle: "command"
-    };
-    
-    const skillKey = skillMap[combatType] || "tactics";
-    const skillLabel = skillKey.charAt(0).toUpperCase() + skillKey.slice(1);
-    const approachValue = this.system?.approaches?.[approach] || 0;
-    
-    // Import and use the roller
-    const { GFLRollerApp } = await import("./dice.js");
-    const app = new GFLRollerApp({
-      actor: this,
-      skillKey: skillKey,
-      skillLabel: `${skillLabel} (Initiative)`,
-      approach: approachValue,
-      approachName: approach,
-      tn: null,
-      hiddenTN: true,
-      isInitiative: true,
-      combatant: combatant  // Pass combatant reference
-    });
-    
-    await app.start();
-    return app;
-  }
-
-  async _promptInitiativeRoll(combatType) {
-    const approaches = this.system?.approaches || {};
-    const combatTypeLabels = {
-      intrigue: "Intrigue (Insight)",
-      duel: "Duel (Centering)",
-      skirmish: "Skirmish (Tactics)",
-      massBattle: "Mass Battle (Command)"
-    };
-    
-    const content = await renderTemplate(`systems/${game.system.id}/templates/roll-prompt.html`, {
-      approaches,
-      defaultTN: 0
-    });
-    
-    return new Dialog({
-      title: `Roll Initiative: ${combatTypeLabels[combatType]}`,
-      content,
-      buttons: {
-        roll: {
-          label: "Roll Initiative",
-          callback: async (dlg) => {
-            const form = dlg[0].querySelector("form");
-            const approachName = form.elements["approach"].value;
-            await this.rollInitiative({ combatType, approach: approachName });
-          }
-        },
-        cancel: { label: "Cancel" }
-      },
-      default: "roll"
-    }, {
-      classes: ["gfl5r", "gfl-roll-prompt"]
-    }).render(true);
-  }
-}
-
 export class GFL5RActorSheet extends ActorSheet {
   static get defaultOptions() {
     const opts = super.defaultOptions;
@@ -597,9 +498,6 @@ export class GFL5RActorSheet extends ActorSheet {
 }
 
 export function registerActorSheets() {
-  // Register custom Actor document
-  CONFIG.Actor.documentClass = GFL5RActor;
-  
   Actors.unregisterSheet("core", ActorSheet);
   Actors.registerSheet("gfl5r", GFL5RActorSheet, { makeDefault: true });
   
