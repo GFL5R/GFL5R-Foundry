@@ -8,13 +8,11 @@ import { GFL5R_CONFIG } from "./config.js";
  */
 export class GFL5RActor extends Actor {
   /**
-   * Get the initiative formula based on combat type stored in flags
-   * Returns a simple formula to prevent errors - actual rolling is handled by custom dialog
+   * Override to prevent default initiative formula evaluation
+   * GFL5R uses custom Roll-and-Keep system instead
    */
   _getInitiativeFormula() {
-    // Return a simple valid formula
-    // The actual initiative roll is handled through our custom rollInitiative method
-    return "1d20";
+    return null;  // Bypasses formula parser entirely
   }
 
   async rollInitiative({ combatType = null, approach = null, createCombatants = false, rerollInitiative = false, initiativeOptions = {} } = {}) {
@@ -35,6 +33,9 @@ export class GFL5RActor extends Actor {
     
     // Store approach choice
     await this.setFlag("gfl5r", "initiativeApproach", approach);
+    
+    // Find the combatant for this actor
+    const combatant = game.combat?.combatants?.find(c => c.actorId === this.id);
     
     // Now roll using our custom dice system
     const skillMap = {
@@ -58,7 +59,8 @@ export class GFL5RActor extends Actor {
       approachName: approach,
       tn: null,
       hiddenTN: true,
-      isInitiative: true
+      isInitiative: true,
+      combatant: combatant  // Pass combatant reference
     });
     
     await app.start();
