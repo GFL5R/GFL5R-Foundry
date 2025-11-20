@@ -139,13 +139,14 @@
           <!-- Combat Skills -->
           <div class="card">
             <h2>Combat Skills</h2>
-            <div class="grid" style="grid-template-columns: repeat(5, 1fr);">
+            <div class="grid" style="grid-template-columns: repeat(6, 1fr);">
               {{#each (object
                 "blades" "Blades"
                 "firearms" "Firearms"
                 "handToHand" "Hand-To-Hand"
                 "explosives" "Explosives"
-                "tactics" "Tactics") as |label key|}}
+                "tactics" "Tactics"
+                "exoticWeapons" "Exotic Weapons") as |label key|}}
                 <div class="form-group vertical" title="{{label}}">
                   <label class="gfl-skill-label" data-skill="{{key}}">{{label}}</label>
                   <input type="number" name="system.skills.{{key}}" value="{{lookup ../actor.system.skills key}}" min="0"/>
@@ -157,13 +158,14 @@
           <!-- Fieldcraft Skills -->
           <div class="card">
             <h2>Fieldcraft Skills</h2>
-            <div class="grid" style="grid-template-columns: repeat(5, 1fr);">
+            <div class="grid" style="grid-template-columns: repeat(6, 1fr);">
               {{#each (object
                 "athletics" "Athletics"
                 "stealth" "Stealth"
                 "survival" "Survival"
                 "centering" "Centering"
-                "insight" "Insight") as |label key|}}
+                "insight" "Insight"
+                "observation" "Observation") as |label key|}}
                 <div class="form-group vertical" title="{{label}}">
                   <label class="gfl-skill-label" data-skill="{{key}}">{{label}}</label>
                   <input type="number" name="system.skills.{{key}}" value="{{lookup ../actor.system.skills key}}" min="0"/>
@@ -175,13 +177,14 @@
           <!-- Technical Skills -->
           <div class="card">
             <h2>Technical Skills</h2>
-            <div class="grid" style="grid-template-columns: repeat(5, 1fr);">
+            <div class="grid" style="grid-template-columns: repeat(6, 1fr);">
               {{#each (object
                 "mechanics" "Mechanics"
                 "computers" "Computers"
                 "medicine" "Medicine"
                 "piloting" "Piloting"
-                "subterfuge" "Subterfuge") as |label key|}}
+                "subterfuge" "Subterfuge"
+                "science" "Science") as |label key|}}
                 <div class="form-group vertical" title="{{label}}">
                   <label class="gfl-skill-label" data-skill="{{key}}">{{label}}</label>
                   <input type="number" name="system.skills.{{key}}" value="{{lookup ../actor.system.skills key}}" min="0"/>
@@ -193,13 +196,14 @@
           <!-- Social & Cultural Skills -->
           <div class="card">
             <h2>Social & Cultural Skills</h2>
-            <div class="grid" style="grid-template-columns: repeat(5, 1fr);">
+            <div class="grid" style="grid-template-columns: repeat(6, 1fr);">
               {{#each (object
                 "command" "Command"
                 "negotiation" "Negotiation"
                 "deception" "Deception"
                 "performance" "Performance"
-                "culture" "Culture") as |label key|}}
+                "culture" "Culture"
+                "arts" "Arts") as |label key|}}
                 <div class="form-group vertical" title="{{label}}">
                   <label class="gfl-skill-label" data-skill="{{key}}">{{label}}</label>
                   <input type="number" name="system.skills.{{key}}" value="{{lookup ../actor.system.skills key}}" min="0"/>

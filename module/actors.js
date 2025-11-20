@@ -497,9 +497,108 @@ export class GFL5RActorSheet extends ActorSheet {
   }
 }
 
+export class GFL5RNPCSheet extends ActorSheet {
+  static get defaultOptions() {
+    const opts = super.defaultOptions;
+    return foundry.utils.mergeObject(opts, {
+      classes: ["gfl5r", "sheet", "actor", "npc"],
+      width: 700,
+      height: 600,
+      tabs: [{ navSelector: ".tabs", contentSelector: ".sheet-body", initial: "features" }]
+    });
+  }
+
+  get template() {
+    return `systems/${game.system.id}/templates/npc-sheet.html`;
+  }
+
+  async getData(options) {
+    console.log("GFL5R | NPC getData()");
+    const context = await super.getData(options);
+    const data = context.actor.system ?? {};
+
+    // Approaches
+    const power      = data.approaches?.power ?? 0;
+    const swiftness  = data.approaches?.swiftness ?? 0;
+    const resilience = data.approaches?.resilience ?? 0;
+    const precision  = data.approaches?.precision ?? 0;
+    const fortune    = data.approaches?.fortune ?? 0;
+
+    // Derived
+    const endurance = (power + resilience) * 2;
+    const composure = (resilience + swiftness) * 2;
+    const vigilance = Math.ceil((precision + swiftness) / 2);
+    const focus     = power + precision;
+
+    const fpMax     = fortune;
+    const fpCurrent = (data.resources?.fortunePoints ?? Math.floor(fpMax / 2));
+
+    context.derived = {
+      endurance, composure, vigilance, focus,
+      fortunePointsMax: fpMax,
+      fortunePointsCurrent: fpCurrent
+    };
+
+    // Expose simplified skills
+    context.skills = data.skills ?? {};
+
+    // Features - all items (abilities, weapons, armor, narrative items, etc.)
+    context.features = this.actor.items.map(i => ({
+      id: i.id,
+      name: i.name,
+      type: i.type,
+      img: i.img,
+      system: i.system ?? {}
+    }));
+
+    return context;
+  }
+
+  activateListeners(html) {
+    super.activateListeners(html);
+    console.log("GFL5R | NPC activateListeners()");
+
+    // Delete item
+    html.on("click", ".gfl-item-delete", ev => {
+      const id = ev.currentTarget?.dataset?.itemId;
+      if (!id) return;
+      return this.actor.deleteEmbeddedDocuments("Item", [id]);
+    });
+
+    // Edit item
+    html.on("click", ".gfl-item-edit", ev => {
+      const id = ev.currentTarget?.dataset?.itemId;
+      if (!id) return;
+      const item = this.actor.items.get(id);
+      if (item) item.sheet.render(true);
+    });
+  }
+
+  async _onDropItem(event, data) {
+    if (!this.actor.isOwner) return false;
+
+    // Get the item
+    let itemData = await Item.fromDropData(data);
+    if (!itemData) return false;
+
+    // Create on actor
+    await this.actor.createEmbeddedDocuments("Item", [itemData]);
+
+    // Subtle UI feedback
+    event.currentTarget.classList.add("gfl-drop-ok");
+    setTimeout(() => event.currentTarget.classList.remove("gfl-drop-ok"), 400);
+  }
+}
+
 export function registerActorSheets() {
   Actors.unregisterSheet("core", ActorSheet);
-  Actors.registerSheet("gfl5r", GFL5RActorSheet, { makeDefault: true });
+  Actors.registerSheet("gfl5r", GFL5RActorSheet, {
+    makeDefault: true,
+    types: ["character"]
+  });
+  Actors.registerSheet("gfl5r", GFL5RNPCSheet, {
+    types: ["npc"]
+  });
   
   // Register Handlebars helpers for discipline logic
   Handlebars.registerHelper('some', function(array, key) {

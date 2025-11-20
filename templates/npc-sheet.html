@@ -1,0 +1,145 @@
+<form class="gfl5r npc-sheet" autocomplete="off">
+
+  <!-- HEADER -->
+  <header class="sheet-header">
+    <div class="flexrow">
+      <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}"
+        style="width:80px; height:80px;" />
+
+      <div class="header-fields" style="flex:1;">
+        <h1>
+          <input name="name" type="text" value="{{actor.name}}" placeholder="NPC Name"/>
+        </h1>
+      </div>
+    </div>
+  </header>
+
+  <!-- APPROACHES + STATE -->
+  <section class="approach-state-wrapper" style="display:flex; gap:40px; margin-bottom:16px;">
+
+    <!-- LEFT: Approaches -->
+    <div class="approaches-section card" style="flex:1;">
+      <h2>Approaches</h2>
+      <div class="grid" style="grid-template-columns: 1fr;">
+        <div class="form-group vertical">
+          <label>Power</label>
+          <input type="number" name="system.approaches.power" value="{{actor.system.approaches.power}}" min="0"/>
+        </div>
+        <div class="form-group vertical">
+          <label>Swiftness</label>
+          <input type="number" name="system.approaches.swiftness" value="{{actor.system.approaches.swiftness}}" min="0"/>
+        </div>
+        <div class="form-group vertical">
+          <label>Resilience</label>
+          <input type="number" name="system.approaches.resilience" value="{{actor.system.approaches.resilience}}" min="0"/>
+        </div>
+        <div class="form-group vertical">
+          <label>Precision</label>
+          <input type="number" name="system.approaches.precision" value="{{actor.system.approaches.precision}}" min="0"/>
+        </div>
+        <div class="form-group vertical">
+          <label>Fortune</label>
+          <input type="number" name="system.approaches.fortune" value="{{actor.system.approaches.fortune}}" min="0"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: State -->
+    <div class="state-section card" style="flex:1;">
+      <h2 style="text-align:right;">State</h2>
+      <div class="grid" style="grid-template-columns: 1fr; justify-items:end;">
+
+        <div class="form-group">
+          <div class="flexrow" style="justify-content:flex-end;">
+            <label>Fatigue</label>
+            <input type="number" name="system.resources.fatigue" value="{{actor.system.resources.fatigue}}" min="0" style="width:70px; text-align:right;"/>
+            <span>/</span>
+            <label>Endurance</label>
+            <input type="text" value="{{derived.endurance}}" disabled style="width:70px; text-align:right;"/>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="flexrow" style="justify-content:flex-end;">
+            <label>Strife</label>
+            <input type="number" name="system.resources.strife" value="{{actor.system.resources.strife}}" min="0" style="width:70px; text-align:right;"/>
+            <span>/</span>
+            <label>Composure</label>
+            <input type="text" value="{{derived.composure}}" disabled style="width:70px; text-align:right;"/>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Vigilance</label>
+          <input type="text" value="{{derived.vigilance}}" disabled style="width:80px; text-align:right;"/>
+        </div>
+
+        <div class="form-group">
+          <label>Focus</label>
+          <input type="text" value="{{derived.focus}}" disabled style="width:80px; text-align:right;"/>
+        </div>
+
+        <div class="form-group">
+          <label>Fortune Points</label>
+          <div class="flexrow" style="justify-content:flex-end;">
+            <input type="number" name="system.resources.fortunePoints" value="{{actor.system.resources.fortunePoints}}" min="0" style="width:70px; text-align:right;"/>
+            <span>/</span>
+            <input type="text" value="{{derived.fortunePointsMax}}" disabled style="width:70px; text-align:right;"/>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </section>
+
+  <!-- SKILLS -->
+  <section class="skills-section card" style="margin-bottom:16px;">
+    <h2>Skills</h2>
+    <div class="grid" style="grid-template-columns: repeat(4, 1fr);">
+      <div class="form-group vertical">
+        <label>Combat</label>
+        <input type="number" name="system.skills.combat" value="{{actor.system.skills.combat}}" min="0"/>
+      </div>
+      <div class="form-group vertical">
+        <label>Fieldcraft</label>
+        <input type="number" name="system.skills.fieldcraft" value="{{actor.system.skills.fieldcraft}}" min="0"/>
+      </div>
+      <div class="form-group vertical">
+        <label>Technical</label>
+        <input type="number" name="system.skills.technical" value="{{actor.system.skills.technical}}" min="0"/>
+      </div>
+      <div class="form-group vertical">
+        <label>Social</label>
+        <input type="number" name="system.skills.social" value="{{actor.system.skills.social}}" min="0"/>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features-section card">
+    <h2>Features</h2>
+    <div class="gfl-item-list">
+      {{#each features}}
+        <div class="gfl-item flexrow" data-item-id="{{id}}">
+          <img src="{{img}}" class="gfl-item-icon" />
+          <div class="gfl-item-info">
+            <h4>{{name}}</h4>
+            <div class="gfl-item-type">{{capitalize type}}</div>
+          </div>
+          <div class="gfl-item-controls">
+            <a class="gfl-item-edit" data-item-id="{{id}}" title="Edit"><i class="fas fa-edit"></i></a>
+            <a class="gfl-item-delete" data-item-id="{{id}}" title="Delete"><i class="fas fa-trash"></i></a>
+          </div>
+        </div>
+      {{/each}}
+    </div>
+
+    <!-- Drop zone for new items -->
+    <div class="gfl-drop-zone" data-drop-zone="features">
+      <i class="fas fa-plus"></i>
+      <span>Drop items here to add to Features</span>
+    </div>
+  </section>
+
+</form>

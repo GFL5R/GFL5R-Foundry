@@ -2,7 +2,7 @@
   "id": "gfl5r",
   "title": "GFL5R",
   "description": "A shoddy attempt to port L5R's dice system and techniques to a near-future setting.",
-  "version": "0.1.16",
+  "version": "0.2.0",
   "compatibility": {
     "minimum": "12",
     "verified": "13"
@@ -14,7 +14,7 @@
   "gridUnits": "meter",
   "template": "template.json",
   "documentTypes": {
-    "Actor": ["character"],
+    "Actor": ["character", "npc"],
     "Item": ["ability", "weaponry", "armor", "narrative", "item", "generic"]
   },
   "url": "https://github.com/GFL5R/GFL5R-Foundry",

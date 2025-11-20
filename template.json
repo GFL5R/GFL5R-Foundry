@@ -1,6 +1,6 @@
 {
   "Actor": {
-    "types": ["character"],
+    "types": ["character", "npc"],
     "templates": {},
     "character": {
       "characterType": "human",
@@ -59,22 +59,48 @@
         "handToHand": 0,
         "explosives": 0,
         "tactics": 0,
+        "exoticWeapons": 0,
         "athletics": 0,
         "stealth": 0,
         "survival": 0,
         "centering": 0,
         "insight": 0,
+        "observation": 0,
         "mechanics": 0,
         "computers": 0,
         "medicine": 0,
         "piloting": 0,
         "subterfuge": 0,
+        "science": 0,
         "command": 0,
         "negotiation": 0,
         "deception": 0,
         "performance": 0,
-        "culture": 0
+        "culture": 0,
+        "arts": 0
       }
+    },
+    "npc": {
+      "characterType": "npc",
+      "approaches": {
+        "power": 1,
+        "swiftness": 1,
+        "resilience": 1,
+        "precision": 1,
+        "fortune": 1
+      },
+      "resources": {
+        "fatigue": 0,
+        "strife": 0,
+        "fortunePoints": 0
+      },
+      "skills": {
+        "combat": 0,
+        "fieldcraft": 0,
+        "technical": 0,
+        "social": 0
+      },
+      "features": []
     }
   },
   "Item": {
