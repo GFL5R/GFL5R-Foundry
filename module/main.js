@@ -21,6 +21,20 @@ Hooks.once("init", () => {
   registerDiceTerms();
 });
 
+// Intercept the combat rollInitiative to prevent default behavior
+Hooks.on("preCreateCombatant", async (combatant, data, options, userId) => {
+  // Don't set initiative on creation
+  combatant.updateSource({ initiative: null });
+});
+
+// Override Combat.rollInitiative to use our custom system
+Hooks.on("combatStart", async (combat, updateData) => {
+  // Set default combat type if not already set
+  if (!combat.getFlag("gfl5r", "combatType")) {
+    await combat.setFlag("gfl5r", "combatType", "skirmish");
+  }
+});
+
 // Intercept combat tracker rendering to add combat type selector
 Hooks.on("renderCombatTracker", (app, html, data) => {
   const combat = game.combat;
@@ -56,25 +70,23 @@ Hooks.on("renderCombatTracker", (app, html, data) => {
     });
   }
   
-  // Override initiative roll buttons
-  $html.find(".combatant").each((i, li) => {
-    const combatantId = li.dataset.combatantId;
+  // Override initiative roll buttons - use event delegation to capture clicks before Foundry
+  $html.off("click.gfl5r", 'a[data-control="rollInitiative"]');
+  $html.on("click.gfl5r", 'a[data-control="rollInitiative"]', async function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    
+    const li = $(this).closest(".combatant");
+    const combatantId = li.data("combatant-id");
     const combatant = combat?.combatants?.get(combatantId);
     if (!combatant?.actor) return;
     
-    // Find the initiative roll button
-    const rollBtn = li.querySelector('a[data-control="rollInitiative"]');
-    if (rollBtn) {
-      // Replace the click handler
-      rollBtn.onclick = async (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        
-        // Get combat type from combat flags
-        const combatType = combat.getFlag("gfl5r", "combatType") || "skirmish";
-        await combatant.actor.rollInitiative({ combatType });
-      };
-    }
+    // Get combat type from combat flags
+    const combatType = combat.getFlag("gfl5r", "combatType") || "skirmish";
+    await combatant.actor.rollInitiative({ combatType });
+    
+    return false;
   });
 });
 
