@@ -18,6 +18,8 @@ Hooks.once("init", () => {
     return s.charAt(0).toUpperCase() + s.slice(1);
   });
 
+  Handlebars.registerHelper("eq", (a, b) => a === b);
+
   // Register settings
   registerSettings();
 

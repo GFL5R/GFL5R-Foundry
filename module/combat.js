@@ -56,36 +56,67 @@ export class GFL5RCombat extends Combat {
 
             // Roll only for characters
             if (combatant.actor.type === "character") {
-                // Use the full dice roller for initiative
-                const { GFLRollerApp } = await import("./dice.js");
+                // For initiative, open roll prompt first to allow approach selection
+                const actorSystem = combatant.actor.system;
+                const approaches = actorSystem.approaches ?? {};
                 
-                // Get approach for initiative
+                // Pre-select approach based on prepared state
                 const isPrepared = game.settings.get("gfl5r", `initiative-prepared-${combatant.actor.type}`) || "true";
-                let approachValue = 0;
-                let approachName = "";
-                
-                if (isPrepared === "true") {
-                    // Prepared: use precision (since focus = power + precision, but we need one approach)
-                    approachValue = actorSystem.approaches?.precision || 0;
-                    approachName = "Precision";
-                } else {
-                    // Unprepared: use swiftness (since vigilance = ceil((precision + swiftness) / 2))
-                    approachValue = actorSystem.approaches?.swiftness || 0;
-                    approachName = "Swiftness";
+                let defaultApproach = "precision"; // default
+                if (isPrepared === "false") {
+                    defaultApproach = "swiftness";
                 }
 
-                const app = new GFLRollerApp({
-                    actor: combatant.actor,
-                    skillKey: skillId,
-                    skillLabel: skillId.charAt(0).toUpperCase() + skillId.slice(1),
-                    approach: approachValue,
-                    approachName,
-                    tn: cfg.difficultyHidden ? null : cfg.difficulty,
-                    hiddenTN: cfg.difficultyHidden,
-                    initiativeCombatantId: combatant.id,
-                    baseInitiative: initiative
+                // Render prompt
+                const content = await renderTemplate(`systems/${game.system.id}/templates/roll-prompt.html`, {
+                    approaches,
+                    defaultTN: cfg.difficulty,
+                    defaultApproach
                 });
-                await app.start();
+
+                // Wait for user input before proceeding
+                const rollPromise = new Promise((resolve) => {
+                    new Dialog({
+                        title: `Initiative Roll for ${combatant.name}`,
+                        content,
+                        buttons: {
+                            roll: {
+                                label: "Roll Initiative",
+                                callback: async (dlg) => {
+                                    const form = dlg[0].querySelector("form");
+                                    const approachName = form.elements["approach"].value;
+                                    const tnHidden = form.elements["hiddenTN"].checked;
+                                    const tnVal = Number(form.elements["tn"].value || cfg.difficulty);
+                                    const approachVal = Number(approaches[approachName] ?? 0);
+
+                                    const { GFLRollerApp } = await import("./dice.js");
+                                    const app = new GFLRollerApp({
+                                        actor: combatant.actor,
+                                        skillKey: skillId,
+                                        skillLabel: skillId.charAt(0).toUpperCase() + skillId.slice(1),
+                                        approach: approachVal,
+                                        approachName: approachName.charAt(0).toUpperCase() + approachName.slice(1),
+                                        tn: tnHidden ? null : tnVal,
+                                        hiddenTN: tnHidden,
+                                        initiativeCombatantId: combatant.id,
+                                        baseInitiative: initiative
+                                    });
+                                    await app.start();
+                                    resolve();
+                                }
+                            },
+                            cancel: { 
+                                label: "Cancel",
+                                callback: () => resolve()
+                            }
+                        },
+                        default: "roll"
+                    }, {
+                        classes: ["gfl5r", "gfl-roll-prompt"]
+                    }).render(true);
+                });
+
+                await rollPromise;
                 
                 // Don't update initiative here - it will be updated when the dice roller finishes
                 updatedCombatants.push({

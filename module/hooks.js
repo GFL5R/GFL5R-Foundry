@@ -4,7 +4,7 @@ console.log("GFL5R | hooks.js loaded");
 export class GFL5RHooks {
     static async renderCombatTracker(app, html, data) {
         // Display Combat bar (only for GMs)
-        await this._gmCombatBar(app, $(html), data);
+        await GFL5RHooks._gmCombatBar(app, $(html), data);
     }
 
     /**

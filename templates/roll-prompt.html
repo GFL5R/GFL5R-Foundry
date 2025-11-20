@@ -8,7 +8,7 @@
         <label>Approach</label>
         <select name="approach">
           {{#each approaches as |val key|}}
-            <option value="{{key}}">{{capitalize key}} ({{val}})</option>
+            <option value="{{key}}" {{#if (eq key @root.defaultApproach)}}selected{{/if}}>{{capitalize key}} ({{val}})</option>
           {{/each}}
         </select>
       </div>
