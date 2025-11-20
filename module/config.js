@@ -13,6 +13,14 @@ export const GFL5R_CONFIG = {
   // Maximum number of discipline slots
   maxDisciplineSlots: 5,
 
+  // Initiative skills for different encounter types
+  initiativeSkills: {
+    intrigue: "insight",
+    duel: "centering",
+    skirmish: "tactics",
+    mass_battle: "command",
+  },
+
   // Get total XP required to reach next rank (cumulative)
   getXPForNextRank(currentRank) {
     if (currentRank < 1) return this.disciplineXPPerRank[0];
