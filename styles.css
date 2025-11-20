@@ -557,6 +557,12 @@
   padding: var(--gfl-gap-xs);
   border-radius: var(--gfl-radius-xs);
   transition: all 0.2s ease;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  min-width: 32px;
+  text-align: center;
 }
 
 .gfl5r #gfl5r_gm_combat_tracker_bar li:hover {
@@ -566,11 +572,4 @@
 .gfl5r #gfl5r_gm_combat_tracker_bar .active {
   background: var(--gfl-accent);
   color: var(--gfl-text-dark);
-}
-
-.gfl5r #gfl5r_gm_combat_tracker_bar i {
-  font-size: 16px;
-  width: 16px;
-  height: 16px;
-  text-align: center;
 }

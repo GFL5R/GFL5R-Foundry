@@ -2,6 +2,7 @@ import { registerActorSheets } from "./actors.js";
 import { registerItemSheets } from "./items.js";
 import { GFL5RCombat } from "./combat.js";
 import { registerSettings } from "./settings.js";
+import { registerDiceTerms } from "./dice.js";
 import "./hooks.js";
 
 Hooks.once("init", () => {
