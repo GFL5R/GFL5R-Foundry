@@ -26,11 +26,14 @@ Hooks.on("renderCombatTracker", (app, html, data) => {
   const combat = game.combat;
   if (!combat) return;
   
+  // Ensure html is a jQuery object
+  const $html = html instanceof jQuery ? html : $(html);
+  
   // Get current combat type from combat flags
   const currentType = combat.getFlag("gfl5r", "combatType") || "skirmish";
   
   // Add combat type selector to header
-  const header = html.find("header.directory-header");
+  const header = $html.find("header.directory-header");
   if (header.length && !header.find(".gfl5r-combat-type").length) {
     const combatTypeSelector = `
       <div class="gfl5r-combat-type" style="padding: 4px 8px; background: rgba(0,0,0,0.2); border-bottom: 1px solid #000; display: flex; align-items: center; justify-content: space-between;">
@@ -46,7 +49,7 @@ Hooks.on("renderCombatTracker", (app, html, data) => {
     header.after(combatTypeSelector);
     
     // Add change handler
-    html.find(".gfl5r-combat-type select").on("change", async (event) => {
+    $html.find(".gfl5r-combat-type select").on("change", async (event) => {
       const newType = event.target.value;
       await combat.setFlag("gfl5r", "combatType", newType);
       ui.notifications?.info(`Combat type changed to ${event.target.options[event.target.selectedIndex].text}`);
@@ -54,7 +57,7 @@ Hooks.on("renderCombatTracker", (app, html, data) => {
   }
   
   // Override initiative roll buttons
-  html.find(".combatant").each((i, li) => {
+  $html.find(".combatant").each((i, li) => {
     const combatantId = li.dataset.combatantId;
     const combatant = combat?.combatants?.get(combatantId);
     if (!combatant?.actor) return;
