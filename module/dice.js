@@ -113,6 +113,7 @@ export class GFLRollerApp extends Application {
    * - tn: number|null (null if hidden)
    * - hiddenTN: boolean
    * - isInitiative: boolean (if this is an initiative roll)
+   * - combatant: Combatant (reference for initiative updates)
    */
   constructor(opts) {
     super(opts);
@@ -124,6 +125,7 @@ export class GFLRollerApp extends Application {
     this.tn = opts.tn;
     this.hiddenTN = !!opts.hiddenTN;
     this.isInitiative = !!opts.isInitiative;
+    this.combatant = opts.combatant;  // Store combatant reference
 
     // State
     this.keepLimit = this.approach;
@@ -407,17 +409,11 @@ export class GFLRollerApp extends Application {
       });
     }
 
-    // If this is an initiative roll, update the combat tracker
-    if (this.isInitiative) {
-      const combat = game.combat;
-      if (combat) {
-        const combatant = combat.combatants.find(c => c.actorId === this.actor.id);
-        if (combatant) {
-          // Use successes as the initiative value
-          await combat.setInitiative(combatant.id, s);
-          ui.notifications?.info(`Initiative set to ${s} for ${this.actor.name}`);
-        }
-      }
+    // If this is an initiative roll, update the combat tracker using combatant.update()
+    if (this.isInitiative && this.combatant) {
+      // Use combatant.update() directly like L5R does
+      await this.combatant.update({ initiative: s });
+      ui.notifications?.info(`Initiative set to ${s} for ${this.actor.name}`);
     }
 
     this.close();
