@@ -38,58 +38,6 @@
 }
 
 /* ----------------------------------------------------------------------------
-   1.5 COMBAT TRACKER INITIATIVE TYPE SELECTOR
-   ---------------------------------------------------------------------------- */
-.gfl5r-combat-type {
-  padding: 6px 10px;
-  background: rgba(0, 0, 0, 0.3);
-  border-bottom: 1px solid rgba(71, 209, 255, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.gfl5r-combat-type label {
-  margin: 0;
-  font-weight: bold;
-  color: var(--gfl-accent);
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  white-space: nowrap;
-}
-
-.gfl5r-combat-type select {
-  flex: 1;
-  margin: 0;
-  padding: 4px 8px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(71, 209, 255, 0.3);
-  border-radius: 4px;
-  color: var(--gfl-text-white);
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.gfl5r-combat-type select:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: var(--gfl-accent);
-}
-
-.gfl5r-combat-type select:focus {
-  outline: none;
-  border-color: var(--gfl-accent);
-  box-shadow: 0 0 6px rgba(71, 209, 255, 0.4);
-}
-
-.gfl5r-combat-type select option {
-  background: #1a1a1a;
-  color: #ffffff;
-}
-
-/* ----------------------------------------------------------------------------
    2. FROSTED GLASS BACKGROUND
    ---------------------------------------------------------------------------- */
 .gfl5r .window-content {
@@ -578,4 +526,51 @@
 .gfl5r .state-section span,
 .gfl5r .state-section label {
   color: var(--gfl-text-white) !important;
+}
+
+/* ----------------------------------------------------------------------------
+   15. COMBAT TRACKER BAR
+   ---------------------------------------------------------------------------- */
+.gfl5r #gfl5r_gm_combat_tracker_bar {
+  margin: 0;
+  padding: 0;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--gfl-border);
+  border-radius: var(--gfl-radius);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--gfl-gap);
+  padding: var(--gfl-gap);
+}
+
+.gfl5r #gfl5r_gm_combat_tracker_bar ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: var(--gfl-gap-xs);
+}
+
+.gfl5r #gfl5r_gm_combat_tracker_bar li {
+  cursor: pointer;
+  padding: var(--gfl-gap-xs);
+  border-radius: var(--gfl-radius-xs);
+  transition: all 0.2s ease;
+}
+
+.gfl5r #gfl5r_gm_combat_tracker_bar li:hover {
+  background: var(--gfl-surface);
+}
+
+.gfl5r #gfl5r_gm_combat_tracker_bar .active {
+  background: var(--gfl-accent);
+  color: var(--gfl-text-dark);
+}
+
+.gfl5r #gfl5r_gm_combat_tracker_bar i {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  text-align: center;
 }
