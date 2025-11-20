@@ -2,7 +2,7 @@
   "id": "gfl5r",
   "title": "GFL5R",
   "description": "A shoddy attempt to port L5R's dice system and techniques to a near-future setting.",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "compatibility": {
     "minimum": "12",
     "verified": "13"
@@ -20,5 +20,10 @@
   "url": "https://github.com/GFL5R/GFL5R-Foundry",
   "manifest": "https://raw.githubusercontent.com/GFL5R/GFL5R-Foundry/refs/heads/main/system.json",
   "download": "https://github.com/GFL5R/GFL5R-Foundry/archive/refs/heads/main.zip",
-  "license": "https://raw.githubusercontent.com/GFL5R/GFL5R-Foundry/refs/heads/main/LICENSE.md"
+  "license": "https://raw.githubusercontent.com/GFL5R/GFL5R-Foundry/refs/heads/main/LICENSE.md",
+  "initiative": "1d6 + @skills.tactics",
+  "grid": {
+    "distance": 1,
+    "units": "meter"
+  }
 }
