@@ -9,34 +9,12 @@ import { GFL5R_CONFIG } from "./config.js";
 export class GFL5RActor extends Actor {
   /**
    * Get the initiative formula based on combat type stored in flags
+   * Returns a simple formula to prevent errors - actual rolling is handled by custom dialog
    */
   _getInitiativeFormula() {
-    const combatType = this.getFlag("gfl5r", "combatType") || "skirmish";
-    const skillMap = {
-      intrigue: "insight",
-      duel: "centering",
-      skirmish: "tactics",
-      massBattle: "command"
-    };
-    
-    const skillKey = skillMap[combatType] || "tactics";
-    const skillValue = this.system?.skills?.[skillKey] || 0;
-    
-    // Return a formula that will trigger our custom roll
-    // We store the approach choice in the combat flag
-    const approach = this.getFlag("gfl5r", "initiativeApproach") || "power";
-    const approachValue = this.system?.approaches?.[approach] || 0;
-    
-    // Return formula as "XdY" format - we'll intercept and use our custom roller
-    const blacks = Math.max(0, approachValue);
-    const whites = Math.max(0, skillValue);
-    
-    // Store combat info for later retrieval
-    this.setFlag("gfl5r", "initiativeSkill", skillKey);
-    
-    // Return the total dice pool as a simple number for sorting
-    // We'll handle the actual roll through a dialog
-    return `1d20 + ${blacks + whites}`;
+    // Return a simple valid formula
+    // The actual initiative roll is handled through our custom rollInitiative method
+    return "1d20";
   }
 
   async rollInitiative({ combatType = null, approach = null, createCombatants = false, rerollInitiative = false, initiativeOptions = {} } = {}) {
