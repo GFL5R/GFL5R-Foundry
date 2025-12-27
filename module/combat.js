@@ -14,68 +14,40 @@ export class GFL5RCombat extends Combat {
      * @return {Promise<Combat>}        A promise which resolves to the updated Combat entity once updates are complete.
      */
     async rollInitiative(ids, { formula = null, updateTurn = true, messageOptions = {} } = {}) {
-        if (!Array.isArray(ids)) {
-            ids = [ids];
-        }
+        const targetIds = Array.isArray(ids) ? ids : [ids];
 
-        // Get global modifiers
         const cfg = {
             difficulty: game.settings.get("gfl5r", "initiative-difficulty-value") || 1,
             difficultyHidden: game.settings.get("gfl5r", "initiative-difficulty-hidden") || false,
         };
 
-        // Skill from DicePicker or global
-        const skillId = messageOptions.skillId
-            ? messageOptions.skillId
-            : GFL5R_CONFIG.initiativeSkills[game.settings.get("gfl5r", "initiative-encounter") || "skirmish"];
+        const encounter = game.settings.get("gfl5r", "initiative-encounter") || "skirmish";
+        const skillId = messageOptions.skillId || GFL5R_CONFIG.initiativeSkills[encounter];
 
-        // Get score for each combatant
-        const networkActors = [];
         const updatedCombatants = [];
-        for (const combatantId of ids) {
-            const combatant = game.combat.combatants.find((c) => c.id === combatantId);
-            if (!combatant || !combatant.actor) {
-                continue;
-            }
+        for (const combatantId of targetIds) {
+            const combatant = this.combatants.get(combatantId);
+            const actor = combatant?.actor;
+            if (!combatant || !actor) continue;
 
-            const actorSystem = combatant.actor.system;
+            const approaches = actor.system?.approaches ?? {};
+            const preparedSetting = game.settings.get("gfl5r", "initiative-prepared-character") || "true";
+            const prepared = preparedSetting === "true";
 
-            // A character's initiative value is based on their state of preparedness
-            // For GFL5R, we'll use focus (derived from power + precision) as base initiative
-            // If unprepared, use vigilance (derived from precision + swiftness)
-            const isPrepared = game.settings.get("gfl5r", `initiative-prepared-${combatant.actor.type}`) || "true";
-            let initiative = 0;
+            const baseInitiative = prepared
+                ? (approaches.power || 0) + (approaches.precision || 0)
+                : Math.ceil(((approaches.precision || 0) + (approaches.swiftness || 0)) / 2);
 
-            if (isPrepared === "true") {
-                // Prepared: use focus (power + precision)
-                initiative = (actorSystem.approaches?.power || 0) + (actorSystem.approaches?.precision || 0);
-            } else {
-                // Unprepared: use vigilance (ceil((precision + swiftness) / 2))
-                initiative = Math.ceil(((actorSystem.approaches?.precision || 0) + (actorSystem.approaches?.swiftness || 0)) / 2);
-            }
+            if (actor.type === "character") {
+                const defaultApproach = prepared ? "precision" : "swiftness";
 
-            // Roll only for characters
-            if (combatant.actor.type === "character") {
-                // For initiative, open roll prompt first to allow approach selection
-                const actorSystem = combatant.actor.system;
-                const approaches = actorSystem.approaches ?? {};
-                
-                // Pre-select approach based on prepared state
-                const isPrepared = game.settings.get("gfl5r", `initiative-prepared-${combatant.actor.type}`) || "true";
-                let defaultApproach = "precision"; // default
-                if (isPrepared === "false") {
-                    defaultApproach = "swiftness";
-                }
-
-                // Render prompt
                 const content = await renderTemplate(`systems/${game.system.id}/templates/roll-prompt.html`, {
                     approaches,
                     defaultTN: cfg.difficulty,
                     defaultApproach
                 });
 
-                // Wait for user input before proceeding
-                const rollPromise = new Promise((resolve) => {
+                await new Promise((resolve) => {
                     new Dialog({
                         title: `Initiative Roll for ${combatant.name}`,
                         content,
@@ -91,7 +63,7 @@ export class GFL5RCombat extends Combat {
 
                                     const { GFLRollerApp } = await import("./dice.js");
                                     const app = new GFLRollerApp({
-                                        actor: combatant.actor,
+                                        actor,
                                         skillKey: skillId,
                                         skillLabel: skillId.charAt(0).toUpperCase() + skillId.slice(1),
                                         approach: approachVal,
@@ -99,13 +71,13 @@ export class GFL5RCombat extends Combat {
                                         tn: tnHidden ? null : tnVal,
                                         hiddenTN: tnHidden,
                                         initiativeCombatantId: combatant.id,
-                                        baseInitiative: initiative
+                                        baseInitiative,
                                     });
                                     await app.start();
                                     resolve();
                                 }
                             },
-                            cancel: { 
+                            cancel: {
                                 label: "Cancel",
                                 callback: () => resolve()
                             }
@@ -115,23 +87,14 @@ export class GFL5RCombat extends Combat {
                         classes: ["gfl5r", "gfl-roll-prompt"]
                     }).render(true);
                 });
-
-                await rollPromise;
-                
-                // Don't update initiative here - it will be updated when the dice roller finishes
-                updatedCombatants.push({
-                    _id: combatant.id,
-                    initiative: initiative, // Base initiative only, successes added later
-                });
             }
 
             updatedCombatants.push({
                 _id: combatant.id,
-                initiative: initiative,
+                initiative: baseInitiative,
             });
         }
 
-        // Update all combatants at once
         await this.updateEmbeddedDocuments("Combatant", updatedCombatants);
         return this;
     }

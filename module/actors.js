@@ -2,6 +2,7 @@
 console.log("GFL5R | actors.js loaded");
 
 import { GFL5R_CONFIG } from "./config.js";
+import { computeDerivedStats } from "./utils/derived.js";
 
 export class GFL5RActorSheet extends ActorSheet {
   static get defaultOptions() {
@@ -23,27 +24,7 @@ export class GFL5RActorSheet extends ActorSheet {
     const context = await super.getData(options);
     const data = context.actor.system ?? {};
 
-    // Approaches
-    const power      = data.approaches?.power ?? 0;
-    const swiftness  = data.approaches?.swiftness ?? 0;
-    const resilience = data.approaches?.resilience ?? 0;
-    const precision  = data.approaches?.precision ?? 0;
-    const fortune    = data.approaches?.fortune ?? 0;
-
-    // Derived
-    const endurance = (power + resilience) * 2;
-    const composure = (resilience + swiftness) * 2;
-    const vigilance = Math.ceil((precision + swiftness) / 2);
-    const focus     = power + precision;
-
-    const fpMax     = fortune;
-    const fpCurrent = (data.resources?.fortunePoints ?? Math.floor(fpMax / 2));
-
-    context.derived = {
-      endurance, composure, vigilance, focus,
-      fortunePointsMax: fpMax,
-      fortunePointsCurrent: fpCurrent
-    };
+    context.derived = computeDerivedStats(data.approaches, data.resources);
 
     // Character type for modules visibility
     context.characterType = data.characterType ?? "human";
@@ -517,27 +498,7 @@ export class GFL5RNPCSheet extends ActorSheet {
     const context = await super.getData(options);
     const data = context.actor.system ?? {};
 
-    // Approaches
-    const power      = data.approaches?.power ?? 0;
-    const swiftness  = data.approaches?.swiftness ?? 0;
-    const resilience = data.approaches?.resilience ?? 0;
-    const precision  = data.approaches?.precision ?? 0;
-    const fortune    = data.approaches?.fortune ?? 0;
-
-    // Derived
-    const endurance = (power + resilience) * 2;
-    const composure = (resilience + swiftness) * 2;
-    const vigilance = Math.ceil((precision + swiftness) / 2);
-    const focus     = power + precision;
-
-    const fpMax     = fortune;
-    const fpCurrent = (data.resources?.fortunePoints ?? Math.floor(fpMax / 2));
-
-    context.derived = {
-      endurance, composure, vigilance, focus,
-      fortunePointsMax: fpMax,
-      fortunePointsCurrent: fpCurrent
-    };
+    context.derived = computeDerivedStats(data.approaches, data.resources);
 
     // Expose simplified skills
     context.skills = data.skills ?? {};
@@ -598,38 +559,5 @@ export function registerActorSheets() {
   });
   Actors.registerSheet("gfl5r", GFL5RNPCSheet, {
     types: ["npc"]
-  });
-  
-  // Register Handlebars helpers for discipline logic
-  Handlebars.registerHelper('some', function(array, key) {
-    if (!Array.isArray(array)) return false;
-    return array.some(item => item[key]);
-  });
-  
-  Handlebars.registerHelper('count', function(array, key) {
-    if (!Array.isArray(array)) return 0;
-    return array.filter(item => item[key]).length;
-  });
-  
-  Handlebars.registerHelper('lt', function(a, b) {
-    return a < b;
-  });
-  
-  Handlebars.registerHelper('eq', function(a, b) {
-    return a === b;
-  });
-  
-  Handlebars.registerHelper('add', function(a, b) {
-    return (a || 0) + (b || 0);
-  });
-  
-  Handlebars.registerHelper('getNextEmptySlot', function(slots) {
-    if (!Array.isArray(slots)) return 'slot1';
-    for (let slot of slots) {
-      if (!slot.discipline) {
-        return slot.slotKey;
-      }
-    }
-    return 'slot1';
   });
 }
