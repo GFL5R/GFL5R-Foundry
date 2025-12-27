@@ -2,7 +2,7 @@ export class GFL5RAbilitySheet extends ItemSheet {
   static get defaultOptions() {
     const opts = super.defaultOptions;
     return foundry.utils.mergeObject(opts, {
-      classes: ["gfl5r", "sheet", "item"],
+      classes: ["sheet", "item"],
       width: 600,
       height: 500
     });
@@ -14,7 +14,7 @@ export class GFL5RWeaponSheet extends ItemSheet {
   static get defaultOptions() {
     const opts = super.defaultOptions;
     return foundry.utils.mergeObject(opts, {
-      classes: ["gfl5r", "sheet", "item"],
+      classes: ["sheet", "item"],
       width: 600,
       height: 600
     });
@@ -26,7 +26,7 @@ export class GFL5RArmorSheet extends ItemSheet {
   static get defaultOptions() {
     const opts = super.defaultOptions;
     return foundry.utils.mergeObject(opts, {
-      classes: ["gfl5r", "sheet", "item"],
+      classes: ["sheet", "item"],
       width: 600,
       height: 500
     });
@@ -38,7 +38,7 @@ export class GFL5RNarrativeSheet extends ItemSheet {
   static get defaultOptions() {
     const opts = super.defaultOptions;
     return foundry.utils.mergeObject(opts, {
-      classes: ["gfl5r", "sheet", "item"],
+      classes: ["sheet", "item"],
       width: 600,
       height: 500
     });
@@ -50,7 +50,7 @@ export class GFL5RItemSheet extends ItemSheet {
   static get defaultOptions() {
     const opts = super.defaultOptions;
     return foundry.utils.mergeObject(opts, {
-      classes: ["gfl5r", "sheet", "item"],
+      classes: ["sheet", "item"],
       width: 600,
       height: 450
     });
@@ -62,7 +62,7 @@ export class GFL5RDisciplineSheet extends ItemSheet {
   static get defaultOptions() {
     const opts = super.defaultOptions;
     return foundry.utils.mergeObject(opts, {
-      classes: ["gfl5r", "sheet", "item"],
+      classes: ["sheet", "item"],
       width: 600,
       height: 600
     });
@@ -74,7 +74,7 @@ export class GFL5RModuleSheet extends ItemSheet {
   static get defaultOptions() {
     const opts = super.defaultOptions;
     return foundry.utils.mergeObject(opts, {
-      classes: ["gfl5r", "sheet", "item"],
+      classes: ["sheet", "item"],
       width: 600,
       height: 550
     });

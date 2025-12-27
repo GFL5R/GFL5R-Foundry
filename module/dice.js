@@ -95,7 +95,7 @@ function expandRoll(roll) {
 export class GFLRollerApp extends Application {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["gfl5r", "sheet", "gfl-roller"],
+      classes: ["sheet", "roller"],
       width: 620,
       height: "auto",
       template: `systems/${game.system.id}/templates/roller.html`,
@@ -162,9 +162,9 @@ export class GFLRollerApp extends Application {
 
     // Enable dragging on any existing dice
     const enableDrag = (root) => {
-      root.querySelectorAll(".gfl-die").forEach(node => {
+      root.querySelectorAll("[data-die-id]").forEach(node => {
         node.addEventListener("dragstart", ev => {
-          ev.dataTransfer.setData("text/plain", node.dataset.id);
+          ev.dataTransfer.setData("text/plain", node.dataset.dieId);
         });
       });
     };
@@ -181,15 +181,15 @@ export class GFLRollerApp extends Application {
         this._moveDie(id, dest);
       });
     };
-    makeDrop(".gfl-pool", "pool");
-    makeDrop(".gfl-keep", "kept");
-    makeDrop(".gfl-reroll", "reroll");
-    makeDrop(".gfl-discard", "discard");
+    makeDrop("[data-zone='pool']", "pool");
+    makeDrop("[data-zone='keep']", "kept");
+    makeDrop("[data-zone='reroll']", "reroll");
+    makeDrop("[data-zone='discard']", "discard");
 
     // Buttons
-    html.find(".gfl-continue").on("click", () => this._continue());
-    html.find(".gfl-finish").on("click", () => this._finish());
-    html.find(".gfl-cancel").on("click", () => this.close());
+    html.find("[data-action='continue-roll']").on("click", () => this._continue());
+    html.find("[data-action='finish-roll']").on("click", () => this._finish());
+    html.find("[data-action='cancel-roll']").on("click", () => this.close());
   }
 
   async start() {
@@ -265,31 +265,29 @@ export class GFLRollerApp extends Application {
     
     // Helper to render dice icons
     const renderDice = (dice, label) => {
-      if (dice.length === 0) return '';
+      if (dice.length === 0) return "";
       const icons = dice.map(d => {
-        const bonus = d._fromExplosion ? ' <span style="color: gold;">✨</span>' : "";
-        return `<img src="${d.icon}" alt="${d.label}" title="${d.label}${d._fromExplosion ? ' (Explosion Bonus)' : ''}" style="width: 32px; height: 32px; vertical-align: middle; margin: 2px;">${bonus}`;
-      }).join('');
-      return `<div style="margin: 8px 0;"><strong>${label}:</strong><br/>${icons}</div>`;
+        const bonus = d._fromExplosion ? "<span class=\"ms-1 text-warning\">✨</span>" : "";
+        return `<div class="d-inline-flex align-items-center border rounded p-1 me-1 mb-1" title="${d.label}${d._fromExplosion ? ' (Explosion Bonus)' : ''}" data-die-id="${d.id}"><img src="${d.icon}" alt="${d.label}" style="width:32px;height:32px;">${bonus}</div>`;
+      }).join("");
+      return `<div class="mb-2"><strong>${label}:</strong><div class="d-flex flex-wrap mt-1">${icons}</div></div>`;
     };
 
     return `
-      <div class="gfl-roll-card" style="padding: 10px; border: 1px solid #999; border-radius: 5px; background: rgba(0,0,0,0.1);">
-        <div class="gfl-roll-header" style="margin-bottom: 8px;">
-          <strong>${this.actor.name}</strong> rolls <em>${this.skillLabel}</em> with <em>${this.approachName}</em> — ${tnText}
-        </div>
-        <div class="gfl-roll-step" style="margin-bottom: 8px; font-style: italic;">
-          <strong>Step ${this.stepNumber}</strong> | Keep Limit: ${this.keepLimit} (${this.kept.filter(d => d._counted).length} used)
-        </div>
-        ${renderDice(this.pool, "🎲 Pool")}
-        ${renderDice(this.kept, "✅ Kept")}
-        ${renderDice(this.toReroll, "🔄 To Reroll")}
-        ${renderDice(this.discarded, "❌ Discarded")}
-        ${this.pendingExplosions.length > 0 ? `<div style="margin: 8px 0;"><strong>💥 Pending Explosions:</strong> ${this.pendingExplosions.length}</div>` : ''}
-        <div class="gfl-roll-summary" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #666;">
-          <div><b>Current Successes:</b> ${this.tally.s}</div>
-          <div><b>Current Opportunity:</b> ${this.tally.o}</div>
-          <div><b>Current Strife:</b> ${this.tally.r}</div>
+      <div class="card mb-2">
+        <div class="card-body">
+          <div class="fw-semibold mb-1">${this.actor.name} rolls <em>${this.skillLabel}</em> with <em>${this.approachName}</em> — ${tnText}</div>
+          <div class="text-muted mb-2"><strong>Step ${this.stepNumber}</strong> · Keep Limit: ${this.keepLimit} (${this.kept.filter(d => d._counted).length} used)</div>
+          ${renderDice(this.pool, "Pool")}
+          ${renderDice(this.kept, "Kept")}
+          ${renderDice(this.toReroll, "To Reroll")}
+          ${renderDice(this.discarded, "Discarded")}
+          ${this.pendingExplosions.length > 0 ? `<div class="mb-2"><strong>Pending Explosions:</strong> ${this.pendingExplosions.length}</div>` : ""}
+          <div class="border-top pt-2 mt-2 d-flex flex-column gap-1">
+            <div><strong>Current Successes:</strong> ${this.tally.s}</div>
+            <div><strong>Current Opportunity:</strong> ${this.tally.o}</div>
+            <div><strong>Current Strife:</strong> ${this.tally.r}</div>
+          </div>
         </div>
       </div>`;
   }
@@ -405,12 +403,12 @@ export class GFLRollerApp extends Application {
     const flavor = `<strong>${this.actor.name}</strong> rolls <em>${this.skillLabel}</em> with <em>${this.approachName}</em> — ${tnText}`;
 
     const html = `
-      <div class="gfl-roll-card">
-        <div class="gfl-roll-summary">
+      <div class="card">
+        <div class="card-body d-flex flex-column gap-1">
           <div><b>Final Successes:</b> ${s}</div>
           <div><b>Final Opportunity:</b> ${o}</div>
           <div><b>Final Strife:</b> ${r}</div>
-          ${pass === null ? "" : `<div><b>Result:</b> ${pass ? "✅ Success" : "❌ Fail"}</div>`}
+          ${pass === null ? "" : `<div><b>Result:</b> ${pass ? "Success" : "Fail"}</div>`}
         </div>
       </div>`;
 

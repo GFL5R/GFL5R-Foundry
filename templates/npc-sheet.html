@@ -1,144 +1,133 @@
-<form class="gfl5r npc-sheet" autocomplete="off">
+<form class="npc-sheet container-fluid py-3" autocomplete="off">
 
-  <!-- HEADER -->
-  <header class="sheet-header">
-    <div class="flexrow">
-      <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}"
-        style="width:80px; height:80px;" />
-
-      <div class="header-fields" style="flex:1;">
-        <h1>
-          <input name="name" type="text" value="{{actor.name}}" placeholder="NPC Name"/>
-        </h1>
+  <header class="mb-4">
+    <div class="row g-3 align-items-center">
+      <div class="col-auto">
+        <img class="img-thumbnail" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" style="width:96px; height:96px;" />
+      </div>
+      <div class="col">
+        <input class="form-control form-control-lg fw-bold" name="name" type="text" value="{{actor.name}}" placeholder="NPC Name"/>
       </div>
     </div>
   </header>
 
-  <!-- APPROACHES + STATE -->
-  <section class="approach-state-wrapper" style="display:flex; gap:40px; margin-bottom:16px;">
-
-    <!-- LEFT: Approaches -->
-    <div class="approaches-section card" style="flex:1;">
-      <h2>Approaches</h2>
-      <div class="grid" style="grid-template-columns: 1fr;">
-        <div class="form-group vertical">
-          <label>Power</label>
-          <input type="number" name="system.approaches.power" value="{{actor.system.approaches.power}}" min="0"/>
-        </div>
-        <div class="form-group vertical">
-          <label>Swiftness</label>
-          <input type="number" name="system.approaches.swiftness" value="{{actor.system.approaches.swiftness}}" min="0"/>
-        </div>
-        <div class="form-group vertical">
-          <label>Resilience</label>
-          <input type="number" name="system.approaches.resilience" value="{{actor.system.approaches.resilience}}" min="0"/>
-        </div>
-        <div class="form-group vertical">
-          <label>Precision</label>
-          <input type="number" name="system.approaches.precision" value="{{actor.system.approaches.precision}}" min="0"/>
-        </div>
-        <div class="form-group vertical">
-          <label>Fortune</label>
-          <input type="number" name="system.approaches.fortune" value="{{actor.system.approaches.fortune}}" min="0"/>
+  <section class="row g-4 mb-4">
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-header fw-semibold">Approaches</div>
+        <div class="card-body">
+          <div class="row g-2">
+            <div class="col-6 col-lg-4">
+              <label class="form-label">Power</label>
+              <input class="form-control form-control-sm" type="number" name="system.approaches.power" value="{{actor.system.approaches.power}}" min="0"/>
+            </div>
+            <div class="col-6 col-lg-4">
+              <label class="form-label">Swiftness</label>
+              <input class="form-control form-control-sm" type="number" name="system.approaches.swiftness" value="{{actor.system.approaches.swiftness}}" min="0"/>
+            </div>
+            <div class="col-6 col-lg-4">
+              <label class="form-label">Resilience</label>
+              <input class="form-control form-control-sm" type="number" name="system.approaches.resilience" value="{{actor.system.approaches.resilience}}" min="0"/>
+            </div>
+            <div class="col-6 col-lg-4">
+              <label class="form-label">Precision</label>
+              <input class="form-control form-control-sm" type="number" name="system.approaches.precision" value="{{actor.system.approaches.precision}}" min="0"/>
+            </div>
+            <div class="col-6 col-lg-4">
+              <label class="form-label">Fortune</label>
+              <input class="form-control form-control-sm" type="number" name="system.approaches.fortune" value="{{actor.system.approaches.fortune}}" min="0"/>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- RIGHT: State -->
-    <div class="state-section card" style="flex:1;">
-      <h2 style="text-align:right;">State</h2>
-      <div class="grid" style="grid-template-columns: 1fr; justify-items:end;">
-
-        <div class="form-group">
-          <div class="flexrow" style="justify-content:flex-end;">
-            <label>Fatigue</label>
-            <input type="number" name="system.resources.fatigue" value="{{actor.system.resources.fatigue}}" min="0" style="width:70px; text-align:right;"/>
-            <span>/</span>
-            <label>Endurance</label>
-            <input type="text" value="{{derived.endurance}}" disabled style="width:70px; text-align:right;"/>
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-header fw-semibold text-end">State</div>
+        <div class="card-body">
+          <div class="d-flex flex-column gap-2 align-items-end">
+            <div class="d-flex align-items-center gap-2">
+              <label class="form-label mb-0">Fatigue</label>
+              <input class="form-control form-control-sm text-end" type="number" name="system.resources.fatigue" value="{{actor.system.resources.fatigue}}" min="0" style="width:80px;"/>
+              <span>/</span>
+              <label class="form-label mb-0">Endurance</label>
+              <input class="form-control form-control-sm text-end" type="text" value="{{derived.endurance}}" disabled style="width:80px;"/>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <label class="form-label mb-0">Strife</label>
+              <input class="form-control form-control-sm text-end" type="number" name="system.resources.strife" value="{{actor.system.resources.strife}}" min="0" style="width:80px;"/>
+              <span>/</span>
+              <label class="form-label mb-0">Composure</label>
+              <input class="form-control form-control-sm text-end" type="text" value="{{derived.composure}}" disabled style="width:80px;"/>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <label class="form-label mb-0">Vigilance</label>
+              <input class="form-control form-control-sm text-end" type="text" value="{{derived.vigilance}}" disabled style="width:90px;"/>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <label class="form-label mb-0">Focus</label>
+              <input class="form-control form-control-sm text-end" type="text" value="{{derived.focus}}" disabled style="width:90px;"/>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <label class="form-label mb-0">Fortune Points</label>
+              <input class="form-control form-control-sm text-end" type="number" name="system.resources.fortunePoints" value="{{actor.system.resources.fortunePoints}}" min="0" style="width:80px;"/>
+              <span>/</span>
+              <input class="form-control form-control-sm text-end" type="text" value="{{derived.fortunePointsMax}}" disabled style="width:80px;"/>
+            </div>
           </div>
         </div>
-
-        <div class="form-group">
-          <div class="flexrow" style="justify-content:flex-end;">
-            <label>Strife</label>
-            <input type="number" name="system.resources.strife" value="{{actor.system.resources.strife}}" min="0" style="width:70px; text-align:right;"/>
-            <span>/</span>
-            <label>Composure</label>
-            <input type="text" value="{{derived.composure}}" disabled style="width:70px; text-align:right;"/>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>Vigilance</label>
-          <input type="text" value="{{derived.vigilance}}" disabled style="width:80px; text-align:right;"/>
-        </div>
-
-        <div class="form-group">
-          <label>Focus</label>
-          <input type="text" value="{{derived.focus}}" disabled style="width:80px; text-align:right;"/>
-        </div>
-
-        <div class="form-group">
-          <label>Fortune Points</label>
-          <div class="flexrow" style="justify-content:flex-end;">
-            <input type="number" name="system.resources.fortunePoints" value="{{actor.system.resources.fortunePoints}}" min="0" style="width:70px; text-align:right;"/>
-            <span>/</span>
-            <input type="text" value="{{derived.fortunePointsMax}}" disabled style="width:70px; text-align:right;"/>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-  </section>
-
-  <!-- SKILLS -->
-  <section class="skills-section card" style="margin-bottom:16px;">
-    <h2>Skills</h2>
-    <div class="grid" style="grid-template-columns: repeat(4, 1fr);">
-      <div class="form-group vertical">
-        <label>Combat</label>
-        <input type="number" name="system.skills.combat" value="{{actor.system.skills.combat}}" min="0"/>
-      </div>
-      <div class="form-group vertical">
-        <label>Fieldcraft</label>
-        <input type="number" name="system.skills.fieldcraft" value="{{actor.system.skills.fieldcraft}}" min="0"/>
-      </div>
-      <div class="form-group vertical">
-        <label>Technical</label>
-        <input type="number" name="system.skills.technical" value="{{actor.system.skills.technical}}" min="0"/>
-      </div>
-      <div class="form-group vertical">
-        <label>Social</label>
-        <input type="number" name="system.skills.social" value="{{actor.system.skills.social}}" min="0"/>
       </div>
     </div>
   </section>
 
-  <!-- FEATURES -->
-  <section class="features-section card">
-    <h2>Features</h2>
-    <div class="gfl-item-list">
-      {{#each features}}
-        <div class="gfl-item flexrow" data-item-id="{{id}}">
-          <img src="{{img}}" class="gfl-item-icon" />
-          <div class="gfl-item-info">
-            <h4>{{name}}</h4>
-            <div class="gfl-item-type">{{capitalize type}}</div>
-          </div>
-          <div class="gfl-item-controls">
-            <a class="gfl-item-edit" data-item-id="{{id}}" title="Edit"><i class="fas fa-edit"></i></a>
-            <a class="gfl-item-delete" data-item-id="{{id}}" title="Delete"><i class="fas fa-trash"></i></a>
-          </div>
+  <section class="card mb-3">
+    <div class="card-header fw-semibold">Skills</div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-6 col-md-3">
+          <label class="form-label">Combat</label>
+          <input class="form-control" type="number" name="system.skills.combat" value="{{actor.system.skills.combat}}" min="0"/>
         </div>
-      {{/each}}
+        <div class="col-6 col-md-3">
+          <label class="form-label">Fieldcraft</label>
+          <input class="form-control" type="number" name="system.skills.fieldcraft" value="{{actor.system.skills.fieldcraft}}" min="0"/>
+        </div>
+        <div class="col-6 col-md-3">
+          <label class="form-label">Technical</label>
+          <input class="form-control" type="number" name="system.skills.technical" value="{{actor.system.skills.technical}}" min="0"/>
+        </div>
+        <div class="col-6 col-md-3">
+          <label class="form-label">Social</label>
+          <input class="form-control" type="number" name="system.skills.social" value="{{actor.system.skills.social}}" min="0"/>
+        </div>
+      </div>
     </div>
+  </section>
 
-    <!-- Drop zone for new items -->
-    <div class="gfl-drop-zone" data-drop-zone="features">
-      <i class="fas fa-plus"></i>
-      <span>Drop items here to add to Features</span>
+  <section class="card">
+    <div class="card-header fw-semibold">Features</div>
+    <div class="card-body">
+      <div class="list-group list-group-flush mb-3">
+        {{#each features}}
+          <div class="list-group-item d-flex align-items-center gap-2" data-item-id="{{id}}">
+            <img src="{{img}}" class="rounded" style="width:32px; height:32px;" />
+            <div class="flex-grow-1">
+              <div class="fw-semibold">{{name}}</div>
+              <div class="small text-muted text-capitalize">{{type}}</div>
+            </div>
+            <div class="btn-group btn-group-sm">
+              <button type="button" class="btn btn-outline-secondary" data-action="edit-item" data-item-id="{{id}}" title="Edit"><i class="fas fa-edit"></i></button>
+              <button type="button" class="btn btn-outline-danger" data-action="delete-item" data-item-id="{{id}}" title="Delete"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+
+      <div class="border border-secondary rounded p-3 text-center bg-light" data-drop-zone="features">
+        <i class="fas fa-plus"></i>
+        <span class="fw-semibold ms-2">Drop items here to add to Features</span>
+      </div>
     </div>
   </section>
 

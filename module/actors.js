@@ -8,7 +8,7 @@ export class GFL5RActorSheet extends ActorSheet {
   static get defaultOptions() {
     const opts = super.defaultOptions;
     return foundry.utils.mergeObject(opts, {
-      classes: ["gfl5r", "sheet", "actor"],
+      classes: ["sheet", "actor"],
       width: 860,
       height: 700,
       tabs: [{ navSelector: ".tabs", contentSelector: ".sheet-body", initial: "skills" }]
@@ -25,6 +25,12 @@ export class GFL5RActorSheet extends ActorSheet {
     const data = context.actor.system ?? {};
 
     context.derived = computeDerivedStats(data.approaches, data.resources);
+
+    const preparedDefaultSetting = game.settings.get("gfl5r", "initiative-prepared-character") || "true";
+    const preparedFlag = data.prepared;
+    context.preparedState = typeof preparedFlag === "boolean"
+      ? preparedFlag
+      : (preparedFlag === "true" ? true : (preparedFlag === "false" ? false : preparedDefaultSetting === "true"));
 
     // Character type for modules visibility
     context.characterType = data.characterType ?? "human";
@@ -173,14 +179,14 @@ export class GFL5RActorSheet extends ActorSheet {
     console.log("GFL5R | activateListeners()");
 
     // Delete item (works for abilities and any other items)
-    html.on("click", ".gfl-ability-delete", ev => {
+    html.on("click", "[data-action='delete-item']", ev => {
       const id = ev.currentTarget?.dataset?.itemId;
       if (!id) return;
       return this.actor.deleteEmbeddedDocuments("Item", [id]);
     });
 
     // Edit item
-    html.on("click", ".gfl-item-edit", ev => {
+    html.on("click", "[data-action='edit-item']", ev => {
       const id = ev.currentTarget?.dataset?.itemId;
       if (!id) return;
       const item = this.actor.items.get(id);
@@ -188,7 +194,7 @@ export class GFL5RActorSheet extends ActorSheet {
     });
 
     // Remove discipline from slot
-    html.on("click", ".gfl-discipline-remove", async ev => {
+    html.on("click", "[data-action='remove-discipline']", async ev => {
       const slotKey = ev.currentTarget?.dataset?.slotKey;
       if (!slotKey) return;
       
@@ -229,7 +235,7 @@ export class GFL5RActorSheet extends ActorSheet {
     });
 
     // Update discipline XP
-    html.on("change", ".gfl-discipline-xp", async ev => {
+    html.on("change", "[data-action='discipline-xp']", async ev => {
       const slotKey = ev.currentTarget?.dataset?.slotKey;
       const xp = Number(ev.currentTarget.value) || 0;
       if (!slotKey) return;
@@ -243,7 +249,7 @@ export class GFL5RActorSheet extends ActorSheet {
     });
 
     // Update discipline rank
-    html.on("change", ".gfl-discipline-rank", async ev => {
+    html.on("change", "[data-action='discipline-rank']", async ev => {
       const slotKey = ev.currentTarget?.dataset?.slotKey;
       const rank = Number(ev.currentTarget.value) || 1;
       if (!slotKey) return;
@@ -256,7 +262,7 @@ export class GFL5RActorSheet extends ActorSheet {
     });
 
     // Remove ability from discipline
-    html.on("click", ".gfl-discipline-ability-remove", async ev => {
+    html.on("click", "[data-action='remove-discipline-ability']", async ev => {
       const slotKey = ev.currentTarget?.dataset?.slotKey;
       const abilityId = ev.currentTarget?.dataset?.abilityId;
       if (!slotKey || !abilityId) return;
@@ -275,7 +281,7 @@ export class GFL5RActorSheet extends ActorSheet {
     });
 
     // Click skill NAME (label) to roll
-    html.on("click", ".gfl-skill-label", async ev => {
+    html.on("click", "[data-action='roll-skill']", async ev => {
       const labelEl = ev.currentTarget;
       const key = labelEl.dataset.skill;            // e.g. "blades"
       const skillLabel = labelEl.textContent.trim();
@@ -313,7 +319,7 @@ export class GFL5RActorSheet extends ActorSheet {
               });
               await app.start();
             }
-          },
+            classes: ["sheet"]
           cancel: { label: "Cancel" }
         },
         default: "roll"
@@ -327,6 +333,11 @@ export class GFL5RActorSheet extends ActorSheet {
   /** Accept dropped Items (from compendia or sidebar) into the drop zones */
   async _onDrop(event) {
     const data = TextEditor.getDragEventData(event);
+    const flashDropTarget = (el) => {
+      if (!el) return;
+      el.classList.add("border", "border-success", "bg-success-subtle");
+      setTimeout(() => el.classList.remove("border-success", "bg-success-subtle"), 400);
+    };
 
     // Check which drop zone was targeted
     const dropAbilities = event.target?.closest?.("[data-drop-target='abilities']");
@@ -408,8 +419,7 @@ export class GFL5RActorSheet extends ActorSheet {
       disciplines[slotKey].abilities = []; // Reset abilities list
       await this.actor.update({ "system.disciplines": disciplines });
       
-      dropTarget.classList.add("gfl-drop-ok");
-      setTimeout(() => dropTarget.classList.remove("gfl-drop-ok"), 400);
+      flashDropTarget(dropTarget);
       return;
     }
 
@@ -436,8 +446,7 @@ export class GFL5RActorSheet extends ActorSheet {
       
       await this.actor.update({ "system.disciplines": disciplines });
       
-      dropTarget.classList.add("gfl-drop-ok");
-      setTimeout(() => dropTarget.classList.remove("gfl-drop-ok"), 400);
+      flashDropTarget(dropTarget);
       return;
     }
 
@@ -473,8 +482,7 @@ export class GFL5RActorSheet extends ActorSheet {
     await this.actor.createEmbeddedDocuments("Item", [itemData]);
 
     // Subtle UI feedback
-    dropTarget.classList.add("gfl-drop-ok");
-    setTimeout(() => dropTarget.classList.remove("gfl-drop-ok"), 400);
+    flashDropTarget(dropTarget);
   }
 }
 
@@ -482,7 +490,7 @@ export class GFL5RNPCSheet extends ActorSheet {
   static get defaultOptions() {
     const opts = super.defaultOptions;
     return foundry.utils.mergeObject(opts, {
-      classes: ["gfl5r", "sheet", "actor", "npc"],
+      classes: ["sheet", "actor", "npc"],
       width: 700,
       height: 600,
       tabs: [{ navSelector: ".tabs", contentSelector: ".sheet-body", initial: "features" }]
@@ -520,14 +528,14 @@ export class GFL5RNPCSheet extends ActorSheet {
     console.log("GFL5R | NPC activateListeners()");
 
     // Delete item
-    html.on("click", ".gfl-item-delete", ev => {
+    html.on("click", "[data-action='delete-item']", ev => {
       const id = ev.currentTarget?.dataset?.itemId;
       if (!id) return;
       return this.actor.deleteEmbeddedDocuments("Item", [id]);
     });
 
     // Edit item
-    html.on("click", ".gfl-item-edit", ev => {
+    html.on("click", "[data-action='edit-item']", ev => {
       const id = ev.currentTarget?.dataset?.itemId;
       if (!id) return;
       const item = this.actor.items.get(id);
@@ -546,8 +554,8 @@ export class GFL5RNPCSheet extends ActorSheet {
     await this.actor.createEmbeddedDocuments("Item", [itemData]);
 
     // Subtle UI feedback
-    event.currentTarget.classList.add("gfl-drop-ok");
-    setTimeout(() => event.currentTarget.classList.remove("gfl-drop-ok"), 400);
+    event.currentTarget.classList.add("border", "border-success", "bg-success-subtle");
+    setTimeout(() => event.currentTarget.classList.remove("border-success", "bg-success-subtle"), 400);
   }
 }
 

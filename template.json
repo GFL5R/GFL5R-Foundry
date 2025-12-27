@@ -19,6 +19,7 @@
       "humanity": 0,
       "fame": 0,
       "posture": "power",
+      "prepared": true,
       "backstory": "",
       "notes": "",
       "disciplines": {
@@ -94,6 +95,7 @@
         "strife": 0,
         "fortunePoints": 0
       },
+      "prepared": true,
       "skills": {
         "combat": 0,
         "fieldcraft": 0,

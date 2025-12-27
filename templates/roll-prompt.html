@@ -1,33 +1,24 @@
-<form class="gfl5r gfl-roll-prompt">
-  
+<form class="container-fluid py-2">
   <div class="card">
-    <div class="grid" style="grid-template-columns: 1fr 1fr;">
-      
-      <!-- Approach selector -->
-      <div class="form-group">
-        <label>Approach</label>
-        <select name="approach">
-          {{#each approaches as |val key|}}
-            <option value="{{key}}" {{#if (eq key @root.defaultApproach)}}selected{{/if}}>{{capitalize key}} ({{val}})</option>
-          {{/each}}
-        </select>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label" for="roll-approach">Approach</label>
+          <select id="roll-approach" name="approach" class="form-select">
+            {{#each approaches as |val key|}}
+              <option value="{{key}}" {{#if (eq key @root.defaultApproach)}}selected{{/if}}>{{capitalize key}} ({{val}})</option>
+            {{/each}}
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="roll-tn">TN</label>
+          <input id="roll-tn" class="form-control" type="number" name="tn" value="{{defaultTN}}" min="0" />
+        </div>
       </div>
-
-      <!-- Target Number input -->
-      <div class="form-group">
-        <label>TN</label>
-        <input type="number" name="tn" value="{{defaultTN}}" min="0"/>
+      <div class="form-check mt-3">
+        <input class="form-check-input" type="checkbox" name="hiddenTN" id="roll-hidden-tn" />
+        <label class="form-check-label" for="roll-hidden-tn">Hide TN (+1 Fortune)</label>
       </div>
-
-    </div>
-
-    <!-- Hidden TN checkbox -->
-    <div class="form-group" style="margin-top: 12px;">
-      <label style="display:flex; gap:8px; align-items:center;">
-        <input type="checkbox" name="hiddenTN" />
-        <span>Hide TN (+1 Fortune)</span>
-      </label>
     </div>
   </div>
-
 </form>

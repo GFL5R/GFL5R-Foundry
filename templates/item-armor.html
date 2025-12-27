@@ -1,56 +1,49 @@
-<form class="gfl5r item-sheet" autocomplete="off">
-
-  <!-- HEADER -->
-  <header class="sheet-header">
-    <div class="flexrow">
-      <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}"
-        style="width:80px; height:80px;" />
-
-      <div class="header-fields" style="flex:1;">
-        <h1>
-          <input name="name" type="text" value="{{item.name}}" placeholder="Armor Name"/>
-        </h1>
-        
-        <div class="grid" style="grid-template-columns: repeat(2, 1fr);">
-          <div class="form-group">
-            <label>Class</label>
-            <input name="system.class" type="text" value="{{item.system.class}}" placeholder="e.g. Heavy Armor"/>
+<form class="item-sheet container-fluid py-3" autocomplete="off">
+  <header class="mb-4">
+    <div class="row g-3 align-items-center">
+      <div class="col-auto">
+        <img class="img-thumbnail" src="{{item.img}}" data-edit="img" title="{{item.name}}" style="width:96px; height:96px;" />
+      </div>
+      <div class="col">
+        <input class="form-control form-control-lg fw-bold" name="name" type="text" value="{{item.name}}" placeholder="Armor Name"/>
+        <div class="row g-3 mt-2">
+          <div class="col-md-6">
+            <label class="form-label">Class</label>
+            <input class="form-control" name="system.class" type="text" value="{{item.system.class}}" placeholder="e.g. Heavy Armor"/>
           </div>
-          <div class="form-group">
-            <label>Price</label>
-            <input type="number" name="system.price" value="{{item.system.price}}" min="0"/>
+          <div class="col-md-6">
+            <label class="form-label">Price</label>
+            <input class="form-control" type="number" name="system.price" value="{{item.system.price}}" min="0"/>
           </div>
         </div>
       </div>
     </div>
   </header>
 
-  <!-- BODY -->
-  <section class="sheet-body">
-    
-    <div class="card">
-      <h2>Armor Stats</h2>
-      <div class="grid" style="grid-template-columns: repeat(3, 1fr);">
-        <div class="form-group">
-          <label>Weight</label>
-          <input type="number" name="system.weight" value="{{item.system.weight}}" min="0"/>
+  <section class="card mb-3">
+    <div class="card-header fw-semibold">Armor Stats</div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label">Weight</label>
+          <input class="form-control" type="number" name="system.weight" value="{{item.system.weight}}" min="0"/>
         </div>
-        <div class="form-group">
-          <label>Protection</label>
-          <input type="number" name="system.protection" value="{{item.system.protection}}" min="0"/>
+        <div class="col-md-4">
+          <label class="form-label">Protection</label>
+          <input class="form-control" type="number" name="system.protection" value="{{item.system.protection}}" min="0"/>
         </div>
-        <div class="form-group">
-          <label>Concealment TN</label>
-          <input type="number" name="system.concealmentTN" value="{{item.system.concealmentTN}}" min="0"/>
+        <div class="col-md-4">
+          <label class="form-label">Concealment TN</label>
+          <input class="form-control" type="number" name="system.concealmentTN" value="{{item.system.concealmentTN}}" min="0"/>
         </div>
       </div>
     </div>
-
-    <div class="card">
-      <h2>Description</h2>
-      <textarea name="system.description" rows="10">{{item.system.description}}</textarea>
-    </div>
-
   </section>
 
+  <section class="card">
+    <div class="card-header fw-semibold">Description</div>
+    <div class="card-body">
+      <textarea class="form-control" name="system.description" rows="10">{{item.system.description}}</textarea>
+    </div>
+  </section>
 </form>

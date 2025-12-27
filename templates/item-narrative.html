@@ -1,17 +1,15 @@
-<form class="gfl5r item-sheet" autocomplete="off">
-  <!-- HEADER -->
-  <header class="sheet-header">
-    <div class="flexrow">
-      <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}"
-        style="width:80px; height:80px;" />
-      <div class="header-fields" style="flex:1;">
-        <h1>
-          <input name="name" type="text" value="{{item.name}}" placeholder="Narrative Element Name" />
-        </h1>
-        <div class="grid" style="grid-template-columns: repeat(2, 1fr);">
-          <div class="form-group">
-            <label>Approach</label>
-            <select name="system.approach">
+<form class="item-sheet container-fluid py-3" autocomplete="off">
+  <header class="mb-4">
+    <div class="row g-3 align-items-center">
+      <div class="col-auto">
+        <img class="img-thumbnail" src="{{item.img}}" data-edit="img" title="{{item.name}}" style="width:96px; height:96px;" />
+      </div>
+      <div class="col">
+        <input class="form-control form-control-lg fw-bold" name="name" type="text" value="{{item.name}}" placeholder="Narrative Element Name"/>
+        <div class="row g-3 mt-2">
+          <div class="col-md-6">
+            <label class="form-label">Approach</label>
+            <select class="form-select" name="system.approach">
               {{#select item.system.approach}}
                 <option value="power">Power</option>
                 <option value="swiftness">Swiftness</option>
@@ -21,9 +19,9 @@
               {{/select}}
             </select>
           </div>
-          <div class="form-group">
-            <label>Type</label>
-            <select name="system.narrativeType">
+          <div class="col-md-6">
+            <label class="form-label">Type</label>
+            <select class="form-select" name="system.narrativeType">
               {{#select item.system.narrativeType}}
                 <option value="distinction">Distinction</option>
                 <option value="passion">Passion</option>
@@ -33,18 +31,20 @@
             </select>
           </div>
         </div>
-        <div class="form-group">
-          <label>Tags</label>
-          <input type="text" name="system.tags" value="{{item.system.tags}}" placeholder="e.g., Military, Survivor, Haunted" />
+        <div class="row g-3 mt-2">
+          <div class="col">
+            <label class="form-label">Tags</label>
+            <input class="form-control" type="text" name="system.tags" value="{{item.system.tags}}" placeholder="e.g. Military, Survivor, Haunted"/>
+          </div>
         </div>
       </div>
     </div>
   </header>
-  <!-- BODY -->
-  <section class="sheet-body">
-    <div class="card">
-      <h2>Description</h2>
-      <textarea name="system.description" rows="10">{{item.system.description}}</textarea>
+
+  <section class="card">
+    <div class="card-header fw-semibold">Description</div>
+    <div class="card-body">
+      <textarea class="form-control" name="system.description" rows="12">{{item.system.description}}</textarea>
     </div>
   </section>
 </form>

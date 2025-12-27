@@ -1,9 +1,8 @@
-<section class="gfl5r gfl-roller">
+<section class="container-fluid py-3">
 
-  <!-- HEADER -->
-  <header class="card">
-    <div class="flexrow" style="justify-content:space-between;">
-      <div>
+  <header class="card mb-3">
+    <div class="card-body d-flex flex-wrap justify-content-between align-items-center gap-2">
+      <div class="fw-semibold">
         <strong>{{skillLabel}}</strong> via <em>{{approachName}}</em>
         {{#if hiddenTN}}
           · <span title="Hidden TN">Hidden TN</span>
@@ -12,71 +11,78 @@
         {{/if}}
         · Keep {{kept.length}} / {{keepLimit}}
       </div>
-      <div class="flexrow">
-        <button type="button" class="gfl-continue">Continue</button>
-        <button type="button" class="gfl-finish">Finish</button>
-        <button type="button" class="gfl-cancel">Cancel</button>
+      <div class="btn-group">
+        <button type="button" class="btn btn-primary" data-action="continue-roll">Continue</button>
+        <button type="button" class="btn btn-success" data-action="finish-roll">Finish</button>
+        <button type="button" class="btn btn-outline-secondary" data-action="cancel-roll">Cancel</button>
       </div>
     </div>
   </header>
 
-  <!-- MAIN POOL -->
-  <div class="card card-transparent">
-    <h2>Pool</h2>
-    <div class="flexrow">
-      {{#each pool as |d|}}
-        <div class="gfl-die type-{{d.type}} {{#if d._fromExplosion}}explosion{{/if}}" draggable="true" data-id="{{d.id}}" title="{{d.label}}">
-          <img class="gfl-die-face" src="{{d.icon}}" alt="{{d.label}}">
+  <div class="card mb-3">
+    <div class="card-body">
+      <h2 class="h6 mb-3">Pool</h2>
+      <div class="d-flex flex-wrap gap-2" data-zone="pool">
+        {{#each pool as |d|}}
+          <div class="border rounded p-1 bg-light" draggable="true" data-die-id="{{d.id}}" title="{{d.label}}">
+            <img src="{{d.icon}}" alt="{{d.label}}" style="width:36px; height:36px;" />
+            {{#if d._fromExplosion}}<span class="ms-1 text-warning">✨</span>{{/if}}
+          </div>
+        {{/each}}
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-md-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <h2 class="h6 mb-3">Keep</h2>
+          <div class="d-flex flex-wrap gap-2" data-zone="keep">
+            {{#each kept as |d|}}
+              <div class="border rounded p-1 bg-light" draggable="true" data-die-id="{{d.id}}" title="{{d.label}}">
+                <img src="{{d.icon}}" alt="{{d.label}}" style="width:36px; height:36px;" />
+                {{#if d._fromExplosion}}<span class="ms-1 text-warning">✨</span>{{/if}}
+              </div>
+            {{/each}}
+          </div>
         </div>
-      {{/each}}
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <h2 class="h6 mb-3">Reroll</h2>
+          <div class="d-flex flex-wrap gap-2" data-zone="reroll">
+            {{#each toReroll as |d|}}
+              <div class="border rounded p-1 bg-light" draggable="true" data-die-id="{{d.id}}" title="{{d.label}}">
+                <img src="{{d.icon}}" alt="{{d.label}}" style="width:36px; height:36px;" />
+                {{#if d._fromExplosion}}<span class="ms-1 text-warning">✨</span>{{/if}}
+              </div>
+            {{/each}}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <h2 class="h6 mb-3">Discard</h2>
+          <div class="d-flex flex-wrap gap-2" data-zone="discard">
+            {{#each discarded as |d|}}
+              <div class="border rounded p-1 bg-light" draggable="true" data-die-id="{{d.id}}" title="{{d.label}}">
+                <img src="{{d.icon}}" alt="{{d.label}}" style="width:36px; height:36px;" />
+                {{#if d._fromExplosion}}<span class="ms-1 text-warning">✨</span>{{/if}}
+              </div>
+            {{/each}}
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- KEEP / REROLL / DISCARD -->
-  <div class="grid" style="grid-template-columns: repeat(3, 1fr);">
-    
-    <!-- Keep -->
-    <div class="card card-transparent gfl-keep">
-      <h2>Keep</h2>
-      <div class="flexrow">
-        {{#each kept as |d|}}
-          <div class="gfl-die type-{{d.type}} {{#if d._fromExplosion}}explosion{{/if}}" draggable="true" data-id="{{d.id}}" title="{{d.label}}">
-            <img class="gfl-die-face" src="{{d.icon}}" alt="{{d.label}}">
-          </div>
-        {{/each}}
-      </div>
-    </div>
-
-    <!-- Reroll -->
-    <div class="card card-transparent gfl-reroll">
-      <h2>Reroll</h2>
-      <div class="flexrow">
-        {{#each toReroll as |d|}}
-          <div class="gfl-die type-{{d.type}} {{#if d._fromExplosion}}explosion{{/if}}" draggable="true" data-id="{{d.id}}" title="{{d.label}}">
-            <img class="gfl-die-face" src="{{d.icon}}" alt="{{d.label}}">
-          </div>
-        {{/each}}
-      </div>
-    </div>
-
-    <!-- Discard -->
-    <div class="card card-transparent gfl-discard">
-      <h2>Discard</h2>
-      <div class="flexrow">
-        {{#each discarded as |d|}}
-          <div class="gfl-die type-{{d.type}} {{#if d._fromExplosion}}explosion{{/if}}" draggable="true" data-id="{{d.id}}" title="{{d.label}}">
-            <img class="gfl-die-face" src="{{d.icon}}" alt="{{d.label}}">
-          </div>
-        {{/each}}
-      </div>
-    </div>
-
-  </div>
-
-  <!-- TALLY -->
-  <div class="card">
-    <h2>Tally</h2>
-    <div class="flexrow">
+  <div class="card mt-3">
+    <div class="card-body d-flex flex-wrap gap-4">
       <div><strong>Successes:</strong> {{tally.s}}</div>
       <div><strong>Opportunity:</strong> {{tally.o}}</div>
       <div><strong>Strife:</strong> {{tally.r}}</div>

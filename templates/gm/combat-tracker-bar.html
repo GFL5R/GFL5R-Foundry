@@ -1,7 +1,7 @@
-<nav class="encounters flexrow gfl5r" id="gfl5r_gm_combat_tracker_bar">
-    <div class="form-group">
-        <label for="encounter-type-select">Encounter Type:</label>
-        <select id="encounter-type-select" class="encounter-type-select">
+<div class="d-flex flex-wrap align-items-center gap-3 p-2 border rounded bg-light" id="gfl5r_gm_combat_tracker_bar">
+    <div class="d-flex flex-column">
+        <label class="form-label mb-1" for="encounter-type-select">Encounter Type</label>
+        <select id="encounter-type-select" class="form-select form-select-sm encounter-type-select">
             {{#each encounterTypeList}}
                 <option value="{{this}}"{{#ifCond this '==' ../encounterType}} selected{{/ifCond}}>
                     {{#ifCond this '==' 'intrigue'}}Intrigue{{/ifCond}}
@@ -12,11 +12,11 @@
             {{/each}}
         </select>
     </div>
-    <div class="form-group">
-        <label for="prepared-select">Prepared State:</label>
-        <select id="prepared-select" class="prepared-select">
+    <div class="d-flex flex-column">
+        <label class="form-label mb-1" for="prepared-select">Prepared State</label>
+        <select id="prepared-select" class="form-select form-select-sm prepared-select">
             <option value="true"{{#ifCond prepared.character '==' 'true'}} selected{{/ifCond}}>Prepared</option>
             <option value="false"{{#ifCond prepared.character '==' 'false'}} selected{{/ifCond}}>Not Prepared</option>
         </select>
     </div>
-</nav>
+</div>

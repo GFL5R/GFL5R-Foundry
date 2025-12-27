@@ -31,8 +31,11 @@ export class GFL5RCombat extends Combat {
             if (!combatant || !actor) continue;
 
             const approaches = actor.system?.approaches ?? {};
+            const preparedFlag = actor.system?.prepared;
             const preparedSetting = game.settings.get("gfl5r", "initiative-prepared-character") || "true";
-            const prepared = preparedSetting === "true";
+            const prepared = typeof preparedFlag === "boolean"
+                ? preparedFlag
+                : (preparedFlag === "true" ? true : (preparedFlag === "false" ? false : preparedSetting === "true"));
 
             const baseInitiative = prepared
                 ? (approaches.power || 0) + (approaches.precision || 0)
