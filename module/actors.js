@@ -319,12 +319,12 @@ export class GFL5RActorSheet extends ActorSheet {
               });
               await app.start();
             }
-            classes: ["sheet"]
+          },
           cancel: { label: "Cancel" }
         },
         default: "roll"
       }, {
-        classes: ["gfl5r", "gfl-roll-prompt"]
+        classes: ["sheet"]
       }).render(true);
     });
 
