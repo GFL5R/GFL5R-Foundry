@@ -1,4 +1,13 @@
 /* Sheet styling previously inlined in templates */
+.ui-control.icon[class*="fa-"],
+.control.icon[class*="fa-"],
+button[class*="fa-"],
+button.fa {
+  font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", "Font Awesome 6 Brands", "Font Awesome 5 Brands" !important;
+  font-style: normal;
+  font-weight: 900;
+}
+
 .gfl5r-sheet {
   background: #0d1118;
   color: #e6eaf0;
