@@ -26,50 +26,50 @@
   font-weight: 400;
 }
 
-/* Actor sheet styling previously inlined in the template */
-.actor-sheet {
+/* Sheet styling previously inlined in templates */
+.gfl5r-sheet {
   background: #0d1118;
   color: #e6eaf0;
 }
 
-.actor-sheet .card {
+.gfl5r-sheet .card {
   background: #161c26;
   border: 1px solid #273143;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
 }
 
-.actor-sheet .card .list-group-item {
+.gfl5r-sheet .card .list-group-item {
   background: #161c26;
   color: #e6eaf0;
 }
 
-.actor-sheet .card-header {
+.gfl5r-sheet .card-header {
   background: linear-gradient(135deg, #232b3a 0%, #161d2a 100%);
   border-bottom: 1px solid #2c3547;
   color: #f4f6fb;
 }
 
-.actor-sheet .form-control,
-.actor-sheet .form-select,
-.actor-sheet textarea {
+.gfl5r-sheet .form-control,
+.gfl5r-sheet .form-select,
+.gfl5r-sheet textarea {
   background: #0f141f;
   color: #e6eaf0;
   border: 1px solid #2c3547;
 }
 
-.actor-sheet .form-control:disabled,
-.actor-sheet .form-select:disabled,
-.actor-sheet textarea:disabled {
+.gfl5r-sheet .form-control:disabled,
+.gfl5r-sheet .form-select:disabled,
+.gfl5r-sheet textarea:disabled {
   color: #cfd5df;
   background: #131926;
 }
 
-.actor-sheet .nav-tabs {
+.gfl5r-sheet .nav-tabs {
   border-bottom: none;
   margin-top: 8px;
 }
 
-.actor-sheet .nav-tabs .nav-link {
+.gfl5r-sheet .nav-tabs .nav-link {
   color: #cfd4df;
   background: linear-gradient(135deg, #1b2230 0%, #131925 100%);
   border: 1px solid #273143;
@@ -82,7 +82,7 @@
   overflow: hidden;
 }
 
-.actor-sheet .nav-tabs .nav-link::after {
+.gfl5r-sheet .nav-tabs .nav-link::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -90,14 +90,14 @@
   pointer-events: none;
 }
 
-.actor-sheet .nav-tabs .nav-link.active {
+.gfl5r-sheet .nav-tabs .nav-link.active {
   color: #ffffff;
   background: linear-gradient(135deg, #2b3447 0%, #1a2130 100%);
   box-shadow: 0 14px 24px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
   border-color: #3b4760;
 }
 
-.actor-sheet .tab-content {
+.gfl5r-sheet .tab-content {
   background: #0f141f;
   border: 1px solid #273143;
   border-top: none;
@@ -162,7 +162,7 @@
   font-size: 0.8rem;
 }
 
-.actor-sheet .text-muted {
+.gfl5r-sheet .text-muted {
   color: #d7dbe4 !important;
 }
 
