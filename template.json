@@ -84,7 +84,7 @@
     }
   },
   "Item": {
-    "types": ["ability", "weaponry", "armor", "narrative", "item", "generic", "discipline", "module", "status"],
+    "types": ["ability", "weaponry", "armor", "narrative", "item", "generic", "discipline", "module", "condition"],
     "templates": {},
     "ability": {
       "activation": "passive",
@@ -136,9 +136,8 @@
       "sardisGold": 0,
       "description": ""
     },
-    "status": {
+    "condition": {
       "duration": "",
-      "severity": "mild",
       "tags": "",
       "description": ""
     }

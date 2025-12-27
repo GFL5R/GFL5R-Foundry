@@ -5,34 +5,20 @@
         <img class="img-thumbnail" src="{{item.img}}" data-edit="img" title="{{item.name}}" style="width:96px; height:96px;" />
       </div>
       <div class="col">
-        <input class="form-control form-control-lg fw-bold" name="name" type="text" value="{{item.name}}" placeholder="Status Name" />
+        <input class="form-control form-control-lg fw-bold" name="name" type="text" value="{{item.name}}" placeholder="Condition Name" />
         <div class="row g-3 mt-2">
           <div class="col-sm-6">
             <label class="form-label">Duration</label>
             <input class="form-control" type="text" name="system.duration" value="{{item.system.duration}}" placeholder="e.g., 1 scene, 1 day" />
           </div>
           <div class="col-sm-6">
-            <label class="form-label">Severity</label>
-            <select class="form-select" name="system.severity">
-              {{#select item.system.severity}}
-                <option value="mild">Mild</option>
-                <option value="moderate">Moderate</option>
-                <option value="severe">Severe</option>
-                <option value="critical">Critical</option>
-              {{/select}}
-            </select>
+            <label class="form-label">Tags</label>
+            <input class="form-control" type="text" name="system.tags" value="{{item.system.tags}}" placeholder="Comma-separated tags" />
           </div>
         </div>
       </div>
     </div>
   </header>
-
-  <section class="card mb-3">
-    <div class="card-header fw-semibold">Tags</div>
-    <div class="card-body">
-      <input class="form-control" type="text" name="system.tags" value="{{item.system.tags}}" placeholder="Comma-separated tags" />
-    </div>
-  </section>
 
   <section class="card">
     <div class="card-header fw-semibold">Description / Effect</div>

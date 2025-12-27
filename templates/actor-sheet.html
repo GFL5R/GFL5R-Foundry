@@ -485,35 +485,34 @@
         <div class="col-lg-6">
           <div class="card h-100">
             <div class="card-header fw-semibold d-flex justify-content-between align-items-center">
-              <span>Status Effects</span>
-              <span class="small text-muted">Drop status items to track effects</span>
+              <span>Conditions</span>
+              <span class="small text-muted">Drop condition items to track effects</span>
             </div>
             <div class="card-body">
-              <div class="drop-zone p-3 text-center mb-3" data-drop-target="status" title="Drag & drop status items here">
-                <div class="fw-semibold">Drop status effects here</div>
+              <div class="drop-zone p-3 text-center mb-3" data-drop-target="condition" title="Drag & drop condition items here">
+                <div class="fw-semibold">Drop conditions here</div>
               </div>
-              {{#if statuses.length}}
+              {{#if conditions.length}}
                 <div class="list-group list-group-flush">
-                  {{#each statuses as |status|}}
-                    <div class="list-group-item d-flex align-items-center gap-2" data-item-id="{{status.id}}">
-                      <img src="{{status.img}}" alt="" class="rounded" style="width:32px; height:32px;" />
+                  {{#each conditions as |condition|}}
+                    <div class="list-group-item d-flex align-items-center gap-2" data-item-id="{{condition.id}}">
+                      <img src="{{condition.img}}" alt="" class="rounded" style="width:32px; height:32px;" />
                       <div class="flex-grow-1">
-                        <div class="fw-semibold">{{status.name}}</div>
+                        <div class="fw-semibold">{{condition.name}}</div>
                         <div class="small text-muted">
-                          {{#if status.system.duration}}<span class="status-chip">Duration: {{status.system.duration}}</span>{{/if}}
-                          {{#if status.system.severity}}<span class="status-chip ms-1">Severity: {{status.system.severity}}</span>{{/if}}
-                          {{#if status.system.tags}}<span class="status-chip ms-1">Tags: {{status.system.tags}}</span>{{/if}}
+                          {{#if condition.system.duration}}<span class="status-chip">Duration: {{condition.system.duration}}</span>{{/if}}
+                          {{#if condition.system.tags}}<span class="status-chip ms-1">Tags: {{condition.system.tags}}</span>{{/if}}
                         </div>
                       </div>
                       <div class="btn-group btn-group-sm">
-                        <button type="button" class="btn btn-outline-secondary" data-action="edit-item" data-item-id="{{status.id}}" title="Edit status"><i class="fas fa-edit"></i></button>
-                        <button type="button" class="btn btn-outline-danger" data-action="delete-item" data-item-id="{{status.id}}" title="Remove status"><i class="fas fa-trash"></i></button>
+                        <button type="button" class="btn btn-outline-secondary" data-action="edit-item" data-item-id="{{condition.id}}" title="Edit condition"><i class="fas fa-edit"></i></button>
+                        <button type="button" class="btn btn-outline-danger" data-action="delete-item" data-item-id="{{condition.id}}" title="Remove condition"><i class="fas fa-trash"></i></button>
                       </div>
                     </div>
                   {{/each}}
                 </div>
               {{else}}
-                <div class="text-muted">No active status effects.</div>
+                <div class="text-muted">No active conditions.</div>
               {{/if}}
             </div>
           </div>
