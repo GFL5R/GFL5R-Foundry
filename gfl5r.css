@@ -1,28 +1,30 @@
 /* Restore Foundry's Font Awesome icon fonts when other styles override them (e.g. Bootstrap defaults). */
-:root {
-  --gfl5r-fa-solid: var(--fa-font-solid, "Font Awesome 6 Free", "Font Awesome 5 Free");
-  --gfl5r-fa-regular: var(--fa-font-regular, "Font Awesome 6 Free", "Font Awesome 5 Free");
-  --gfl5r-fa-brands: var(--fa-font-brands, "Font Awesome 6 Brands", "Font Awesome 5 Brands");
+[class^="fa-"],
+[class*=" fa-"] {
+  font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", "Font Awesome 6 Brands", "Font Awesome 5 Brands" !important;
+  font-style: normal;
+  font-weight: 400;
 }
 
 .fa,
 .fa-solid,
-.fas,
-[class^="fa-"],
-[class*=" fa-"] {
-  font-family: var(--gfl5r-fa-solid) !important;
+.fas {
+  font-family: "Font Awesome 6 Free", "Font Awesome 5 Free" !important;
+  font-style: normal;
   font-weight: 900;
 }
 
 .fa-regular,
 .far {
-  font-family: var(--gfl5r-fa-regular) !important;
+  font-family: "Font Awesome 6 Free", "Font Awesome 5 Free" !important;
+  font-style: normal;
   font-weight: 400;
 }
 
 .fa-brands,
 .fab {
-  font-family: var(--gfl5r-fa-brands) !important;
+  font-family: "Font Awesome 6 Brands", "Font Awesome 5 Brands" !important;
+  font-style: normal;
   font-weight: 400;
 }
 
