@@ -1,0 +1,188 @@
+/* Restore Foundry's Font Awesome icon fonts when other styles override them (e.g. Bootstrap defaults). */
+:root {
+  --gfl5r-fa-solid: var(--fa-font-solid, "Font Awesome 6 Free", "Font Awesome 5 Free");
+  --gfl5r-fa-regular: var(--fa-font-regular, "Font Awesome 6 Free", "Font Awesome 5 Free");
+  --gfl5r-fa-brands: var(--fa-font-brands, "Font Awesome 6 Brands", "Font Awesome 5 Brands");
+}
+
+.fa,
+.fa-solid,
+.fas,
+[class^="fa-"],
+[class*=" fa-"] {
+  font-family: var(--gfl5r-fa-solid) !important;
+  font-weight: 900;
+}
+
+.fa-regular,
+.far {
+  font-family: var(--gfl5r-fa-regular) !important;
+  font-weight: 400;
+}
+
+.fa-brands,
+.fab {
+  font-family: var(--gfl5r-fa-brands) !important;
+  font-weight: 400;
+}
+
+/* Actor sheet styling previously inlined in the template */
+.actor-sheet {
+  background: #0d1118;
+  color: #e6eaf0;
+}
+
+.actor-sheet .card {
+  background: #161c26;
+  border: 1px solid #273143;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+}
+
+.actor-sheet .card .list-group-item {
+  background: #161c26;
+  color: #e6eaf0;
+}
+
+.actor-sheet .card-header {
+  background: linear-gradient(135deg, #232b3a 0%, #161d2a 100%);
+  border-bottom: 1px solid #2c3547;
+  color: #f4f6fb;
+}
+
+.actor-sheet .form-control,
+.actor-sheet .form-select,
+.actor-sheet textarea {
+  background: #0f141f;
+  color: #e6eaf0;
+  border: 1px solid #2c3547;
+}
+
+.actor-sheet .form-control:disabled,
+.actor-sheet .form-select:disabled,
+.actor-sheet textarea:disabled {
+  color: #cfd5df;
+  background: #131926;
+}
+
+.actor-sheet .nav-tabs {
+  border-bottom: none;
+  margin-top: 8px;
+}
+
+.actor-sheet .nav-tabs .nav-link {
+  color: #cfd4df;
+  background: linear-gradient(135deg, #1b2230 0%, #131925 100%);
+  border: 1px solid #273143;
+  border-bottom: none;
+  margin-right: 10px;
+  padding: 0.7rem 1.25rem;
+  border-radius: 12px 12px 0 0;
+  position: relative;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+
+.actor-sheet .nav-tabs .nav-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0));
+  pointer-events: none;
+}
+
+.actor-sheet .nav-tabs .nav-link.active {
+  color: #ffffff;
+  background: linear-gradient(135deg, #2b3447 0%, #1a2130 100%);
+  box-shadow: 0 14px 24px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  border-color: #3b4760;
+}
+
+.actor-sheet .tab-content {
+  background: #0f141f;
+  border: 1px solid #273143;
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.45);
+}
+
+.skill-card {
+  background: linear-gradient(145deg, #1b2232 0%, #131a27 100%);
+  border: 1px solid #2c3547;
+  border-radius: 12px;
+  transition: border-color 0.2s ease, transform 0.15s ease;
+}
+
+.skill-card:hover {
+  border-color: #6ea8fe;
+  transform: translateY(-1px);
+}
+
+.skill-card.skill-roll {
+  cursor: pointer;
+}
+
+.skill-card .card-body {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.skill-rank-display {
+  font-size: 1.6rem;
+  min-width: 32px;
+  text-align: center;
+}
+
+.xp-flash {
+  box-shadow: 0 0 0 3px rgba(70, 175, 255, 0.35);
+}
+
+.xp-flash-danger {
+  box-shadow: 0 0 0 3px rgba(255, 94, 94, 0.45);
+}
+
+.drop-zone {
+  border: 1px dashed #3a455b;
+  background: rgba(58, 69, 91, 0.18);
+  border-radius: 12px;
+  color: #d7dbe4;
+}
+
+.drop-zone:hover {
+  border-color: #6ea8fe;
+  background: rgba(110, 168, 254, 0.14);
+}
+
+.pill-muted {
+  color: #9ea7ba;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.8rem;
+}
+
+.actor-sheet .text-muted {
+  color: #d7dbe4 !important;
+}
+
+.collapse-progress {
+  background: #131a27;
+  border: 1px solid #273143;
+  border-radius: 10px;
+  height: 18px;
+  overflow: hidden;
+}
+
+.collapse-progress .progress-bar {
+  height: 100%;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.status-chip {
+  background: rgba(110, 168, 254, 0.08);
+  border: 1px solid #273143;
+  border-radius: 10px;
+  padding: 2px 8px;
+  font-size: 0.85rem;
+}

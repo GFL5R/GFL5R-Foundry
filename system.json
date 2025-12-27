@@ -2,14 +2,14 @@
   "id": "gfl5r",
   "title": "GFL5R",
   "description": "A shoddy attempt to port L5R's dice system and techniques to a near-future setting.",
-  "version": "0.2.13",
+  "version": "0.3.0",
   "compatibility": {
     "minimum": "12",
     "verified": "13"
   },
   "authors": [{ "name": "GFL5R Team" }],
   "esmodules": ["module/main.js"],
-  "styles": ["bootstrap.min.css"],
+  "styles": ["bootstrap.min.css", "gfl5r.css"],
   "scripts": ["bootstrap.bundle.min.js"],
   "gridDistance": 1,
   "gridUnits": "meter",
