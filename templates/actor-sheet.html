@@ -1,0 +1,644 @@
+<form class="gfl5r actor-sheet" autocomplete="off">
+
+  <!-- HEADER -->
+  <header class="sheet-header">
+    <div class="flexrow">
+      <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}"
+        style="width:80px; height:80px;" />
+
+      <div class="header-fields" style="flex:1;">
+        <h1>
+          <input name="name" type="text" value="{{actor.name}}" placeholder="Character Name"/>
+        </h1>
+
+        <div class="grid" style="grid-template-columns: repeat(3, 1fr);">
+          <div class="form-group">
+            <label>Type</label>
+            <select name="system.characterType" title="Character type affects available features">
+              {{#select actor.system.characterType}}
+                <option value="human">Human</option>
+                <option value="transhumanist">Transhumanist</option>
+                <option value="doll">Doll</option>
+              {{/select}}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Humanity</label>
+            <input type="number" name="system.humanity" value="{{actor.system.humanity}}" min="0"/>
+          </div>
+          <div class="form-group">
+            <label>Fame</label>
+            <input type="number" name="system.fame" value="{{actor.system.fame}}" min="0"/>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+  
+  <!-- APPROACHES + STATE -->
+  <section class="approach-state-wrapper" style="display:flex; gap:40px; margin-bottom:16px;">
+
+    <!-- LEFT: Approaches -->
+    <div class="approaches-section card" style="flex:1;">
+      <h2>Approaches</h2>
+      <div class="grid" style="grid-template-columns: 1fr;">
+        <div class="form-group vertical">
+          <label>Power</label>
+          <input type="number" name="system.approaches.power" value="{{actor.system.approaches.power}}" min="0"/>
+        </div>
+        <div class="form-group vertical">
+          <label>Swiftness</label>
+          <input type="number" name="system.approaches.swiftness" value="{{actor.system.approaches.swiftness}}" min="0"/>
+        </div>
+        <div class="form-group vertical">
+          <label>Resilience</label>
+          <input type="number" name="system.approaches.resilience" value="{{actor.system.approaches.resilience}}" min="0"/>
+        </div>
+        <div class="form-group vertical">
+          <label>Precision</label>
+          <input type="number" name="system.approaches.precision" value="{{actor.system.approaches.precision}}" min="0"/>
+        </div>
+        <div class="form-group vertical">
+          <label>Fortune</label>
+          <input type="number" name="system.approaches.fortune" value="{{actor.system.approaches.fortune}}" min="0"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: State -->
+    <div class="state-section card" style="flex:1;">
+      <h2 style="text-align:right;">State</h2>
+      <div class="grid" style="grid-template-columns: 1fr; justify-items:end;">
+        
+        <div class="form-group">
+          <div class="flexrow" style="justify-content:flex-end;">
+            <label>Fatigue</label>
+            <input type="number" name="system.resources.fatigue" value="{{actor.system.resources.fatigue}}" min="0" style="width:70px; text-align:right;"/>
+            <span>/</span>
+            <label>Endurance</label>
+            <input type="text" value="{{derived.endurance}}" disabled style="width:70px; text-align:right;"/>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="flexrow" style="justify-content:flex-end;">
+            <label>Strife</label>
+            <input type="number" name="system.resources.strife" value="{{actor.system.resources.strife}}" min="0" style="width:70px; text-align:right;"/>
+            <span>/</span>
+            <label>Composure</label>
+            <input type="text" value="{{derived.composure}}" disabled style="width:70px; text-align:right;"/>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Vigilance</label>
+          <input type="text" value="{{derived.vigilance}}" disabled style="width:80px; text-align:right;"/>
+        </div>
+
+        <div class="form-group">
+          <label>Focus</label>
+          <input type="text" value="{{derived.focus}}" disabled style="width:80px; text-align:right;"/>
+        </div>
+
+        <div class="form-group">
+          <label>Fortune Points</label>
+          <div class="flexrow" style="justify-content:flex-end;">
+            <input type="number" name="system.resources.fortunePoints" value="{{actor.system.resources.fortunePoints}}" min="0" style="width:70px; text-align:right;"/>
+            <span>/</span>
+            <input type="text" value="{{derived.fortunePointsMax}}" disabled style="width:70px; text-align:right;"/>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </section>
+
+  <!-- TABS -->
+  <nav class="tabs sheet-tabs" data-group="primary">
+    <a class="item" data-tab="skills">Skills</a>
+    <a class="item" data-tab="disciplines">Disciplines</a>
+    {{#if showModules}}
+      <a class="item" data-tab="modules">Modules</a>
+    {{/if}}
+    <a class="item" data-tab="combat">Combat</a>
+    <a class="item" data-tab="inventory">Inventory</a>
+    <a class="item" data-tab="narrative">Narrative</a>
+  </nav>
+
+  <!-- BODY -->
+  <section class="sheet-body">
+  
+    <!-- SKILLS TAB -->
+    <section class="tab" data-group="primary" data-tab="skills">
+      <div class="grid" style="grid-template-columns: 2fr 1fr; align-items:start;">
+    
+        <!-- LEFT: SKILLS -->
+        <div class="skills-column">
+    
+          <!-- Combat Skills -->
+          <div class="card">
+            <h2>Combat Skills</h2>
+            <div class="grid" style="grid-template-columns: repeat(6, 1fr);">
+              {{#each (object
+                "blades" "Blades"
+                "firearms" "Firearms"
+                "handToHand" "Hand-To-Hand"
+                "explosives" "Explosives"
+                "tactics" "Tactics"
+                "exoticWeapons" "Exotic Weapons") as |label key|}}
+                <div class="form-group vertical" title="{{label}}">
+                  <label class="gfl-skill-label" data-skill="{{key}}">{{label}}</label>
+                  <input type="number" name="system.skills.{{key}}" value="{{lookup ../actor.system.skills key}}" min="0"/>
+                </div>
+              {{/each}}
+            </div>
+          </div>
+    
+          <!-- Fieldcraft Skills -->
+          <div class="card">
+            <h2>Fieldcraft Skills</h2>
+            <div class="grid" style="grid-template-columns: repeat(6, 1fr);">
+              {{#each (object
+                "athletics" "Athletics"
+                "stealth" "Stealth"
+                "survival" "Survival"
+                "centering" "Centering"
+                "insight" "Insight"
+                "observation" "Observation") as |label key|}}
+                <div class="form-group vertical" title="{{label}}">
+                  <label class="gfl-skill-label" data-skill="{{key}}">{{label}}</label>
+                  <input type="number" name="system.skills.{{key}}" value="{{lookup ../actor.system.skills key}}" min="0"/>
+                </div>
+              {{/each}}
+            </div>
+          </div>
+    
+          <!-- Technical Skills -->
+          <div class="card">
+            <h2>Technical Skills</h2>
+            <div class="grid" style="grid-template-columns: repeat(6, 1fr);">
+              {{#each (object
+                "mechanics" "Mechanics"
+                "computers" "Computers"
+                "medicine" "Medicine"
+                "piloting" "Piloting"
+                "subterfuge" "Subterfuge"
+                "science" "Science") as |label key|}}
+                <div class="form-group vertical" title="{{label}}">
+                  <label class="gfl-skill-label" data-skill="{{key}}">{{label}}</label>
+                  <input type="number" name="system.skills.{{key}}" value="{{lookup ../actor.system.skills key}}" min="0"/>
+                </div>
+              {{/each}}
+            </div>
+          </div>
+    
+          <!-- Social & Cultural Skills -->
+          <div class="card">
+            <h2>Social & Cultural Skills</h2>
+            <div class="grid" style="grid-template-columns: repeat(6, 1fr);">
+              {{#each (object
+                "command" "Command"
+                "negotiation" "Negotiation"
+                "deception" "Deception"
+                "performance" "Performance"
+                "culture" "Culture"
+                "arts" "Arts") as |label key|}}
+                <div class="form-group vertical" title="{{label}}">
+                  <label class="gfl-skill-label" data-skill="{{key}}">{{label}}</label>
+                  <input type="number" name="system.skills.{{key}}" value="{{lookup ../actor.system.skills key}}" min="0"/>
+                </div>
+              {{/each}}
+            </div>
+          </div>
+
+        </div>
+    
+        <!-- RIGHT: ABILITIES -->
+        <aside class="abilities-column">
+          <div class="card">
+            <h2>Abilities</h2>
+            
+            <!-- Discipline Abilities by Slot -->
+            {{#each disciplineSlots as |slot|}}
+              {{#if slot.discipline}}
+                <div class="gfl-discipline-abilities-section" style="margin-bottom:20px;">
+                  <h3 style="font-size:1.1em; margin-bottom:8px; color:#555;">
+                    {{slot.discipline.name}} (Slot {{slot.slotNumber}})
+                  </h3>
+                  
+                  {{#if slot.abilities.length}}
+                    {{#each slot.abilities as |ability|}}
+                      <div class="gfl-ability-row" data-item-id="{{ability.id}}">
+                        <img src="{{ability.img}}" alt="" />
+                        <div class="gfl-ability-meta">
+                          <div class="gfl-ability-name">{{ability.name}}</div>
+                          <div style="font-size:0.85em; opacity:0.8;">
+                            {{#if ability.system.activation}}{{ability.system.activation}}{{/if}}
+                            {{#if ability.system.xpCost}} • XP: {{ability.system.xpCost}}{{/if}}
+                          </div>
+                        </div>
+                        <a class="gfl-item-edit" data-item-id="{{ability.id}}" title="Edit ability">
+                          <i class="fas fa-edit"></i>
+                        </a>
+                      </div>
+                    {{/each}}
+                  {{else}}
+                    <div class="gfl-ability-empty" style="font-size:0.9em; opacity:0.6;">No abilities yet</div>
+                  {{/if}}
+                </div>
+              {{/if}}
+            {{/each}}
+          </div>
+        </aside>
+
+      </div>
+    </section>
+
+    <!-- DISCIPLINES TAB -->
+    <section class="tab" data-group="primary" data-tab="disciplines">
+      <div class="card">
+        <h2>Disciplines</h2>
+        
+        <!-- Show drop zone if no disciplines assigned yet -->
+        {{#unless (some disciplineSlots "discipline")}}
+          <div class="gfl-drop-zone" data-drop-target="discipline" data-slot-key="slot1" title="Drag & drop a discipline item here">
+            <div class="gfl-drop-zone__hint">Drop your first discipline here to get started</div>
+          </div>
+        {{/unless}}
+        
+        <!-- Show assigned disciplines -->
+        {{#each disciplineSlots as |slot|}}
+          {{#if slot.discipline}}
+            <div class="gfl-discipline-slot card" style="margin-bottom:16px; background:var(--gfl-surface-2);">
+              
+              <!-- Slot Header -->
+              <div class="flexrow" style="justify-content:space-between; margin-bottom:12px;">
+                <h3 style="margin:0; font-size:1.1em; color:var(--gfl-accent);">{{slot.discipline.name}}</h3>
+                <div class="flexrow" style="gap:8px;">
+                  <a class="gfl-item-edit" data-item-id="{{slot.discipline.id}}" title="Edit discipline" style="cursor:pointer; color:var(--gfl-text-dim);">
+                    <i class="fas fa-edit"></i>
+                  </a>
+                  <a class="gfl-discipline-remove" data-slot-key="{{slot.slotKey}}" title="Remove discipline" style="cursor:pointer; color:#ff6b6b;">
+                    <i class="fas fa-times-circle"></i>
+                  </a>
+                </div>
+              </div>
+              
+              <!-- Discipline Info Row -->
+              <div class="flexrow" style="gap:12px; align-items:start; margin-bottom:12px;">
+                <img src="{{slot.discipline.img}}" alt="" class="profile-img" style="width:64px; height:64px;"/>
+                <div style="flex:1;">
+                  {{#if slot.discipline.system.category}}
+                    <div style="font-size:0.9em; color:var(--gfl-text-dim); margin-bottom:8px;">
+                      Category: <span style="color:var(--gfl-accent-2);">{{slot.discipline.system.category}}</span>
+                    </div>
+                  {{/if}}
+                  
+                  <!-- XP and Rank -->
+                  <div class="grid" style="grid-template-columns: 1fr 1fr; gap:10px; max-width:300px;">
+                    <div class="form-group">
+                      <label>XP</label>
+                      <input type="number" class="gfl-discipline-xp" data-slot-key="{{slot.slotKey}}" value="{{slot.xp}}" min="0"/>
+                    </div>
+                    <div class="form-group">
+                      <label>Rank</label>
+                      <input type="number" class="gfl-discipline-rank" data-slot-key="{{slot.slotKey}}" value="{{slot.rank}}" min="1"/>
+                    </div>
+                  </div>
+                  {{#if slot.xpRemaining}}
+                    <div style="font-size:0.85em; color:var(--gfl-text-dim); margin-top:6px;">
+                      <i class="fas fa-arrow-up" style="color:var(--gfl-accent-2);"></i> {{slot.xpRemaining}} XP until Rank {{add slot.rank 1}}
+                    </div>
+                  {{/if}}
+                </div>
+              </div>
+              
+              <!-- Discipline Description -->
+              {{#if slot.discipline.system.description}}
+                <div class="sub-card" style="margin-bottom:12px;">
+                  <div style="font-size:0.9em; line-height:1.5;">{{{slot.discipline.system.description}}}</div>
+                </div>
+              {{/if}}
+              
+              <!-- Abilities Section -->
+              <div style="margin-top:12px;">
+                <h4 style="font-size:1em; margin-bottom:8px; color:var(--gfl-text-dim); text-transform:uppercase; letter-spacing:0.05em;">Abilities</h4>
+                
+                <div class="gfl-drop-zone" data-drop-target="discipline-ability" data-slot-key="{{slot.slotKey}}" title="Drag & drop ability items here" style="margin-bottom:10px;">
+                  <div class="gfl-drop-zone__hint">Drop abilities for this discipline here</div>
+                </div>
+                
+                {{#if slot.abilities.length}}
+                  <div class="gfl-ability-list">
+                    {{#each slot.abilities as |ability|}}
+                      <div class="gfl-ability-row" data-item-id="{{ability.id}}">
+                        <img src="{{ability.img}}" alt=""/>
+                        <div class="gfl-ability-meta">
+                          <div class="gfl-ability-name">{{ability.name}}</div>
+                          <div style="font-size:0.85em; color:var(--gfl-text-dim);">
+                            {{#if ability.system.activation}}{{ability.system.activation}}{{/if}}
+                            {{#if ability.system.xpCost}} • XP: {{ability.system.xpCost}}{{/if}}
+                            {{#if ability.system.requiredRank}} • Req. Rank: {{ability.system.requiredRank}}{{/if}}
+                          </div>
+                        </div>
+                        <a class="gfl-item-edit" data-item-id="{{ability.id}}" title="Edit ability" style="color:var(--gfl-text-dim); cursor:pointer; padding:4px;">
+                          <i class="fas fa-edit"></i>
+                        </a>
+                        <a class="gfl-discipline-ability-remove" data-slot-key="{{../slot.slotKey}}" data-ability-id="{{ability.id}}" title="Remove ability" class="gfl-ability-delete">
+                          <i class="fas fa-trash"></i>
+                        </a>
+                      </div>
+                    {{/each}}
+                  </div>
+                {{else}}
+                  <div class="gfl-ability-empty">No abilities assigned yet.</div>
+                {{/if}}
+              </div>
+            </div>
+          {{/if}}
+        {{/each}}
+        
+        <!-- Add another discipline button (if less than 5 disciplines) -->
+        {{#if (lt (count disciplineSlots "discipline") 5)}}
+          <div class="gfl-drop-zone" data-drop-target="discipline" data-slot-key="{{getNextEmptySlot disciplineSlots}}" title="Drag & drop another discipline item here" style="margin-top:12px;">
+            <div class="gfl-drop-zone__hint">
+              <i class="fas fa-plus-circle"></i> Drop another discipline here ({{count disciplineSlots "discipline"}}/5)
+            </div>
+          </div>
+        {{/if}}
+        
+      </div>
+    </section>
+
+    <!-- MODULES TAB -->
+    {{#if showModules}}
+    <section class="tab" data-group="primary" data-tab="modules">
+      <div class="card">
+        <h2>Body Modules</h2>
+        <p style="font-size:0.9em; color:var(--gfl-text-dim); margin-bottom:12px;">
+          {{#if (eq characterType "doll")}}
+            As a Doll, you can install body modification modules to enhance your capabilities.
+          {{else}}
+            As a Transhumanist, you have embraced body modification technology.
+          {{/if}}
+        </p>
+        
+        <div class="gfl-drop-zone" data-drop-target="modules" title="Drag & drop module items here">
+          <div class="gfl-drop-zone__hint">Drop modules here</div>
+        </div>
+
+        <div class="gfl-ability-list" style="margin-top:12px;">
+          {{#if modules.length}}
+            {{#each modules as |module|}}
+              <div class="gfl-ability-row" data-item-id="{{module.id}}">
+                <img src="{{module.img}}" alt="" />
+                <div class="gfl-ability-meta">
+                  <div class="gfl-ability-name">{{module.name}}</div>
+                  <div style="font-size:0.85em; color:var(--gfl-text-dim);">
+                    {{#if module.system.points}}Points: {{module.system.points}}{{/if}}
+                    {{#if module.system.sardisGold}} • Sardis Gold: {{module.system.sardisGold}}¤{{/if}}
+                  </div>
+                </div>
+                <a class="gfl-item-edit" data-item-id="{{module.id}}" title="Edit module" style="color:var(--gfl-text-dim); cursor:pointer; padding:4px;">
+                  <i class="fas fa-edit"></i>
+                </a>
+                <a class="gfl-ability-delete" data-item-id="{{module.id}}" title="Remove module">
+                  <i class="fas fa-trash"></i>
+                </a>
+              </div>
+            {{/each}}
+          {{else}}
+            <div class="gfl-ability-empty">No modules installed.</div>
+          {{/if}}
+        </div>
+      </div>
+    </section>
+    {{/if}}
+
+    <!-- COMBAT TAB -->
+    <section class="tab" data-group="primary" data-tab="combat">
+      
+      <!-- POSTURE SELECTION -->
+      <div class="card" style="margin-bottom:20px;">
+        <h2>Combat Posture</h2>
+        <div class="form-group">
+          <select name="system.posture" style="width:100%; font-size:1.1em; padding:8px;">
+            {{#select actor.system.posture}}
+              <option value="power">Power - Additional success per strife kept on successful checks</option>
+              <option value="swiftness">Swiftness - Take an additional action that doesn't require a check</option>
+              <option value="resilience">Resilience - Enemies cannot spend opportunity for critical strikes/conditions</option>
+              <option value="precision">Precision - Increase TN of attacks/schemes against you by 1 (2 if fortification 4+)</option>
+              <option value="fortune">Fortune - No strife from strife symbols on kept dice</option>
+            {{/select}}
+          </select>
+        </div>
+      </div>
+
+      <div class="grid" style="grid-template-columns: 1fr 1fr; gap:20px; align-items:start;">
+        
+        <!-- LEFT: WEAPONS -->
+        <div class="weapons-column">
+          <div class="card">
+            <h2>Weapons</h2>
+            
+            <div class="gfl-inventory-list">
+              {{#if weapons.length}}
+                {{#each weapons as |weapon|}}
+                  <div class="gfl-ability-row" data-item-id="{{weapon.id}}">
+                    <img src="{{weapon.img}}" alt="" />
+                    <div class="gfl-ability-meta">
+                      <div class="gfl-ability-name">{{weapon.name}}</div>
+                      <div style="font-size:0.85em; opacity:0.8;">
+                        Range: {{weapon.system.idealRange}} | Threat: {{weapon.system.threat}}
+                      </div>
+                    </div>
+                    <a class="gfl-item-edit" data-item-id="{{weapon.id}}" title="Edit item">
+                      <i class="fas fa-edit"></i>
+                    </a>
+                  </div>
+                {{/each}}
+              {{else}}
+                <div class="gfl-ability-empty">No weapons.</div>
+              {{/if}}
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: ARMOR -->
+        <div class="armor-column">
+          <div class="card">
+            <h2>Armor</h2>
+            
+            <div class="gfl-inventory-list">
+              {{#if armor.length}}
+                {{#each armor as |armorItem|}}
+                  <div class="gfl-ability-row" data-item-id="{{armorItem.id}}">
+                    <img src="{{armorItem.img}}" alt="" />
+                    <div class="gfl-ability-meta">
+                      <div class="gfl-ability-name">{{armorItem.name}}</div>
+                      <div style="font-size:0.85em; opacity:0.8;">
+                        Protection: {{armorItem.system.protection}} | Weight: {{armorItem.system.weight}}
+                      </div>
+                    </div>
+                    <a class="gfl-item-edit" data-item-id="{{armorItem.id}}" title="Edit item">
+                      <i class="fas fa-edit"></i>
+                    </a>
+                  </div>
+                {{/each}}
+              {{else}}
+                <div class="gfl-ability-empty">No armor.</div>
+              {{/if}}
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- INVENTORY TAB -->
+    <section class="tab" data-group="primary" data-tab="inventory">
+      <div class="card">
+        <h2>Inventory</h2>
+        
+        <div class="gfl-drop-zone" data-drop-target="inventory" title="Drag & drop items here">
+          <div class="gfl-drop-zone__hint">Drop items here</div>
+        </div>
+  
+        <div class="gfl-inventory-list">
+          {{#if inventory.length}}
+            <table style="width:100%; border-collapse: collapse;">
+              <thead>
+                <tr style="border-bottom: 2px solid rgba(0,0,0,0.3);">
+                  <th style="text-align:left; padding:8px;">Item</th>
+                  <th style="text-align:left; padding:8px;">Type</th>
+                  <th style="text-align:center; padding:8px;">Qty</th>
+                  <th style="text-align:right; padding:8px;">Price</th>
+                  <th style="text-align:center; padding:8px; width:80px;">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each inventory as |item|}}
+                  <tr style="border-bottom: 1px solid rgba(0,0,0,0.1);" data-item-id="{{item.id}}">
+                    <td style="padding:8px;">
+                      <div style="display:flex; align-items:center; gap:8px;">
+                        <img src="{{item.img}}" alt="" style="width:32px; height:32px; border-radius:4px;"/>
+                        <strong>{{item.name}}</strong>
+                      </div>
+                    </td>
+                    <td style="padding:8px; text-transform:capitalize;">{{item.type}}</td>
+                    <td style="padding:8px; text-align:center;">
+                      <input type="number" name="items.{{item.id}}.system.quantity" value="{{item.system.quantity}}" min="0" style="width:60px; text-align:center;" />
+                    </td>
+                    <td style="padding:8px; text-align:right;">
+                      {{#if item.system.price}}{{item.system.price}}¤{{else}}—{{/if}}
+                    </td>
+                    <td style="padding:8px; text-align:center;">
+                      <a class="gfl-item-edit" data-item-id="{{item.id}}" title="Edit item" style="margin-right:8px;">
+                        <i class="fas fa-edit"></i>
+                      </a>
+                      <a class="gfl-ability-delete" data-item-id="{{item.id}}" title="Delete item">
+                        <i class="fas fa-trash"></i>
+                      </a>
+                    </td>
+                  </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          {{else}}
+            <div class="gfl-ability-empty">No items in inventory.</div>
+          {{/if}}
+        </div>
+      </div>
+    </section>
+
+    <!-- NARRATIVE TAB -->
+    <section class="tab" data-group="primary" data-tab="narrative">
+      <div class="grid" style="grid-template-columns: 1fr 1fr; gap:20px; align-items:start;">
+        
+        <!-- LEFT: NARRATIVE ITEMS -->
+        <div class="narrative-items-column">
+          
+          <!-- Distinctions and Passions -->
+          <div class="card" style="margin-bottom:20px;">
+            <h2>Distinctions and Passions</h2>
+            
+            <div class="gfl-drop-zone" data-drop-target="narrative-positive" title="Drag & drop Distinction or Passion items here">
+              <div class="gfl-drop-zone__hint">Drop Distinction/Passion items here</div>
+            </div>
+      
+            <div class="gfl-narrative-list">
+              {{#if narrativePositive.length}}
+                {{#each narrativePositive as |item|}}
+                  <div class="gfl-ability-row" data-item-id="{{item.id}}">
+                    <img src="{{item.img}}" alt="" />
+                    <div class="gfl-ability-meta">
+                      <div class="gfl-ability-name">{{item.name}}</div>
+                      <div style="font-size:0.85em; opacity:0.8;">{{item.system.approach}} - {{item.system.narrativeType}}</div>
+                    </div>
+                    <a class="gfl-ability-delete" data-item-id="{{item.id}}" title="Remove item">
+                      <i class="fas fa-trash"></i>
+                    </a>
+                  </div>
+                {{/each}}
+              {{else}}
+                <div class="gfl-ability-empty">No distinctions or passions yet.</div>
+              {{/if}}
+            </div>
+          </div>
+
+          <!-- Adversities and Anxieties -->
+          <div class="card">
+            <h2>Adversities and Anxieties</h2>
+            
+            <div class="gfl-drop-zone" data-drop-target="narrative-negative" title="Drag & drop Adversity or Anxiety items here">
+              <div class="gfl-drop-zone__hint">Drop Adversity/Anxiety items here</div>
+            </div>
+      
+            <div class="gfl-narrative-list">
+              {{#if narrativeNegative.length}}
+                {{#each narrativeNegative as |item|}}
+                  <div class="gfl-ability-row" data-item-id="{{item.id}}">
+                    <img src="{{item.img}}" alt="" />
+                    <div class="gfl-ability-meta">
+                      <div class="gfl-ability-name">{{item.name}}</div>
+                      <div style="font-size:0.85em; opacity:0.8;">{{item.system.approach}} - {{item.system.narrativeType}}</div>
+                    </div>
+                    <a class="gfl-ability-delete" data-item-id="{{item.id}}" title="Remove item">
+                      <i class="fas fa-trash"></i>
+                    </a>
+                  </div>
+                {{/each}}
+              {{else}}
+                <div class="gfl-ability-empty">No adversities or anxieties yet.</div>
+              {{/if}}
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT: BACKSTORY -->
+        <div class="backstory-column">
+          
+          <div class="card" style="margin-bottom:20px;">
+            <h2>Backstory</h2>
+            <div class="form-group">
+              <textarea name="system.backstory" rows="12" style="width:100%; resize:vertical;">{{actor.system.backstory}}</textarea>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2>Notes</h2>
+            <div class="form-group">
+              <textarea name="system.notes" rows="12" style="width:100%; resize:vertical;">{{actor.system.notes}}</textarea>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+  
+  </section>
+
+</form>

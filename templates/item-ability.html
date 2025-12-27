@@ -1,0 +1,46 @@
+<form class="gfl5r item-sheet" autocomplete="off">
+
+  <!-- HEADER -->
+  <header class="sheet-header">
+    <div class="flexrow">
+      <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}"
+        style="width:80px; height:80px;" />
+
+      <div class="header-fields" style="flex:1;">
+        <h1>
+          <input name="name" type="text" value="{{item.name}}" placeholder="Ability Name" />
+        </h1>
+
+        <div class="grid" style="grid-template-columns: repeat(3, 1fr);">
+          <div class="form-group">
+            <label>Activation</label>
+            <select name="system.activation">
+              {{#select item.system.activation}}
+                <option value="passive">Passive</option>
+                <option value="movement">Movement</option>
+                <option value="action">Action</option>
+              {{/select}}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>XP Cost</label>
+            <input type="number" name="system.xpCost" value="{{item.system.xpCost}}" min="0" />
+          </div>
+          <div class="form-group">
+            <label>Required Rank</label>
+            <input type="number" name="system.requiredRank" value="{{item.system.requiredRank}}" min="0" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- BODY -->
+  <section class="sheet-body">
+    <div class="card">
+      <h2>Description</h2>
+      <textarea name="system.description" rows="10">{{item.system.description}}</textarea>
+    </div>
+  </section>
+
+</form>

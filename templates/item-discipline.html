@@ -1,0 +1,32 @@
+<form class="gfl5r item-sheet" autocomplete="off">
+
+  <!-- HEADER -->
+  <header class="sheet-header">
+    <div class="flexrow">
+      <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}"
+        style="width:80px; height:80px;" />
+
+      <div class="header-fields" style="flex:1;">
+        <h1>
+          <input name="name" type="text" value="{{item.name}}" placeholder="Discipline Name" />
+        </h1>
+
+        <div class="form-group">
+          <label>Category</label>
+          <input type="text" name="system.category" value="{{item.system.category}}" placeholder="e.g., Combat, Technical, Social" />
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- BODY -->
+  <section class="sheet-body">
+    <div class="card">
+      <h2>Description</h2>
+      <div class="form-group">
+        <textarea name="system.description" rows="15" style="font-family: monospace; font-size:12px;">{{item.system.description}}</textarea>
+      </div>
+    </div>
+  </section>
+
+</form>

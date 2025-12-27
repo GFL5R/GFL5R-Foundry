@@ -1,0 +1,22 @@
+<nav class="encounters flexrow gfl5r" id="gfl5r_gm_combat_tracker_bar">
+    <div class="form-group">
+        <label for="encounter-type-select">Encounter Type:</label>
+        <select id="encounter-type-select" class="encounter-type-select">
+            {{#each encounterTypeList}}
+                <option value="{{this}}"{{#ifCond this '==' ../encounterType}} selected{{/ifCond}}>
+                    {{#ifCond this '==' 'intrigue'}}Intrigue{{/ifCond}}
+                    {{#ifCond this '==' 'duel'}}Duel{{/ifCond}}
+                    {{#ifCond this '==' 'skirmish'}}Skirmish{{/ifCond}}
+                    {{#ifCond this '==' 'mass_battle'}}Mass Battle{{/ifCond}}
+                </option>
+            {{/each}}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="prepared-select">Prepared State:</label>
+        <select id="prepared-select" class="prepared-select">
+            <option value="true"{{#ifCond prepared.character '==' 'true'}} selected{{/ifCond}}>Prepared</option>
+            <option value="false"{{#ifCond prepared.character '==' 'false'}} selected{{/ifCond}}>Not Prepared</option>
+        </select>
+    </div>
+</nav>

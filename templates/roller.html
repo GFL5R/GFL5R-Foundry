@@ -1,0 +1,86 @@
+<section class="gfl5r gfl-roller">
+
+  <!-- HEADER -->
+  <header class="card">
+    <div class="flexrow" style="justify-content:space-between;">
+      <div>
+        <strong>{{skillLabel}}</strong> via <em>{{approachName}}</em>
+        {{#if hiddenTN}}
+          · <span title="Hidden TN">Hidden TN</span>
+        {{else}}
+          · TN {{tn}}
+        {{/if}}
+        · Keep {{kept.length}} / {{keepLimit}}
+      </div>
+      <div class="flexrow">
+        <button type="button" class="gfl-continue">Continue</button>
+        <button type="button" class="gfl-finish">Finish</button>
+        <button type="button" class="gfl-cancel">Cancel</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN POOL -->
+  <div class="card card-transparent">
+    <h2>Pool</h2>
+    <div class="flexrow">
+      {{#each pool as |d|}}
+        <div class="gfl-die type-{{d.type}} {{#if d._fromExplosion}}explosion{{/if}}" draggable="true" data-id="{{d.id}}" title="{{d.label}}">
+          <img class="gfl-die-face" src="{{d.icon}}" alt="{{d.label}}">
+        </div>
+      {{/each}}
+    </div>
+  </div>
+
+  <!-- KEEP / REROLL / DISCARD -->
+  <div class="grid" style="grid-template-columns: repeat(3, 1fr);">
+    
+    <!-- Keep -->
+    <div class="card card-transparent gfl-keep">
+      <h2>Keep</h2>
+      <div class="flexrow">
+        {{#each kept as |d|}}
+          <div class="gfl-die type-{{d.type}} {{#if d._fromExplosion}}explosion{{/if}}" draggable="true" data-id="{{d.id}}" title="{{d.label}}">
+            <img class="gfl-die-face" src="{{d.icon}}" alt="{{d.label}}">
+          </div>
+        {{/each}}
+      </div>
+    </div>
+
+    <!-- Reroll -->
+    <div class="card card-transparent gfl-reroll">
+      <h2>Reroll</h2>
+      <div class="flexrow">
+        {{#each toReroll as |d|}}
+          <div class="gfl-die type-{{d.type}} {{#if d._fromExplosion}}explosion{{/if}}" draggable="true" data-id="{{d.id}}" title="{{d.label}}">
+            <img class="gfl-die-face" src="{{d.icon}}" alt="{{d.label}}">
+          </div>
+        {{/each}}
+      </div>
+    </div>
+
+    <!-- Discard -->
+    <div class="card card-transparent gfl-discard">
+      <h2>Discard</h2>
+      <div class="flexrow">
+        {{#each discarded as |d|}}
+          <div class="gfl-die type-{{d.type}} {{#if d._fromExplosion}}explosion{{/if}}" draggable="true" data-id="{{d.id}}" title="{{d.label}}">
+            <img class="gfl-die-face" src="{{d.icon}}" alt="{{d.label}}">
+          </div>
+        {{/each}}
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TALLY -->
+  <div class="card">
+    <h2>Tally</h2>
+    <div class="flexrow">
+      <div><strong>Successes:</strong> {{tally.s}}</div>
+      <div><strong>Opportunity:</strong> {{tally.o}}</div>
+      <div><strong>Strife:</strong> {{tally.r}}</div>
+    </div>
+  </div>
+
+</section>

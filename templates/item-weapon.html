@@ -1,0 +1,97 @@
+<form class="gfl5r item-sheet" autocomplete="off">
+  <!-- HEADER -->
+  <header class="sheet-header">
+    <div class="flexrow">
+      <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}"
+        style="width:80px; height:80px;" />
+      <div class="header-fields" style="flex:1;">
+        <h1>
+          <input name="name" type="text" value="{{item.name}}" placeholder="Weapon Name"/>
+        </h1>
+        
+        <div class="grid" style="grid-template-columns: repeat(3, 1fr);">
+          <div class="form-group">
+            <label>Class</label>
+            <input name="system.class" type="text" value="{{item.system.class}}" placeholder="e.g. Assault Rifle"/>
+          </div>
+          <div class="form-group">
+            <label>Type</label>
+            <select name="system.weaponType">
+              {{#select item.system.weaponType}}
+                <option value="ranged">Ranged</option>
+                <option value="melee">Melee</option>
+              {{/select}}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Associated Skill</label>
+            <select name="system.skill">
+              {{#select item.system.skill}}
+                <option value="blades">Blades</option>
+                <option value="firearms">Firearms</option>
+                <option value="handToHand">Hand-to-Hand</option>
+                <option value="explosives">Explosives</option>
+              {{/select}}
+            </select>
+          </div>
+        </div>
+
+        <div class="grid" style="grid-template-columns: repeat(2, 1fr);">
+          <div class="form-group">
+            <label>Rarity</label>
+            <select name="system.rarity">
+              {{#select item.system.rarity}}
+                <option value="common">Common</option>
+                <option value="uncommon">Uncommon</option>
+                <option value="rare">Rare</option>
+                <option value="very rare">Very Rare</option>
+                <option value="legendary">Legendary</option>
+              {{/select}}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Price</label>
+            <input type="number" name="system.price" value="{{item.system.price}}" min="0"/>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+  <!-- BODY -->
+  <section class="sheet-body">
+    
+    <div class="card">
+      <h2>Weapon Stats</h2>
+      <div class="grid" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="form-group">
+          <label>Ideal Range</label>
+          <input type="number" name="system.idealRange" value="{{item.system.idealRange}}" min="0"/>
+        </div>
+        <div class="form-group">
+          <label>Suppression</label>
+          <input type="number" name="system.suppression" value="{{item.system.suppression}}" min="0"/>
+        </div>
+        <div class="form-group">
+          <label>Caliber</label>
+          <input type="number" name="system.caliber" value="{{item.system.caliber}}" min="0"/>
+        </div>
+        <div class="form-group">
+          <label>Threat</label>
+          <input type="number" name="system.threat" value="{{item.system.threat}}" min="0"/>
+        </div>
+        <div class="form-group">
+          <label>Signature</label>
+          <input type="number" name="system.signature" value="{{item.system.signature}}" min="0"/>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Traits</h2>
+      <input type="text" name="system.traits" value="{{item.system.traits}}" placeholder="e.g. Concealable, Mobile"/>
+    </div>
+    <div class="card">
+      <h2>Description</h2>
+      <textarea name="system.description" rows="10">{{item.system.description}}</textarea>
+    </div>
+  </section>
+</form>

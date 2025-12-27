@@ -1,0 +1,33 @@
+<form class="gfl5r gfl-roll-prompt">
+  
+  <div class="card">
+    <div class="grid" style="grid-template-columns: 1fr 1fr;">
+      
+      <!-- Approach selector -->
+      <div class="form-group">
+        <label>Approach</label>
+        <select name="approach">
+          {{#each approaches as |val key|}}
+            <option value="{{key}}" {{#if (eq key @root.defaultApproach)}}selected{{/if}}>{{capitalize key}} ({{val}})</option>
+          {{/each}}
+        </select>
+      </div>
+
+      <!-- Target Number input -->
+      <div class="form-group">
+        <label>TN</label>
+        <input type="number" name="tn" value="{{defaultTN}}" min="0"/>
+      </div>
+
+    </div>
+
+    <!-- Hidden TN checkbox -->
+    <div class="form-group" style="margin-top: 12px;">
+      <label style="display:flex; gap:8px; align-items:center;">
+        <input type="checkbox" name="hiddenTN" />
+        <span>Hide TN (+1 Fortune)</span>
+      </label>
+    </div>
+  </div>
+
+</form>

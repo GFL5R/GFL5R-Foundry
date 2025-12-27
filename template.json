@@ -1,0 +1,159 @@
+{
+  "Actor": {
+    "types": ["character", "npc"],
+    "templates": {},
+    "character": {
+      "characterType": "human",
+      "approaches": {
+        "power": 1,
+        "swiftness": 1,
+        "resilience": 1,
+        "precision": 1,
+        "fortune": 1
+      },
+      "resources": {
+        "fatigue": 0,
+        "strife": 0,
+        "fortunePoints":0
+      },
+      "humanity": 0,
+      "fame": 0,
+      "posture": "power",
+      "backstory": "",
+      "notes": "",
+      "disciplines": {
+        "slot1": {
+          "disciplineId": null,
+          "xp": 0,
+          "rank": 1,
+          "abilities": []
+        },
+        "slot2": {
+          "disciplineId": null,
+          "xp": 0,
+          "rank": 1,
+          "abilities": []
+        },
+        "slot3": {
+          "disciplineId": null,
+          "xp": 0,
+          "rank": 1,
+          "abilities": []
+        },
+        "slot4": {
+          "disciplineId": null,
+          "xp": 0,
+          "rank": 1,
+          "abilities": []
+        },
+        "slot5": {
+          "disciplineId": null,
+          "xp": 0,
+          "rank": 1,
+          "abilities": []
+        }
+      },
+      "skills": {
+        "blades": 0,
+        "firearms": 0,
+        "handToHand": 0,
+        "explosives": 0,
+        "tactics": 0,
+        "exoticWeapons": 0,
+        "athletics": 0,
+        "stealth": 0,
+        "survival": 0,
+        "centering": 0,
+        "insight": 0,
+        "observation": 0,
+        "mechanics": 0,
+        "computers": 0,
+        "medicine": 0,
+        "piloting": 0,
+        "subterfuge": 0,
+        "science": 0,
+        "command": 0,
+        "negotiation": 0,
+        "deception": 0,
+        "performance": 0,
+        "culture": 0,
+        "arts": 0
+      }
+    },
+    "npc": {
+      "characterType": "npc",
+      "approaches": {
+        "power": 1,
+        "swiftness": 1,
+        "resilience": 1,
+        "precision": 1,
+        "fortune": 1
+      },
+      "resources": {
+        "fatigue": 0,
+        "strife": 0,
+        "fortunePoints": 0
+      },
+      "skills": {
+        "combat": 0,
+        "fieldcraft": 0,
+        "technical": 0,
+        "social": 0
+      },
+      "features": []
+    }
+  },
+  "Item": {
+    "types": ["ability", "weaponry", "armor", "narrative", "item", "generic", "discipline", "module"],
+    "templates": {},
+    "ability": {
+      "activation": "passive",
+      "xpCost": 0,
+      "requiredRank": 0,
+      "description": ""
+    },
+    "weaponry": {
+      "weaponType": "ranged",
+      "skill": "firearms",
+      "idealRange": 2,
+      "suppression": 0,
+      "caliber": 0,
+      "threat": 0,
+      "signature": 0,
+      "rarity": "common",
+      "price": 0,
+      "class": "",
+      "traits": "",
+      "description": ""
+    },
+    "armor": {
+      "weight": 0,
+      "protection": 0,
+      "concealmentTN": 0,
+      "price": 0,
+      "class": "",
+      "description": ""
+    },
+    "narrative": {
+      "approach": "power",
+      "narrativeType": "distinction",
+      "tags": "",
+      "description": ""
+    },
+    "item": {
+      "price": 0,
+      "rarity": "common",
+      "description": ""
+    },
+    "generic": {},
+    "discipline": {
+      "description": "",
+      "category": ""
+    },
+    "module": {
+      "points": 0,
+      "sardisGold": 0,
+      "description": ""
+    }
+  }
+}
