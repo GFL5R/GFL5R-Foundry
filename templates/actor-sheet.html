@@ -1,29 +1,141 @@
-<form class="actor-sheet container-fluid py-3" autocomplete="off">
+<form class="actor-sheet container-fluid py-3 text-light" autocomplete="off">
+  <style>
+    .actor-sheet {
+      background: #0d1118;
+      color: #e6eaf0;
+    }
+    .actor-sheet .card {
+      background: #161c26;
+      border: 1px solid #273143;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    }
+    .actor-sheet .card-header {
+      background: linear-gradient(135deg, #232b3a 0%, #161d2a 100%);
+      border-bottom: 1px solid #2c3547;
+      color: #f4f6fb;
+    }
+    .actor-sheet .form-control,
+    .actor-sheet .form-select,
+    .actor-sheet textarea {
+      background: #0f141f;
+      color: #e6eaf0;
+      border: 1px solid #2c3547;
+    }
+    .actor-sheet .form-control:disabled,
+    .actor-sheet .form-select:disabled,
+    .actor-sheet textarea:disabled {
+      color: #cfd5df;
+      background: #131926;
+    }
+    .actor-sheet .nav-tabs {
+      border-bottom: none;
+      margin-top: 8px;
+    }
+    .actor-sheet .nav-tabs .nav-link {
+      color: #cfd4df;
+      background: linear-gradient(135deg, #1b2230 0%, #131925 100%);
+      border: 1px solid #273143;
+      border-bottom: none;
+      margin-right: 10px;
+      padding: 0.7rem 1.25rem;
+      border-radius: 12px 12px 0 0;
+      position: relative;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+      overflow: hidden;
+    }
+    .actor-sheet .nav-tabs .nav-link::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0));
+      pointer-events: none;
+    }
+    .actor-sheet .nav-tabs .nav-link.active {
+      color: #ffffff;
+      background: linear-gradient(135deg, #2b3447 0%, #1a2130 100%);
+      box-shadow: 0 14px 24px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      border-color: #3b4760;
+    }
+    .actor-sheet .tab-content {
+      background: #0f141f;
+      border: 1px solid #273143;
+      border-top: none;
+      border-radius: 0 0 12px 12px;
+      box-shadow: 0 18px 36px rgba(0, 0, 0, 0.45);
+    }
+    .skill-card {
+      background: linear-gradient(145deg, #1b2232 0%, #131a27 100%);
+      border: 1px solid #2c3547;
+      border-radius: 12px;
+      transition: border-color 0.2s ease, transform 0.15s ease;
+    }
+    .skill-card:hover {
+      border-color: #6ea8fe;
+      transform: translateY(-1px);
+    }
+    .skill-rank-display {
+      font-size: 1.6rem;
+      min-width: 32px;
+      text-align: center;
+    }
+    .xp-flash {
+      box-shadow: 0 0 0 3px rgba(70, 175, 255, 0.35);
+    }
+    .xp-flash-danger {
+      box-shadow: 0 0 0 3px rgba(255, 94, 94, 0.45);
+    }
+    .drop-zone {
+      border: 1px dashed #3a455b;
+      background: rgba(58, 69, 91, 0.18);
+      border-radius: 12px;
+      color: #d7dbe4;
+    }
+    .drop-zone:hover {
+      border-color: #6ea8fe;
+      background: rgba(110, 168, 254, 0.14);
+    }
+    .pill-muted {
+      color: #9ea7ba;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-size: 0.8rem;
+    }
+  </style>
+
   <header class="mb-4">
-    <div class="row g-3 align-items-center">
+    <div class="row g-3 align-items-start">
       <div class="col-auto">
         <img class="img-thumbnail" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" style="width:96px; height:96px;" />
       </div>
       <div class="col">
-        <input class="form-control form-control-lg fw-bold" name="name" type="text" value="{{actor.name}}" placeholder="Character Name"/>
-        <div class="row g-3 mt-2">
-          <div class="col-12 col-md-4">
-            <label class="form-label">Type</label>
-            <select class="form-select" name="system.characterType" title="Character type affects available features">
-              {{#select actor.system.characterType}}
-                <option value="human">Human</option>
-                <option value="transhumanist">Transhumanist</option>
-                <option value="doll">Doll</option>
-              {{/select}}
-            </select>
+        <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+          <div class="flex-grow-1">
+            <input class="form-control form-control-lg fw-bold" name="name" type="text" value="{{actor.name}}" placeholder="Character Name"/>
+            <div class="row g-3 mt-2">
+              <div class="col-12 col-md-4">
+                <label class="form-label pill-muted mb-1">Type</label>
+                <select class="form-select" name="system.characterType" title="Character type affects available features">
+                  {{#select actor.system.characterType}}
+                    <option value="human">Human</option>
+                    <option value="transhumanist">Transhumanist</option>
+                    <option value="doll">Doll</option>
+                  {{/select}}
+                </select>
+              </div>
+              <div class="col-12 col-md-4">
+                <label class="form-label pill-muted mb-1">Humanity</label>
+                <input class="form-control" type="number" name="system.humanity" value="{{actor.system.humanity}}" min="0"/>
+              </div>
+              <div class="col-12 col-md-4">
+                <label class="form-label pill-muted mb-1">Fame</label>
+                <input class="form-control" type="number" name="system.fame" value="{{actor.system.fame}}" min="0"/>
+              </div>
+            </div>
           </div>
-          <div class="col-12 col-md-4">
-            <label class="form-label">Humanity</label>
-            <input class="form-control" type="number" name="system.humanity" value="{{actor.system.humanity}}" min="0"/>
-          </div>
-          <div class="col-12 col-md-4">
-            <label class="form-label">Fame</label>
-            <input class="form-control" type="number" name="system.fame" value="{{actor.system.fame}}" min="0"/>
+          <div class="col-auto text-end">
+            <label class="form-label pill-muted mb-1">Experience</label>
+            <input class="form-control form-control-lg text-end" type="number" name="system.xp" value="{{actor.system.xp}}" min="0" />
+            <div class="small text-muted mt-1">Saved XP</div>
           </div>
         </div>
       </div>
@@ -35,7 +147,7 @@
       <div class="card h-100">
         <div class="card-header fw-semibold">Approaches</div>
         <div class="card-body">
-          <div class="row g-2">
+          <div class="row g-3">
             <div class="col-6 col-lg-4">
               <label class="form-label">Power</label>
               <input class="form-control form-control-sm" type="number" name="system.approaches.power" value="{{actor.system.approaches.power}}" min="0"/>
@@ -110,90 +222,42 @@
     <li class="nav-item"><a class="nav-link item" data-tab="narrative">Narrative</a></li>
   </ul>
 
-  <section class="tab-content sheet-body mt-3">
-    <section class="tab-pane active tab" data-group="primary" data-tab="skills">
+  <section class="tab-content sheet-body mt-0">
+    <section class="tab-pane active tab p-3" data-group="primary" data-tab="skills">
       <div class="row g-4">
         <div class="col-lg-8">
-          <div class="card mb-3">
-            <div class="card-header fw-semibold">Combat Skills</div>
-            <div class="card-body">
-              <div class="row g-2">
-                {{#each (object
-                  "blades" "Blades"
-                  "firearms" "Firearms"
-                  "handToHand" "Hand-To-Hand"
-                  "explosives" "Explosives"
-                  "tactics" "Tactics"
-                  "exoticWeapons" "Exotic Weapons") as |label key|}}
-                  <div class="col-6 col-lg-4 col-xxl-2">
-                    <label class="form-label small text-muted" data-action="roll-skill" data-skill="{{key}}" role="button">{{label}}</label>
-                    <input class="form-control form-control-sm" type="number" name="system.skills.{{key}}" value="{{lookup ../actor.system.skills key}}" min="0"/>
-                  </div>
-                {{/each}}
-              </div>
+          {{#each skillGroups as |group|}}
+            <div class="d-flex align-items-center justify-content-between mt-2 mb-2">
+              <div class="pill-muted">{{group.title}}</div>
+              <div class="small text-muted">Click skill name to roll</div>
             </div>
-          </div>
-          <div class="card mb-3">
-            <div class="card-header fw-semibold">Fieldcraft Skills</div>
-            <div class="card-body">
-              <div class="row g-2">
-                {{#each (object
-                  "athletics" "Athletics"
-                  "stealth" "Stealth"
-                  "survival" "Survival"
-                  "centering" "Centering"
-                  "insight" "Insight"
-                  "observation" "Observation") as |label key|}}
-                  <div class="col-6 col-lg-4 col-xxl-2">
-                    <label class="form-label small text-muted" data-action="roll-skill" data-skill="{{key}}" role="button">{{label}}</label>
-                    <input class="form-control form-control-sm" type="number" name="system.skills.{{key}}" value="{{lookup ../actor.system.skills key}}" min="0"/>
+            <div class="row g-3 mb-2">
+              {{#each group.items as |skill|}}
+                <div class="col-12 col-sm-6 col-xl-4">
+                  <div class="card skill-card h-100" data-skill-card data-skill-key="{{skill.key}}">
+                    <div class="card-body d-flex flex-column gap-2">
+                      <div class="d-flex align-items-start justify-content-between">
+                        <div>
+                          <div class="pill-muted">{{group.title}}</div>
+                          <div class="fw-semibold" data-action="roll-skill" data-skill="{{skill.key}}" role="button">{{skill.label}}</div>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                          <button type="button" class="btn btn-outline-light btn-sm" data-action="skill-decrease" data-skill="{{skill.key}}" title="Refund last rank">-</button>
+                          <span class="skill-rank-display">{{lookup ../../skills skill.key}}</span>
+                          <button type="button" class="btn btn-primary btn-sm" data-action="skill-increase" data-skill="{{skill.key}}" title="Buy next rank">+</button>
+                        </div>
+                      </div>
+                      <div class="small text-muted">Next rank costs 2 × {{add (lookup ../../skills skill.key) 1}} XP</div>
+                    </div>
                   </div>
-                {{/each}}
-              </div>
+                </div>
+              {{/each}}
             </div>
-          </div>
-          <div class="card mb-3">
-            <div class="card-header fw-semibold">Technical Skills</div>
-            <div class="card-body">
-              <div class="row g-2">
-                {{#each (object
-                  "mechanics" "Mechanics"
-                  "computers" "Computers"
-                  "medicine" "Medicine"
-                  "piloting" "Piloting"
-                  "subterfuge" "Subterfuge"
-                  "science" "Science") as |label key|}}
-                  <div class="col-6 col-lg-4 col-xxl-2">
-                    <label class="form-label small text-muted" data-action="roll-skill" data-skill="{{key}}" role="button">{{label}}</label>
-                    <input class="form-control form-control-sm" type="number" name="system.skills.{{key}}" value="{{lookup ../actor.system.skills key}}" min="0"/>
-                  </div>
-                {{/each}}
-              </div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-header fw-semibold">Social &amp; Cultural Skills</div>
-            <div class="card-body">
-              <div class="row g-2">
-                {{#each (object
-                  "command" "Command"
-                  "negotiation" "Negotiation"
-                  "deception" "Deception"
-                  "performance" "Performance"
-                  "culture" "Culture"
-                  "arts" "Arts") as |label key|}}
-                  <div class="col-6 col-lg-4 col-xxl-2">
-                    <label class="form-label small text-muted" data-action="roll-skill" data-skill="{{key}}" role="button">{{label}}</label>
-                    <input class="form-control form-control-sm" type="number" name="system.skills.{{key}}" value="{{lookup ../actor.system.skills key}}" min="0"/>
-                  </div>
-                {{/each}}
-              </div>
-            </div>
-          </div>
+          {{/each}}
         </div>
         <aside class="col-lg-4">
-          <div class="card">
-            <div class="card-header fw-semibold">Abilities</div>
+          <div class="card h-100">
+            <div class="card-header fw-semibold">Discipline Abilities</div>
             <div class="card-body">
               {{#each disciplineSlots as |slot|}}
                 {{#if slot.discipline}}
@@ -229,12 +293,12 @@
       </div>
     </section>
 
-    <section class="tab-pane tab" data-group="primary" data-tab="disciplines">
+    <section class="tab-pane tab p-3" data-group="primary" data-tab="disciplines">
       <div class="card">
         <div class="card-header fw-semibold">Disciplines</div>
         <div class="card-body">
           {{#unless (some disciplineSlots "discipline")}}
-            <div class="border border-secondary rounded p-3 text-center bg-light" data-drop-target="discipline" data-slot-key="slot1" title="Drag & drop a discipline item here">
+            <div class="drop-zone p-3 text-center" data-drop-target="discipline" data-slot-key="slot1" title="Drag & drop a discipline item here">
               <div class="fw-semibold">Drop your first discipline here to get started</div>
             </div>
           {{/unless}}
@@ -261,11 +325,11 @@
                       <div class="row g-3" style="max-width:360px;">
                         <div class="col-sm-6">
                           <label class="form-label">XP</label>
-                          <input class="form-control" type="number" data-action="discipline-xp" data-slot-key="{{slot.slotKey}}" value="{{slot.xp}}" min="0"/>
+                          <input class="form-control" type="number" value="{{slot.xp}}" disabled />
                         </div>
                         <div class="col-sm-6">
                           <label class="form-label">Rank</label>
-                          <input class="form-control" type="number" data-action="discipline-rank" data-slot-key="{{slot.slotKey}}" value="{{slot.rank}}" min="1"/>
+                          <input class="form-control" type="number" value="{{slot.rank}}" disabled />
                         </div>
                       </div>
                       {{#if slot.xpRemaining}}
@@ -282,8 +346,8 @@
 
                   <div class="mb-2">
                     <h4 class="h6">Abilities</h4>
-                    <div class="border border-secondary rounded p-3 bg-light mb-2" data-drop-target="discipline-ability" data-slot-key="{{slot.slotKey}}" title="Drag & drop ability items here">
-                      <div class="fw-semibold">Drop abilities for this discipline here</div>
+                    <div class="drop-zone p-3 mb-2" data-drop-target="discipline-ability" data-slot-key="{{slot.slotKey}}" title="Drag & drop ability items here">
+                      <div class="fw-semibold">Drop abilities for this discipline here (costs 3 XP)</div>
                     </div>
                     {{#if slot.abilities.length}}
                       <div class="list-group list-group-flush">
@@ -315,7 +379,7 @@
           {{/each}}
 
           {{#if (lt (count disciplineSlots "discipline") 5)}}
-            <div class="border border-secondary rounded p-3 text-center bg-light" data-drop-target="discipline" data-slot-key="{{getNextEmptySlot disciplineSlots}}" title="Drag & drop another discipline item here">
+            <div class="drop-zone p-3 text-center" data-drop-target="discipline" data-slot-key="{{getNextEmptySlot disciplineSlots}}" title="Drag & drop another discipline item here">
               <div class="fw-semibold"><i class="fas fa-plus-circle"></i> Drop another discipline here ({{count disciplineSlots "discipline"}}/5)</div>
             </div>
           {{/if}}
@@ -324,18 +388,18 @@
     </section>
 
     {{#if showModules}}
-    <section class="tab-pane tab" data-group="primary" data-tab="modules">
+    <section class="tab-pane tab p-3" data-group="primary" data-tab="modules">
       <div class="card">
         <div class="card-header fw-semibold">Body Modules</div>
         <div class="card-body">
-          <p class="text-muted">
+          <p class="text-muted mb-3">
             {{#if (eq characterType "doll")}}
               As a Doll, you can install body modification modules to enhance your capabilities.
             {{else}}
               As a Transhumanist, you have embraced body modification technology.
             {{/if}}
           </p>
-          <div class="border border-secondary rounded p-3 text-center bg-light" data-drop-target="modules" title="Drag & drop module items here">
+          <div class="drop-zone p-3 text-center" data-drop-target="modules" title="Drag & drop module items here">
             <div class="fw-semibold">Drop modules here</div>
           </div>
           <div class="mt-3">
@@ -367,25 +431,29 @@
     </section>
     {{/if}}
 
-    <section class="tab-pane tab" data-group="primary" data-tab="combat">
+    <section class="tab-pane tab p-3" data-group="primary" data-tab="combat">
       <div class="card mb-3">
         <div class="card-header fw-semibold">Combat Posture</div>
         <div class="card-body">
-          <div class="row g-3 align-items-end">
+          <div class="row g-3 align-items-start">
             <div class="col-md-8">
-              <label class="form-label">Posture</label>
-              <select class="form-select" name="system.posture">
-                {{#select actor.system.posture}}
-                  <option value="power">Power - Additional success per strife kept on successful checks</option>
-                  <option value="swiftness">Swiftness - Take an additional action that doesn't require a check</option>
-                  <option value="resilience">Resilience - Enemies cannot spend opportunity for critical strikes/conditions</option>
-                  <option value="precision">Precision - Increase TN of attacks/schemes against you by 1 (2 if fortification 4+)</option>
-                  <option value="fortune">Fortune - No strife from strife symbols on kept dice</option>
-                {{/select}}
-              </select>
+              <label class="form-label pill-muted">Posture</label>
+              <div class="d-flex flex-column gap-2">
+                {{#each (object
+                  "power" "Power - Additional success per strife kept on successful checks"
+                  "swiftness" "Swiftness - Take an additional action that doesn't require a check"
+                  "resilience" "Resilience - Enemies cannot spend opportunity for critical strikes/conditions"
+                  "precision" "Precision - Increase TN of attacks/schemes against you by 1 (2 if fortification 4+)"
+                  "fortune" "Fortune - No strife from strife symbols on kept dice") as |desc key|}}
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="system.posture" id="posture-{{key}}" value="{{key}}" {{#ifCond ../actor.system.posture "==" key}}checked{{/ifCond}}>
+                    <label class="form-check-label" for="posture-{{key}}">{{desc}}</label>
+                  </div>
+                {{/each}}
+              </div>
             </div>
             <div class="col-md-4">
-              <div class="form-check form-switch text-end">
+              <div class="form-check form-switch text-end mt-1">
                 <input class="form-check-input" type="checkbox" name="system.prepared" id="prepared-toggle" {{checked preparedState}} />
                 <label class="form-check-label" for="prepared-toggle">Prepared for Combat</label>
               </div>
@@ -444,16 +512,16 @@
       </div>
     </section>
 
-    <section class="tab-pane tab" data-group="primary" data-tab="inventory">
+    <section class="tab-pane tab p-3" data-group="primary" data-tab="inventory">
       <div class="card">
         <div class="card-header fw-semibold">Inventory</div>
         <div class="card-body">
-          <div class="border border-secondary rounded p-3 text-center bg-light mb-3" data-drop-target="inventory" title="Drag & drop items here">
+          <div class="drop-zone p-3 text-center mb-3" data-drop-target="inventory" title="Drag & drop items here">
             <div class="fw-semibold">Drop items here</div>
           </div>
           {{#if inventory.length}}
-            <table class="table table-sm align-middle">
-              <thead class="table-light">
+            <table class="table table-sm align-middle text-light">
+              <thead class="table-dark">
                 <tr>
                   <th>Item</th>
                   <th>Type</th>
@@ -493,13 +561,13 @@
       </div>
     </section>
 
-    <section class="tab-pane tab" data-group="primary" data-tab="narrative">
+    <section class="tab-pane tab p-3" data-group="primary" data-tab="narrative">
       <div class="row g-3">
         <div class="col-lg-6">
           <div class="card mb-3">
             <div class="card-header fw-semibold">Distinctions and Passions</div>
             <div class="card-body">
-              <div class="border border-secondary rounded p-3 text-center bg-light mb-2" data-drop-target="narrative-positive" title="Drag & drop Distinction or Passion items here">
+              <div class="drop-zone p-3 text-center mb-2" data-drop-target="narrative-positive" title="Drag & drop Distinction or Passion items here">
                 <div class="fw-semibold">Drop Distinction/Passion items here</div>
               </div>
               {{#if narrativePositive.length}}
@@ -524,7 +592,7 @@
           <div class="card">
             <div class="card-header fw-semibold">Adversities and Anxieties</div>
             <div class="card-body">
-              <div class="border border-secondary rounded p-3 text-center bg-light mb-2" data-drop-target="narrative-negative" title="Drag & drop Adversity or Anxiety items here">
+              <div class="drop-zone p-3 text-center mb-2" data-drop-target="narrative-negative" title="Drag & drop Adversity or Anxiety items here">
                 <div class="fw-semibold">Drop Adversity/Anxiety items here</div>
               </div>
               {{#if narrativeNegative.length}}

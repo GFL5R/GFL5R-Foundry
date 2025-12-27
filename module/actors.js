@@ -25,6 +25,7 @@ export class GFL5RActorSheet extends ActorSheet {
     const data = context.actor.system ?? {};
 
     context.derived = computeDerivedStats(data.approaches, data.resources);
+    context.availableXP = Number(data.xp ?? 0);
 
     const preparedDefaultSetting = game.settings.get("gfl5r", "initiative-prepared-character") || "true";
     const preparedFlag = data.prepared;
@@ -36,8 +37,54 @@ export class GFL5RActorSheet extends ActorSheet {
     context.characterType = data.characterType ?? "human";
     context.showModules = (context.characterType === "doll" || context.characterType === "transhumanist");
 
-    // Expose skills
+    // Expose skills and labels for rendering
     context.skills = data.skills ?? {};
+    context.skillGroups = [
+      {
+        title: "Combat Skills",
+        items: [
+          { key: "blades", label: "Blades" },
+          { key: "firearms", label: "Firearms" },
+          { key: "handToHand", label: "Hand-To-Hand" },
+          { key: "explosives", label: "Explosives" },
+          { key: "tactics", label: "Tactics" },
+          { key: "exoticWeapons", label: "Exotic Weapons" }
+        ]
+      },
+      {
+        title: "Fieldcraft Skills",
+        items: [
+          { key: "athletics", label: "Athletics" },
+          { key: "stealth", label: "Stealth" },
+          { key: "survival", label: "Survival" },
+          { key: "centering", label: "Centering" },
+          { key: "insight", label: "Insight" },
+          { key: "observation", label: "Observation" }
+        ]
+      },
+      {
+        title: "Technical Skills",
+        items: [
+          { key: "mechanics", label: "Mechanics" },
+          { key: "computers", label: "Computers" },
+          { key: "medicine", label: "Medicine" },
+          { key: "piloting", label: "Piloting" },
+          { key: "subterfuge", label: "Subterfuge" },
+          { key: "science", label: "Science" }
+        ]
+      },
+      {
+        title: "Social & Cultural Skills",
+        items: [
+          { key: "command", label: "Command" },
+          { key: "negotiation", label: "Negotiation" },
+          { key: "deception", label: "Deception" },
+          { key: "performance", label: "Performance" },
+          { key: "culture", label: "Culture" },
+          { key: "arts", label: "Arts" }
+        ]
+      }
+    ];
 
     // Process disciplines
     const disciplinesData = data.disciplines ?? {};
@@ -191,6 +238,60 @@ export class GFL5RActorSheet extends ActorSheet {
       if (!id) return;
       const item = this.actor.items.get(id);
       if (item) item.sheet.render(true);
+    });
+
+    const flashSkillCard = (element, danger = false) => {
+      if (!element) return;
+      element.classList.add(danger ? "xp-flash-danger" : "xp-flash");
+      setTimeout(() => element.classList.remove("xp-flash", "xp-flash-danger"), 450);
+    };
+
+    // Increase skill rank using XP
+    html.on("click", "[data-action='skill-increase']", async ev => {
+      const key = ev.currentTarget?.dataset?.skill;
+      if (!key) return;
+
+      const skillCard = ev.currentTarget.closest?.("[data-skill-card]");
+      const skills = foundry.utils.duplicate(this.actor.system.skills ?? {});
+      const currentRank = Number(skills[key] ?? 0);
+      const nextRank = currentRank + 1;
+      const cost = 2 * nextRank;
+      const availableXP = Number(this.actor.system?.xp ?? 0);
+
+      if (availableXP < cost) {
+        flashSkillCard(skillCard, true);
+        ui.notifications?.warn("Not enough XP to increase this skill.");
+        return;
+      }
+
+      skills[key] = nextRank;
+      await this.actor.update({
+        [`system.skills.${key}`]: nextRank,
+        "system.xp": availableXP - cost
+      });
+      flashSkillCard(skillCard);
+    });
+
+    // Decrease skill rank and refund XP
+    html.on("click", "[data-action='skill-decrease']", async ev => {
+      const key = ev.currentTarget?.dataset?.skill;
+      if (!key) return;
+
+      const skillCard = ev.currentTarget.closest?.("[data-skill-card]");
+      const skills = foundry.utils.duplicate(this.actor.system.skills ?? {});
+      const currentRank = Number(skills[key] ?? 0);
+      if (currentRank <= 0) return;
+
+      const refund = 2 * currentRank;
+      const availableXP = Number(this.actor.system?.xp ?? 0);
+      const newRank = currentRank - 1;
+
+      skills[key] = newRank;
+      await this.actor.update({
+        [`system.skills.${key}`]: newRank,
+        "system.xp": availableXP + refund
+      });
+      flashSkillCard(skillCard);
     });
 
     // Remove discipline from slot
@@ -427,25 +528,40 @@ export class GFL5RActorSheet extends ActorSheet {
     if (dropDisciplineAbility) {
       const slotKey = dropTarget.dataset.slotKey;
       if (!slotKey) return;
-      
+
+      const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
+      if (!disciplines[slotKey]) return;
+
+      const availableXP = Number(this.actor.system?.xp ?? 0);
+      const cost = 3;
+      if (availableXP < cost) {
+        dropTarget.classList.add("border", "border-danger", "bg-danger-subtle");
+        setTimeout(() => dropTarget.classList.remove("border-danger", "bg-danger-subtle"), 500);
+        ui.notifications?.warn("Not enough XP to add an ability to this discipline (costs 3 XP).");
+        return;
+      }
+
       // Clone the item data
       let itemData = itemDoc.toObject();
       itemData.type = "ability";
-      
+
       // Create the ability item
       const [createdItem] = await this.actor.createEmbeddedDocuments("Item", [itemData]);
-      
-      // Update disciplines data
-      const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
-      if (!disciplines[slotKey]) return;
-      
-      if (!disciplines[slotKey].abilities) {
-        disciplines[slotKey].abilities = [];
-      }
+      if (!createdItem) return;
+
+      // Update disciplines data and actor XP
+      disciplines[slotKey].abilities ||= [];
       disciplines[slotKey].abilities.push(createdItem.id);
-      
-      await this.actor.update({ "system.disciplines": disciplines });
-      
+
+      const updatedXP = Number(disciplines[slotKey].xp ?? 0) + cost;
+      disciplines[slotKey].xp = updatedXP;
+      disciplines[slotKey].rank = GFL5R_CONFIG.getRankFromXP(updatedXP);
+
+      await this.actor.update({
+        "system.xp": availableXP - cost,
+        "system.disciplines": disciplines
+      });
+
       flashDropTarget(dropTarget);
       return;
     }
