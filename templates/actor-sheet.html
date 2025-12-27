@@ -1,4 +1,4 @@
-<form class="actor-sheet container-fluid py-3 text-light" autocomplete="off">
+<form class="actor-sheet container-fluid py-3 text-light" data-bs-theme="dark" autocomplete="off">
   <style>
     .actor-sheet {
       background: #0d1118;
@@ -8,6 +8,10 @@
       background: #161c26;
       border: 1px solid #273143;
       box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    }
+    .actor-sheet .card .list-group-item {
+      background: #161c26;
+      color: #e6eaf0;
     }
     .actor-sheet .card-header {
       background: linear-gradient(135deg, #232b3a 0%, #161d2a 100%);
@@ -73,6 +77,13 @@
       border-color: #6ea8fe;
       transform: translateY(-1px);
     }
+    .skill-card .card-body {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
     .skill-rank-display {
       font-size: 1.6rem;
       min-width: 32px;
@@ -99,6 +110,9 @@
       text-transform: uppercase;
       letter-spacing: 0.04em;
       font-size: 0.8rem;
+    }
+    .actor-sheet .text-muted {
+      color: #d7dbe4 !important;
     }
   </style>
 
@@ -227,19 +241,19 @@
       <div class="row g-4">
         <div class="col-lg-8">
           {{#each skillGroups as |group|}}
-            <div class="d-flex align-items-center justify-content-between mt-2 mb-2">
-              <div class="pill-muted">{{group.title}}</div>
-              <div class="small text-muted">Click skill name to roll</div>
-            </div>
-            <div class="row g-3 mb-2">
-              {{#each group.items as |skill|}}
-                <div class="col-12 col-sm-6 col-xl-4">
-                  <div class="card skill-card h-100" data-skill-card data-skill-key="{{skill.key}}">
-                    <div class="card-body d-flex flex-column gap-2">
-                      <div class="d-flex align-items-start justify-content-between">
-                        <div>
-                          <div class="pill-muted">{{group.title}}</div>
+            <div class="card mb-3">
+              <div class="card-header fw-semibold d-flex justify-content-between align-items-center">
+                <span>{{group.title}}</span>
+                <span class="small text-muted">Click skill name to roll</span>
+              </div>
+              <div class="card-body">
+                <div class="d-flex flex-wrap gap-3">
+                  {{#each group.items as |skill|}}
+                    <div class="card skill-card flex-grow-1" style="min-width: 240px;" data-skill-card data-skill-key="{{skill.key}}">
+                      <div class="card-body">
+                        <div class="d-flex flex-column">
                           <div class="fw-semibold" data-action="roll-skill" data-skill="{{skill.key}}" role="button">{{skill.label}}</div>
+                          <div class="small text-muted">Next rank costs 2 × {{add (lookup ../../skills skill.key) 1}} XP</div>
                         </div>
                         <div class="d-flex align-items-center gap-2">
                           <button type="button" class="btn btn-outline-light btn-sm" data-action="skill-decrease" data-skill="{{skill.key}}" title="Refund last rank">-</button>
@@ -247,11 +261,10 @@
                           <button type="button" class="btn btn-primary btn-sm" data-action="skill-increase" data-skill="{{skill.key}}" title="Buy next rank">+</button>
                         </div>
                       </div>
-                      <div class="small text-muted">Next rank costs 2 × {{add (lookup ../../skills skill.key) 1}} XP</div>
                     </div>
-                  </div>
+                  {{/each}}
                 </div>
-              {{/each}}
+              </div>
             </div>
           {{/each}}
         </div>
