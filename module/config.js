@@ -13,10 +13,58 @@ export const GFL5R_CONFIG = {
   // Maximum number of discipline slots
   maxDisciplineSlots: 5,
 
+  // Skill catalog shared by sheets and item configs
+  skillGroups: [
+    {
+      title: "Combat Skills",
+      items: [
+        { key: "blades", label: "Blades" },
+        { key: "explosives", label: "Explosives" },
+        { key: "exoticWeapons", label: "Exotic Weapons" },
+        { key: "firearms", label: "Firearms" },
+        { key: "handToHand", label: "Hand-To-Hand" },
+        { key: "tactics", label: "Tactics" }
+      ]
+    },
+    {
+      title: "Fieldcraft Skills",
+      items: [
+        { key: "conditioning", label: "Conditioning" },
+        { key: "resolve", label: "Resolve" },
+        { key: "crafting", label: "Crafting" },
+        { key: "stealth", label: "Stealth" },
+        { key: "survival", label: "Survival" },
+        { key: "insight", label: "Insight" }
+      ]
+    },
+    {
+      title: "Technical Skills",
+      items: [
+        { key: "computers", label: "Computers" },
+        { key: "mechanics", label: "Mechanics" },
+        { key: "medicine", label: "Medicine" },
+        { key: "piloting", label: "Piloting" },
+        { key: "science", label: "Science" },
+        { key: "subterfuge", label: "Subterfuge" }
+      ]
+    },
+    {
+      title: "Social & Cultural Skills",
+      items: [
+        { key: "arts", label: "Arts" },
+        { key: "command", label: "Command" },
+        { key: "culture", label: "Culture" },
+        { key: "deception", label: "Deception" },
+        { key: "negotiation", label: "Negotiation" },
+        { key: "performance", label: "Performance" }
+      ]
+    }
+  ],
+
   // Initiative skills for different encounter types
   initiativeSkills: {
     intrigue: "insight",
-    duel: "centering",
+    duel: "resolve",
     skirmish: "tactics",
     mass_battle: "command",
   },
@@ -47,5 +95,14 @@ export const GFL5R_CONFIG = {
       }
     }
     return rank;
+  },
+
+  getSkillLabel(key) {
+    const safeKey = key ?? "";
+    for (const group of this.skillGroups) {
+      const match = group.items.find(item => item.key === safeKey);
+      if (match) return match.label;
+    }
+    return safeKey;
   }
 };

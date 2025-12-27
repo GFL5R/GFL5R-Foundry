@@ -339,6 +339,9 @@
                           <input class="form-control" type="number" value="{{slot.rank}}" disabled />
                         </div>
                       </div>
+                      {{#if slot.associatedSkillText}}
+                        <div class="small text-muted mt-2">Associated Skills: {{slot.associatedSkillText}}</div>
+                      {{/if}}
                       {{#if slot.xpRemaining}}
                         <div class="small text-muted mt-2">{{slot.xpRemaining}} XP until Rank {{add slot.rank 1}}</div>
                       {{/if}}

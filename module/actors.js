@@ -49,52 +49,7 @@ export class GFL5RActorSheet extends ActorSheet {
 
     // Expose skills and labels for rendering
     context.skills = data.skills ?? {};
-    context.skillGroups = [
-      {
-        title: "Combat Skills",
-        items: [
-          { key: "blades", label: "Blades" },
-          { key: "firearms", label: "Firearms" },
-          { key: "handToHand", label: "Hand-To-Hand" },
-          { key: "explosives", label: "Explosives" },
-          { key: "tactics", label: "Tactics" },
-          { key: "exoticWeapons", label: "Exotic Weapons" }
-        ]
-      },
-      {
-        title: "Fieldcraft Skills",
-        items: [
-          { key: "athletics", label: "Athletics" },
-          { key: "stealth", label: "Stealth" },
-          { key: "survival", label: "Survival" },
-          { key: "centering", label: "Centering" },
-          { key: "insight", label: "Insight" },
-          { key: "observation", label: "Observation" }
-        ]
-      },
-      {
-        title: "Technical Skills",
-        items: [
-          { key: "mechanics", label: "Mechanics" },
-          { key: "computers", label: "Computers" },
-          { key: "medicine", label: "Medicine" },
-          { key: "piloting", label: "Piloting" },
-          { key: "subterfuge", label: "Subterfuge" },
-          { key: "science", label: "Science" }
-        ]
-      },
-      {
-        title: "Social & Cultural Skills",
-        items: [
-          { key: "command", label: "Command" },
-          { key: "negotiation", label: "Negotiation" },
-          { key: "deception", label: "Deception" },
-          { key: "performance", label: "Performance" },
-          { key: "culture", label: "Culture" },
-          { key: "arts", label: "Arts" }
-        ]
-      }
-    ];
+    context.skillGroups = GFL5R_CONFIG.skillGroups;
 
     // Process disciplines
     const disciplinesData = data.disciplines ?? {};
@@ -113,6 +68,13 @@ export class GFL5RActorSheet extends ActorSheet {
       if (slotData.disciplineId) {
         disciplineItem = this.actor.items.get(slotData.disciplineId);
       }
+
+      const associatedSkills = Array.isArray(disciplineItem?.system?.associatedSkills)
+        ? disciplineItem.system.associatedSkills
+        : [];
+      const associatedSkillLabels = associatedSkills
+        .map(key => GFL5R_CONFIG.getSkillLabel(key))
+        .filter(label => label);
       
       // Get abilities for this discipline
       const disciplineAbilities = (slotData.abilities ?? [])
@@ -141,7 +103,9 @@ export class GFL5RActorSheet extends ActorSheet {
           name: a.name,
           img: a.img,
           system: a.system ?? {}
-        }))
+        })),
+        associatedSkills,
+        associatedSkillText: associatedSkillLabels.join(", ")
       });
     }
 
@@ -317,10 +281,17 @@ export class GFL5RActorSheet extends ActorSheet {
       }
 
       skills[key] = nextRank;
-      await this.actor.update({
+      const updatedDisciplines = this._applyDisciplineSkillXP(key, cost);
+      const updateData = {
         [`system.skills.${key}`]: nextRank,
         "system.xp": availableXP - cost
-      });
+      };
+
+      if (updatedDisciplines) {
+        updateData["system.disciplines"] = updatedDisciplines;
+      }
+
+      await this.actor.update(updateData);
       flashSkillCard(skillCard);
     });
 
@@ -339,10 +310,17 @@ export class GFL5RActorSheet extends ActorSheet {
       const newRank = currentRank - 1;
 
       skills[key] = newRank;
-      await this.actor.update({
+      const updatedDisciplines = this._applyDisciplineSkillXP(key, -refund);
+      const updateData = {
         [`system.skills.${key}`]: newRank,
         "system.xp": availableXP + refund
-      });
+      };
+
+      if (updatedDisciplines) {
+        updateData["system.disciplines"] = updatedDisciplines;
+      }
+
+      await this.actor.update(updateData);
       flashSkillCard(skillCard);
     });
 
@@ -499,6 +477,33 @@ export class GFL5RActorSheet extends ActorSheet {
       await rollSkill(key, label);
     });
 
+  }
+
+  _applyDisciplineSkillXP(skillKey, deltaXP) {
+    if (!deltaXP) return null;
+
+    const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
+    let changed = false;
+
+    for (let i = 1; i <= GFL5R_CONFIG.maxDisciplineSlots; i++) {
+      const slotKey = `slot${i}`;
+      const slot = disciplines[slotKey];
+      if (!slot?.disciplineId) continue;
+
+      const disciplineItem = this.actor.items.get(slot.disciplineId);
+      const associated = Array.isArray(disciplineItem?.system?.associatedSkills)
+        ? disciplineItem.system.associatedSkills
+        : [];
+
+      if (!associated.includes(skillKey)) continue;
+
+      const nextXP = Math.max(0, Number(slot.xp ?? 0) + deltaXP);
+      slot.xp = nextXP;
+      slot.rank = GFL5R_CONFIG.getRankFromXP(nextXP);
+      changed = true;
+    }
+
+    return changed ? disciplines : null;
   }
 
   /** Accept dropped Items (from compendia or sidebar) into the drop zones */

@@ -16,6 +16,8 @@ export function registerHandlebarsHelpers() {
 
   hbs.registerHelper("eq", (a, b) => a === b);
 
+  hbs.registerHelper("includes", (array, value) => Array.isArray(array) && array.includes(value));
+
   hbs.registerHelper("ifCond", function (v1, operator, v2, options) {
     switch (operator) {
       case "==": return v1 == v2 ? options.fn(this) : options.inverse(this);

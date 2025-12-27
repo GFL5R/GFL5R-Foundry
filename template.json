@@ -14,7 +14,7 @@
       "resources": {
         "fatigue": 0,
         "strife": 0,
-        "fortunePoints":0
+        "fortunePoints": 0
       },
       "humanity": 0,
       "fame": 0,
@@ -24,62 +24,37 @@
       "backstory": "",
       "notes": "",
       "disciplines": {
-        "slot1": {
-          "disciplineId": null,
-          "xp": 0,
-          "rank": 1,
-          "abilities": []
-        },
-        "slot2": {
-          "disciplineId": null,
-          "xp": 0,
-          "rank": 1,
-          "abilities": []
-        },
-        "slot3": {
-          "disciplineId": null,
-          "xp": 0,
-          "rank": 1,
-          "abilities": []
-        },
-        "slot4": {
-          "disciplineId": null,
-          "xp": 0,
-          "rank": 1,
-          "abilities": []
-        },
-        "slot5": {
-          "disciplineId": null,
-          "xp": 0,
-          "rank": 1,
-          "abilities": []
-        }
+        "slot1": { "disciplineId": null, "xp": 0, "rank": 1, "abilities": [] },
+        "slot2": { "disciplineId": null, "xp": 0, "rank": 1, "abilities": [] },
+        "slot3": { "disciplineId": null, "xp": 0, "rank": 1, "abilities": [] },
+        "slot4": { "disciplineId": null, "xp": 0, "rank": 1, "abilities": [] },
+        "slot5": { "disciplineId": null, "xp": 0, "rank": 1, "abilities": [] }
       },
       "skills": {
         "blades": 0,
+        "exoticWeapons": 0,
+        "explosives": 0,
         "firearms": 0,
         "handToHand": 0,
-        "explosives": 0,
         "tactics": 0,
-        "exoticWeapons": 0,
-        "athletics": 0,
+        "conditioning": 0,
+        "resolve": 0,
+        "crafting": 0,
         "stealth": 0,
         "survival": 0,
-        "centering": 0,
         "insight": 0,
-        "observation": 0,
-        "mechanics": 0,
         "computers": 0,
+        "mechanics": 0,
         "medicine": 0,
         "piloting": 0,
-        "subterfuge": 0,
         "science": 0,
+        "subterfuge": 0,
+        "arts": 0,
         "command": 0,
-        "negotiation": 0,
-        "deception": 0,
-        "performance": 0,
         "culture": 0,
-        "arts": 0
+        "deception": 0,
+        "negotiation": 0,
+        "performance": 0
       }
     },
     "npc": {
@@ -151,7 +126,8 @@
     "generic": {},
     "discipline": {
       "description": "",
-      "category": ""
+      "category": "",
+      "associatedSkills": []
     },
     "module": {
       "points": 0,

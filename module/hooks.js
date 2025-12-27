@@ -22,7 +22,7 @@ export class GFL5RHooks {
         // *** Conf ***
         const encounterTypeList = Object.keys(game.gfl5r?.initiativeSkills || {
             intrigue: "insight",
-            duel: "centering",
+            duel: "resolve",
             skirmish: "tactics",
             mass_battle: "command",
         });

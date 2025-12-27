@@ -1,3 +1,5 @@
+import { GFL5R_CONFIG } from "./config.js";
+
 export class GFL5RAbilitySheet extends ItemSheet {
   static get defaultOptions() {
     const opts = super.defaultOptions;
@@ -68,6 +70,14 @@ export class GFL5RDisciplineSheet extends ItemSheet {
     });
   }
   get template() { return "systems/gfl5r/templates/item-discipline.html"; }
+
+  async getData(options) {
+    const context = await super.getData(options);
+    context.skillGroups = GFL5R_CONFIG.skillGroups;
+    const skills = context.item?.system?.associatedSkills;
+    context.associatedSkills = Array.isArray(skills) ? skills : [];
+    return context;
+  }
 }
 
 export class GFL5RModuleSheet extends ItemSheet {
