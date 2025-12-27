@@ -14,7 +14,8 @@
       "resources": {
         "fatigue": 0,
         "strife": 0,
-        "fortunePoints": 0
+        "fortunePoints": 0,
+        "collapse": 0
       },
       "humanity": 0,
       "fame": 0,
@@ -69,7 +70,8 @@
       "resources": {
         "fatigue": 0,
         "strife": 0,
-        "fortunePoints": 0
+        "fortunePoints": 0,
+        "collapse": 0
       },
       "prepared": true,
       "skills": {
@@ -82,7 +84,7 @@
     }
   },
   "Item": {
-    "types": ["ability", "weaponry", "armor", "narrative", "item", "generic", "discipline", "module"],
+    "types": ["ability", "weaponry", "armor", "narrative", "item", "generic", "discipline", "module", "status"],
     "templates": {},
     "ability": {
       "activation": "passive",
@@ -132,6 +134,12 @@
     "module": {
       "points": 0,
       "sardisGold": 0,
+      "description": ""
+    },
+    "status": {
+      "duration": "",
+      "severity": "mild",
+      "tags": "",
       "description": ""
     }
   }

@@ -115,6 +115,24 @@
     .actor-sheet .text-muted {
       color: #d7dbe4 !important;
     }
+    .collapse-progress {
+      background: #131a27;
+      border: 1px solid #273143;
+      border-radius: 10px;
+      height: 18px;
+      overflow: hidden;
+    }
+    .collapse-progress .progress-bar {
+      height: 100%;
+      transition: width 0.3s ease, background-color 0.3s ease;
+    }
+    .status-chip {
+      background: rgba(110, 168, 254, 0.08);
+      border: 1px solid #273143;
+      border-radius: 10px;
+      padding: 2px 8px;
+      font-size: 0.85rem;
+    }
   </style>
 
   <header class="mb-4">
@@ -226,6 +244,7 @@
     {{#if showModules}}
       <li class="nav-item"><a class="nav-link item" data-tab="modules">Modules</a></li>
     {{/if}}
+    <li class="nav-item"><a class="nav-link item" data-tab="status">Status</a></li>
     <li class="nav-item"><a class="nav-link item" data-tab="combat">Combat</a></li>
     <li class="nav-item"><a class="nav-link item" data-tab="inventory">Inventory</a></li>
     <li class="nav-item"><a class="nav-link item" data-tab="narrative">Narrative</a></li>
@@ -440,6 +459,67 @@
       </div>
     </section>
     {{/if}}
+
+    <section class="tab-pane tab p-3" data-group="primary" data-tab="status">
+      <div class="row g-3">
+        <div class="col-lg-6">
+          <div class="card h-100">
+            <div class="card-header fw-semibold">Collapse</div>
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <div class="pill-muted">Exposure</div>
+                <div class="fw-semibold">{{collapse.current}} / {{collapse.capacity}}</div>
+              </div>
+              <div class="collapse-progress mb-2">
+                <div class="progress-bar" role="progressbar" aria-valuenow="{{collapse.current}}" aria-valuemin="0" aria-valuemax="{{collapse.capacity}}" style="width: {{collapse.barWidth}}; background-color: {{collapse.barColor}};"></div>
+              </div>
+              <div class="small text-muted mb-3">Maximum collapse equals the sum of all approaches times 5.</div>
+              <div class="d-flex align-items-center gap-2">
+                <label class="form-label mb-0">Current Collapse</label>
+                <input class="form-control form-control-sm text-end" type="number" name="system.resources.collapse" value="{{actor.system.resources.collapse}}" min="0" style="width:110px;" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="card h-100">
+            <div class="card-header fw-semibold d-flex justify-content-between align-items-center">
+              <span>Status Effects</span>
+              <span class="small text-muted">Drop status items to track effects</span>
+            </div>
+            <div class="card-body">
+              <div class="drop-zone p-3 text-center mb-3" data-drop-target="status" title="Drag & drop status items here">
+                <div class="fw-semibold">Drop status effects here</div>
+              </div>
+              {{#if statuses.length}}
+                <div class="list-group list-group-flush">
+                  {{#each statuses as |status|}}
+                    <div class="list-group-item d-flex align-items-center gap-2" data-item-id="{{status.id}}">
+                      <img src="{{status.img}}" alt="" class="rounded" style="width:32px; height:32px;" />
+                      <div class="flex-grow-1">
+                        <div class="fw-semibold">{{status.name}}</div>
+                        <div class="small text-muted">
+                          {{#if status.system.duration}}<span class="status-chip">Duration: {{status.system.duration}}</span>{{/if}}
+                          {{#if status.system.severity}}<span class="status-chip ms-1">Severity: {{status.system.severity}}</span>{{/if}}
+                          {{#if status.system.tags}}<span class="status-chip ms-1">Tags: {{status.system.tags}}</span>{{/if}}
+                        </div>
+                      </div>
+                      <div class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-outline-secondary" data-action="edit-item" data-item-id="{{status.id}}" title="Edit status"><i class="fas fa-edit"></i></button>
+                        <button type="button" class="btn btn-outline-danger" data-action="delete-item" data-item-id="{{status.id}}" title="Remove status"><i class="fas fa-trash"></i></button>
+                      </div>
+                    </div>
+                  {{/each}}
+                </div>
+              {{else}}
+                <div class="text-muted">No active status effects.</div>
+              {{/if}}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <section class="tab-pane tab p-3" data-group="primary" data-tab="combat">
       <div class="card mb-3">

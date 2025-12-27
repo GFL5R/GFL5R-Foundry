@@ -37,6 +37,18 @@ export class GFL5RActorSheet extends ActorSheet {
       { key: "fortune", label: "Fortune", value: Number(approachesData.fortune ?? 0) }
     ];
 
+    const collapseCurrent = Number(data.resources?.collapse ?? 0);
+    const collapseCapacity = Math.max(0, context.approachesList.reduce((sum, a) => sum + (Number(a.value ?? 0)), 0) * 5);
+    const collapsePercent = collapseCapacity > 0 ? Math.min(1, Math.max(0, collapseCurrent / collapseCapacity)) : 0;
+    const collapseHue = 120 - (collapsePercent * 120);
+    context.collapse = {
+      current: collapseCurrent,
+      capacity: collapseCapacity,
+      percent: collapsePercent,
+      barWidth: `${(collapsePercent * 100).toFixed(1)}%`,
+      barColor: `hsl(${collapseHue}, 70%, 45%)`
+    };
+
     const preparedDefaultSetting = game.settings.get("gfl5r", "initiative-prepared-character") || "true";
     const preparedFlag = data.prepared;
     context.preparedState = typeof preparedFlag === "boolean"
@@ -147,6 +159,13 @@ export class GFL5RActorSheet extends ActorSheet {
         system: i.system ?? {}
       }));
 
+    context.statuses = this.actor.items.filter(i => i.type === "status").map(i => ({
+      id: i.id,
+      name: i.name,
+      img: i.img,
+      system: i.system ?? {}
+    }));
+
     // Combat tab - weapons and armor
     context.weapons = this.actor.items.filter(i => i.type === "weaponry").map(i => ({
       id: i.id,
@@ -181,6 +200,7 @@ export class GFL5RActorSheet extends ActorSheet {
         i.type !== "discipline" && 
         i.type !== "narrative" &&
         i.type !== "module" &&
+        i.type !== "status" &&
         !disciplineIds.has(i.id) && 
         !disciplineAbilityIds.has(i.id)
       )
@@ -521,12 +541,13 @@ export class GFL5RActorSheet extends ActorSheet {
     const dropNarrativeNeg = event.target?.closest?.("[data-drop-target='narrative-negative']");
     const dropInventory = event.target?.closest?.("[data-drop-target='inventory']");
     const dropModules = event.target?.closest?.("[data-drop-target='modules']");
+    const dropStatus = event.target?.closest?.("[data-drop-target='status']");
     
     // Check for discipline slot drops
     const dropDiscipline = event.target?.closest?.("[data-drop-target='discipline']");
     const dropDisciplineAbility = event.target?.closest?.("[data-drop-target='discipline-ability']");
     
-    const dropTarget = dropAbilities || dropNarrativePos || dropNarrativeNeg || dropInventory || dropModules || dropDiscipline || dropDisciplineAbility;
+    const dropTarget = dropAbilities || dropNarrativePos || dropNarrativeNeg || dropInventory || dropModules || dropStatus || dropDiscipline || dropDisciplineAbility;
     if (!dropTarget) return super._onDrop(event);
 
     // Resolve a Document from the drop
@@ -664,6 +685,13 @@ export class GFL5RActorSheet extends ActorSheet {
       // Force type to module
       itemData.type = "module";
       itemData.system.description ??= itemDoc.system?.description ?? "";
+    } else if (dropStatus) {
+      // Force type to status
+      itemData.type = "status";
+      itemData.system.description ??= itemDoc.system?.description ?? "";
+      itemData.system.duration ??= itemDoc.system?.duration ?? "";
+      itemData.system.severity ??= itemDoc.system?.severity ?? "mild";
+      itemData.system.tags ??= itemDoc.system?.tags ?? "";
     } else if (dropInventory) {
       // Keep original type for inventory (accepts all types)
       itemData.system.description ??= itemDoc.system?.description ?? "";

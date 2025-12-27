@@ -92,6 +92,18 @@ export class GFL5RModuleSheet extends ItemSheet {
   get template() { return "systems/gfl5r/templates/item-module.html"; }
 }
 
+export class GFL5RStatusSheet extends ItemSheet {
+  static get defaultOptions() {
+    const opts = super.defaultOptions;
+    return foundry.utils.mergeObject(opts, {
+      classes: ["sheet", "item"],
+      width: 600,
+      height: 500
+    });
+  }
+  get template() { return "systems/gfl5r/templates/item-status.html"; }
+}
+
 export function registerItemSheets() {
   Items.unregisterSheet("core", ItemSheet);
   Items.registerSheet("gfl5r", GFL5RAbilitySheet, { types: ["ability"], makeDefault: true });
@@ -101,4 +113,5 @@ export function registerItemSheets() {
   Items.registerSheet("gfl5r", GFL5RItemSheet, { types: ["item"], makeDefault: true });
   Items.registerSheet("gfl5r", GFL5RDisciplineSheet, { types: ["discipline"], makeDefault: true });
   Items.registerSheet("gfl5r", GFL5RModuleSheet, { types: ["module"], makeDefault: true });
+  Items.registerSheet("gfl5r", GFL5RStatusSheet, { types: ["status"], makeDefault: true });
 }
