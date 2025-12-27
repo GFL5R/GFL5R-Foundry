@@ -534,7 +534,7 @@ export class GFL5RActorSheet extends ActorSheet {
       if (!itemDoc) {
         // Foundry v12 compat: Item.implementation.fromDropData if present
         const fromDrop = Item.implementation?.fromDropData ?? Item.fromDropData;
-        itemDoc = await fromDrop(data);
+        itemDoc = await fromDrop.call(Item.implementation ?? Item, data); // ensure correct context
       }
     } catch (err) {
       ui.notifications?.error("Unable to import dropped item.");
