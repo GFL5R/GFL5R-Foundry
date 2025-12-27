@@ -27,6 +27,16 @@ export class GFL5RActorSheet extends ActorSheet {
     context.derived = computeDerivedStats(data.approaches, data.resources);
     context.availableXP = Number(data.xp ?? 0);
 
+    // Approaches for card rendering
+    const approachesData = data.approaches ?? {};
+    context.approachesList = [
+      { key: "power", label: "Power", value: Number(approachesData.power ?? 0) },
+      { key: "swiftness", label: "Swiftness", value: Number(approachesData.swiftness ?? 0) },
+      { key: "resilience", label: "Resilience", value: Number(approachesData.resilience ?? 0) },
+      { key: "precision", label: "Precision", value: Number(approachesData.precision ?? 0) },
+      { key: "fortune", label: "Fortune", value: Number(approachesData.fortune ?? 0) }
+    ];
+
     const preparedDefaultSetting = game.settings.get("gfl5r", "initiative-prepared-character") || "true";
     const preparedFlag = data.prepared;
     context.preparedState = typeof preparedFlag === "boolean"
@@ -246,6 +256,48 @@ export class GFL5RActorSheet extends ActorSheet {
       setTimeout(() => element.classList.remove("xp-flash", "xp-flash-danger"), 450);
     };
 
+    const rollSkill = async (key, skillLabel) => {
+      const approaches = this.actor.system?.approaches ?? {};
+
+      const content = await renderTemplate(`systems/${game.system.id}/templates/roll-prompt.html`, {
+        approaches,
+        defaultTN: 2
+      });
+
+      new Dialog({
+        title: `Roll ${skillLabel}`,
+        content,
+        buttons: {
+          roll: {
+            label: "Roll",
+            callback: async (dlg) => {
+              const form = dlg[0].querySelector("form");
+              const approachName = form.elements["approach"].value;
+              const tnHidden = form.elements["hiddenTN"].checked;
+              const tnVal = Number(form.elements["tn"].value || 0);
+              const approachVal = Number(approaches[approachName] ?? 0);
+
+              const { GFLRollerApp } = await import("./dice.js");
+              const app = new GFLRollerApp({
+                actor: this.actor,
+                skillKey: key,
+                skillLabel,
+                approach: approachVal,
+                approachName,
+                tn: tnHidden ? null : tnVal,
+                hiddenTN: tnHidden
+              });
+              await app.start();
+            }
+          },
+          cancel: { label: "Cancel" }
+        },
+        default: "roll"
+      }, {
+        classes: ["sheet"]
+      }).render(true);
+    };
+
     // Increase skill rank using XP
     html.on("click", "[data-action='skill-increase']", async ev => {
       const key = ev.currentTarget?.dataset?.skill;
@@ -292,6 +344,54 @@ export class GFL5RActorSheet extends ActorSheet {
         "system.xp": availableXP + refund
       });
       flashSkillCard(skillCard);
+    });
+
+    // Increase approach rank using XP (cost 3x next rank)
+    html.on("click", "[data-action='approach-increase']", async ev => {
+      const key = ev.currentTarget?.dataset?.approach;
+      if (!key) return;
+
+      const card = ev.currentTarget.closest?.("[data-approach-card]");
+      const approaches = foundry.utils.duplicate(this.actor.system.approaches ?? {});
+      const currentRank = Number(approaches[key] ?? 0);
+      const nextRank = currentRank + 1;
+      const cost = 3 * nextRank;
+      const availableXP = Number(this.actor.system?.xp ?? 0);
+
+      if (availableXP < cost) {
+        flashSkillCard(card, true);
+        ui.notifications?.warn("Not enough XP to increase this approach.");
+        return;
+      }
+
+      approaches[key] = nextRank;
+      await this.actor.update({
+        [`system.approaches.${key}`]: nextRank,
+        "system.xp": availableXP - cost
+      });
+      flashSkillCard(card);
+    });
+
+    // Decrease approach rank and refund XP (refund 3x current rank)
+    html.on("click", "[data-action='approach-decrease']", async ev => {
+      const key = ev.currentTarget?.dataset?.approach;
+      if (!key) return;
+
+      const card = ev.currentTarget.closest?.("[data-approach-card]");
+      const approaches = foundry.utils.duplicate(this.actor.system.approaches ?? {});
+      const currentRank = Number(approaches[key] ?? 0);
+      if (currentRank <= 0) return;
+
+      const refund = 3 * currentRank;
+      const availableXP = Number(this.actor.system?.xp ?? 0);
+      const newRank = currentRank - 1;
+
+      approaches[key] = newRank;
+      await this.actor.update({
+        [`system.approaches.${key}`]: newRank,
+        "system.xp": availableXP + refund
+      });
+      flashSkillCard(card);
     });
 
     // Remove discipline from slot
@@ -386,47 +486,17 @@ export class GFL5RActorSheet extends ActorSheet {
       const labelEl = ev.currentTarget;
       const key = labelEl.dataset.skill;            // e.g. "blades"
       const skillLabel = labelEl.textContent.trim();
-    
-      const approaches = this.actor.system?.approaches ?? {};
-    
-      // Render prompt
-      const content = await renderTemplate(`systems/${game.system.id}/templates/roll-prompt.html`, {
-        approaches,
-        defaultTN: 2
-      });
-    
-      new Dialog({
-        title: `Roll ${skillLabel}`,
-        content,
-        buttons: {
-          roll: {
-            label: "Roll",
-            callback: async (dlg) => {
-              const form = dlg[0].querySelector("form");
-              const approachName = form.elements["approach"].value;
-              const tnHidden = form.elements["hiddenTN"].checked;
-              const tnVal = Number(form.elements["tn"].value || 0);
-              const approachVal = Number(approaches[approachName] ?? 0);
-    
-              const { GFLRollerApp } = await import("./dice.js");
-              const app = new GFLRollerApp({
-                actor: this.actor,
-                skillKey: key,
-                skillLabel,
-                approach: approachVal,
-                approachName,
-                tn: tnHidden ? null : tnVal,
-                hiddenTN: tnHidden
-              });
-              await app.start();
-            }
-          },
-          cancel: { label: "Cancel" }
-        },
-        default: "roll"
-      }, {
-        classes: ["sheet"]
-      }).render(true);
+      await rollSkill(key, skillLabel);
+    });
+
+    // Click anywhere on the skill card to roll (unless clicking buttons)
+    html.on("click", "[data-skill-card]", async ev => {
+      if (ev.target.closest("button")) return;
+      const card = ev.currentTarget;
+      const key = card.dataset.skillKey;
+      const label = card.querySelector("[data-action='roll-skill']")?.textContent?.trim() || key;
+      if (!key) return;
+      await rollSkill(key, label);
     });
 
   }
