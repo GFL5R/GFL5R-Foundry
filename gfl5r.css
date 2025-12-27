@@ -1,12 +1,16 @@
-/* Sheet styling previously inlined in templates */
-.ui-control.icon[class*="fa-"],
-.control.icon[class*="fa-"],
+/* Let Font Awesome win over Bootstrap's button font reset by reverting to the previous layer */
 button[class*="fa-"],
-button.fa {
-  font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", "Font Awesome 6 Brands", "Font Awesome 5 Brands" !important;
-  font-style: normal;
-  font-weight: 900;
+button[class*="fa-"]::before,
+.control.icon[class*="fa-"],
+.control.icon[class*="fa-"]::before,
+.ui-control.icon[class*="fa-"],
+.ui-control.icon[class*="fa-"]::before {
+  font-family: revert-layer;
+  font-style: revert-layer;
+  font-weight: revert-layer;
 }
+
+/* Sheet styling previously inlined in templates */
 
 .gfl5r-sheet {
   background: #0d1118;
