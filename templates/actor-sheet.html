@@ -134,9 +134,10 @@
                   {{#each group.items as |skill|}}
                     <div class="card skill-card skill-roll flex-grow-1" style="min-width: 240px;" data-skill-card data-skill-key="{{skill.key}}">
                       <div class="card-body">
-                        <div class="d-flex flex-column">
-                          <div class="fw-semibold" data-action="roll-skill" data-skill="{{skill.key}}" role="button">{{skill.label}}</div>
-                        </div>
+                          <div class="d-flex flex-column">
+                            <div class="fw-semibold" data-action="roll-skill" data-skill="{{skill.key}}" role="button">{{skill.label}}</div>
+                            {{#if skill.itemId}}<input type="hidden" data-item-id="{{skill.itemId}}" />{{/if}}
+                          </div>
                         <div class="d-flex align-items-center gap-2">
                           <button type="button" class="btn btn-outline-light btn-sm" data-action="skill-decrease" data-skill="{{skill.key}}" title="Refund last rank">-</button>
                           <span class="skill-rank-display">{{lookup ../../skills skill.key}}</span>
