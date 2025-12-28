@@ -91,6 +91,16 @@ const resolveItemFromDropData = async (data) => {
   return { item: null, uuid, itemData: null };
 };
 
+const getDragEventDataSafe = (event) => {
+  const evt = event?.originalEvent ?? event;
+  const TextEditorImpl = foundry?.applications?.ux?.TextEditor?.implementation ?? TextEditor;
+  if (!(evt instanceof DragEvent)) {
+    console.warn("GFL5R | Drop handler received non-DragEvent", evt);
+    return {};
+  }
+  return TextEditorImpl.getDragEventData(evt);
+};
+
 const flattenSkillList = () => {
   return GFL5R_CONFIG.skillGroups.flatMap(group => group.items.map(item => ({
     key: item.key,
@@ -232,7 +242,7 @@ class CharacterBuilderApp extends FormApplication {
     if (!dropTarget) return false;
 
     const kind = dropTarget.dataset.dropTarget;
-    const data = TextEditor.getDragEventData(event);
+    const data = getDragEventDataSafe(event);
 
     const { item: itemDoc, uuid: sourceUuid, itemData } = await resolveItemFromDropData(data);
     if (!itemDoc) {
@@ -1068,7 +1078,7 @@ export class GFL5RActorSheet extends ActorSheet {
 
   /** Accept dropped Items (from compendia or sidebar) into the drop zones */
   async _onDrop(event) {
-    const data = TextEditor.getDragEventData(event);
+    const data = getDragEventDataSafe(event);
     const flashDropTarget = (el) => {
       if (!el) return;
       el.classList.add("border", "border-success", "bg-success-subtle");
