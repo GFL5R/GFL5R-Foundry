@@ -119,7 +119,7 @@ export class GFLDicePickerDialog extends HandlebarsApplicationMixin(ApplicationV
 
   static get eventListeners() {
     return [
-      { event: "submit", selector: "form", callback: "onSubmit", preventDefault: true },
+      { event: "submit", selector: "form", callback: "onSubmit", preventDefault: true, stopPropagation: true },
       { event: "click", selector: "[data-action='ring-minus']", callback: "onRingMinus" },
       { event: "click", selector: "[data-action='ring-plus']", callback: "onRingPlus" },
       { event: "click", selector: "[data-action='skill-minus']", callback: "onSkillMinus" },
@@ -178,7 +178,9 @@ export class GFLDicePickerDialog extends HandlebarsApplicationMixin(ApplicationV
     ev?.stopPropagation?.();
     const form = ev?.currentTarget ?? ev?.target?.closest?.("form");
     const data = form ? foundry.utils.expandObject(Object.fromEntries(new FormData(form).entries())) : {};
-    return this._updateObject(ev, data);
+    console.log("GFL5R | Dice picker onSubmit", { data });
+    this._updateObject(ev, data);
+    return false;
   }
   onRingMinus(ev) { ev.preventDefault(); this.ringAdjust = Math.max(this.ringAdjust - 1, -9); this.render(false); }
   onRingPlus(ev) { ev.preventDefault(); this.ringAdjust = Math.min(this.ringAdjust + 1, 9); this.render(false); }
@@ -197,7 +199,35 @@ export class GFLDicePickerDialog extends HandlebarsApplicationMixin(ApplicationV
     this.render(false);
   }
 
+  activateListeners(html) {
+    super.activateListeners?.(html);
+    const root = html instanceof HTMLElement ? html : html?.[0];
+    const form = root?.querySelector?.("form");
+    if (form) {
+      const handler = (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        console.log("GFL5R | Dice picker submit intercepted", ev);
+        this.onSubmit(ev);
+        return false;
+      };
+      form.addEventListener("submit", handler, { capture: true });
+    }
+    // Global capture as last resort to stop navigation
+    this._globalSubmitHandler = (ev) => {
+      if (!(ev.target instanceof HTMLFormElement)) return;
+      if (!root || !root.contains(ev.target)) return;
+      ev.preventDefault();
+      ev.stopPropagation();
+      console.log("GFL5R | Dice picker global submit intercepted", ev);
+      this.onSubmit(ev);
+      return false;
+    };
+    window.addEventListener("submit", this._globalSubmitHandler, true);
+  }
+
   async _updateObject(event, formData) {
+    console.log("GFL5R | Dice picker _updateObject", { formData });
     if (!this.actor || !this.skillKey) {
       await this._finish();
       return;
@@ -281,7 +311,9 @@ export class GFLDicePickerDialog extends HandlebarsApplicationMixin(ApplicationV
     }
 
     const flavor = `<strong>${this.actor.name}</strong> rolls <em>${this.skillLabel || this.skillKey}</em> with <em>${approachName}</em>`;
+    console.log("GFL5R | Dice picker sending roll", { formula, flavor, difficulty: tnVal, tnHidden, keepBonus, ringDice, skillDice });
     await roll.toMessage({ flavor });
+    console.log("GFL5R | Dice picker roll sent");
     await this._finish();
   }
 
@@ -318,6 +350,10 @@ export class GFLDicePickerDialog extends HandlebarsApplicationMixin(ApplicationV
 
   async _finish() {
     if (this._completed) return;
+    if (this._globalSubmitHandler) {
+      window.removeEventListener("submit", this._globalSubmitHandler, true);
+      this._globalSubmitHandler = null;
+    }
     this._completed = true;
     if (this.onComplete) {
       try {
