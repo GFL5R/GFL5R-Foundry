@@ -355,41 +355,6 @@
         </div>
         {{/if}}
       {{/if}}
-              {{#if selectedCards.passion}}
-                <div class="card bg-secondary bg-opacity-25 border mt-2">
-                  <div class="card-body d-flex gap-2 align-items-start">
-                    <img src="{{selectedCards.passion.img}}" alt="" class="rounded" style="width:40px; height:40px;" />
-                    <div class="flex-grow-1">
-                      <div class="fw-semibold">{{selectedCards.passion.name}}</div>
-                      <div class="small text-muted">Passion</div>
-                    </div>
-                    <button type="button" class="btn btn-link btn-sm text-danger" data-action="clear-drop" data-drop-key="passion">Clear</button>
-                  </div>
-                </div>
-              {{/if}}
-            </div>
-          </div>
-          <div class="col-md-6">
-            <h3 class="h6">Question 7. What do you fear the most?</h3>
-            <p class="text-muted">{{flavor.human.anxiety}}</p>
-            <div class="drop-zone p-3" data-drop-target="anxiety">
-              <div class="fw-semibold">Drop Anxiety here</div>
-              {{#if selectedCards.anxiety}}
-                <div class="card bg-secondary bg-opacity-25 border mt-2">
-                  <div class="card-body d-flex gap-2 align-items-start">
-                    <img src="{{selectedCards.anxiety.img}}" alt="" class="rounded" style="width:40px; height:40px;" />
-                    <div class="flex-grow-1">
-                      <div class="fw-semibold">{{selectedCards.anxiety.name}}</div>
-                      <div class="small text-muted">Anxiety</div>
-                    </div>
-                    <button type="button" class="btn btn-link btn-sm text-danger" data-action="clear-drop" data-drop-key="anxiety">Clear</button>
-                  </div>
-                </div>
-              {{/if}}
-            </div>
-          </div>
-        </div>
-      {{/if}}
 
       {{#if (eq step 4)}}
         {{#if (eq buildType "human")}}
