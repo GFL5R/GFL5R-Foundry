@@ -87,7 +87,7 @@ export class GFL5RItemSheet extends BaseGFLItemSheet {
 
   static get PARTS() {
     return {
-      sheet: { template: templatePath("templates/item-item.html") }
+      sheet: { template: templatePath("templates/item-sheet.html") }
     };
   }
 }

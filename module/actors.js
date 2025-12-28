@@ -819,8 +819,10 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
 
   async _prepareContext(options) {
     sheetDebug("ActorSheet#_prepareContext", { actor: this.actor?.id, name: this.actor?.name });
-    const context = await super._prepareContext(options);
-    const data = context.actor.system ?? {};
+    const context = (await super._prepareContext(options)) ?? {};
+    const actor = this.document ?? this.actor;
+    context.actor ??= actor?.toObject?.() ?? actor;
+    const data = context.actor?.system ?? actor?.system ?? {};
 
     context.derived = computeDerivedStats(data.approaches, data.resources);
     context.availableXP = Number(data.xp ?? 0);
@@ -1556,8 +1558,10 @@ export class GFL5RNPCSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
   #renderAbort = null;
 
   async _prepareContext(options) {
-    const context = await super._prepareContext(options);
-    const data = context.actor.system ?? {};
+    const context = (await super._prepareContext(options)) ?? {};
+    const actor = this.document ?? this.actor;
+    context.actor ??= actor?.toObject?.() ?? actor;
+    const data = context.actor?.system ?? actor?.system ?? {};
 
     context.derived = computeDerivedStats(data.approaches, data.resources);
     context.skills = data.skills ?? {};
