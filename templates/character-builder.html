@@ -1,21 +1,63 @@
 <form class="actor-sheet gfl5r-sheet container-fluid py-2 text-light" data-bs-theme="dark" autocomplete="off">
-  <input type="hidden" name="buildType" value="human" />
+  <input type="hidden" name="buildType" value="{{buildType}}" />
 
   <div class="card bg-dark text-light">
     <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
       <div>
-        <div class="fw-bold">Character Builder — Human</div>
-        <div class="small text-muted">Step {{step}} of 4</div>
+        <div class="fw-bold">Character Builder — {{#if (eq buildType "tdoll")}}T-Doll{{else}}Human{{/if}}</div>
+        {{#if (gt step 0)}}
+          <div class="small text-muted">Step {{step}} of 4</div>
+        {{/if}}
       </div>
-      <div class="d-flex flex-wrap gap-2">
-        {{#each steps as |s|}}
-          <span class="badge rounded-pill {{#if (eq ../step s.num)}}bg-primary{{else}}bg-secondary{{/if}}">{{s.num}}. {{s.label}}</span>
-        {{/each}}
-      </div>
+      {{#if (gt step 0)}}
+        <div class="d-flex flex-wrap gap-2">
+          {{#each steps as |s|}}
+            <span class="badge rounded-pill {{#if (eq ../step s.num)}}bg-primary{{else}}bg-secondary{{/if}}">{{s.num}}. {{s.label}}</span>
+          {{/each}}
+        </div>
+      {{/if}}
     </div>
 
     <div class="card-body">
+      {{#if (eq step 0)}}
+        <div class="mb-3">
+          <h3 class="h5 mb-2">What type of character are you creating?</h3>
+          <p class="text-muted mb-3">Choose whether you want to create a human Commander or a T-Doll operative.</p>
+          <div class="row g-3">
+            <div class="col-12 col-md-6">
+              <label class="card h-100 shadow-sm" role="button">
+                <div class="card-body d-flex align-items-start gap-2">
+                  <input class="form-check-input mt-1" type="radio" name="characterType" value="human" required {{#if (eq buildType "human")}}checked{{/if}} />
+                  <div>
+                    <div class="fw-semibold">Human Commander</div>
+                    <div class="small text-muted">Humans are shaped by their pasts: choices, training, and circumstance. Commanders lead Dolls into danger and make the tough decisions.</div>
+                  </div>
+                </div>
+              </label>
+            </div>
+            <div class="col-12 col-md-6">
+              <label class="card h-100 shadow-sm" role="button">
+                <div class="card-body d-flex align-items-start gap-2">
+                  <input class="form-check-input mt-1" type="radio" name="characterType" value="tdoll" required {{#if (eq buildType "tdoll")}}checked{{/if}} />
+                  <div>
+                    <div class="fw-semibold">T-Doll</div>
+                    <div class="small text-muted">T-Dolls are built, not born. Every model starts with a frame and can be fitted with specialized upgrades. They're more than the sum of their parts.</div>
+                  </div>
+                </div>
+              </label>
+            </div>
+          </div>
+          {{#if (eq buildType "tdoll")}}
+            <div class="alert alert-info mt-3">
+              <strong>Note:</strong> Typically, T-Dolls are most often female presenting. However, since you're creating your own here, there's no reason yours has to be!
+            </div>
+            <p class="text-muted mt-3">{{flavor.tdoll.intro}}</p>
+          {{/if}}
+        </div>
+      {{/if}}
+
       {{#if (eq step 1)}}
+        {{#if (eq buildType "human")}}
         <div class="mb-3">
           <h3 class="h5 mb-2">Question 1. Where are you from?</h3>
           <p class="text-muted mb-2">{{flavor.human.step1.lead1}}</p>
@@ -36,9 +78,33 @@
             {{/each}}
           </div>
         </div>
+        {{else}}
+        <div class="mb-3">
+          <h3 class="h5 mb-2">Question 1. Who made you, and what is your model number?</h3>
+          <p class="text-muted mb-2">{{flavor.tdoll.step1.lead1}}</p>
+          <p class="text-muted mb-3">{{flavor.tdoll.step1.lead2}}</p>
+          <div class="row g-3">
+            {{#each tdollFrames as |frame|}}
+              <div class="col-12">
+                <label class="card shadow-sm" role="button">
+                  <div class="card-body d-flex align-items-start gap-2">
+                    <input class="form-check-input mt-1" type="radio" name="tdoll.frame" value="{{frame.key}}" required {{#if (eq ../formValues.tdoll.frame frame.key)}}checked{{/if}} />
+                    <div class="flex-grow-1">
+                      <div class="fw-semibold">{{frame.manufacturer}} — {{frame.model}}</div>
+                      <div class="small text-muted mb-1">{{frame.description}}</div>
+                      <div class="small text-muted">Approaches: {{frame.approachesText}} • Skills: {{frame.skillsText}}</div>
+                    </div>
+                  </div>
+                </label>
+              </div>
+            {{/each}}
+          </div>
+        </div>
+        {{/if}}
       {{/if}}
 
       {{#if (eq step 2)}}
+        {{#if (eq buildType "human")}}
         <div class="mb-3">
           <h3 class="h5 mb-2">Question 2. What is your background?</h3>
           <p class="text-muted mb-2">{{flavor.human.step2.lead1}}</p>
@@ -58,9 +124,38 @@
             {{/each}}
           </div>
         </div>
+        {{else}}
+        <div class="mb-3">
+          <h3 class="h5 mb-2">Question 2. What weapon were you imprinted with?</h3>
+          <p class="text-muted mb-2">{{flavor.tdoll.step2.lead1}}</p>
+          <p class="text-muted mb-3">{{flavor.tdoll.step2.lead2}}</p>
+          <div class="drop-zone p-3 text-center" data-drop-target="discipline">
+            <div class="fw-semibold">Drop a Weapon Discipline item here</div>
+            {{#if selectedCards.discipline}}
+              <div class="card bg-secondary bg-opacity-25 border mt-2 text-start">
+                <div class="card-body d-flex gap-2 align-items-start">
+                  <img src="{{selectedCards.discipline.img}}" alt="" class="rounded" style="width:48px; height:48px;" />
+                  <div class="flex-grow-1">
+                    <div class="fw-semibold">{{selectedCards.discipline.name}}</div>
+                    {{#if selectedCards.discipline.associatedLabels.length}}
+                      <div class="small text-muted">{{join selectedCards.discipline.associatedLabels ", "}}</div>
+                    {{else}}
+                      <div class="small text-muted">No associated skills listed</div>
+                    {{/if}}
+                  </div>
+                  <button type="button" class="btn btn-link btn-sm text-danger" data-action="clear-drop" data-drop-key="discipline">Clear</button>
+                </div>
+              </div>
+            {{else}}
+              <div class="text-muted small">Drag from sidebar or compendium.</div>
+            {{/if}}
+          </div>
+        </div>
+        {{/if}}
       {{/if}}
 
       {{#if (eq step 3)}}
+        {{#if (eq buildType "human")}}
         <div class="mb-4">
           <h3 class="h5 mb-1">Question 3. What path have you chosen?</h3>
           <p class="text-muted mb-2">{{flavor.human.step3.lead1}}</p>
@@ -168,9 +263,136 @@
             </div>
           </div>
         </div>
+        {{else}}
+        <div class="mb-3">
+          <h3 class="h5 mb-2">Question 3. What upgrades set you apart?</h3>
+          <p class="text-muted mb-2">{{flavor.tdoll.step3.lead1}}</p>
+          <p class="text-muted mb-3">{{flavor.tdoll.step3.lead2}}</p>
+          <div class="alert alert-warning">
+            <strong>Upgrade Point Allocation:</strong> You have 10 points to spend. Track your choices here (not yet implemented in this prototype).
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <h3 class="h6">Question 4. What is your greatest achievement?</h3>
+          <p class="text-muted">{{flavor.tdoll.advantage}}</p>
+          <div class="drop-zone p-3" data-drop-target="advantage">
+            <div class="fw-semibold">Drop Advantage here</div>
+            {{#if selectedCards.advantage}}
+              <div class="card bg-secondary bg-opacity-25 border mt-2">
+                <div class="card-body d-flex gap-2 align-items-start">
+                  <img src="{{selectedCards.advantage.img}}" alt="" class="rounded" style="width:40px; height:40px;" />
+                  <div class="flex-grow-1">
+                    <div class="fw-semibold">{{selectedCards.advantage.name}}</div>
+                    <div class="small text-muted">Distinction</div>
+                  </div>
+                  <button type="button" class="btn btn-link btn-sm text-danger" data-action="clear-drop" data-drop-key="advantage">Clear</button>
+                </div>
+              </div>
+            {{/if}}
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <h3 class="h6">Question 5. What holds you back most?</h3>
+          <p class="text-muted">{{flavor.tdoll.disadvantage}}</p>
+          <div class="drop-zone p-3" data-drop-target="disadvantage">
+            <div class="fw-semibold">Drop Disadvantage here</div>
+            {{#if selectedCards.disadvantage}}
+              <div class="card bg-secondary bg-opacity-25 border mt-2">
+                <div class="card-body d-flex gap-2 align-items-start">
+                  <img src="{{selectedCards.disadvantage.img}}" alt="" class="rounded" style="width:40px; height:40px;" />
+                  <div class="flex-grow-1">
+                    <div class="fw-semibold">{{selectedCards.disadvantage.name}}</div>
+                    <div class="small text-muted">Adversity</div>
+                  </div>
+                  <button type="button" class="btn btn-link btn-sm text-danger" data-action="clear-drop" data-drop-key="disadvantage">Clear</button>
+                </div>
+              </div>
+            {{/if}}
+          </div>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-md-6">
+            <h3 class="h6">Question 6. What makes you different?</h3>
+            <p class="text-muted">{{flavor.tdoll.passion}}</p>
+            <div class="drop-zone p-3" data-drop-target="passion">
+              <div class="fw-semibold">Drop Passion here</div>
+              {{#if selectedCards.passion}}
+                <div class="card bg-secondary bg-opacity-25 border mt-2">
+                  <div class="card-body d-flex gap-2 align-items-start">
+                    <img src="{{selectedCards.passion.img}}" alt="" class="rounded" style="width:40px; height:40px;" />
+                    <div class="flex-grow-1">
+                      <div class="fw-semibold">{{selectedCards.passion.name}}</div>
+                      <div class="small text-muted">Passion</div>
+                    </div>
+                    <button type="button" class="btn btn-link btn-sm text-danger" data-action="clear-drop" data-drop-key="passion">Clear</button>
+                  </div>
+                </div>
+              {{/if}}
+            </div>
+          </div>
+          <div class="col-md-6">
+            <h3 class="h6">Question 7. What are you most afraid of?</h3>
+            <p class="text-muted">{{flavor.tdoll.anxiety}}</p>
+            <div class="drop-zone p-3" data-drop-target="anxiety">
+              <div class="fw-semibold">Drop Anxiety here</div>
+              {{#if selectedCards.anxiety}}
+                <div class="card bg-secondary bg-opacity-25 border mt-2">
+                  <div class="card-body d-flex gap-2 align-items-start">
+                    <img src="{{selectedCards.anxiety.img}}" alt="" class="rounded" style="width:40px; height:40px;" />
+                    <div class="flex-grow-1">
+                      <div class="fw-semibold">{{selectedCards.anxiety.name}}</div>
+                      <div class="small text-muted">Anxiety</div>
+                    </div>
+                    <button type="button" class="btn btn-link btn-sm text-danger" data-action="clear-drop" data-drop-key="anxiety">Clear</button>
+                  </div>
+                </div>
+              {{/if}}
+            </div>
+          </div>
+        </div>
+        {{/if}}
+      {{/if}}
+              {{#if selectedCards.passion}}
+                <div class="card bg-secondary bg-opacity-25 border mt-2">
+                  <div class="card-body d-flex gap-2 align-items-start">
+                    <img src="{{selectedCards.passion.img}}" alt="" class="rounded" style="width:40px; height:40px;" />
+                    <div class="flex-grow-1">
+                      <div class="fw-semibold">{{selectedCards.passion.name}}</div>
+                      <div class="small text-muted">Passion</div>
+                    </div>
+                    <button type="button" class="btn btn-link btn-sm text-danger" data-action="clear-drop" data-drop-key="passion">Clear</button>
+                  </div>
+                </div>
+              {{/if}}
+            </div>
+          </div>
+          <div class="col-md-6">
+            <h3 class="h6">Question 7. What do you fear the most?</h3>
+            <p class="text-muted">{{flavor.human.anxiety}}</p>
+            <div class="drop-zone p-3" data-drop-target="anxiety">
+              <div class="fw-semibold">Drop Anxiety here</div>
+              {{#if selectedCards.anxiety}}
+                <div class="card bg-secondary bg-opacity-25 border mt-2">
+                  <div class="card-body d-flex gap-2 align-items-start">
+                    <img src="{{selectedCards.anxiety.img}}" alt="" class="rounded" style="width:40px; height:40px;" />
+                    <div class="flex-grow-1">
+                      <div class="fw-semibold">{{selectedCards.anxiety.name}}</div>
+                      <div class="small text-muted">Anxiety</div>
+                    </div>
+                    <button type="button" class="btn btn-link btn-sm text-danger" data-action="clear-drop" data-drop-key="anxiety">Clear</button>
+                  </div>
+                </div>
+              {{/if}}
+            </div>
+          </div>
+        </div>
       {{/if}}
 
       {{#if (eq step 4)}}
+        {{#if (eq buildType "human")}}
         <div class="mb-3">
           <h3 class="h5 mb-1">Question 8. How do you view Dolls?</h3>
           <p class="text-muted">{{flavor.human.viewDolls}}</p>
@@ -222,11 +444,63 @@
           <h3 class="h6">Notes</h3>
           <textarea class="form-control" name="human.additionalNotes" rows="3" placeholder="Anything else to capture?">{{formValues.human.additionalNotes}}</textarea>
         </div>
+        {{else}}
+        <div class="mb-3">
+          <h3 class="h5 mb-2">Question 8. When did you meet your Commander?</h3>
+          <p class="text-muted">{{flavor.tdoll.metCommander}}</p>
+          <textarea class="form-control" name="tdoll.metCommander" rows="3" placeholder="Describe your first meeting...">{{formValues.tdoll.metCommander}}</textarea>
+        </div>
+
+        <div class="mb-3">
+          <h3 class="h6">Question 9. What do you want for yourself?</h3>
+          <p class="text-muted">{{flavor.tdoll.goal}}</p>
+          <textarea class="form-control" name="tdoll.goal" rows="2" placeholder="Freedom, learning, revenge, a home...">{{formValues.tdoll.goal}}</textarea>
+        </div>
+
+        <div class="mb-3">
+          <h3 class="h6">Question 10. How were you named?</h3>
+          <p class="text-muted">{{flavor.tdoll.nameOrigin}}</p>
+          <div class="d-flex flex-column gap-2">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="tdoll.nameOrigin" id="name-human" value="human" {{#if (eq formValues.tdoll.nameOrigin "human")}}checked{{/if}}>
+              <label class="form-check-label" for="name-human">Human Name (+5 Humanity)</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="tdoll.nameOrigin" id="name-callsign" value="callsign" {{#if (eq formValues.tdoll.nameOrigin "callsign")}}checked{{/if}}>
+              <label class="form-check-label" for="name-callsign">Callsign or Nickname (+5 Fame)</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="tdoll.nameOrigin" id="name-weapon" value="weapon" {{#if (eq formValues.tdoll.nameOrigin "weapon")}}checked{{/if}}>
+              <label class="form-check-label" for="name-weapon">Weapon Imprint Name (+1 Firearms, -5 Humanity)</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="tdoll.nameOrigin" id="name-weird" value="weird" {{#if (eq formValues.tdoll.nameOrigin "weird")}}checked{{/if}}>
+              <label class="form-check-label" for="name-weird">Weird Name (-5 Fame, +1 Upgrade Module point)</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <h3 class="h6">Question 11. What is your name?</h3>
+          <input class="form-control" type="text" name="tdoll.name" value="{{#if formValues.tdoll.name}}{{formValues.tdoll.name}}{{else}}{{actorName}}{{/if}}" placeholder="T-Doll designation" required />
+        </div>
+
+        <div class="mb-3">
+          <h3 class="h6">Question 12. How does your story end?</h3>
+          <p class="text-muted">{{flavor.tdoll.storyEnd}}</p>
+          <textarea class="form-control" name="tdoll.storyEnd" rows="2">{{formValues.tdoll.storyEnd}}</textarea>
+        </div>
+
+        <div class="mb-3">
+          <h3 class="h6">Notes</h3>
+          <textarea class="form-control" name="tdoll.additionalNotes" rows="3" placeholder="Anything else to capture?">{{formValues.tdoll.additionalNotes}}</textarea>
+        </div>
+        {{/if}}
       {{/if}}
     </div>
 
     <div class="card-footer d-flex justify-content-between">
-      <button type="button" class="btn btn-outline-secondary" data-action="builder-prev" {{#if (eq step 1)}}disabled{{/if}}>Back</button>
+      <button type="button" class="btn btn-outline-secondary" data-action="builder-prev" {{#if (eq step 0)}}disabled{{/if}}>Back</button>
       <div class="d-flex gap-2">
         {{#if (eq step 4)}}
           <button type="submit" class="btn btn-primary">Apply to Sheet</button>

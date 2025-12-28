@@ -44,6 +44,57 @@ const HUMAN_BACKGROUNDS = [
   { key: "scholar", label: "Scholar", approach: "swiftness", skill: "computers" }
 ];
 
+const TDOLL_FRAMES = [
+  { 
+    key: "iop-ssd62", 
+    manufacturer: "IOP (Kyiv, Ukraine)", 
+    model: "SSD-62",
+    description: "Designed as general-purpose companions, equally comfortable in a civilian home or a security detail.",
+    approaches: { power: 2, swiftness: 2, resilience: 2, precision: 2, fortune: 2 },
+    skills: ["firearms", "negotiation"]
+  },
+  { 
+    key: "iop-sst05", 
+    manufacturer: "IOP (Kyiv, Ukraine)", 
+    model: "SST-05",
+    description: "Agile frontline combat Dolls, optimized for firearms and battlefield adaptability.",
+    approaches: { power: 3, swiftness: 3, resilience: 2, precision: 2, fortune: 1 },
+    skills: ["firearms", "tactics"]
+  },
+  { 
+    key: "svarog-crar", 
+    manufacturer: "Svarog Heavy Industries (Moscow, Russia)", 
+    model: "CRAR",
+    description: "A heavy industrial frame retrofitted for combat. Strong, armored, and reliable, but sluggish compared to other Dolls.",
+    approaches: { power: 3, swiftness: 1, resilience: 3, precision: 2, fortune: 1 },
+    skills: ["conditioning", "mechanics"]
+  },
+  { 
+    key: "svarog-dmtx", 
+    manufacturer: "Svarog Heavy Industries (Moscow, Russia)", 
+    model: "DMT-X",
+    description: "Originally designed to repair other Dolls in hazardous environments, these frames excel in precision tasks and technical support.",
+    approaches: { power: 1, swiftness: 1, resilience: 3, precision: 4, fortune: 1 },
+    skills: ["mechanics", "medicine"]
+  },
+  { 
+    key: "sangvis-dsi8", 
+    manufacturer: "Sangvis Ferri (Romania)", 
+    model: "DSI-8",
+    description: "Infiltration frames optimized for deception and tactical operations. They can blend into human spaces surprisingly well, too.",
+    approaches: { power: 2, swiftness: 2, resilience: 2, precision: 3, fortune: 1 },
+    skills: ["stealth", "subterfuge"]
+  },
+  { 
+    key: "sangvis-ppd02", 
+    manufacturer: "Sangvis Ferri (Romania)", 
+    model: "PPD-02",
+    description: "Originally a law enforcement design, later adapted for private security and paramilitary use. Balanced and authoritative, but rarely trusted outside official capacities.",
+    approaches: { power: 1, swiftness: 2, resilience: 2, precision: 3, fortune: 2 },
+    skills: ["insight", "command"]
+  }
+];
+
 const FLAVOR_DEFAULTS = {
   human: {
     step1: {
@@ -120,13 +171,14 @@ class CharacterBuilderApp extends FormApplication {
     this.actor = actor;
     const saved = actor.getFlag("gfl5r", "builderState") ?? null;
     this.builderState = saved ?? {
-      step: 1,
+      step: 0,
+      buildType: "human",
       discipline: null,
       advantage: null,
       disadvantage: null,
       passion: null,
       anxiety: null,
-      formValues: { human: {} }
+      formValues: { human: {}, tdoll: {} }
     };
   }
 
@@ -192,19 +244,22 @@ class CharacterBuilderApp extends FormApplication {
     selectedCards.anxiety = mapNarrative("anxiety");
 
     const steps = [
-      { num: 1, label: "Nationality" },
-      { num: 2, label: "Background" },
-      { num: 3, label: "Discipline & Traits" },
+      { num: 1, label: this.builderState.buildType === "tdoll" ? "Frame" : "Nationality" },
+      { num: 2, label: this.builderState.buildType === "tdoll" ? "Weapon" : "Background" },
+      { num: 3, label: this.builderState.buildType === "tdoll" ? "Upgrades & Traits" : "Discipline & Traits" },
       { num: 4, label: "Motivation" }
     ];
 
-    const formValues = this.builderState.formValues ?? { human: {} };
+    const formValues = this.builderState.formValues ?? { human: {}, tdoll: {} };
     formValues.human ??= {};
+    formValues.tdoll ??= {};
     if (!formValues.human.viewDolls) formValues.human.viewDolls = "favor";
+    if (!formValues.tdoll.nameOrigin) formValues.tdoll.nameOrigin = "human";
 
     return {
       actorName: this.actor.name,
       flavor,
+      buildType: this.builderState.buildType,
       humanNationalities: HUMAN_NATIONALITIES.map(n => ({
         ...n,
         approachesText: n.approaches.map(a => APPROACH_LABELS[a] ?? a).join(" & ")
@@ -213,6 +268,13 @@ class CharacterBuilderApp extends FormApplication {
         ...bg,
         approachLabel: APPROACH_LABELS[bg.approach] ?? bg.approach,
         skillLabel: GFL5R_CONFIG.getSkillLabel(bg.skill)
+      })),
+      tdollFrames: TDOLL_FRAMES.map(f => ({
+        ...f,
+        approachesText: Object.entries(f.approaches)
+          .map(([k, v]) => `${APPROACH_LABELS[k]} ${v}`)
+          .join(", "),
+        skillsText: f.skills.map(s => GFL5R_CONFIG.getSkillLabel(s)).join(", ")
       })),
       skillOptions,
       existingDisciplines,
@@ -241,6 +303,15 @@ class CharacterBuilderApp extends FormApplication {
   activateListeners(html) {
     super.activateListeners(html);
     sheetDebug("CharacterBuilderApp#activateListeners");
+
+    html.on("change", "[name='characterType']", ev => {
+      const selectedType = ev.currentTarget.value;
+      if (selectedType && this.builderState.buildType !== selectedType) {
+        this.builderState.buildType = selectedType;
+        this._persistBuilderState();
+        this.render();
+      }
+    });
 
     html.on("click", "[data-action='builder-next']", ev => {
       ev.preventDefault();
@@ -280,13 +351,17 @@ class CharacterBuilderApp extends FormApplication {
     if (!formEl) return;
     const fd = new FormData(formEl);
     const prevHuman = foundry.utils.duplicate(this.builderState?.formValues?.human ?? {});
+    const prevTdoll = foundry.utils.duplicate(this.builderState?.formValues?.tdoll ?? {});
     const human = { ...prevHuman };
+    const tdoll = { ...prevTdoll };
     for (const [key, value] of fd.entries()) {
       if (key.startsWith("human.")) {
         human[key.slice(6)] = value;
+      } else if (key.startsWith("tdoll.")) {
+        tdoll[key.slice(6)] = value;
       }
     }
-    this.builderState.formValues = { human };
+    this.builderState.formValues = { human, tdoll };
     this._persistBuilderState();
   }
 
@@ -353,7 +428,7 @@ class CharacterBuilderApp extends FormApplication {
 
   _changeStep(delta) {
     const total = 4;
-    const next = Math.min(total, Math.max(1, this.builderState.step + delta));
+    const next = Math.min(total, Math.max(0, this.builderState.step + delta));
     if (next !== this.builderState.step) {
       this.builderState.step = next;
       this.render(false);
@@ -363,12 +438,16 @@ class CharacterBuilderApp extends FormApplication {
 
   async _updateObject(event, formData) {
     sheetDebug("CharacterBuilderApp#_updateObject", { formData });
-    const buildType = formData["buildType"] ?? formData.buildType ?? "human";
-    if (buildType !== "human") {
-      ui.notifications?.info("T-Doll builder is coming soon.");
-      return;
+    const buildType = this.builderState.buildType ?? formData["buildType"] ?? formData.buildType ?? "human";
+    
+    if (buildType === "tdoll") {
+      return await this._applyTdollBuilder(formData);
+    } else {
+      return await this._applyHumanBuilder(formData);
     }
+  }
 
+  async _applyHumanBuilder(formData) {
     // Foundry expands dot-notation field names into nested objects; fall back to stored wizard state.
     const formHuman = formData.human ?? {};
     const storedHuman = this.builderState?.formValues?.human ?? {};
@@ -413,9 +492,7 @@ class CharacterBuilderApp extends FormApplication {
       resilience: 1,
       precision: 1,
       fortune: 1
-    };
-
-    const bumpApproach = (key) => {
+    };    const bumpApproach = (key) => {
       if (!key) return;
       approaches[key] = Number(approaches[key] ?? 0) + 1;
     };
@@ -452,6 +529,8 @@ class CharacterBuilderApp extends FormApplication {
     }
     updates["system.skills"] = skills;
     updates["system.characterType"] = "human";
+    updates["system.nationality"] = nationalityKey;
+    updates["system.background"] = backgroundKey;
 
     const currentHumanity = 0;
     updates["system.humanity"] = viewDolls === "favor" ? currentHumanity + 5 : currentHumanity;
@@ -493,6 +572,120 @@ class CharacterBuilderApp extends FormApplication {
     await this._persistBuilderState();
 
     ui.notifications?.info("Character builder applied to this actor.");
+  }
+
+  async _applyTdollBuilder(formData) {
+    const formTdoll = formData.tdoll ?? {};
+    const storedTdoll = this.builderState?.formValues?.tdoll ?? {};
+    const getTdoll = (key) => formTdoll[key] ?? formData[`tdoll.${key}`] ?? storedTdoll[key];
+
+    const frameKey = getTdoll("frame");
+    const nameOrigin = getTdoll("nameOrigin") || "human";
+    const metCommander = (getTdoll("metCommander") || "").trim();
+    const goal = (getTdoll("goal") || "").trim();
+    const newName = (getTdoll("name") || "").trim();
+    const storyEnd = (getTdoll("storyEnd") || "").trim();
+    const additionalNotes = (getTdoll("additionalNotes") || "").trim();
+
+    const frame = TDOLL_FRAMES.find(f => f.key === frameKey);
+
+    if (!frame) {
+      ui.notifications?.warn("Pick a frame to continue.");
+      return;
+    }
+    if (!this.builderState.discipline) {
+      ui.notifications?.warn("Drop a weapon imprint Discipline before applying.");
+      this.builderState.step = 2;
+      this.render(false);
+      return;
+    }
+
+    // Overwrite sheet from a clean state
+    const allItemIds = this.actor.items.map(i => i.id);
+    if (allItemIds.length) await this.actor.deleteEmbeddedDocuments("Item", allItemIds);
+    await this.actor.update({ "system.disciplines": {} });
+
+    const approaches = { ...frame.approaches };
+
+    const skills = {};
+    const ensureSkillAtLeast = (key, min) => {
+      const current = skills[key] ?? 0;
+      if (current < min) skills[key] = min;
+    };
+
+    frame.skills.forEach(sk => ensureSkillAtLeast(sk, 1));
+
+    const { label: disciplineLabel, associatedSkills } = await this._applyDisciplineFromBuilder();
+    const uniqueAssociatedSkills = [...new Set(Array.isArray(associatedSkills) ? associatedSkills : [])];
+    uniqueAssociatedSkills.forEach(skillKey => {
+      skills[skillKey] = (skills[skillKey] ?? 0) + 1;
+    });
+
+    const updates = {};
+    for (const [k, v] of Object.entries(approaches)) {
+      updates[`system.approaches.${k}`] = v;
+    }
+    updates["system.skills"] = skills;
+    updates["system.characterType"] = "doll";
+    updates["system.frame"] = frameKey;
+
+    let currentHumanity = 0;
+    let currentFame = 0;
+
+    // Apply name origin bonuses
+    if (nameOrigin === "human") {
+      currentHumanity += 5;
+    } else if (nameOrigin === "callsign") {
+      currentFame += 5;
+    } else if (nameOrigin === "weapon") {
+      ensureSkillAtLeast("firearms", (skills["firearms"] ?? 0) + 1);
+      currentHumanity -= 5;
+    } else if (nameOrigin === "weird") {
+      currentFame -= 5;
+      // +1 Upgrade Module point (not yet implemented in system)
+    }
+
+    updates["system.humanity"] = currentHumanity;
+    updates["system.fame"] = currentFame;
+
+    if (newName) updates["name"] = newName;
+
+    const notesPieces = [];
+    notesPieces.push(`Frame: ${frame.manufacturer} ${frame.model}`);
+
+    if (disciplineLabel) notesPieces.push(`Weapon Imprint: ${disciplineLabel}`);
+
+    const advantageName = await this._ensureNarrativeFromBuilder("advantage", "distinction");
+    const disadvantageName = await this._ensureNarrativeFromBuilder("disadvantage", "adversity");
+    const passionName = await this._ensureNarrativeFromBuilder("passion", "passion");
+    const anxietyName = await this._ensureNarrativeFromBuilder("anxiety", "anxiety");
+
+    if (advantageName) notesPieces.push(`Advantage: ${advantageName}`);
+    if (disadvantageName) notesPieces.push(`Disadvantage: ${disadvantageName}`);
+    if (passionName) notesPieces.push(`Passion: ${passionName}`);
+    if (anxietyName) notesPieces.push(`Anxiety: ${anxietyName}`);
+
+    const nameOriginLabels = {
+      human: "Human Name (+5 Humanity)",
+      callsign: "Callsign (+5 Fame)",
+      weapon: "Weapon Imprint (+1 Firearms, -5 Humanity)",
+      weird: "Weird Name (-5 Fame, +1 Module point)"
+    };
+    notesPieces.push(`Name Origin: ${nameOriginLabels[nameOrigin] ?? nameOrigin}`);
+
+    if (metCommander) notesPieces.push(`Met Commander: ${metCommander}`);
+    if (goal) notesPieces.push(`Goal: ${goal}`);
+    if (storyEnd) notesPieces.push(`Story end: ${storyEnd}`);
+    if (additionalNotes) notesPieces.push(additionalNotes);
+
+    const notesBlock = `Character Builder (T-Doll)\n${notesPieces.join("\n")}`;
+    updates["system.notes"] = notesBlock;
+
+    await this.actor.update(updates);
+
+    await this._persistBuilderState();
+
+    ui.notifications?.info("T-Doll character builder applied to this actor.");
   }
 
   async _applyDisciplineFromBuilder() {
@@ -657,6 +850,25 @@ export class GFL5RActorSheet extends ActorSheet {
     // Character type for modules visibility
     context.characterType = data.characterType ?? "human";
     context.showModules = (context.characterType === "doll" || context.characterType === "transhumanist");
+
+    // Origin display for humans and dolls
+    let originDisplay = "";
+    if (context.characterType === "human" && (data.nationality || data.background)) {
+      const nat = HUMAN_NATIONALITIES.find(n => n.key === data.nationality);
+      const bg = HUMAN_BACKGROUNDS.find(b => b.key === data.background);
+      const parts = [];
+      if (nat) parts.push(nat.label);
+      if (bg) parts.push(bg.label);
+      originDisplay = parts.join(" • ");
+    } else if (context.characterType === "doll" && data.frame) {
+      const frame = TDOLL_FRAMES.find(f => f.key === data.frame);
+      if (frame) {
+        // Extract manufacturer name without location (remove parenthetical)
+        const manufacturerShort = frame.manufacturer.split('(')[0].trim();
+        originDisplay = `${manufacturerShort} ${frame.model}`;
+      }
+    }
+    context.originDisplay = originDisplay;
 
     // Expose skills and labels for rendering
     context.skills = data.skills ?? {};

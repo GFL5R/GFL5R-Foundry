@@ -4,6 +4,9 @@
     "templates": {},
     "character": {
       "characterType": "human",
+      "nationality": "",
+      "background": "",
+      "frame": "",
       "approaches": {
         "power": 1,
         "swiftness": 1,
