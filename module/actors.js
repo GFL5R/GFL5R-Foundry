@@ -137,6 +137,12 @@ class CharacterBuilderApp extends FormApplication {
     html.on("dragover", "[data-drop-target]", ev => {
       ev.preventDefault();
     });
+
+    html.on("drop", "[data-drop-target]", async ev => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      await this._onDrop(ev);
+    });
   }
 
   _captureForm(formEl) {
