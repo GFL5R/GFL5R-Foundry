@@ -3,6 +3,9 @@ import { GFL5R_CONFIG } from "./config.js";
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ItemSheetV2 } = foundry.applications.sheets;
 
+const systemId = () => game?.system?.id ?? CONFIG?.system?.id ?? "gfl5r";
+const templatePath = (relativePath) => `systems/${systemId()}/${relativePath}`;
+
 class BaseGFLItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
   static buildOptions({ width, height }) {
     return {
@@ -18,9 +21,11 @@ export class GFL5RAbilitySheet extends BaseGFLItemSheet {
     window: { title: "Ability" }
   };
 
-  static PARTS = {
-    sheet: { template: "systems/gfl5r/templates/item-ability.html" }
-  };
+  static get PARTS() {
+    return {
+      sheet: { template: templatePath("templates/item-ability.html") }
+    };
+  }
 
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
@@ -35,9 +40,11 @@ export class GFL5RWeaponSheet extends BaseGFLItemSheet {
     window: { title: "Weapon" }
   };
 
-  static PARTS = {
-    sheet: { template: "systems/gfl5r/templates/item-weapon.html" }
-  };
+  static get PARTS() {
+    return {
+      sheet: { template: templatePath("templates/item-weapon.html") }
+    };
+  }
 
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
@@ -52,9 +59,11 @@ export class GFL5RArmorSheet extends BaseGFLItemSheet {
     window: { title: "Armor" }
   };
 
-  static PARTS = {
-    sheet: { template: "systems/gfl5r/templates/item-armor.html" }
-  };
+  static get PARTS() {
+    return {
+      sheet: { template: templatePath("templates/item-armor.html") }
+    };
+  }
 }
 
 export class GFL5RNarrativeSheet extends BaseGFLItemSheet {
@@ -63,9 +72,11 @@ export class GFL5RNarrativeSheet extends BaseGFLItemSheet {
     window: { title: "Narrative" }
   };
 
-  static PARTS = {
-    sheet: { template: "systems/gfl5r/templates/item-narrative.html" }
-  };
+  static get PARTS() {
+    return {
+      sheet: { template: templatePath("templates/item-narrative.html") }
+    };
+  }
 }
 
 export class GFL5RItemSheet extends BaseGFLItemSheet {
@@ -74,9 +85,11 @@ export class GFL5RItemSheet extends BaseGFLItemSheet {
     window: { title: "Item" }
   };
 
-  static PARTS = {
-    sheet: { template: "systems/gfl5r/templates/item-item.html" }
-  };
+  static get PARTS() {
+    return {
+      sheet: { template: templatePath("templates/item-item.html") }
+    };
+  }
 }
 
 export class GFL5RDisciplineSheet extends BaseGFLItemSheet {
@@ -85,9 +98,11 @@ export class GFL5RDisciplineSheet extends BaseGFLItemSheet {
     window: { title: "Discipline" }
   };
 
-  static PARTS = {
-    sheet: { template: "systems/gfl5r/templates/item-discipline.html" }
-  };
+  static get PARTS() {
+    return {
+      sheet: { template: templatePath("templates/item-discipline.html") }
+    };
+  }
 
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
@@ -104,9 +119,11 @@ export class GFL5RModuleSheet extends BaseGFLItemSheet {
     window: { title: "Module" }
   };
 
-  static PARTS = {
-    sheet: { template: "systems/gfl5r/templates/item-module.html" }
-  };
+  static get PARTS() {
+    return {
+      sheet: { template: templatePath("templates/item-module.html") }
+    };
+  }
 }
 
 export class GFL5RConditionSheet extends BaseGFLItemSheet {
@@ -115,9 +132,11 @@ export class GFL5RConditionSheet extends BaseGFLItemSheet {
     window: { title: "Condition" }
   };
 
-  static PARTS = {
-    sheet: { template: "systems/gfl5r/templates/item-condition.html" }
-  };
+  static get PARTS() {
+    return {
+      sheet: { template: templatePath("templates/item-condition.html") }
+    };
+  }
 }
 
 export function registerItemSheets() {

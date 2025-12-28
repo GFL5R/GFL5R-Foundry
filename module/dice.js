@@ -3,6 +3,7 @@
   Now updates a chat message at each step! */
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+const systemId = () => game?.system?.id ?? CONFIG?.system?.id ?? "gfl5r";
 
 function payloadBlack(face) {
   // 1..6
@@ -108,11 +109,13 @@ export class GFLRollerApp extends HandlebarsApplicationMixin(ApplicationV2) {
     }
   };
 
-  static PARTS = {
-    roller: {
-      template: `systems/${game.system.id}/templates/roller.html`
-    }
-  };
+  static get PARTS() {
+    return {
+      roller: {
+        template: `systems/${systemId()}/templates/roller.html`
+      }
+    };
+  }
 
   #renderAbort = null;
 

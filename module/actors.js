@@ -14,6 +14,9 @@ const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ActorSheetV2 } = foundry.applications.sheets;
 const ActorSheet = foundry.appv1.sheets.ActorSheet;
 
+const systemId = () => game?.system?.id ?? CONFIG?.system?.id ?? "gfl5r";
+const templatePath = (relativePath) => `systems/${systemId()}/${relativePath}`;
+
 const APPROACH_LABELS = {
   power: "Power",
   swiftness: "Swiftness",
@@ -806,9 +809,11 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     window: { title: "Character" }
   };
 
-  static PARTS = {
-    sheet: { template: `systems/${game.system.id}/templates/actor-sheet.html` }
-  };
+  static get PARTS() {
+    return {
+      sheet: { template: templatePath("templates/actor-sheet.html") }
+    };
+  }
 
   #renderAbort = null;
 
@@ -1542,9 +1547,11 @@ export class GFL5RNPCSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     window: { title: "NPC" }
   };
 
-  static PARTS = {
-    sheet: { template: `systems/${game.system.id}/templates/npc-sheet.html` }
-  };
+  static get PARTS() {
+    return {
+      sheet: { template: templatePath("templates/npc-sheet.html") }
+    };
+  }
 
   #renderAbort = null;
 
