@@ -10,6 +10,11 @@ button[class*="fa-"]::before,
   font-weight: revert-layer;
 }
 
+/* Remove padding from all Foundry windows (affects every app) */
+.window-app .window-content {
+  padding: 0 !important;
+}
+
 /* Sheet styling previously inlined in templates */
 
 .gfl5r-sheet {
