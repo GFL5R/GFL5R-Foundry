@@ -49,6 +49,15 @@ class CharacterBuilderApp extends FormApplication {
   constructor(actor, options = {}) {
     super(options);
     this.actor = actor;
+    this.builderState = {
+      step: 1,
+      discipline: null,
+      advantage: null,
+      disadvantage: null,
+      passion: null,
+      anxiety: null,
+      formValues: { human: {} }
+    };
   }
 
   static get defaultOptions() {
@@ -56,9 +65,9 @@ class CharacterBuilderApp extends FormApplication {
       id: "gfl5r-character-builder",
       title: "Character Builder",
       template: `systems/${game.system.id}/templates/character-builder.html`,
-      width: 760,
+      width: 900,
       height: "auto",
-      classes: ["sheet", "gfl5r-builder"],
+      classes: ["sheet", "gfl5r-builder", "actor"],
       submitOnChange: false
     });
   }
@@ -69,9 +78,19 @@ class CharacterBuilderApp extends FormApplication {
       .filter(i => i.type === "discipline")
       .map(i => ({ id: i.id, name: i.name }));
 
+    const steps = [
+      { num: 1, label: "Nationality" },
+      { num: 2, label: "Background" },
+      { num: 3, label: "Discipline & Traits" },
+      { num: 4, label: "Motivation" }
+    ];
+
+    const formValues = this.builderState.formValues ?? { human: {} };
+    formValues.human ??= {};
+    if (!formValues.human.viewDolls) formValues.human.viewDolls = "favor";
+
     return {
       actorName: this.actor.name,
-      defaultNotes: "",
       humanNationalities: HUMAN_NATIONALITIES.map(n => ({
         ...n,
         approachesText: n.approaches.map(a => APPROACH_LABELS[a] ?? a).join(" & ")
@@ -82,8 +101,127 @@ class CharacterBuilderApp extends FormApplication {
         skillLabel: GFL5R_CONFIG.getSkillLabel(bg.skill)
       })),
       skillOptions,
-      existingDisciplines
+      existingDisciplines,
+      step: this.builderState.step,
+      steps,
+      selections: this.builderState,
+      formValues
     };
+  }
+
+  activateListeners(html) {
+    super.activateListeners(html);
+
+    html.on("click", "[data-action='builder-next']", ev => {
+      ev.preventDefault();
+      this._captureForm(html[0]);
+      this._changeStep(1);
+    });
+
+    html.on("click", "[data-action='builder-prev']", ev => {
+      ev.preventDefault();
+      this._captureForm(html[0]);
+      this._changeStep(-1);
+    });
+
+    html.on("click", "[data-action='clear-drop']", ev => {
+      ev.preventDefault();
+      const key = ev.currentTarget.dataset.dropKey;
+      if (!key) return;
+      if (this.builderState[key]) {
+        this.builderState[key] = null;
+        this.render(false);
+      }
+    });
+
+    html.on("dragover", "[data-drop-target]", ev => {
+      ev.preventDefault();
+    });
+  }
+
+  _captureForm(formEl) {
+    if (!formEl) return;
+    const fd = new FormData(formEl);
+    const human = {};
+    for (const [key, value] of fd.entries()) {
+      if (key.startsWith("human.")) {
+        human[key.slice(6)] = value;
+      }
+    }
+    this.builderState.formValues = { human };
+  }
+
+  async _onDrop(event) {
+    event.preventDefault();
+    const dropTarget = event.target.closest?.("[data-drop-target]");
+    if (!dropTarget) return false;
+
+    const kind = dropTarget.dataset.dropTarget;
+    const data = TextEditor.getDragEventData(event);
+    let itemDoc;
+    try {
+      if (data?.uuid) {
+        itemDoc = await fromUuid(data.uuid);
+      }
+      if (!itemDoc) {
+        const fromDrop = Item.implementation?.fromDropData ?? Item.fromDropData;
+        itemDoc = await fromDrop.call(Item.implementation ?? Item, data);
+      }
+    } catch (err) {
+      ui.notifications?.error("Unable to read dropped item.");
+      console.error(err);
+      return false;
+    }
+
+    if (!itemDoc) return false;
+
+    if (kind === "discipline") {
+      if (itemDoc.type !== "discipline") {
+        ui.notifications?.warn("Drop a Discipline item here.");
+        return false;
+      }
+      this.builderState.discipline = {
+        name: itemDoc.name,
+        uuid: itemDoc.uuid,
+        type: "discipline"
+      };
+      this.render(false);
+      return false;
+    }
+
+    const narrativeKeyMap = {
+      advantage: "distinction",
+      disadvantage: "adversity",
+      passion: "passion",
+      anxiety: "anxiety"
+    };
+
+    const narrativeType = narrativeKeyMap[kind];
+    if (narrativeType) {
+      if (itemDoc.type !== "narrative") {
+        ui.notifications?.warn("Drop a Narrative item here.");
+        return false;
+      }
+      this.builderState[kind] = {
+        name: itemDoc.name,
+        uuid: itemDoc.uuid,
+        type: "narrative",
+        narrativeType
+      };
+      this.render(false);
+      return false;
+    }
+
+    return false;
+  }
+
+  _changeStep(delta) {
+    const total = 4;
+    const next = Math.min(total, Math.max(1, this.builderState.step + delta));
+    if (next !== this.builderState.step) {
+      this.builderState.step = next;
+      this.render(false);
+    }
   }
 
   async _updateObject(event, formData) {
@@ -95,12 +233,6 @@ class CharacterBuilderApp extends FormApplication {
 
     const nationalityKey = formData["human.nationality"];
     const backgroundKey = formData["human.background"];
-    const disciplineExisting = formData["human.disciplineExisting"] || "";
-    const disciplineName = (formData["human.disciplineName"] || "").trim();
-    const advantage = (formData["human.advantage"] || "").trim();
-    const disadvantage = (formData["human.disadvantage"] || "").trim();
-    const passion = (formData["human.passion"] || "").trim();
-    const anxiety = (formData["human.anxiety"] || "").trim();
     const viewDolls = formData["human.viewDolls"] || "favor";
     const viewDollsSkill = (formData["human.viewDollsSkill"] || "").trim();
     const goal = (formData["human.goal"] || "").trim();
@@ -118,6 +250,12 @@ class CharacterBuilderApp extends FormApplication {
     }
     if (!background) {
       ui.notifications?.warn("Pick a background to continue.");
+      return;
+    }
+    if (!this.builderState.discipline) {
+      ui.notifications?.warn("Drop a starting Discipline before applying.");
+      this.builderState.step = 3;
+      this.render(false);
       return;
     }
 
@@ -164,14 +302,20 @@ class CharacterBuilderApp extends FormApplication {
     const notesPieces = [];
     notesPieces.push(`Nationality: ${nationality.label}`);
     notesPieces.push(`Background: ${background.label}`);
-    if (disciplineName || disciplineExisting) {
-      const chosenLabel = disciplineName || this.actor.items.get(disciplineExisting)?.name || "";
-      if (chosenLabel) notesPieces.push(`Discipline: ${chosenLabel}`);
-    }
-    if (advantage) notesPieces.push(`Advantage: ${advantage}`);
-    if (disadvantage) notesPieces.push(`Disadvantage: ${disadvantage}`);
-    if (passion) notesPieces.push(`Passion: ${passion}`);
-    if (anxiety) notesPieces.push(`Anxiety: ${anxiety}`);
+
+    const disciplineLabel = await this._applyDisciplineFromBuilder();
+    if (disciplineLabel) notesPieces.push(`Discipline: ${disciplineLabel}`);
+
+    const advantageName = await this._ensureNarrativeFromBuilder("advantage", formData["human.advantageText"], "distinction");
+    const disadvantageName = await this._ensureNarrativeFromBuilder("disadvantage", formData["human.disadvantageText"], "adversity");
+    const passionName = await this._ensureNarrativeFromBuilder("passion", formData["human.passionText"], "passion");
+    const anxietyName = await this._ensureNarrativeFromBuilder("anxiety", formData["human.anxietyText"], "anxiety");
+
+    if (advantageName) notesPieces.push(`Advantage: ${advantageName}`);
+    if (disadvantageName) notesPieces.push(`Disadvantage: ${disadvantageName}`);
+    if (passionName) notesPieces.push(`Passion: ${passionName}`);
+    if (anxietyName) notesPieces.push(`Anxiety: ${anxietyName}`);
+
     if (viewDolls === "favor") {
       notesPieces.push("Views Dolls as partners (+5 Humanity)");
     } else if (viewDollsSkill) {
@@ -186,68 +330,96 @@ class CharacterBuilderApp extends FormApplication {
     const notesBlock = `Character Builder (Human)\n${notesPieces.join("\n")}`;
     updates["system.notes"] = existingNotes ? `${existingNotes}\n\n${notesBlock}` : notesBlock;
 
-    const disciplinesUpdate = await this._prepareDisciplineUpdate(disciplineExisting, disciplineName);
-    if (disciplinesUpdate) updates["system.disciplines"] = disciplinesUpdate;
-
     await this.actor.update(updates);
-
-    await this._ensureNarrativeItem(advantage, "distinction");
-    await this._ensureNarrativeItem(disadvantage, "adversity");
-    await this._ensureNarrativeItem(passion, "passion");
-    await this._ensureNarrativeItem(anxiety, "anxiety");
 
     ui.notifications?.info("Character builder applied to this actor.");
   }
 
-  async _prepareDisciplineUpdate(selectedId, disciplineName) {
+  async _applyDisciplineFromBuilder() {
+    const drop = this.builderState.discipline;
+    if (!drop?.uuid) return "";
+
+    let source;
+    try {
+      source = await fromUuid(drop.uuid);
+    } catch (err) {
+      console.error(err);
+    }
+
+    if (!source) return drop.name || "";
+
+    let targetId = null;
+    let createdName = drop.name;
+
+    if (source.parent === this.actor) {
+      targetId = source.id;
+      createdName = source.name;
+    } else {
+      const itemData = source.toObject();
+      itemData.type = "discipline";
+      const [created] = await this.actor.createEmbeddedDocuments("Item", [itemData]);
+      targetId = created?.id ?? null;
+      createdName = created?.name ?? drop.name;
+    }
+
+    if (!targetId) return createdName || "";
+
     const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
     const slotKey = "slot1";
     const slot = disciplines[slotKey] ?? { disciplineId: null, xp: 0, rank: 1, abilities: [] };
 
-    let targetDisciplineId = selectedId || null;
-
-    if (disciplineName) {
-      const [created] = await this.actor.createEmbeddedDocuments("Item", [{
-        name: disciplineName,
-        type: "discipline",
-        system: {}
-      }]);
-      targetDisciplineId = created?.id ?? targetDisciplineId;
-    }
-
-    if (!targetDisciplineId) return null;
-
-    if (slot.disciplineId && slot.disciplineId !== targetDisciplineId) {
+    if (slot.disciplineId && slot.disciplineId !== targetId) {
       const toDelete = [slot.disciplineId, ...(slot.abilities ?? [])].filter(id => this.actor.items.get(id));
-      if (toDelete.length) {
-        await this.actor.deleteEmbeddedDocuments("Item", toDelete);
-      }
+      if (toDelete.length) await this.actor.deleteEmbeddedDocuments("Item", toDelete);
     }
 
     disciplines[slotKey] = {
-      disciplineId: targetDisciplineId,
+      disciplineId: targetId,
       xp: 0,
       rank: 1,
       abilities: []
     };
 
-    return disciplines;
+    await this.actor.update({ "system.disciplines": disciplines });
+    return created.name;
   }
 
-  async _ensureNarrativeItem(name, narrativeType) {
-    const trimmed = (name || "").trim();
-    if (!trimmed) return null;
-    const existing = this.actor.items.find(i => i.type === "narrative" && i.name === trimmed && i.system?.narrativeType === narrativeType);
-    if (existing) return existing;
-    const [created] = await this.actor.createEmbeddedDocuments("Item", [{
-      name: trimmed,
-      type: "narrative",
-      system: {
-        narrativeType,
-        description: ""
+  async _ensureNarrativeFromBuilder(key, fallbackName, narrativeType) {
+    const drop = this.builderState[key];
+    const name = (drop?.name || fallbackName || "").trim();
+    if (!name) return "";
+
+    const existing = this.actor.items.find(i => i.type === "narrative" && i.name === name && i.system?.narrativeType === narrativeType);
+    if (existing) return existing.name;
+
+    let itemData = null;
+    if (drop?.uuid) {
+      try {
+        const src = await fromUuid(drop.uuid);
+        if (src) {
+          itemData = src.toObject();
+          itemData.type = "narrative";
+          itemData.system ||= {};
+          itemData.system.narrativeType = narrativeType;
+        }
+      } catch (err) {
+        console.error(err);
       }
-    }]);
-    return created;
+    }
+
+    if (!itemData) {
+      itemData = {
+        name,
+        type: "narrative",
+        system: {
+          narrativeType,
+          description: ""
+        }
+      };
+    }
+
+    const [created] = await this.actor.createEmbeddedDocuments("Item", [itemData]);
+    return created?.name || name;
   }
 }
 
