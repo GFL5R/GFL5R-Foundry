@@ -109,10 +109,19 @@ export class GFLRollerApp extends HandlebarsApplicationMixin(ApplicationV2) {
     }
   };
 
+  get title() {
+    const name = this.actor?.name ?? "Roll";
+    const skill = this.skillLabel || this.skillKey || "";
+    const approach = this.approachName || "";
+    const detail = [skill, approach].filter(Boolean).join(" · ");
+    return detail ? `${name}: ${detail}` : `${name}: Roll`;
+  }
+
   static get PARTS() {
     return {
       roller: {
-        template: `systems/${systemId()}/templates/roller.html`
+        template: `systems/${systemId()}/templates/roller.html`,
+        scrollable: [""]
       }
     };
   }

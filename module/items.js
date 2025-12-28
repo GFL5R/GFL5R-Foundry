@@ -14,6 +14,14 @@ class BaseGFLItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
       window: { resizable: true }
     };
   }
+
+  get title() {
+    const item = this.document ?? this.object ?? this.item;
+    const type = item?.type ?? "Item";
+    const typeLabel = type.charAt(0).toUpperCase() + type.slice(1);
+    const name = item?.name ?? typeLabel;
+    return `${typeLabel}: ${name}`;
+  }
 }
 
 export class GFL5RAbilitySheet extends BaseGFLItemSheet {

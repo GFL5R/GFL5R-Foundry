@@ -809,6 +809,13 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     window: { title: "Character", resizable: true }
   };
 
+  get title() {
+    const actor = this.document ?? this.actor;
+    const name = actor?.name ?? "Actor";
+    const typeLabel = actor?.type === "npc" ? "NPC" : "Character";
+    return `${typeLabel}: ${name}`;
+  }
+
   static get PARTS() {
     return {
       sheet: { template: templatePath("templates/actor-sheet.html"), scrollable: [""] }
@@ -1548,6 +1555,12 @@ export class GFL5RNPCSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     position: { width: 700, height: 600 },
     window: { title: "NPC", resizable: true }
   };
+
+  get title() {
+    const actor = this.document ?? this.actor;
+    const name = actor?.name ?? "NPC";
+    return `NPC: ${name}`;
+  }
 
   static get PARTS() {
     return {
