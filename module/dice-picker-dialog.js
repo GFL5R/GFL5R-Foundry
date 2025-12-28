@@ -1,7 +1,10 @@
-// GFL5R Dice Picker Dialog (lightweight)
+// GFL5R Dice Picker Dialog (Application V2)
 import { GFL5R_CONFIG } from "./config.js";
 
-export class GFLDicePickerDialog extends FormApplication {
+const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+const getSystemId = () => CONFIG?.system?.id ?? game?.system?.id ?? "gfl5r";
+
+export class GFLDicePickerDialog extends HandlebarsApplicationMixin(ApplicationV2) {
   constructor(options = {}) {
     super(options);
     this.actor = options.actor || null;
@@ -100,19 +103,35 @@ export class GFLDicePickerDialog extends FormApplication {
     assignCategoryFromSkill();
   }
 
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      id: "gfl5r-dice-picker-dialog",
-      template: `systems/${game.system.id}/templates/dice/dice-picker-dialog.html`,
-      classes: ["sheet", "gfl5r", "dice-picker-dialog"],
-      title: "Roll Dice",
-      width: 420,
-      height: "auto",
-      closeOnSubmit: true,
-    });
+  static DEFAULT_OPTIONS = {
+    id: "gfl5r-dice-picker-dialog",
+    classes: ["sheet", "gfl5r", "dice-picker-dialog"],
+    window: { title: "Roll Dice", resizable: true },
+    position: { width: 420, height: "auto" },
+  };
+
+  static PARTS = {
+    picker: {
+      template: `systems/${getSystemId()}/templates/dice/dice-picker-dialog.html`,
+      scrollable: []
+    }
+  };
+
+  static get eventListeners() {
+    return [
+      { event: "submit", selector: "form", callback: "onSubmit", preventDefault: true },
+      { event: "click", selector: "[data-action='ring-minus']", callback: "onRingMinus" },
+      { event: "click", selector: "[data-action='ring-plus']", callback: "onRingPlus" },
+      { event: "click", selector: "[data-action='skill-minus']", callback: "onSkillMinus" },
+      { event: "click", selector: "[data-action='skill-plus']", callback: "onSkillPlus" },
+      { event: "click", selector: "[data-action='assist-minus']", callback: "onAssistMinus" },
+      { event: "click", selector: "[data-action='assist-plus']", callback: "onAssistPlus" },
+      { event: "change", selector: "#roll-approach", callback: "onApproachChange" },
+      { event: "change", selector: "#roll-skill", callback: "onSkillChange" },
+    ];
   }
 
-  getData() {
+  async _prepareContext() {
     const skillOptions = Array.isArray(this.skillList)
       ? this.skillList.map((s) => ({
           key: s.key || s.id,
@@ -153,56 +172,23 @@ export class GFLDicePickerDialog extends FormApplication {
     };
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
-    html.find("form").on("submit", (ev) => {
-      ev.preventDefault();
-      this._onSubmit(ev);
-    });
-
-    html.on("click", "[data-action='ring-minus']", (ev) => {
-      ev.preventDefault();
-      this.ringAdjust = Math.max(this.ringAdjust - 1, -9);
-      this.render(false);
-    });
-    html.on("click", "[data-action='ring-plus']", (ev) => {
-      ev.preventDefault();
-      this.ringAdjust = Math.min(this.ringAdjust + 1, 9);
-      this.render(false);
-    });
-    html.on("click", "[data-action='skill-minus']", (ev) => {
-      ev.preventDefault();
-      this.skillAdjust = Math.max(this.skillAdjust - 1, -9);
-      this.render(false);
-    });
-    html.on("click", "[data-action='skill-plus']", (ev) => {
-      ev.preventDefault();
-      this.skillAdjust = Math.min(this.skillAdjust + 1, 9);
-      this.render(false);
-    });
-    html.on("click", "[data-action='assist-minus']", (ev) => {
-      ev.preventDefault();
-      this.assistance = Math.max(this.assistance - 1, 0);
-      this.render(false);
-    });
-    html.on("click", "[data-action='assist-plus']", (ev) => {
-      ev.preventDefault();
-      this.assistance = Math.min(this.assistance + 1, 9);
-      this.render(false);
-    });
-    html.on("change", "#roll-approach", (ev) => {
-      this.defaultApproach = ev.currentTarget.value;
-      this.render(false);
-    });
-    html.on("change", "#roll-skill", (ev) => {
-      this.skillKey = ev.currentTarget.value;
-      const found = this.skillList?.find((s) => s.key === this.skillKey || s.id === this.skillKey);
-      if (found) {
-        this.skillLabel = found.label || this.skillLabel;
-        this.skillCatId = found.groupSlug || found.groupId || this._normalizeCat(found.group || this.skillCatId || "");
-      }
-      this.render(false);
-    });
+  // V2 event callbacks
+  onSubmit(ev) { return this._onSubmit(ev); }
+  onRingMinus(ev) { ev.preventDefault(); this.ringAdjust = Math.max(this.ringAdjust - 1, -9); this.render(false); }
+  onRingPlus(ev) { ev.preventDefault(); this.ringAdjust = Math.min(this.ringAdjust + 1, 9); this.render(false); }
+  onSkillMinus(ev) { ev.preventDefault(); this.skillAdjust = Math.max(this.skillAdjust - 1, -9); this.render(false); }
+  onSkillPlus(ev) { ev.preventDefault(); this.skillAdjust = Math.min(this.skillAdjust + 1, 9); this.render(false); }
+  onAssistMinus(ev) { ev.preventDefault(); this.assistance = Math.max(this.assistance - 1, 0); this.render(false); }
+  onAssistPlus(ev) { ev.preventDefault(); this.assistance = Math.min(this.assistance + 1, 9); this.render(false); }
+  onApproachChange(ev) { this.defaultApproach = ev.currentTarget.value; this.render(false); }
+  onSkillChange(ev) {
+    this.skillKey = ev.currentTarget.value;
+    const found = this.skillList?.find((s) => s.key === this.skillKey || s.id === this.skillKey);
+    if (found) {
+      this.skillLabel = found.label || this.skillLabel;
+      this.skillCatId = found.groupSlug || found.groupId || this._normalizeCat(found.group || this.skillCatId || "");
+    }
+    this.render(false);
   }
 
   async _updateObject(event, formData) {

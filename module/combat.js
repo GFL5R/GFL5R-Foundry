@@ -2,6 +2,7 @@
 console.log("GFL5R | combat.js loaded");
 
 import { GFL5R_CONFIG } from "./config.js";
+import { GFLDicePickerDialog } from "./dice-picker-dialog.js";
 
 export class GFL5RCombat extends Combat {
     /**
@@ -30,6 +31,11 @@ export class GFL5RCombat extends Combat {
             const actor = combatant?.actor;
             if (!combatant || !actor) continue;
 
+            if (combatant.initiative !== null && combatant.initiative !== undefined) {
+                ui.notifications?.warn(`Initiative already set for ${combatant.name}.`);
+                continue;
+            }
+
             const approaches = actor.system?.approaches ?? {};
             const preparedFlag = actor.system?.prepared;
             const preparedSetting = game.settings.get("gfl5r", "initiative-prepared-character") || "true";
@@ -43,51 +49,22 @@ export class GFL5RCombat extends Combat {
 
             if (actor.type === "character") {
                 const defaultApproach = prepared ? "precision" : "swiftness";
-
-                const content = await renderTemplate(`systems/${game.system.id}/templates/roll-prompt.html`, {
-                    approaches,
-                    defaultTN: cfg.difficulty,
-                    defaultApproach
-                });
+                const skillLabel = GFL5R_CONFIG.getSkillLabel?.(skillId) ?? skillId;
 
                 await new Promise((resolve) => {
-                    new Dialog({
-                        title: `Initiative Roll for ${combatant.name}`,
-                        content,
-                        buttons: {
-                            roll: {
-                                label: "Roll Initiative",
-                                callback: async (dlg) => {
-                                    const form = dlg[0].querySelector("form");
-                                    const approachName = form.elements["approach"].value;
-                                    const tnHidden = form.elements["hiddenTN"].checked;
-                                    const tnVal = Number(form.elements["tn"].value || cfg.difficulty);
-                                    const approachVal = Number(approaches[approachName] ?? 0);
-
-                                    const { GFLRollerApp } = await import("./dice.js");
-                                    const app = new GFLRollerApp({
-                                        actor,
-                                        skillKey: skillId,
-                                        skillLabel: skillId.charAt(0).toUpperCase() + skillId.slice(1),
-                                        approach: approachVal,
-                                        approachName: approachName.charAt(0).toUpperCase() + approachName.slice(1),
-                                        tn: tnHidden ? null : tnVal,
-                                        hiddenTN: tnHidden,
-                                        initiativeCombatantId: combatant.id,
-                                        baseInitiative,
-                                    });
-                                    await app.start();
-                                    resolve();
-                                }
-                            },
-                            cancel: {
-                                label: "Cancel",
-                                callback: () => resolve()
-                            }
-                        },
-                        default: "roll"
-                    }, {
-                        classes: ["gfl5r", "gfl-roll-prompt"]
+                    new GFLDicePickerDialog({
+                        actor,
+                        skillKey: skillId,
+                        skillLabel,
+                        approaches,
+                        defaultTN: cfg.difficulty,
+                        defaultApproach,
+                        defaultHiddenTN: cfg.difficultyHidden,
+                        lockHiddenTN: cfg.difficultyHidden,
+                        isInitiativeRoll: true,
+                        baseInitiative,
+                        initiativeCombatantId: combatant.id,
+                        onComplete: resolve
                     }).render(true);
                 });
             }

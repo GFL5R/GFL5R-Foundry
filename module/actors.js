@@ -818,8 +818,30 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
 
   static get PARTS() {
     return {
-      sheet: { template: templatePath("templates/actor-sheet.html"), scrollable: [""] }
+      sheet: { template: templatePath("templates/actor-sheet.html"), scrollable: [".sheet-body"] }
     };
+  }
+
+  onDeleteItemClick(ev) {
+    const id = ev.currentTarget?.dataset?.itemId;
+    if (!id) return;
+    return this.actor.deleteEmbeddedDocuments("Item", [id]);
+  }
+
+  onEditItemClick(ev) {
+    const id = ev.currentTarget?.dataset?.itemId;
+    if (!id) return;
+    const item = this.actor.items.get(id);
+    if (item) item.sheet.render(true);
+  }
+
+  static get eventListeners() {
+    return [
+      { event: "click", selector: "[data-action='roll-skill']", callback: "onRollSkillClick", part: "sheet" },
+      { event: "click", selector: "[data-skill-card]", callback: "onSkillCardClick", part: "sheet" },
+      { event: "click", selector: "[data-item-id][data-action='delete-item']", callback: "onDeleteItemClick", part: "sheet" },
+      { event: "click", selector: "[data-item-id][data-action='edit-item']", callback: "onEditItemClick", part: "sheet" },
+    ];
   }
 
   #renderAbort = null;
@@ -1029,35 +1051,55 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
   _onRender() {
     const root = this.element;
     if (!root) return;
+    const html = $(root);
 
     this.#renderAbort?.abort();
     this.#renderAbort = new AbortController();
     const { signal } = this.#renderAbort;
 
-    root.addEventListener("click", (event) => {
-      const actionEl = event.target.closest("[data-action]");
-      if (actionEl && root.contains(actionEl)) {
-        event.preventDefault();
-        this.#handleAction(actionEl.dataset.action, actionEl, event);
+    // Delete item (abilities, weapons, etc.) - scoped to elements that carry an item id
+    // (item edit/delete now handled via eventListeners)
+
+    const flashSkillCard = (element, danger = false) => {
+      if (!element) return;
+      element.classList.add(danger ? "xp-flash-danger" : "xp-flash");
+      setTimeout(() => element.classList.remove("xp-flash", "xp-flash-danger"), 450);
+    };
+
+    // Increase skill rank using XP
+    html.on("click", "[data-action='skill-increase']", async ev => {
+      const key = ev.currentTarget?.dataset?.skill;
+      if (!key) return;
+
+      const skillCard = ev.currentTarget.closest?.("[data-skill-card]");
+      const skills = foundry.utils.duplicate(this.actor.system.skills ?? {});
+      const currentRank = Number(skills[key] ?? 0);
+      const nextRank = currentRank + 1;
+      const cost = 2 * nextRank;
+      const availableXP = Number(this.actor.system?.xp ?? 0);
+
+      if (availableXP < cost) {
+        flashSkillCard(skillCard, true);
+        ui.notifications?.warn("Not enough XP to increase this skill.");
         return;
       }
 
-      const tabEl = event.target.closest(".nav-link[data-tab]");
+      const tabEl = ev.target.closest(".nav-link[data-tab]");
       if (tabEl && root.contains(tabEl)) {
-        event.preventDefault();
-        this.#activateTab(tabEl.dataset.tab);
+        ev.preventDefault();
+        this.activateTab(tabEl.dataset.tab);
       }
 
-      const skillCard = event.target.closest("[data-skill-card]");
-      if (skillCard && root.contains(skillCard)) {
-        if (event.target.closest("button")) return;
-        const key = skillCard.dataset.skillKey;
-        const label = skillCard.querySelector("[data-action='roll-skill']")?.textContent?.trim() || key;
+      const clickedSkillCard = ev.target.closest("[data-skill-card]");
+      if (clickedSkillCard && root.contains(clickedSkillCard)) {
+        if (ev.target.closest("button")) return;
+        const key = clickedSkillCard.dataset.skillKey;
+        const label = clickedSkillCard.querySelector("[data-action='roll-skill']")?.textContent?.trim() || key;
         if (key) this.#rollSkill(key, label);
       }
 
-      const itemContainer = event.target.closest("[data-item-id]");
-      if (itemContainer && root.contains(itemContainer) && !event.target.closest("button")) {
+      const itemContainer = ev.target.closest("[data-item-id]");
+      if (itemContainer && root.contains(itemContainer) && !ev.target.closest("button")) {
         const itemId = itemContainer.dataset.itemId;
         if (itemId) this.#maybeRollItem(itemId);
       }
@@ -1145,44 +1187,38 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
 
   async #rollSkill(key, skillLabel) {
     const approaches = this.actor.system?.approaches ?? {};
-
-    const content = await renderTemplate(`systems/${game.system.id}/templates/roll-prompt.html`, {
+    const { GFLDicePickerDialog } = await import("./dice-picker-dialog.js");
+    const pickerOpts = {
+      actor: this.actor,
+      skillKey: key,
+      skillLabel,
       approaches,
-      defaultTN: 2
-    });
+      defaultTN: 2,
+      defaultApproach: Object.keys(approaches || {})[0]
+    };
+    new GFLDicePickerDialog(pickerOpts).render(true);
+  }
 
-    new Dialog({
-      title: `Roll ${skillLabel}`,
-      content,
-      buttons: {
-        roll: {
-          label: "Roll",
-          callback: async (dlg) => {
-            const form = dlg[0].querySelector("form");
-            const approachName = form.elements["approach"].value;
-            const tnHidden = form.elements["hiddenTN"].checked;
-            const tnVal = Number(form.elements["tn"].value || 0);
-            const approachVal = Number(approaches[approachName] ?? 0);
+  async onRollSkillClick(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const el = event.currentTarget;
+    const key = el.dataset.skill;
+    const label = (el.textContent || "").trim() || key;
+    if (!key) return;
+    await this.#rollSkill(key, label);
+  }
 
-            const { GFLRollerApp } = await import("./dice.js");
-            const app = new GFLRollerApp({
-              actor: this.actor,
-              skillKey: key,
-              skillLabel,
-              approach: approachVal,
-              approachName,
-              tn: tnHidden ? null : tnVal,
-              hiddenTN: tnHidden
-            });
-            await app.start();
-          }
-        },
-        cancel: { label: "Cancel" }
-      },
-      default: "roll"
-    }, {
-      classes: ["sheet"]
-    }).render(true);
+  async onSkillCardClick(event) {
+    if (event.target.closest("button")) return;
+    if (event.target.closest("[data-action='roll-skill']")) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const card = event.currentTarget;
+    const key = card.dataset.skillKey;
+    const label = card.querySelector("[data-action='roll-skill']")?.textContent?.trim() || key;
+    if (!key) return;
+    await this.#rollSkill(key, label);
   }
 
   async #deleteItem(target) {
@@ -1281,17 +1317,6 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
       }
     }
 
-    if (toDelete.length > 0) {
-      await this.actor.deleteEmbeddedDocuments("Item", toDelete);
-    }
-
-    disciplines[slotKey] = {
-      disciplineId: null,
-      xp: 0,
-      rank: 1,
-      abilities: []
-    };
-
     await this.actor.update({ "system.disciplines": disciplines });
   }
 
@@ -1346,7 +1371,7 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     }
   }
 
-  #activateTab(tabId) {
+  activateTab(tabId) {
     const root = this.element;
     if (!root) return;
 
@@ -1572,8 +1597,12 @@ export class GFL5RNPCSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
 
   static get PARTS() {
     return {
-      sheet: { template: templatePath("templates/npc-sheet.html"), scrollable: [""] }
+      sheet: { template: templatePath("templates/npc-sheet.html"), scrollable: [".sheet-body"] }
     };
+  }
+
+  static get eventListeners() {
+    return [];
   }
 
   #renderAbort = null;
