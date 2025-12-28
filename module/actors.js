@@ -304,21 +304,25 @@ class CharacterBuilderApp extends FormApplication {
   }
 
   async _updateObject(event, formData) {
-    const buildType = formData["buildType"] ?? "human";
+    const buildType = formData["buildType"] ?? formData.buildType ?? "human";
     if (buildType !== "human") {
       ui.notifications?.info("T-Doll builder is coming soon.");
       return;
     }
 
-    const nationalityKey = formData["human.nationality"];
-    const backgroundKey = formData["human.background"];
-    const viewDolls = formData["human.viewDolls"] || "favor";
-    const viewDollsSkill = (formData["human.viewDollsSkill"] || "").trim();
-    const goal = (formData["human.goal"] || "").trim();
-    const nameMeaning = (formData["human.nameMeaning"] || "").trim();
-    const newName = (formData["human.name"] || "").trim();
-    const storyEnd = (formData["human.storyEnd"] || "").trim();
-    const additionalNotes = (formData["human.additionalNotes"] || "").trim();
+    // Foundry expands dot-notation field names into nested objects.
+    const formHuman = formData.human ?? {};
+    const getHuman = (key) => formHuman[key] ?? formData[`human.${key}`];
+
+    const nationalityKey = getHuman("nationality");
+    const backgroundKey = getHuman("background");
+    const viewDolls = getHuman("viewDolls") || "favor";
+    const viewDollsSkill = (getHuman("viewDollsSkill") || "").trim();
+    const goal = (getHuman("goal") || "").trim();
+    const nameMeaning = (getHuman("nameMeaning") || "").trim();
+    const newName = (getHuman("name") || "").trim();
+    const storyEnd = (getHuman("storyEnd") || "").trim();
+    const additionalNotes = (getHuman("additionalNotes") || "").trim();
 
     const nationality = HUMAN_NATIONALITIES.find(n => n.key === nationalityKey);
     const background = HUMAN_BACKGROUNDS.find(b => b.key === backgroundKey);
