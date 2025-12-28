@@ -198,7 +198,7 @@ class CharacterBuilderApp extends FormApplication {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       id: "gfl5r-character-builder",
-      title: "Character Builder",
+      title: "Character Creation",
       template: `systems/${game.system.id}/templates/character-builder.html`,
       width: 900,
       height: "auto",
@@ -568,7 +568,7 @@ class CharacterBuilderApp extends FormApplication {
     if (storyEnd) notesPieces.push(`Story end: ${storyEnd}`);
     if (additionalNotes) notesPieces.push(additionalNotes);
 
-    const notesBlock = `Character Builder (Human)\n${notesPieces.join("\n")}`;
+    const notesBlock = `Character Creation (Human)\n${notesPieces.join("\n")}`;
     updates["system.notes"] = notesBlock;
 
     await this.actor.update(updates);
@@ -576,7 +576,7 @@ class CharacterBuilderApp extends FormApplication {
     // Keep builder state so the user can tweak and reapply later
     await this._persistBuilderState();
 
-    ui.notifications?.info("Character builder applied to this actor.");
+    ui.notifications?.info("Character Creation applied to this actor.");
   }
 
   async _applyTdollBuilder(formData) {
@@ -683,14 +683,14 @@ class CharacterBuilderApp extends FormApplication {
     if (storyEnd) notesPieces.push(`Story end: ${storyEnd}`);
     if (additionalNotes) notesPieces.push(additionalNotes);
 
-    const notesBlock = `Character Builder (T-Doll)\n${notesPieces.join("\n")}`;
+    const notesBlock = `Character Creation (T-Doll)\n${notesPieces.join("\n")}`;
     updates["system.notes"] = notesBlock;
 
     await this.actor.update(updates);
 
     await this._persistBuilderState();
 
-    ui.notifications?.info("T-Doll character builder applied to this actor.");
+    ui.notifications?.info("T-Doll Character Creation applied to this actor.");
   }
 
   async _applyDisciplineFromBuilder() {

@@ -6,43 +6,39 @@
         <img class="img-thumbnail" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" style="width:96px; height:96px;" />
       </div>
       <div class="col">
-        <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
-          <div class="flex-grow-1">
+        <div class="d-flex flex-column gap-3">
+          <div>
             <input class="form-control form-control-lg fw-bold" name="name" type="text" value="{{actor.name}}" placeholder="Character Name"/>
             {{#if originDisplay}}
               <div class="small text-muted mt-1">{{originDisplay}}</div>
             {{/if}}
-            <div class="row g-3 mt-2">
-              <div class="col-12 col-md-4">
-                <label class="form-label pill-muted mb-1">Type</label>
-                <select class="form-select" name="system.characterType" title="Character type affects available features">
-                  {{selectOptions (object "human" "Human" "transhumanist" "Transhumanist" "doll" "Doll") selected=actor.system.characterType localize=false}}
-                </select>
-              </div>
-              <div class="col-12 col-md-4">
-                <label class="form-label pill-muted mb-1">Humanity</label>
-                <input class="form-control" type="number" name="system.humanity" value="{{actor.system.humanity}}" min="0"/>
-              </div>
-              <div class="col-12 col-md-4">
-                <label class="form-label pill-muted mb-1">Fame</label>
-                <input class="form-control" type="number" name="system.fame" value="{{actor.system.fame}}" min="0"/>
-              </div>
+          </div>
+          <div class="row g-3 align-items-end">
+            <div class="col-12 col-md-4">
+              <label class="form-label pill-muted mb-1">Type</label>
+              <select class="form-select" name="system.characterType" title="Character type affects available features">
+                {{selectOptions (object "human" "Human" "transhumanist" "Transhumanist" "doll" "Doll") selected=actor.system.characterType localize=false}}
+              </select>
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label pill-muted mb-1">Humanity</label>
+              <input class="form-control" type="number" name="system.humanity" value="{{actor.system.humanity}}" min="0"/>
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label pill-muted mb-1">Fame</label>
+              <input class="form-control" type="number" name="system.fame" value="{{actor.system.fame}}" min="0"/>
             </div>
           </div>
-          <div class="col-auto text-end">
-            <div class="d-flex align-items-start gap-2">
-              <div>
-                <label class="form-label pill-muted mb-1">Experience</label>
-                <input class="form-control form-control-lg text-end" type="number" name="system.xp" value="{{actor.system.xp}}" min="0" />
-                <div class="small text-muted mt-1">Saved XP</div>
-              </div>
-              <div class="pt-4">
-                <button type="button" class="btn btn-outline-light btn-sm" data-action="open-character-builder" title="Guided character creation">
-                  <i class="fas fa-magic me-1"></i> Character Builder
-                </button>
-              </div>
-            </div>
-          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-3">
+        <label class="form-label pill-muted mb-1 d-block">Experience</label>
+        <input class="form-control form-control-lg text-end" type="number" name="system.xp" value="{{actor.system.xp}}" min="0" />
+        <div class="small text-muted mt-1">Saved XP</div>
+        <div class="mt-2 d-flex justify-content-md-end">
+          <button type="button" class="btn btn-outline-light btn-sm" data-action="open-character-builder" title="Guided character creation">
+            <i class="fas fa-magic me-1"></i> Character Creation
+          </button>
         </div>
       </div>
     </div>
