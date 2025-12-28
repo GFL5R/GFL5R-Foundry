@@ -1,18 +1,71 @@
 # Copilot Instructions for GFL5R-Foundry
-- System scope: Foundry VTT game system (id "gfl5r") for a near-future L5R variant; ES modules loaded directly from the manifest in [system.json](system.json). No build tooling, bundlers, or package.json—edit JS/HTML/CSS in place and reload the world in Foundry.
-- Entry point: [module/main.js](module/main.js) runs on `init`, registers Handlebars helpers, world settings, swaps in the custom combat class, and registers all actor/item sheets and dice terms. New global setup belongs here.
-- Configuration: [module/config.js](module/config.js) holds discipline XP tables, max discipline slots (5), and initiative skill mapping; helper methods compute cumulative XP and rank from XP. Reuse these helpers instead of duplicating math.
-- Settings: [module/settings.js](module/settings.js) defines world-scoped settings for initiative (encounter type, difficulty, hidden flag, prepared flag). Changing the encounter setting forces the combat tracker to rerender. Follow the same pattern for new system settings.
-- Handlebars helpers: Registered centrally in [module/utils/handlebars.js](module/utils/handlebars.js) (object builder, eq/ifCond, discipline slot helpers, etc.). Add template helpers here so they are available across sheets.
-- Actor sheets: [module/actors.js](module/actors.js) implements character and NPC sheets. Character sheets compute derived stats with [module/utils/derived.js](module/utils/derived.js), manage up to five discipline slots, and orchestrate item drops for abilities, disciplines, modules, narrative items, and inventory. NPC sheets are simpler, treating all items as features. Extend these classes instead of modifying core Foundry behavior.
-- Item sheets: [module/items.js](module/items.js) registers separate sheets for abilities, weaponry, armor, narrative items, generic items, disciplines, and modules. Register new item types here and add matching templates under templates/.
-- Dice roller: [module/dice.js](module/dice.js) provides `GFLRollerApp` with interactive keep/reroll/explosion flow, updates a chat message after every action, and applies hidden-TN fortune bonuses and initiative integration. Use `registerDiceTerms` (currently empty) if adding custom dice terms.
-- Combat: [module/combat.js](module/combat.js) overrides `rollInitiative` to prompt per-combatant rolls using the roller app and base initiative logic (prepared vs. unprepared). Sorting favors higher initiative then name. Keep new combat logic consistent with this override.
-- Hooks/UI: [module/hooks.js](module/hooks.js) injects a GM-only combat tracker bar (encounter type + prepared toggle) on `renderCombatTracker`, rendering [templates/gm/combat-tracker-bar.html](templates/gm/combat-tracker-bar.html) and persisting selections to world settings. Add UI hooks here to keep side effects centralized.
-- Templates/assets: Sheet and roller UIs live in templates/ (actor/item sheets, roller, roll prompt, GM tracker). Dice face icons are in assets/dice/black and assets/dice/white; paths are built dynamically in the roller.
-- Data conventions: System data uses `actor.system` fields `approaches`, `resources`, `skills`, `disciplines` (slot1..slot5 with disciplineId/xp/rank/abilities), and item types include ability/weaponry/armor/narrative/item/discipline/module. Preserve these keys when updating schema or handling drops.
-- Derivatives and limits: Derived stats (endurance, composure, vigilance, focus, fortune points) depend on approaches/resources; keep logic in [module/utils/derived.js](module/utils/derived.js) in sync with sheet displays. Keep-limit in the roller equals the chosen approach value, with explosion dice not counting toward the limit.
-- Compatibility: Targeted for Foundry v12+ (verified v13) per [system.json](system.json); some code (Hooks, Item.implementation) includes v12 compatibility shims—avoid removing unless dropping v12 support.
-- Debugging: Console logging is enabled throughout modules for quick tracing. To test changes, reload the Foundry world; there are no automated tests.
-- When adding features: register new settings and helpers up front, prefer dialogs/templates for user input, wire UI actions with jQuery-style `html.on` handlers, and keep chat updates and notifications consistent with existing roller/combat patterns.
-- Versioning rule: whenever making any change, increment the patch component of the semver in [system.json](system.json) (line 5) by 1.
+
+## System Architecture
+- **Foundry VTT game system** (id "gfl5r") for a near-future L5R variant
+- **No build tooling**: ES modules loaded directly from [system.json](system.json)—edit JS/HTML/CSS in place and reload the world in Foundry
+- **No package.json or bundlers**: This is a pure ES module system using Foundry's native loading
+
+## Core Entry Points & Initialization
+- **Entry point**: [module/main.js](module/main.js) runs on `init` hook, orchestrates all registration:
+  - Handlebars helpers → world settings → custom combat class → actor/item sheets → dice terms
+  - New global setup (hooks, classes, configs) belongs here
+- **Configuration**: [module/config.js](module/config.js) holds:
+  - Discipline XP tables: `[16, 20, 24]` for ranks 1-4, max 5 discipline slots
+  - Initiative skill mapping by encounter type: `intrigue→insight`, `duel→resolve`, `skirmish→tactics`, `mass_battle→command`
+  - Helper methods: `getXPForNextRank(currentRank)` and `getRankFromXP(xp)` — reuse these, don't duplicate XP math
+- **Settings**: [module/settings.js](module/settings.js) defines world-scoped initiative settings (encounter type, difficulty, hidden flag, prepared flag)
+  - Changing `initiative-encounter` forces combat tracker rerender via `onChange` callback
+  - Follow this pattern for new system settings
+
+## Data Schema & Conventions
+- **Actor types**: `character` (PCs/T-Dolls with full stats) and `npc` (simplified stat blocks)
+- **Actor system fields**: `approaches` (power/swiftness/resilience/precision/fortune), `resources` (fatigue/strife/fortunePoints/collapse), `skills` (24 skills grouped in 4 categories), `disciplines` (slot1-slot5 objects: `{disciplineId, xp, rank, abilities[]}`)
+- **Item types** (9 total): `ability`, `weaponry`, `armor`, `narrative`, `item`, `generic`, `discipline`, `module`, `condition`
+- **Character types**: `human` (nationality + background) or T-Doll (frame-based)—see [module/actors.js](module/actors.js) for `HUMAN_NATIONALITIES`, `HUMAN_BACKGROUNDS`, `TDOLL_FRAMES` constants
+- Preserve these schema keys when updating data models or handling item drops
+
+## Dice System (L5R-inspired)
+- **Black dice (d6)**: Ring/approach dice—faces 1-6 map to blank/opp+strife/opp/success+strife/success/explosive+strife
+- **White dice (d12)**: Skill dice—faces 1-12 with more success/opportunity variants and less strife
+- **Roller flow**: [module/dice.js](module/dice.js) `GFLRollerApp` provides interactive keep/reroll/explode workflow
+  - Keep-limit equals chosen approach value (explosion dice don't count toward limit)
+  - Chat message updates after every action (keep, reroll, explode)
+  - Handles hidden-TN fortune bonuses and initiative integration
+- Roll formula: approach dice (d6) + skill dice (d12), e.g., `3d6 + 2d12`
+
+## Sheets & UI Components
+- **Actor sheets**: [module/actors.js](module/actors.js)
+  - Character sheets compute derived stats via [module/utils/derived.js](module/utils/derived.js): `computeDerivedStats(approaches, resources)` returns endurance, composure, vigilance, focus, fortunePointsMax
+  - Manage up to 5 discipline slots, orchestrate drag-and-drop for items (abilities, disciplines, modules, narrative, inventory)
+  - NPC sheets simpler: treat all items as features
+  - Extend `ActorSheet` classes, don't modify Foundry core
+- **Item sheets**: [module/items.js](module/items.js) registers separate sheets for each item type
+  - Add new item types here + matching templates under [templates/](templates/)
+- **Handlebars helpers**: Centralized in [module/utils/handlebars.js](module/utils/handlebars.js) (object builder, eq/ifCond, discipline slot helpers)
+
+## Combat & Initiative
+- **Custom combat class**: [module/combat.js](module/combat.js) `GFL5RCombat` overrides `rollInitiative`
+  - Prompts per-combatant rolls via roller app with prepared vs. unprepared logic:
+    - **Prepared**: base initiative = power + precision
+    - **Unprepared**: base initiative = ⌈(precision + swiftness)/2⌉
+  - Encounter type (intrigue/duel/skirmish/mass_battle) determines skill used for roll
+  - Sorting: higher initiative, then alphabetical by name
+- **GM tracker bar**: [module/hooks.js](module/hooks.js) injects UI on `renderCombatTracker` for GMs only
+  - Renders [templates/gm/combat-tracker-bar.html](templates/gm/combat-tracker-bar.html)
+  - Dropdowns persist to world settings using jQuery `.on("change")` handlers
+
+## Workflow & Development Practices
+- **No automated tests**: Manual testing by reloading Foundry world
+- **Debugging**: Console logging enabled throughout (`console.log("GFL5R | ...")`)
+- **UI patterns**: Use `html.on()` jQuery-style handlers, Foundry `Dialog` API, and `renderTemplate()` for dynamic content
+- **Adding features checklist**:
+  1. Register settings/helpers up front in [module/settings.js](module/settings.js) or [module/utils/handlebars.js](module/utils/handlebars.js)
+  2. Add UI elements in templates, wire with jQuery handlers
+  3. Keep chat updates/notifications consistent with existing roller/combat patterns
+  4. Update derived stat logic in [module/utils/derived.js](module/utils/derived.js) if needed
+- **Version bump rule**: Always increment patch version in [system.json](system.json) line 5 when making any change
+
+## Compatibility & Assets
+- **Foundry compatibility**: Minimum v12, verified v13—some code has v12 shims (Hooks, `Item.implementation`), don't remove unless dropping v12
+- **Templates**: Located in [templates/](templates/) for actor/item sheets, roller, roll prompt, GM UI
+- **Assets**: Dice face icons in [assets/dice/black/](assets/dice/black/) and [assets/dice/white/](assets/dice/white/), paths built dynamically as `systems/gfl5r/assets/dice/{black|white}/{face-key}.png`
