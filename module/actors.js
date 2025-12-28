@@ -236,7 +236,8 @@ class CharacterBuilderApp extends FormApplication {
     sheetDebug("CharacterBuilderApp#_captureForm");
     if (!formEl) return;
     const fd = new FormData(formEl);
-    const human = {};
+    const prevHuman = foundry.utils.duplicate(this.builderState?.formValues?.human ?? {});
+    const human = { ...prevHuman };
     for (const [key, value] of fd.entries()) {
       if (key.startsWith("human.")) {
         human[key.slice(6)] = value;
