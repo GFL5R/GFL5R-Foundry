@@ -1048,7 +1048,8 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     return context;
   }
 
-  _onRender() {
+  _onRender(...args) {
+    super._onRender?.(...args);
     const root = this.element;
     if (!root) return;
     const html = $(root);
@@ -1065,6 +1066,25 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
       element.classList.add(danger ? "xp-flash-danger" : "xp-flash");
       setTimeout(() => element.classList.remove("xp-flash", "xp-flash-danger"), 450);
     };
+
+    // Fallback delegations for skill clicks so we can see events even if V2 wiring fails
+    root.addEventListener("click", (event) => {
+      const btn = event.target.closest?.("[data-action='roll-skill']");
+      if (btn && root.contains(btn)) {
+        const key = btn.dataset.skill;
+        const label = (btn.textContent || "").trim() || key;
+        console.log("GFL5R | Skill click (delegate button)", { key, label });
+        if (key) this.#rollSkill(key, label);
+      }
+
+      const card = event.target.closest?.("[data-skill-card]");
+      if (card && root.contains(card) && !event.target.closest("button")) {
+        const key = card.dataset.skillKey;
+        const label = card.querySelector("[data-action='roll-skill']")?.textContent?.trim() || key;
+        console.log("GFL5R | Skill click (delegate card)", { key, label });
+        if (key) this.#rollSkill(key, label);
+      }
+    }, { signal });
 
     // Increase skill rank using XP
     html.on("click", "[data-action='skill-increase']", async ev => {
@@ -1205,6 +1225,7 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     const el = event.currentTarget;
     const key = el.dataset.skill;
     const label = (el.textContent || "").trim() || key;
+    console.log("GFL5R | Skill click", { key, label, via: "button" });
     if (!key) return;
     await this.#rollSkill(key, label);
   }
@@ -1217,6 +1238,7 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     const card = event.currentTarget;
     const key = card.dataset.skillKey;
     const label = card.querySelector("[data-action='roll-skill']")?.textContent?.trim() || key;
+    console.log("GFL5R | Skill click", { key, label, via: "card" });
     if (!key) return;
     await this.#rollSkill(key, label);
   }
