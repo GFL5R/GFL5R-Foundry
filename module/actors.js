@@ -62,6 +62,35 @@ const FLAVOR_DEFAULTS = {
   }
 };
 
+const resolveItemFromDropData = async (data) => {
+  if (!data) return { item: null, uuid: null, itemData: null };
+
+  const documentName = data.documentName ?? data.type;
+  if (documentName && documentName !== "Item") return { item: null, uuid: null, itemData: null };
+
+  const uuid = data.uuid ?? (data.pack && data.id ? `Compendium.${data.pack}.${data.id}` : null);
+  if (uuid) {
+    try {
+      const doc = await fromUuid(uuid);
+      if (doc?.documentName === "Item") {
+        return { item: doc, uuid, itemData: doc.toObject?.() ?? null };
+      }
+    } catch (err) {
+      console.warn("GFL5R | Unable to resolve drop UUID", err);
+    }
+  }
+
+  const itemData = data.data ? foundry.utils.duplicate(data.data) : null;
+  if (itemData) {
+    itemData.type ??= data.type ?? itemData.type;
+    const ItemCls = Item.implementation ?? Item;
+    const item = new ItemCls(itemData, { temporary: true });
+    return { item, uuid, itemData };
+  }
+
+  return { item: null, uuid, itemData: null };
+};
+
 const flattenSkillList = () => {
   return GFL5R_CONFIG.skillGroups.flatMap(group => group.items.map(item => ({
     key: item.key,
@@ -204,22 +233,14 @@ class CharacterBuilderApp extends FormApplication {
 
     const kind = dropTarget.dataset.dropTarget;
     const data = TextEditor.getDragEventData(event);
-    let itemDoc;
-    try {
-      if (data?.uuid) {
-        itemDoc = await fromUuid(data.uuid);
-      }
-      if (!itemDoc) {
-        const fromDrop = Item.implementation?.fromDropData ?? Item.fromDropData;
-        itemDoc = await fromDrop.call(Item.implementation ?? Item, data);
-      }
-    } catch (err) {
-      ui.notifications?.error("Unable to read dropped item.");
-      console.error(err);
+
+    const { item: itemDoc, uuid: sourceUuid, itemData } = await resolveItemFromDropData(data);
+    if (!itemDoc) {
+      ui.notifications?.warn("Drop an Item from the sidebar or a compendium.");
       return false;
     }
 
-    if (!itemDoc) return false;
+    const dropData = itemData ?? itemDoc.toObject?.() ?? null;
 
     if (kind === "discipline") {
       if (itemDoc.type !== "discipline") {
@@ -228,8 +249,9 @@ class CharacterBuilderApp extends FormApplication {
       }
       this.builderState.discipline = {
         name: itemDoc.name,
-        uuid: itemDoc.uuid,
-        type: "discipline"
+        uuid: sourceUuid ?? itemDoc.uuid ?? null,
+        type: "discipline",
+        data: dropData
       };
       this.render(false);
       return false;
@@ -250,9 +272,10 @@ class CharacterBuilderApp extends FormApplication {
       }
       this.builderState[kind] = {
         name: itemDoc.name,
-        uuid: itemDoc.uuid,
+        uuid: sourceUuid ?? itemDoc.uuid ?? null,
         type: "narrative",
-        narrativeType
+        narrativeType,
+        data: dropData
       };
       this.render(false);
       return false;
@@ -392,18 +415,27 @@ class CharacterBuilderApp extends FormApplication {
 
   async _applyDisciplineFromBuilder() {
     const drop = this.builderState.discipline;
-    if (!drop?.uuid) return { label: drop?.name || "", associatedSkills: [] };
+    if (!drop) return { label: "", associatedSkills: [] };
 
-    let source;
-    try {
-      source = await fromUuid(drop.uuid);
-    } catch (err) {
-      console.error(err);
+    let source = null;
+    if (drop.uuid) {
+      try {
+        source = await fromUuid(drop.uuid);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    if (!source && drop.data) {
+      const ItemCls = Item.implementation ?? Item;
+      source = new ItemCls(foundry.utils.duplicate(drop.data), { temporary: true });
     }
 
     const associatedSkills = Array.isArray(source?.system?.associatedSkills)
       ? [...source.system.associatedSkills]
-      : [];
+      : Array.isArray(drop.data?.system?.associatedSkills)
+        ? [...drop.data.system.associatedSkills]
+        : [];
 
     if (!source) return { label: drop.name || "", associatedSkills };
 
@@ -464,6 +496,13 @@ class CharacterBuilderApp extends FormApplication {
       } catch (err) {
         console.error(err);
       }
+    }
+
+    if (!itemData && drop?.data) {
+      itemData = foundry.utils.duplicate(drop.data);
+      itemData.type = "narrative";
+      itemData.system ||= {};
+      itemData.system.narrativeType = narrativeType;
     }
 
     if (!itemData) {
@@ -1051,24 +1090,11 @@ export class GFL5RActorSheet extends ActorSheet {
     const dropTarget = dropAbilities || dropNarrativePos || dropNarrativeNeg || dropInventory || dropModules || dropCondition || dropDiscipline || dropDisciplineAbility;
     if (!dropTarget) return super._onDrop(event);
 
-    // Resolve a Document from the drop
-    let itemDoc;
-    try {
-      if (data?.uuid) {
-        const doc = await fromUuid(data.uuid);
-        if (doc?.documentName === "Item") itemDoc = doc;
-      }
-      if (!itemDoc) {
-        // Foundry v12 compat: Item.implementation.fromDropData if present
-        const fromDrop = Item.implementation?.fromDropData ?? Item.fromDropData;
-        itemDoc = await fromDrop.call(Item.implementation ?? Item, data); // ensure correct context
-      }
-    } catch (err) {
-      ui.notifications?.error("Unable to import dropped item.");
-      console.error(err);
+    const { item: itemDoc, itemData: rawItemData } = await resolveItemFromDropData(data);
+    if (!itemDoc) {
+      ui.notifications?.warn("Drop an Item from the sidebar or compendium.");
       return;
     }
-    if (!itemDoc) return;
 
     // Handle discipline slot drops
     if (dropDiscipline) {
@@ -1076,7 +1102,7 @@ export class GFL5RActorSheet extends ActorSheet {
       if (!slotKey) return;
       
       // Clone the item data
-      let itemData = itemDoc.toObject();
+      let itemData = itemDoc.toObject?.() ?? foundry.utils.duplicate(rawItemData) ?? {};
       itemData.type = "discipline";
       
       // Update disciplines data
@@ -1164,7 +1190,7 @@ export class GFL5RActorSheet extends ActorSheet {
     }
 
     // Clone the item data
-    let itemData = itemDoc.toObject();
+    let itemData = itemDoc.toObject?.() ?? foundry.utils.duplicate(rawItemData) ?? {};
     if (!itemData.system) itemData.system = {};
 
     // Handle different drop zones
