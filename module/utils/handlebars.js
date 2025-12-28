@@ -69,4 +69,9 @@ export function registerHandlebarsHelpers() {
     if (!key) return "";
     return GFL5R_CONFIG.getSkillLabel?.(key) ?? key;
   });
+
+  hbs.registerHelper("stanceLabel", function (key) {
+    if (!key) return "";
+    return GFL5R_CONFIG.getApproachLabel?.(key) ?? key;
+  });
 }

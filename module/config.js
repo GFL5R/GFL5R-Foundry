@@ -68,6 +68,17 @@ export const GFL5R_CONFIG = {
     skirmish: "tactics",
     mass_battle: "command",
   },
+  getSkillsMap() {
+    const map = new Map();
+    this.skillGroups.forEach((group) => {
+      group.items.forEach((item) => map.set(item.key, item));
+    });
+    return map;
+  },
+  getSkillCategoryLabel(id) {
+    // For future category support; fallback to capitalize id
+    return (id || "").charAt(0).toUpperCase() + (id || "").slice(1);
+  },
 
   // Get total XP required to reach next rank (cumulative)
   getXPForNextRank(currentRank) {
@@ -104,5 +115,10 @@ export const GFL5R_CONFIG = {
       if (match) return match.label;
     }
     return safeKey;
+  },
+
+  getApproachLabel(key) {
+    const safe = (key || "").toString();
+    return safe.charAt(0).toUpperCase() + safe.slice(1);
   }
 };
