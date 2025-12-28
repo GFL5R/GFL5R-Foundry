@@ -31,5 +31,11 @@
       "void": "Void",
       "ring": "Ring"
     }
+  },
+  "TYPES": {
+    "Actor": {
+      "character": "Character",
+      "npc": "NPC"
+    }
   }
 }
