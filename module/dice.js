@@ -793,12 +793,28 @@ export class RollnKeepDialog extends HandlebarsApplicationMixin(ApplicationV2) {
 
   onStrifeRangeChange(event) {
     if (!this.isEditable) return;
-    this._syncStrife(event?.currentTarget?.value);
+    const form = event?.currentTarget?.closest?.("form");
+    const val = event?.currentTarget?.value;
+    const clamped = Math.max(
+      0,
+      Math.min(Number(event?.currentTarget?.max || 0), Number(val) || 0)
+    );
+    const number = form?.querySelector("input[name='strifeApplied'][type='number']");
+    if (number) number.value = clamped;
+    this._syncStrife(clamped);
   }
 
   onStrifeNumberChange(event) {
     if (!this.isEditable) return;
-    this._syncStrife(event?.currentTarget?.value);
+    const form = event?.currentTarget?.closest?.("form");
+    const val = event?.currentTarget?.value;
+    const clamped = Math.max(
+      0,
+      Math.min(Number(event?.currentTarget?.max || 0), Number(val) || 0)
+    );
+    const range = form?.querySelector("#strife-applied");
+    if (range) range.value = clamped;
+    this._syncStrife(clamped);
   }
 
   /**
