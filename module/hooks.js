@@ -7,6 +7,23 @@ export class GFL5RHooks {
         await GFL5RHooks._gmCombatBar(app, $(html), data);
     }
 
+    static renderChatMessageHTML(message, html, data) {
+        if (!html) return;
+        const root = html instanceof HTMLElement ? html : (html[0] || html);
+        const $root = root instanceof jQuery ? root : $(root);
+
+        if (message.isRoll) {
+            $root.addClass("roll");
+            $root.on("click", ".chat-dice-rnk", game.gfl5r.RollnKeepDialog.onChatAction.bind(this));
+
+            if (game.user.isGM) {
+                $root.find(".player-only").remove();
+            } else {
+                $root.find(".gm-only").remove();
+            }
+        }
+    }
+
     /**
      * Display a GM bar for Combat/Initiative
      * @private
@@ -63,3 +80,4 @@ export class GFL5RHooks {
 
 // Register hooks
 Hooks.on("renderCombatTracker", GFL5RHooks.renderCombatTracker);
+Hooks.on("renderChatMessageHTML", GFL5RHooks.renderChatMessageHTML);
