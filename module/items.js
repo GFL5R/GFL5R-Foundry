@@ -10,7 +10,8 @@ class BaseGFLItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
   static buildOptions({ width, height }) {
     return {
       classes: ["sheet", "item"],
-      position: { width, height }
+      position: { width, height },
+      window: { resizable: true }
     };
   }
 }
@@ -23,7 +24,7 @@ export class GFL5RAbilitySheet extends BaseGFLItemSheet {
 
   static get PARTS() {
     return {
-      sheet: { template: templatePath("templates/item-ability.html") }
+      sheet: { template: templatePath("templates/item-ability.html"), scrollable: [""] }
     };
   }
 
@@ -42,7 +43,7 @@ export class GFL5RWeaponSheet extends BaseGFLItemSheet {
 
   static get PARTS() {
     return {
-      sheet: { template: templatePath("templates/item-weapon.html") }
+      sheet: { template: templatePath("templates/item-weapon.html"), scrollable: [""] }
     };
   }
 
@@ -61,7 +62,7 @@ export class GFL5RArmorSheet extends BaseGFLItemSheet {
 
   static get PARTS() {
     return {
-      sheet: { template: templatePath("templates/item-armor.html") }
+      sheet: { template: templatePath("templates/item-armor.html"), scrollable: [""] }
     };
   }
 }
@@ -74,7 +75,7 @@ export class GFL5RNarrativeSheet extends BaseGFLItemSheet {
 
   static get PARTS() {
     return {
-      sheet: { template: templatePath("templates/item-narrative.html") }
+      sheet: { template: templatePath("templates/item-narrative.html"), scrollable: [""] }
     };
   }
 }
@@ -87,7 +88,7 @@ export class GFL5RItemSheet extends BaseGFLItemSheet {
 
   static get PARTS() {
     return {
-      sheet: { template: templatePath("templates/item-sheet.html") }
+      sheet: { template: templatePath("templates/item-sheet.html"), scrollable: [""] }
     };
   }
 }
@@ -100,7 +101,7 @@ export class GFL5RDisciplineSheet extends BaseGFLItemSheet {
 
   static get PARTS() {
     return {
-      sheet: { template: templatePath("templates/item-discipline.html") }
+      sheet: { template: templatePath("templates/item-discipline.html"), scrollable: [""] }
     };
   }
 
@@ -121,7 +122,7 @@ export class GFL5RModuleSheet extends BaseGFLItemSheet {
 
   static get PARTS() {
     return {
-      sheet: { template: templatePath("templates/item-module.html") }
+      sheet: { template: templatePath("templates/item-module.html"), scrollable: [""] }
     };
   }
 }
@@ -134,7 +135,7 @@ export class GFL5RConditionSheet extends BaseGFLItemSheet {
 
   static get PARTS() {
     return {
-      sheet: { template: templatePath("templates/item-condition.html") }
+      sheet: { template: templatePath("templates/item-condition.html"), scrollable: [""] }
     };
   }
 }

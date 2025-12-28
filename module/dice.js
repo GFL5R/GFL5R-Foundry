@@ -100,7 +100,7 @@ export class GFLRollerApp extends HandlebarsApplicationMixin(ApplicationV2) {
     id: "gfl5r-roller",
     classes: ["sheet", "roller"],
     position: { width: 620, height: "auto" },
-    window: { title: "GFL5R Roll" },
+    window: { title: "GFL5R Roll", resizable: true },
     title: "GFL5R Roll",
     actions: {
       "continue-roll": GFLRollerApp.#onContinueAction,

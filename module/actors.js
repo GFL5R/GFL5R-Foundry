@@ -806,12 +806,12 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     id: "gfl5r-actor-sheet",
     classes: ["sheet", "actor"],
     position: { width: 860, height: 700 },
-    window: { title: "Character" }
+    window: { title: "Character", resizable: true }
   };
 
   static get PARTS() {
     return {
-      sheet: { template: templatePath("templates/actor-sheet.html") }
+      sheet: { template: templatePath("templates/actor-sheet.html"), scrollable: [""] }
     };
   }
 
@@ -1546,12 +1546,12 @@ export class GFL5RNPCSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     id: "gfl5r-npc-sheet",
     classes: ["sheet", "actor", "npc"],
     position: { width: 700, height: 600 },
-    window: { title: "NPC" }
+    window: { title: "NPC", resizable: true }
   };
 
   static get PARTS() {
     return {
-      sheet: { template: templatePath("templates/npc-sheet.html") }
+      sheet: { template: templatePath("templates/npc-sheet.html"), scrollable: [""] }
     };
   }
 
