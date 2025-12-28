@@ -74,4 +74,14 @@ export function registerHandlebarsHelpers() {
     if (!key) return "";
     return GFL5R_CONFIG.getApproachLabel?.(key) ?? key;
   });
+
+  hbs.registerHelper("ringLabel", function (key) {
+    if (!key) return "";
+    return GFL5R_CONFIG.getRingLabel?.(key) ?? GFL5R_CONFIG.getApproachLabel?.(key) ?? key;
+  });
+
+  hbs.registerHelper("skillCategoryLabel", function (key) {
+    if (!key) return "";
+    return GFL5R_CONFIG.getSkillCategoryLabel?.(key) ?? key;
+  });
 }

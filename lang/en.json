@@ -1,0 +1,35 @@
+{
+  "GFL5R": {
+    "SkillCategory": {
+      "combat": "Combat Skills",
+      "combat-skills": "Combat Skills",
+      "fieldcraft": "Fieldcraft Skills",
+      "fieldcraft-skills": "Fieldcraft Skills",
+      "technical": "Technical Skills",
+      "technical-skills": "Technical Skills",
+      "social": "Social & Cultural Skills",
+      "culture": "Social & Cultural Skills",
+      "social-cultural-skills": "Social & Cultural Skills"
+    },
+    "Approach": {
+      "power": "Power",
+      "swiftness": "Swiftness",
+      "resilience": "Resilience",
+      "precision": "Precision",
+      "fortune": "Fortune",
+      "air": "Air",
+      "earth": "Earth",
+      "fire": "Fire",
+      "water": "Water",
+      "void": "Void"
+    },
+    "Ring": {
+      "air": "Air",
+      "earth": "Earth",
+      "fire": "Fire",
+      "water": "Water",
+      "void": "Void",
+      "ring": "Ring"
+    }
+  }
+}
