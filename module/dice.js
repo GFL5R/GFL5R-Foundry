@@ -6,6 +6,7 @@
 const systemId = () => game?.system?.id ?? CONFIG?.system?.id ?? "gfl5r";
 // GFL5R Dice & Roll (ported from gfl5r, themed for GFL)
 import { GFL5R_CONFIG } from "./config.js";
+const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 const PATHS = {
   get templates() {
@@ -619,7 +620,7 @@ export class RollGFL5R extends Roll {
 /**
  * Roll & Keep dialog (ported from l5r5e flow, namespaced for gfl5r)
  */
-export class RollnKeepDialog extends FormApplication {
+export class RollnKeepDialog extends HandlebarsApplicationMixin(ApplicationV2) {
   /**
    * Player choice list
    */
@@ -656,19 +657,31 @@ export class RollnKeepDialog extends FormApplication {
     dicesList: [[]],
   };
 
-  /**
-   * Assign the default options
-   * @override
-   */
-  static get defaultOptions() {
-    const opts = foundry.utils.mergeObject(super.defaultOptions, {
-      id: "gfl5r-roll-n-keep-dialog",
+  static DEFAULT_OPTIONS = {
+    id: "gfl5r-roll-n-keep-dialog",
+    classes: ["gfl5r", "roll-n-keep-dialog"],
+    window: { title: "Roll & Keep", resizable: true },
+    position: { width: "auto", height: "auto" },
+  };
+
+  static PARTS = {
+    main: {
       template: PATHS.templates + "dice/roll-n-keep-dialog.html",
-      title: "Roll & Keep",
-      closeOnSubmit: false,
-    });
-    opts.classes = Array.from(new Set([...(opts.classes || []), "gfl5r", "roll-n-keep-dialog"]));
-    return opts;
+      scrollable: [],
+    },
+  };
+
+  static get eventListeners() {
+    return [
+      { event: "submit", selector: "form", callback: "onSubmit", preventDefault: true },
+      { event: "click", selector: "#undo-step", callback: "onUndoClick", preventDefault: true, stopPropagation: true },
+      { event: "click", selector: "#finalize", callback: "onFinalizeClick", preventDefault: true, stopPropagation: true },
+      { event: "click", selector: ".faces-change", callback: "onFacesChange" },
+      { event: "input", selector: "#strife-applied", callback: "onStrifeRangeChange" },
+      { event: "change", selector: "#strife-applied", callback: "onStrifeRangeChange" },
+      { event: "input", selector: "input[name='strifeApplied'][type='number']", callback: "onStrifeNumberChange" },
+      { event: "change", selector: "input[name='strifeApplied'][type='number']", callback: "onStrifeNumberChange" },
+    ];
   }
 
   /**
@@ -710,16 +723,94 @@ export class RollnKeepDialog extends FormApplication {
     return this._message?.isAuthor || this.messageRoll?.gfl5r?.actor?.isOwner || this._message?.isOwner || false;
   }
 
+  get isEditable() {
+    return this._editable !== false;
+  }
+
+  /**
+   * Gather form data similar to FormApplication behavior
+   * @param {Event} event
+   * @returns {object}
+   * @private
+   */
+  _collectFormData(event) {
+    const form =
+      event?.currentTarget?.closest?.("form") ||
+      (this.element ? this.element.querySelector("form") : null);
+    if (!form) return {};
+    const fd = new FormData(form);
+    return foundry.utils.expandObject(Object.fromEntries(fd.entries()));
+  }
+
+  /**
+   * Event: submit form
+   */
+  async onSubmit(event) {
+    const data = this._collectFormData(event);
+    await this._updateObject(event, data);
+  }
+
+  async onUndoClick(event) {
+    event?.preventDefault?.();
+    event?.stopPropagation?.();
+    if (!this.isEditable) return;
+    await this._undoLastStepChoices();
+  }
+
+  async onFinalizeClick(event) {
+    event?.preventDefault?.();
+    event?.stopPropagation?.();
+    if (!this.isEditable) return;
+    if (this.object.submitDisabled) return;
+    const data = this._collectFormData(event);
+    await this._updateObject(event, data);
+  }
+
+  onFacesChange(event) {
+    if (!this.isEditable) return;
+    const type = event.currentTarget?.dataset?.die;
+    const face = Number(event.currentTarget?.dataset?.face);
+    if (!type || Number.isNaN(face)) return;
+    this.object.dicesList[this.object.currentStep]?.forEach((dice) => {
+      if (dice && dice.choice === RollnKeepDialog.CHOICES.swap && dice.type === type) {
+        dice.newFace = face;
+      }
+    });
+    this.render(false);
+  }
+
+  _syncStrife(val) {
+    const clamped = Math.max(
+      0,
+      Math.min(Number(this.element?.querySelector("#strife-applied")?.max || 0), Number(val) || 0)
+    );
+    const range = this.element?.querySelector("#strife-applied");
+    const number = this.element?.querySelector("input[name='strifeApplied'][type='number']");
+    if (range) range.value = clamped;
+    if (number) number.value = clamped;
+    if (this.roll?.gfl5r) this.roll.gfl5r.strifeApplied = clamped;
+  }
+
+  onStrifeRangeChange(event) {
+    if (!this.isEditable) return;
+    this._syncStrife(event?.currentTarget?.value);
+  }
+
+  onStrifeNumberChange(event) {
+    if (!this.isEditable) return;
+    this._syncStrife(event?.currentTarget?.value);
+  }
+
   /**
    * Create the Roll n Keep dialog
    * @param {number} messageId
    * @param {FormApplicationOptions} options
    */
   constructor(messageId, options = {}) {
-    super({}, options);
+    super(options);
     this.message = game.messages.get(messageId);
     this._strifeInitial = null;
-    this.options.editable = this.isOwner;
+    this._editable = this.isOwner;
 
     this._initializeDiceFaces();
     this._initializeHistory();
@@ -747,8 +838,6 @@ export class RollnKeepDialog extends FormApplication {
     if (!this._message) {
       return;
     }
-    this.position.width = "auto";
-    this.position.height = "auto";
     return super.render(force, options);
   }
 
@@ -842,11 +931,12 @@ export class RollnKeepDialog extends FormApplication {
    * @param options
    * @return {Object}
    */
-  async getData(options = null) {
+  async _prepareContext(options = null) {
     const rollData = this.roll?.gfl5r ?? {};
 
     // Disable submit / edition
-    this.options.classes = (this.options.classes || []).filter((e) => e !== "finalized");
+    let classes = (this.options.classes || []).filter((e) => e !== "finalized");
+    let editable = this._editable !== false;
     this.object.submitDisabled = false;
 
     if (this._checkKeepCount(this.object.currentStep)) {
@@ -856,81 +946,43 @@ export class RollnKeepDialog extends FormApplication {
 
     const hasStrife = (rollData.summary?.strife || 0) > 0;
     const actorIsCharacter = rollData.actor?.type === "character";
-    const showStrifeBt = this.options.editable && hasStrife && rollData.rnkEnded && actorIsCharacter;
+    const showStrifeBt = editable && hasStrife && rollData.rnkEnded && actorIsCharacter;
     if (showStrifeBt && this._strifeInitial === null) {
       this._strifeInitial = Number(rollData.strifeApplied || 0);
     }
     if (!this.object.dicesList[this.object.currentStep] && !this._checkKeepCount(this.object.currentStep)) {
-      this.options.editable = this.isOwner && (hasStrife || false);
-      this.options.classes.push("finalized");
+      editable = this.isOwner && (hasStrife || false);
+      classes = [...classes, "finalized"];
       this.object.submitDisabled = false;
     }
+    this._editable = editable;
 
     return {
-      ...(await super.getData(options)),
       isGM: game.user.isGM,
-      showChoices: this.options.editable && !rollData.rnkEnded,
+      showChoices: editable && !rollData.rnkEnded,
       showStrifeBt,
-      cssClass: this.options.classes.join(" "),
+      cssClass: classes.join(" "),
       data: this.object,
       gfl5r: rollData,
     };
   }
 
   /**
-   * Listen to html elements
-   * @param {jQuery} html HTML content of the sheet.
-   * @override
+   * Bind DragDrop handlers (other events handled via eventListeners)
+   * @param {HTMLElement|jQuery} html
    */
   activateListeners(html) {
-    super.activateListeners(html);
-
-    // *** Everything below here is only needed if the sheet is editable ***
-    if (!this.isEditable) {
-      return;
-    }
-
-    html.find("#undo-step").on("click", (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      this._undoLastStepChoices();
-    });
-
-    // Finalize Button
-    html.find("#finalize").on("click", (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      if (!this.object.submitDisabled) {
-        this.submit();
+    const root = html instanceof HTMLElement ? html : html?.[0];
+    super.activateListeners?.(html);
+    if (!root || !this.isEditable) return;
+    this._dragDrop = this._dragDrop || this._createDragDropHandlers();
+    for (const dd of this._dragDrop) {
+      try {
+        dd.bind(root);
+      } catch (err) {
+        console.warn("GFL5R | RNK dragdrop bind failed", err);
       }
-    });
-
-    // Strife slider/number sync (final step)
-    const $strifeRange = html.find("#strife-applied");
-    const $strifeNumber = html.find("input[name='strifeApplied'][type='number']");
-    if ($strifeRange.length && $strifeNumber.length) {
-      const syncStrife = (val) => {
-        const max = Number($strifeRange.attr("max") || 0);
-        const clamped = Math.max(0, Math.min(max, Number(val) || 0));
-        $strifeRange.val(clamped);
-        $strifeNumber.val(clamped);
-        if (this.roll?.gfl5r) this.roll.gfl5r.strifeApplied = clamped;
-      };
-      $strifeRange.on("input change", (ev) => syncStrife(ev.currentTarget.value));
-      $strifeNumber.on("input change", (ev) => syncStrife(ev.currentTarget.value));
     }
-
-    html.find(".faces-change").on("click", (event) => {
-      const type = event.currentTarget.dataset.die;
-      const face = parseInt(event.currentTarget.dataset.face);
-      if (!type || isNaN(face)) return;
-      this.object.dicesList[this.object.currentStep].forEach((dice) => {
-        if (dice && dice.choice === RollnKeepDialog.CHOICES.swap && dice.type === type) {
-          dice.newFace = face;
-        }
-      });
-      this.render(false);
-    });
   }
 
   /**
@@ -942,8 +994,9 @@ export class RollnKeepDialog extends FormApplication {
       return;
     }
 
-    const type = $(event.currentTarget).data("type");
-    const json = event.dataTransfer.getData("text/plain");
+    const target = event.currentTarget;
+    const type = target?.dataset?.type;
+    const json = event.dataTransfer?.getData("text/plain");
     if (!json || !Object.values(RollnKeepDialog.CHOICES).some((e) => !!e && e === type)) {
       return;
     }
@@ -962,10 +1015,10 @@ export class RollnKeepDialog extends FormApplication {
     switch (type) {
       case RollnKeepDialog.CHOICES.swap: {
         // Dice Type Ring/Skill
-        const diceType = $(event.currentTarget).data("die");
-        const diceNewFace = $(event.currentTarget).data("face");
+        const diceType = target?.dataset?.die;
+        const diceNewFace = target?.dataset?.face ? Number(target.dataset.face) : undefined;
 
-        if (current.type !== diceType || current.face === diceNewFace) {
+        if (current.type !== diceType || current.face === diceNewFace || Number.isNaN(diceNewFace)) {
           current.choice = RollnKeepDialog.CHOICES.nothing;
           this.render(false);
           return false;
@@ -1474,7 +1527,7 @@ export class RollnKeepDialog extends FormApplication {
         return e;
       });
 
-    this.options.editable = this.isOwner;
+    this._editable = this.isOwner;
     await this._rebuildRoll(true);
     await this._toChatMessage();
     return this.render(false);
