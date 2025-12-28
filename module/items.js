@@ -27,7 +27,7 @@ class BaseGFLItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
 export class GFL5RAbilitySheet extends BaseGFLItemSheet {
   static DEFAULT_OPTIONS = {
     ...BaseGFLItemSheet.buildOptions({ width: 600, height: 500 }),
-    window: { title: "Ability" }
+    window: { title: "Ability", resizable: true }
   };
 
   static get PARTS() {
@@ -46,7 +46,7 @@ export class GFL5RAbilitySheet extends BaseGFLItemSheet {
 export class GFL5RWeaponSheet extends BaseGFLItemSheet {
   static DEFAULT_OPTIONS = {
     ...BaseGFLItemSheet.buildOptions({ width: 600, height: 600 }),
-    window: { title: "Weapon" }
+    window: { title: "Weapon", resizable: true }
   };
 
   static get PARTS() {
@@ -65,7 +65,7 @@ export class GFL5RWeaponSheet extends BaseGFLItemSheet {
 export class GFL5RArmorSheet extends BaseGFLItemSheet {
   static DEFAULT_OPTIONS = {
     ...BaseGFLItemSheet.buildOptions({ width: 600, height: 500 }),
-    window: { title: "Armor" }
+    window: { title: "Armor", resizable: true }
   };
 
   static get PARTS() {
@@ -78,7 +78,7 @@ export class GFL5RArmorSheet extends BaseGFLItemSheet {
 export class GFL5RNarrativeSheet extends BaseGFLItemSheet {
   static DEFAULT_OPTIONS = {
     ...BaseGFLItemSheet.buildOptions({ width: 600, height: 500 }),
-    window: { title: "Narrative" }
+    window: { title: "Narrative", resizable: true }
   };
 
   static get PARTS() {
@@ -91,7 +91,7 @@ export class GFL5RNarrativeSheet extends BaseGFLItemSheet {
 export class GFL5RItemSheet extends BaseGFLItemSheet {
   static DEFAULT_OPTIONS = {
     ...BaseGFLItemSheet.buildOptions({ width: 600, height: 450 }),
-    window: { title: "Item" }
+    window: { title: "Item", resizable: true }
   };
 
   static get PARTS() {
@@ -104,7 +104,7 @@ export class GFL5RItemSheet extends BaseGFLItemSheet {
 export class GFL5RDisciplineSheet extends BaseGFLItemSheet {
   static DEFAULT_OPTIONS = {
     ...BaseGFLItemSheet.buildOptions({ width: 600, height: 600 }),
-    window: { title: "Discipline" }
+    window: { title: "Discipline", resizable: true }
   };
 
   static get PARTS() {
@@ -125,7 +125,7 @@ export class GFL5RDisciplineSheet extends BaseGFLItemSheet {
 export class GFL5RModuleSheet extends BaseGFLItemSheet {
   static DEFAULT_OPTIONS = {
     ...BaseGFLItemSheet.buildOptions({ width: 600, height: 550 }),
-    window: { title: "Module" }
+    window: { title: "Module", resizable: true }
   };
 
   static get PARTS() {
@@ -138,7 +138,7 @@ export class GFL5RModuleSheet extends BaseGFLItemSheet {
 export class GFL5RConditionSheet extends BaseGFLItemSheet {
   static DEFAULT_OPTIONS = {
     ...BaseGFLItemSheet.buildOptions({ width: 600, height: 500 }),
-    window: { title: "Condition" }
+    window: { title: "Condition", resizable: true }
   };
 
   static get PARTS() {
