@@ -12,6 +12,12 @@ export class GFL5RAbilitySheet extends ItemSheet {
     });
   }
   get template() { return "systems/gfl5r/templates/item-ability.html"; }
+
+  async getData(options) {
+    const context = await super.getData(options);
+    context.skillGroups = GFL5R_CONFIG.skillGroups;
+    return context;
+  }
 }
 
 export class GFL5RWeaponSheet extends ItemSheet {
@@ -24,6 +30,12 @@ export class GFL5RWeaponSheet extends ItemSheet {
     });
   }
   get template() { return "systems/gfl5r/templates/item-weapon.html"; }
+
+  async getData(options) {
+    const context = await super.getData(options);
+    context.skillGroups = GFL5R_CONFIG.skillGroups;
+    return context;
+  }
 }
 
 export class GFL5RArmorSheet extends ItemSheet {

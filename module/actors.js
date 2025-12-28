@@ -499,6 +499,25 @@ export class GFL5RActorSheet extends ActorSheet {
       await rollSkill(key, label);
     });
 
+    // Click on discipline ability to roll associated skill
+    html.on("click", "[data-item-id]", async ev => {
+      if (ev.target.closest("button")) return;
+      const container = ev.currentTarget.closest("[data-item-id]");
+      if (!container) return;
+      const itemId = container.dataset.itemId;
+      if (!itemId) return;
+      
+      const item = this.actor.items.get(itemId);
+      if (!item) return;
+      
+      // Check if this item is an ability or weapon with a skill
+      if ((item.type === "ability" || item.type === "weaponry") && item.system.skill) {
+        const skillKey = item.system.skill;
+        const skillLabel = item.name;
+        await rollSkill(skillKey, skillLabel);
+      }
+    });
+
   }
 
   _applyDisciplineSkillXP(skillKey, deltaXP) {

@@ -23,12 +23,14 @@
           <div class="col-md-4">
             <label class="form-label">Associated Skill</label>
             <select class="form-select" name="system.skill">
-              {{#select item.system.skill}}
-                <option value="blades">Blades</option>
-                <option value="firearms">Firearms</option>
-                <option value="handToHand">Hand-to-Hand</option>
-                <option value="explosives">Explosives</option>
-              {{/select}}
+              <option value="">None</option>
+              {{#each skillGroups as |group|}}
+                <optgroup label="{{group.title}}">
+                  {{#each group.items as |skill|}}
+                    <option value="{{skill.key}}" {{#ifCond ../item.system.skill "==" skill.key}}selected{{/ifCond}}>{{skill.label}}</option>
+                  {{/each}}
+                </optgroup>
+              {{/each}}
             </select>
           </div>
         </div>
