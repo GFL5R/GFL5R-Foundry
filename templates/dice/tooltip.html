@@ -1,0 +1,28 @@
+<div class="dice-tooltip">
+  <section class="tooltip-part">
+    <div class="dice">
+      <ol class="dice-rolls">
+        {{#each chatData.parts as |part|}}
+          {{#if part.display}}
+            <li class="roll die {{part.formula}} {{part.classes}}">
+              {{#each part.rolls}}
+                <span class="result">{{{this.result}}}</span>
+              {{/each}}
+            </li>
+          {{/if}}
+        {{/each}}
+      </ol>
+    </div>
+  </section>
+  <div class="tooltip-summary">
+    {{#if chatData.gfl5r.dicesTypes.l5r}}
+      <ul class="list-unstyled mb-0">
+        <li>Successes: {{chatData.gfl5r.summary.success}}</li>
+        <li>Explosives: {{chatData.gfl5r.summary.explosive}}</li>
+        <li>Opportunities: {{chatData.gfl5r.summary.opportunity}}</li>
+        <li>Strife: {{chatData.gfl5r.summary.strife}}</li>
+        <li>TN: {{chatData.gfl5r.difficulty}}</li>
+      </ul>
+    {{/if}}
+  </div>
+</div>

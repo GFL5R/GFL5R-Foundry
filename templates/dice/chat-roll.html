@@ -1,0 +1,94 @@
+﻿<div class="gfl5r chat dice-roll">
+  {{#if isPublicRoll}}
+  <div class="card dice-card">
+    <div class="card-body">
+      <div class="d-flex align-items-center gap-2 mb-2">
+        <img class="profile-img rounded" src="{{profileImg}}" alt="{{#if gfl5r.actor.name}}{{gfl5r.actor.name}}{{else}}mystery{{/if}}" />
+        <div class="flex-grow-1">
+          <div class="fw-semibold">{{gfl5r.actor.name}}</div>
+          <div class="text-muted small">
+            {{#if gfl5r.stance}}{{stanceLabel gfl5r.stance}}{{/if}}
+            {{#if gfl5r.skillId}}{{#if gfl5r.stance}} · {{/if}}{{skillLabel gfl5r.skillId}}{{/if}}
+            {{#if gfl5r.skillCatId}} · {{skillCategoryLabel gfl5r.skillCatId}}{{/if}}
+          </div>
+        </div>
+        <div class="text-end small">
+          <div>
+            TN
+            {{#if gfl5r.difficultyHidden}}
+              {{gfl5r.difficulty}}{{#if gfl5r.difficulty}} {{/if}}<i class="fas fa-eye-slash" title="Hidden TN"></i>
+            {{else}}
+              {{#if gfl5r.difficulty}}{{gfl5r.difficulty}}{{else}}?{{/if}}
+            {{/if}}
+          </div>
+          {{#if gfl5r.voidPointUsed}}
+            <div class="text-warning">Fortune spent</div>
+          {{/if}}
+          {{#if gfl5r.skillAssistance}}
+            <div class="text-warning">Assist x{{gfl5r.skillAssistance}}</div>
+          {{/if}}
+        </div>
+      </div>
+
+      <div class="dice-formula mb-2">{{#if gfl5r.initialFormula}}{{gfl5r.initialFormula}}{{else}}{{formula}}{{/if}}</div>
+
+      <div class="dice-result">
+        {{#if gfl5r.dicesTypes.l5r}}
+        <div class="item-display dices-l5r">
+          <div class="dice-container mb-2">
+            {{#each gfl5r.dices}}
+              {{#if this.diceTypeL5r}}
+                {{#each this.rolls}}
+                  <span class="chat-dice {{this.classes}}">{{{this.result}}}</span>
+                {{/each}}
+              {{/if}}
+            {{/each}}
+          </div>
+
+          <button class="btn btn-outline-light btn-sm chat-dice-rnk {{#if this.gfl5r.rnkEnded}}chat-dice-rnk-ended{{/if}}">
+            Roll &amp; Keep
+          </button>
+
+          {{#gfl5r.summary}}
+          <div class="dice-total dice-total-rnk">
+            {{#if success}}<span class="badge bg-success">Success x{{success}}</span>{{/if}}
+            {{#if explosive}}<span class="badge bg-warning text-dark">Explosive x{{explosive}}</span>{{/if}}
+            {{#if opportunity}}<span class="badge bg-info text-dark">Opportunity x{{opportunity}}</span>{{/if}}
+            {{#if strife}}<span class="badge bg-danger">Strife x{{strife}} {{#if ../gfl5r.strifeApplied}}<sup>{{../gfl5r.strifeApplied}}</sup>{{/if}}</span>{{/if}}
+          </div>
+
+          {{#if ../gfl5r.difficultyHidden}}
+            <div class="dice-result-rnk unknown player-only">{{totalSuccess}} successes</div>
+          {{/if}}
+          <div class="dice-result-rnk {{#ifCond totalSuccess '>=' ../gfl5r.difficulty}}success{{else}}fail{{/ifCond}} {{#if ../gfl5r.difficultyHidden}}gm-only{{/if}}">
+            {{#ifCond totalSuccess '>=' ../gfl5r.difficulty}}
+              Success <span class="text-muted">(+{{totalBonus}} bonus)</span>
+            {{else}}
+              Fail
+            {{/ifCond}}
+          </div>
+          {{/gfl5r.summary}}
+        </div>
+        {{/if}}
+
+        {{#if gfl5r.dicesTypes.std}}
+        <div class="dices-std">
+          {{#each results}}
+            {{#each this.rolls}}
+              <span class="chat-dice">{{{this.result}}}</span>
+            {{/each}}
+          {{/each}}
+        </div>
+        {{{tooltip}}}
+        <h4 class="dice-total dice-total-std">{{{total}}}</h4>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+  {{/if}}
+</div>
+
+
+
+
+

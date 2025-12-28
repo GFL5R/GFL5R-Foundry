@@ -1,0 +1,80 @@
+<form class="container-fluid py-2">
+  <div class="card">
+    <div class="card-body d-flex flex-column gap-3">
+      <div class="fw-semibold">Roll {{skillLabel}}</div>
+
+      <div class="row g-3 align-items-end">
+        <div class="col-md-6">
+          <label class="form-label" for="roll-approach">Approach</label>
+          <select id="roll-approach" name="approach" class="form-select">
+            {{#each approachList as |a|}}
+              <option value="{{a.key}}" {{#if (eq a.key ../defaultApproach)}}selected{{/if}}>{{stanceLabel a.key}} ({{a.value}})</option>
+            {{/each}}
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Skill</label>
+          {{#if skillOptions}}
+            <select id="roll-skill" name="skill" class="form-select">
+              {{#each skillOptions}}
+                <option value="{{this.key}}" {{#if (eq this.key ../skillKey)}}selected{{/if}}>{{this.label}}</option>
+              {{/each}}
+            </select>
+          {{else}}
+            <input class="form-control" type="text" value="{{skillLabel}}" readonly />
+          {{/if}}
+        </div>
+      </div>
+
+      <div class="row g-3 align-items-end">
+        <div class="col-md-6">
+          <label class="form-label">TN</label>
+          <input id="roll-tn" class="form-control" type="number" name="tn" value="{{defaultTN}}" min="0" />
+        </div>
+      </div>
+
+      <div class="row g-3 align-items-center">
+        <div class="col-md-4">
+          <label class="form-label mb-1">Ring Dice</label>
+          <div class="input-group">
+            <button class="btn btn-outline-secondary" type="button" data-action="ring-minus">-</button>
+            <input class="form-control text-center" type="number" readonly value="{{ringValue}}" />
+            <button class="btn btn-outline-secondary" type="button" data-action="ring-plus">+</button>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label mb-1">Skill Dice</label>
+          <div class="input-group">
+            <button class="btn btn-outline-secondary" type="button" data-action="skill-minus">-</button>
+            <input class="form-control text-center" type="number" readonly value="{{skillValue}}" />
+            <button class="btn btn-outline-secondary" type="button" data-action="skill-plus">+</button>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label mb-1">Assistance (keeps)</label>
+          <div class="input-group">
+            <button class="btn btn-outline-secondary" type="button" data-action="assist-minus">-</button>
+            <input class="form-control text-center" type="number" readonly value="{{assistance}}" />
+            <button class="btn btn-outline-secondary" type="button" data-action="assist-plus">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="hiddenTN" id="roll-hidden-tn" {{#if hiddenChecked}}checked{{/if}} {{#if hiddenLocked}}disabled{{/if}} />
+        <label class="form-check-label" for="roll-hidden-tn">
+          Hide TN (+1 Fortune) {{#if hiddenLocked}}<span class="text-muted">(locked by GM)</span>{{/if}}
+        </label>
+      </div>
+
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="useFortune" id="roll-use-fortune" />
+        <label class="form-check-label" for="roll-use-fortune">Spend Fortune (+1 Ring die)</label>
+      </div>
+
+      <div class="text-end">
+        <button type="submit" class="btn btn-primary">Roll</button>
+      </div>
+    </div>
+  </div>
+</form>
