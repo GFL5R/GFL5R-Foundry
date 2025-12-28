@@ -284,6 +284,27 @@ export class GFLDicePickerDialog extends HandlebarsApplicationMixin(ApplicationV
     return super.close(options);
   }
 
+  /**
+   * Avoid positioning before the element is attached to the DOM.
+   */
+  setPosition(opts = {}) {
+    if (!this.element || !this.element.parentElement) return this;
+    return super.setPosition(opts);
+  }
+
+  /**
+   * Guard position updates when element is not yet in DOM (prevents null offsetWidth errors).
+   */
+  _updatePosition(...args) {
+    if (!this.element || !this.element.parentElement) return;
+    try {
+      return super._updatePosition(...args);
+    } catch (err) {
+      console.warn("GFL5R | Picker position update skipped", err);
+      return this;
+    }
+  }
+
   async _finish() {
     if (this._completed) return;
     this._completed = true;
