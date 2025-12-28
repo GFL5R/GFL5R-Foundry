@@ -1,5 +1,7 @@
 import { GFL5R_CONFIG } from "./config.js";
 
+const ItemSheet = foundry.appv1.sheets.ItemSheet;
+
 export class GFL5RAbilitySheet extends ItemSheet {
   static get defaultOptions() {
     const opts = super.defaultOptions;
@@ -105,6 +107,7 @@ export class GFL5RConditionSheet extends ItemSheet {
 }
 
 export function registerItemSheets() {
+  const Items = foundry.documents.collections.Items;
   Items.unregisterSheet("core", ItemSheet);
   Items.registerSheet("gfl5r", GFL5RAbilitySheet, { types: ["ability"], makeDefault: true });
   Items.registerSheet("gfl5r", GFL5RWeaponSheet, { types: ["weaponry"], makeDefault: true });

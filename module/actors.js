@@ -4,6 +4,8 @@ console.log("GFL5R | actors.js loaded");
 import { GFL5R_CONFIG } from "./config.js";
 import { computeDerivedStats } from "./utils/derived.js";
 
+const ActorSheet = foundry.appv1.sheets.ActorSheet;
+
 export class GFL5RActorSheet extends ActorSheet {
   static get defaultOptions() {
     const opts = super.defaultOptions;
@@ -778,6 +780,7 @@ export class GFL5RNPCSheet extends ActorSheet {
 }
 
 export function registerActorSheets() {
+  const Actors = foundry.documents.collections.Actors;
   Actors.unregisterSheet("core", ActorSheet);
   Actors.registerSheet("gfl5r", GFL5RActorSheet, {
     makeDefault: true,
