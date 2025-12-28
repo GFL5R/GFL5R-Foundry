@@ -1,6 +1,17 @@
 // module/config.js
 console.log("GFL5R | config.js loaded");
 
+const normalizeId = (id) => (id ?? "").toString().trim().toLowerCase().replace(/[^a-z0-9]+/g, "-");
+const capitalize = (val) => {
+  const safe = (val ?? "").toString();
+  return safe.charAt(0).toUpperCase() + safe.slice(1);
+};
+const localize = (key, fallback = undefined) => {
+  const localized = game?.i18n?.localize?.(key);
+  if (localized && localized !== key) return localized;
+  return fallback;
+};
+
 export const GFL5R_CONFIG = {
   // XP required to advance to each rank
   // Index 0 = rank 1, index 1 = rank 2, etc.
@@ -61,6 +72,42 @@ export const GFL5R_CONFIG = {
     }
   ],
 
+  skillCategories: {
+    combat: "Combat Skills",
+    "combat-skills": "Combat Skills",
+    fieldcraft: "Fieldcraft Skills",
+    "fieldcraft-skills": "Fieldcraft Skills",
+    technical: "Technical Skills",
+    "technical-skills": "Technical Skills",
+    social: "Social & Cultural Skills",
+    culture: "Social & Cultural Skills",
+    "social-cultural-skills": "Social & Cultural Skills",
+  },
+
+  // Approach/ring labels (player + NPC friendly)
+  approachLabels: {
+    power: "Power",
+    swiftness: "Swiftness",
+    resilience: "Resilience",
+    precision: "Precision",
+    fortune: "Fortune",
+    air: "Air",
+    earth: "Earth",
+    fire: "Fire",
+    water: "Water",
+    void: "Void"
+  },
+
+  // Optional alt ring labels; falls back to approachLabels/capitalization
+  ringLabels: {
+    air: "Air",
+    earth: "Earth",
+    fire: "Fire",
+    water: "Water",
+    void: "Void",
+    ring: "Ring"
+  },
+
   // Initiative skills for different encounter types
   initiativeSkills: {
     intrigue: "insight",
@@ -71,13 +118,21 @@ export const GFL5R_CONFIG = {
   getSkillsMap() {
     const map = new Map();
     this.skillGroups.forEach((group) => {
-      group.items.forEach((item) => map.set(item.key, item));
+      const groupId = normalizeId(group.title);
+      group.items.forEach((item) => map.set(item.key, { ...item, group: group.title, groupId }));
     });
     return map;
   },
   getSkillCategoryLabel(id) {
-    // For future category support; fallback to capitalize id
-    return (id || "").charAt(0).toUpperCase() + (id || "").slice(1);
+    const slug = normalizeId(id);
+    if (!slug) return "";
+    const i18nKey = `GFL5R.SkillCategory.${slug}`;
+    const loc = localize(i18nKey, null);
+    if (loc) return loc;
+    if (this.skillCategories?.[slug]) return this.skillCategories[slug];
+    const fromGroup = this.skillGroups.find((group) => normalizeId(group.title) === slug);
+    if (fromGroup) return fromGroup.title;
+    return capitalize(id);
   },
 
   // Get total XP required to reach next rank (cumulative)
@@ -110,15 +165,28 @@ export const GFL5R_CONFIG = {
 
   getSkillLabel(key) {
     const safeKey = key ?? "";
-    for (const group of this.skillGroups) {
-      const match = group.items.find(item => item.key === safeKey);
-      if (match) return match.label;
-    }
-    return safeKey;
+    const map = this.getSkillsMap();
+    const found = map.get(safeKey);
+    if (found?.label) return found.label;
+    return capitalize(safeKey);
   },
 
   getApproachLabel(key) {
-    const safe = (key || "").toString();
-    return safe.charAt(0).toUpperCase() + safe.slice(1);
+    const slug = normalizeId(key);
+    if (!slug) return "";
+    const loc = localize(`GFL5R.Approach.${slug}`, null);
+    if (loc) return loc;
+    if (this.approachLabels?.[slug]) return this.approachLabels[slug];
+    if (this.ringLabels?.[slug]) return this.ringLabels[slug];
+    return capitalize(key);
+  },
+
+  getRingLabel(key) {
+    const slug = normalizeId(key);
+    if (!slug) return "";
+    const loc = localize(`GFL5R.Ring.${slug}`, null);
+    if (loc) return loc;
+    if (this.ringLabels?.[slug]) return this.ringLabels[slug];
+    return this.getApproachLabel(key);
   }
 };
