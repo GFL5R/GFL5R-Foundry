@@ -1,6 +1,7 @@
 import { GFL5R_CONFIG } from "./config.js";
 
-const { HandlebarsApplicationMixin, ItemSheetV2 } = foundry.applications.api;
+const { HandlebarsApplicationMixin } = foundry.applications.api;
+const { ItemSheetV2 } = foundry.applications.sheets;
 
 class BaseGFLItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
   static buildOptions({ width, height }) {

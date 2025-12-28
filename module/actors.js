@@ -10,7 +10,8 @@ const sheetDebug = (...args) => {
   console.debug("GFL5R | Sheet", ...args);
 };
 
-const { HandlebarsApplicationMixin, ActorSheetV2 } = foundry.applications.api;
+const { HandlebarsApplicationMixin } = foundry.applications.api;
+const { ActorSheetV2 } = foundry.applications.sheets;
 const ActorSheet = foundry.appv1.sheets.ActorSheet;
 
 const APPROACH_LABELS = {
