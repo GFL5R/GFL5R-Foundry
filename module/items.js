@@ -1,92 +1,95 @@
 import { GFL5R_CONFIG } from "./config.js";
 
-const ItemSheet = foundry.appv1.sheets.ItemSheet;
+const { HandlebarsApplicationMixin, ItemSheetV2 } = foundry.applications.api;
 
-export class GFL5RAbilitySheet extends ItemSheet {
-  static get defaultOptions() {
-    const opts = super.defaultOptions;
-    return foundry.utils.mergeObject(opts, {
+class BaseGFLItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
+  static buildOptions({ width, height }) {
+    return {
       classes: ["sheet", "item"],
-      width: 600,
-      height: 500
-    });
+      position: { width, height }
+    };
   }
-  get template() { return "systems/gfl5r/templates/item-ability.html"; }
+}
 
-  async getData(options) {
-    const context = await super.getData(options);
+export class GFL5RAbilitySheet extends BaseGFLItemSheet {
+  static DEFAULT_OPTIONS = {
+    ...BaseGFLItemSheet.buildOptions({ width: 600, height: 500 }),
+    window: { title: "Ability" }
+  };
+
+  static PARTS = {
+    sheet: { template: "systems/gfl5r/templates/item-ability.html" }
+  };
+
+  async _prepareContext(options) {
+    const context = await super._prepareContext(options);
     context.skillGroups = GFL5R_CONFIG.skillGroups;
     return context;
   }
 }
 
-export class GFL5RWeaponSheet extends ItemSheet {
-  static get defaultOptions() {
-    const opts = super.defaultOptions;
-    return foundry.utils.mergeObject(opts, {
-      classes: ["sheet", "item"],
-      width: 600,
-      height: 600
-    });
-  }
-  get template() { return "systems/gfl5r/templates/item-weapon.html"; }
+export class GFL5RWeaponSheet extends BaseGFLItemSheet {
+  static DEFAULT_OPTIONS = {
+    ...BaseGFLItemSheet.buildOptions({ width: 600, height: 600 }),
+    window: { title: "Weapon" }
+  };
 
-  async getData(options) {
-    const context = await super.getData(options);
+  static PARTS = {
+    sheet: { template: "systems/gfl5r/templates/item-weapon.html" }
+  };
+
+  async _prepareContext(options) {
+    const context = await super._prepareContext(options);
     context.skillGroups = GFL5R_CONFIG.skillGroups;
     return context;
   }
 }
 
-export class GFL5RArmorSheet extends ItemSheet {
-  static get defaultOptions() {
-    const opts = super.defaultOptions;
-    return foundry.utils.mergeObject(opts, {
-      classes: ["sheet", "item"],
-      width: 600,
-      height: 500
-    });
-  }
-  get template() { return "systems/gfl5r/templates/item-armor.html"; }
+export class GFL5RArmorSheet extends BaseGFLItemSheet {
+  static DEFAULT_OPTIONS = {
+    ...BaseGFLItemSheet.buildOptions({ width: 600, height: 500 }),
+    window: { title: "Armor" }
+  };
+
+  static PARTS = {
+    sheet: { template: "systems/gfl5r/templates/item-armor.html" }
+  };
 }
 
-export class GFL5RNarrativeSheet extends ItemSheet {
-  static get defaultOptions() {
-    const opts = super.defaultOptions;
-    return foundry.utils.mergeObject(opts, {
-      classes: ["sheet", "item"],
-      width: 600,
-      height: 500
-    });
-  }
-  get template() { return "systems/gfl5r/templates/item-narrative.html"; }
+export class GFL5RNarrativeSheet extends BaseGFLItemSheet {
+  static DEFAULT_OPTIONS = {
+    ...BaseGFLItemSheet.buildOptions({ width: 600, height: 500 }),
+    window: { title: "Narrative" }
+  };
+
+  static PARTS = {
+    sheet: { template: "systems/gfl5r/templates/item-narrative.html" }
+  };
 }
 
-export class GFL5RItemSheet extends ItemSheet {
-  static get defaultOptions() {
-    const opts = super.defaultOptions;
-    return foundry.utils.mergeObject(opts, {
-      classes: ["sheet", "item"],
-      width: 600,
-      height: 450
-    });
-  }
-  get template() { return "systems/gfl5r/templates/item-item.html"; }
+export class GFL5RItemSheet extends BaseGFLItemSheet {
+  static DEFAULT_OPTIONS = {
+    ...BaseGFLItemSheet.buildOptions({ width: 600, height: 450 }),
+    window: { title: "Item" }
+  };
+
+  static PARTS = {
+    sheet: { template: "systems/gfl5r/templates/item-item.html" }
+  };
 }
 
-export class GFL5RDisciplineSheet extends ItemSheet {
-  static get defaultOptions() {
-    const opts = super.defaultOptions;
-    return foundry.utils.mergeObject(opts, {
-      classes: ["sheet", "item"],
-      width: 600,
-      height: 600
-    });
-  }
-  get template() { return "systems/gfl5r/templates/item-discipline.html"; }
+export class GFL5RDisciplineSheet extends BaseGFLItemSheet {
+  static DEFAULT_OPTIONS = {
+    ...BaseGFLItemSheet.buildOptions({ width: 600, height: 600 }),
+    window: { title: "Discipline" }
+  };
 
-  async getData(options) {
-    const context = await super.getData(options);
+  static PARTS = {
+    sheet: { template: "systems/gfl5r/templates/item-discipline.html" }
+  };
+
+  async _prepareContext(options) {
+    const context = await super._prepareContext(options);
     context.skillGroups = GFL5R_CONFIG.skillGroups;
     const skills = context.item?.system?.associatedSkills;
     context.associatedSkills = Array.isArray(skills) ? skills : [];
@@ -94,33 +97,31 @@ export class GFL5RDisciplineSheet extends ItemSheet {
   }
 }
 
-export class GFL5RModuleSheet extends ItemSheet {
-  static get defaultOptions() {
-    const opts = super.defaultOptions;
-    return foundry.utils.mergeObject(opts, {
-      classes: ["sheet", "item"],
-      width: 600,
-      height: 550
-    });
-  }
-  get template() { return "systems/gfl5r/templates/item-module.html"; }
+export class GFL5RModuleSheet extends BaseGFLItemSheet {
+  static DEFAULT_OPTIONS = {
+    ...BaseGFLItemSheet.buildOptions({ width: 600, height: 550 }),
+    window: { title: "Module" }
+  };
+
+  static PARTS = {
+    sheet: { template: "systems/gfl5r/templates/item-module.html" }
+  };
 }
 
-export class GFL5RConditionSheet extends ItemSheet {
-  static get defaultOptions() {
-    const opts = super.defaultOptions;
-    return foundry.utils.mergeObject(opts, {
-      classes: ["sheet", "item"],
-      width: 600,
-      height: 500
-    });
-  }
-  get template() { return "systems/gfl5r/templates/item-condition.html"; }
+export class GFL5RConditionSheet extends BaseGFLItemSheet {
+  static DEFAULT_OPTIONS = {
+    ...BaseGFLItemSheet.buildOptions({ width: 600, height: 500 }),
+    window: { title: "Condition" }
+  };
+
+  static PARTS = {
+    sheet: { template: "systems/gfl5r/templates/item-condition.html" }
+  };
 }
 
 export function registerItemSheets() {
   const Items = foundry.documents.collections.Items;
-  Items.unregisterSheet("core", ItemSheet);
+  Items.unregisterSheet("core", foundry.appv1.sheets.ItemSheet);
   Items.registerSheet("gfl5r", GFL5RAbilitySheet, { types: ["ability"], makeDefault: true });
   Items.registerSheet("gfl5r", GFL5RWeaponSheet, { types: ["weaponry"], makeDefault: true });
   Items.registerSheet("gfl5r", GFL5RArmorSheet, { types: ["armor"], makeDefault: true });

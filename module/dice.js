@@ -1,6 +1,8 @@
 // module/dice.js
 /* GFL5R Dice Roller — using native d6 (black) and d12 (white)
-   Now updates a chat message at each step! */
+  Now updates a chat message at each step! */
+
+const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 function payloadBlack(face) {
   // 1..6
@@ -92,16 +94,27 @@ function expandRoll(roll) {
    ROLLER APP
    ============================ */
 
-export class GFLRollerApp extends Application {
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["sheet", "roller"],
-      width: 620,
-      height: "auto",
-      template: `systems/${game.system.id}/templates/roller.html`,
-      title: "GFL5R Roll"
-    });
-  }
+export class GFLRollerApp extends HandlebarsApplicationMixin(ApplicationV2) {
+  static DEFAULT_OPTIONS = {
+    id: "gfl5r-roller",
+    classes: ["sheet", "roller"],
+    position: { width: 620, height: "auto" },
+    window: { title: "GFL5R Roll" },
+    title: "GFL5R Roll",
+    actions: {
+      "continue-roll": GFLRollerApp.#onContinueAction,
+      "finish-roll": GFLRollerApp.#onFinishAction,
+      "cancel-roll": GFLRollerApp.#onCancelAction
+    }
+  };
+
+  static PARTS = {
+    roller: {
+      template: `systems/${game.system.id}/templates/roller.html`
+    }
+  };
+
+  #renderAbort = null;
 
   /**
    * @param {object} opts
@@ -141,7 +154,7 @@ export class GFLRollerApp extends Application {
     this.stepNumber = 0;
   }
 
-  async getData() {
+  async _prepareContext() {
     return {
       skillLabel: this.skillLabel,
       approachName: this.approachName,
@@ -157,39 +170,43 @@ export class GFLRollerApp extends Application {
     };
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  _onRender() {
+    const root = this.element;
+    if (!root) return;
+
+    this.#renderAbort?.abort();
+    this.#renderAbort = new AbortController();
+    const { signal } = this.#renderAbort;
 
     // Enable dragging on any existing dice
-    const enableDrag = (root) => {
-      root.querySelectorAll("[data-die-id]").forEach(node => {
-        node.addEventListener("dragstart", ev => {
-          ev.dataTransfer.setData("text/plain", node.dataset.dieId);
-        });
-      });
-    };
-    enableDrag(html[0]);
+    root.querySelectorAll("[data-die-id]").forEach(node => {
+      node.addEventListener("dragstart", ev => {
+        const dieId = node.dataset.dieId;
+        if (!dieId) return;
+        ev.dataTransfer?.setData("text/plain", dieId);
+      }, { signal });
+    });
 
-    // Handle drops
-    const makeDrop = (selector, dest) => {
-      const el = html[0].querySelector(selector);
-      if (!el) return;
-      el.addEventListener("dragover", e => e.preventDefault());
-      el.addEventListener("drop", e => {
-        e.preventDefault();
-        const id = e.dataTransfer.getData("text/plain");
-        this._moveDie(id, dest);
-      });
-    };
-    makeDrop("[data-zone='pool']", "pool");
-    makeDrop("[data-zone='keep']", "kept");
-    makeDrop("[data-zone='reroll']", "reroll");
-    makeDrop("[data-zone='discard']", "discard");
+    this.#bindDropZone(root, "[data-zone='pool']", "pool", signal);
+    this.#bindDropZone(root, "[data-zone='keep']", "kept", signal);
+    this.#bindDropZone(root, "[data-zone='reroll']", "reroll", signal);
+    this.#bindDropZone(root, "[data-zone='discard']", "discard", signal);
+  }
 
-    // Buttons
-    html.find("[data-action='continue-roll']").on("click", () => this._continue());
-    html.find("[data-action='finish-roll']").on("click", () => this._finish());
-    html.find("[data-action='cancel-roll']").on("click", () => this.close());
+  #bindDropZone(root, selector, dest, signal) {
+    const el = root.querySelector(selector);
+    if (!el) return;
+    el.addEventListener("dragover", event => event.preventDefault(), { signal });
+    el.addEventListener("drop", event => {
+      event.preventDefault();
+      const id = event.dataTransfer?.getData("text/plain");
+      if (id) this._moveDie(id, dest);
+    }, { signal });
+  }
+
+  async close(options) {
+    this.#renderAbort?.abort();
+    return super.close(options);
   }
 
   async start() {
@@ -201,7 +218,8 @@ export class GFLRollerApp extends Application {
     }
     await this._initialRoll();
     await this._updateChatMessage(); // Create initial message
-    return this.render(true);
+    await this.render(true);
+    return this;
   }
 
   async _initialRoll() {
@@ -244,7 +262,7 @@ export class GFLRollerApp extends Application {
       this.pool.push(die);
     }
 
-    this.render(false);
+    this.render();
     this._updateChatMessage(); // Update after each move
   }
 
@@ -332,7 +350,7 @@ export class GFLRollerApp extends Application {
     if (countB === 0 && countW === 0) {
       // Nothing more to roll
       await this._updateChatMessage();
-      return this.render(false);
+      return this.render();
     }
 
     this.stepNumber++;
@@ -374,7 +392,7 @@ export class GFLRollerApp extends Application {
     }
     
     await this._updateChatMessage();
-    this.render(false);
+    this.render();
   }
 
   async _finish() {
@@ -421,6 +439,21 @@ export class GFLRollerApp extends Application {
       });
     }
 
+    this.close();
+  }
+
+  static async #onContinueAction(event) {
+    event.preventDefault();
+    await this._continue();
+  }
+
+  static async #onFinishAction(event) {
+    event.preventDefault();
+    await this._finish();
+  }
+
+  static #onCancelAction(event) {
+    event.preventDefault();
     this.close();
   }
 }

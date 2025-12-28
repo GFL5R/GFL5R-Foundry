@@ -10,6 +10,7 @@ const sheetDebug = (...args) => {
   console.debug("GFL5R | Sheet", ...args);
 };
 
+const { HandlebarsApplicationMixin, ActorSheetV2 } = foundry.applications.api;
 const ActorSheet = foundry.appv1.sheets.ActorSheet;
 
 const APPROACH_LABELS = {
@@ -796,30 +797,28 @@ class CharacterBuilderApp extends FormApplication {
   }
 }
 
-export class GFL5RActorSheet extends ActorSheet {
-  static get defaultOptions() {
-    const opts = super.defaultOptions;
-    return foundry.utils.mergeObject(opts, {
-      classes: ["sheet", "actor"],
-      width: 860,
-      height: 700,
-      tabs: [{ navSelector: ".tabs", contentSelector: ".sheet-body", initial: "skills" }]
-    });
-  }
+export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
+  static DEFAULT_OPTIONS = {
+    id: "gfl5r-actor-sheet",
+    classes: ["sheet", "actor"],
+    position: { width: 860, height: 700 },
+    window: { title: "Character" }
+  };
 
-  get template() {
-    return `systems/${game.system.id}/templates/actor-sheet.html`;
-  }
+  static PARTS = {
+    sheet: { template: `systems/${game.system.id}/templates/actor-sheet.html` }
+  };
 
-  async getData(options) {
-    sheetDebug("ActorSheet#getData", { actor: this.actor?.id, name: this.actor?.name });
-    const context = await super.getData(options);
+  #renderAbort = null;
+
+  async _prepareContext(options) {
+    sheetDebug("ActorSheet#_prepareContext", { actor: this.actor?.id, name: this.actor?.name });
+    const context = await super._prepareContext(options);
     const data = context.actor.system ?? {};
 
     context.derived = computeDerivedStats(data.approaches, data.resources);
     context.availableXP = Number(data.xp ?? 0);
 
-    // Approaches for card rendering
     const approachesData = data.approaches ?? {};
     context.approachesList = [
       { key: "power", label: "Power", value: Number(approachesData.power ?? 0) },
@@ -847,11 +846,9 @@ export class GFL5RActorSheet extends ActorSheet {
       ? preparedFlag
       : (preparedFlag === "true" ? true : (preparedFlag === "false" ? false : preparedDefaultSetting === "true"));
 
-    // Character type for modules visibility
     context.characterType = data.characterType ?? "human";
     context.showModules = (context.characterType === "doll" || context.characterType === "transhumanist");
 
-    // Origin display for humans and dolls
     let originDisplay = "";
     if (context.characterType === "human" && (data.nationality || data.background)) {
       const nat = HUMAN_NATIONALITIES.find(n => n.key === data.nationality);
@@ -863,21 +860,18 @@ export class GFL5RActorSheet extends ActorSheet {
     } else if (context.characterType === "doll" && data.frame) {
       const frame = TDOLL_FRAMES.find(f => f.key === data.frame);
       if (frame) {
-        // Extract manufacturer name without location (remove parenthetical)
-        const manufacturerShort = frame.manufacturer.split('(')[0].trim();
+        const manufacturerShort = frame.manufacturer.split("(")[0].trim();
         originDisplay = `${manufacturerShort} ${frame.model}`;
       }
     }
     context.originDisplay = originDisplay;
 
-    // Expose skills and labels for rendering
     context.skills = data.skills ?? {};
     context.skillGroups = GFL5R_CONFIG.skillGroups;
 
-    // Process disciplines
     const disciplinesData = data.disciplines ?? {};
     context.disciplineSlots = [];
-    
+
     for (let i = 1; i <= GFL5R_CONFIG.maxDisciplineSlots; i++) {
       const slotKey = `slot${i}`;
       const slotData = disciplinesData[slotKey] ?? {
@@ -886,7 +880,7 @@ export class GFL5RActorSheet extends ActorSheet {
         rank: 1,
         abilities: []
       };
-      
+
       let disciplineItem = null;
       if (slotData.disciplineId) {
         disciplineItem = this.actor.items.get(slotData.disciplineId);
@@ -898,16 +892,14 @@ export class GFL5RActorSheet extends ActorSheet {
       const associatedSkillLabels = associatedSkills
         .map(key => GFL5R_CONFIG.getSkillLabel(key))
         .filter(label => label);
-      
-      // Get abilities for this discipline
+
       const disciplineAbilities = (slotData.abilities ?? [])
         .map(abilityId => this.actor.items.get(abilityId))
-        .filter(a => a); // Remove null entries
-      
-      // Calculate XP remaining for next rank
+        .filter(a => a);
+
       const xpForNextRank = GFL5R_CONFIG.getXPForNextRank(slotData.rank ?? 1);
       const xpRemaining = xpForNextRank ? (xpForNextRank - (slotData.xp ?? 0)) : null;
-      
+
       context.disciplineSlots.push({
         slotKey,
         slotNumber: i,
@@ -932,16 +924,13 @@ export class GFL5RActorSheet extends ActorSheet {
       });
     }
 
-    // Filter items by type
-    // Get all discipline ability IDs to exclude from general abilities
     const disciplineAbilityIds = new Set();
     context.disciplineSlots.forEach(slot => {
       if (slot.abilities) {
         slot.abilities.forEach(ability => disciplineAbilityIds.add(ability.id));
       }
     });
-    
-    // Only show abilities that are NOT assigned to any discipline
+
     context.abilities = this.actor.items
       .filter(i => i.type === "ability" && !disciplineAbilityIds.has(i.id))
       .map(i => ({
@@ -951,7 +940,6 @@ export class GFL5RActorSheet extends ActorSheet {
         system: i.system ?? {}
       }));
 
-    // Narrative items - split by type
     const narrativeItems = this.actor.items.filter(i => i.type === "narrative");
     context.narrativePositive = narrativeItems
       .filter(i => i.system.narrativeType === "distinction" || i.system.narrativeType === "passion")
@@ -977,7 +965,6 @@ export class GFL5RActorSheet extends ActorSheet {
       system: i.system ?? {}
     }));
 
-    // Combat tab - weapons and armor
     context.weapons = this.actor.items.filter(i => i.type === "weaponry").map(i => ({
       id: i.id,
       name: i.name,
@@ -991,7 +978,6 @@ export class GFL5RActorSheet extends ActorSheet {
       system: i.system ?? {}
     }));
 
-    // Modules tab
     context.modules = this.actor.items.filter(i => i.type === "module").map(i => ({
       id: i.id,
       name: i.name,
@@ -999,20 +985,19 @@ export class GFL5RActorSheet extends ActorSheet {
       system: i.system ?? {}
     }));
 
-    // Inventory - exclude disciplines, their abilities, and narrative items
     const disciplineIds = new Set(
       context.disciplineSlots
         .filter(slot => slot.discipline)
         .map(slot => slot.discipline.id)
     );
-    
+
     context.inventory = this.actor.items
-      .filter(i => 
-        i.type !== "discipline" && 
+      .filter(i =>
+        i.type !== "discipline" &&
         i.type !== "narrative" &&
         i.type !== "module" &&
         i.type !== "condition" &&
-        !disciplineIds.has(i.id) && 
+        !disciplineIds.has(i.id) &&
         !disciplineAbilityIds.has(i.id)
       )
       .map(i => ({
@@ -1026,311 +1011,333 @@ export class GFL5RActorSheet extends ActorSheet {
     return context;
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
-    sheetDebug("ActorSheet#activateListeners", { actor: this.actor?.id });
+  _onRender() {
+    const root = this.element;
+    if (!root) return;
 
-    html.on("click", "[data-action='open-character-builder']", () => {
-      new CharacterBuilderApp(this.actor).render(true);
-    });
+    this.#renderAbort?.abort();
+    this.#renderAbort = new AbortController();
+    const { signal } = this.#renderAbort;
 
-    // Delete item (works for abilities and any other items)
-    html.on("click", "[data-action='delete-item']", ev => {
-      const id = ev.currentTarget?.dataset?.itemId;
-      if (!id) return;
-      return this.actor.deleteEmbeddedDocuments("Item", [id]);
-    });
-
-    // Edit item
-    html.on("click", "[data-action='edit-item']", ev => {
-      const id = ev.currentTarget?.dataset?.itemId;
-      if (!id) return;
-      const item = this.actor.items.get(id);
-      if (item) item.sheet.render(true);
-    });
-
-    const flashSkillCard = (element, danger = false) => {
-      if (!element) return;
-      element.classList.add(danger ? "xp-flash-danger" : "xp-flash");
-      setTimeout(() => element.classList.remove("xp-flash", "xp-flash-danger"), 450);
-    };
-
-    const rollSkill = async (key, skillLabel) => {
-      const approaches = this.actor.system?.approaches ?? {};
-
-      const content = await renderTemplate(`systems/${game.system.id}/templates/roll-prompt.html`, {
-        approaches,
-        defaultTN: 2
-      });
-
-      new Dialog({
-        title: `Roll ${skillLabel}`,
-        content,
-        buttons: {
-          roll: {
-            label: "Roll",
-            callback: async (dlg) => {
-              const form = dlg[0].querySelector("form");
-              const approachName = form.elements["approach"].value;
-              const tnHidden = form.elements["hiddenTN"].checked;
-              const tnVal = Number(form.elements["tn"].value || 0);
-              const approachVal = Number(approaches[approachName] ?? 0);
-
-              const { GFLRollerApp } = await import("./dice.js");
-              const app = new GFLRollerApp({
-                actor: this.actor,
-                skillKey: key,
-                skillLabel,
-                approach: approachVal,
-                approachName,
-                tn: tnHidden ? null : tnVal,
-                hiddenTN: tnHidden
-              });
-              await app.start();
-            }
-          },
-          cancel: { label: "Cancel" }
-        },
-        default: "roll"
-      }, {
-        classes: ["sheet"]
-      }).render(true);
-    };
-
-    // Increase skill rank using XP
-    html.on("click", "[data-action='skill-increase']", async ev => {
-      const key = ev.currentTarget?.dataset?.skill;
-      if (!key) return;
-
-      const skillCard = ev.currentTarget.closest?.("[data-skill-card]");
-      const skills = foundry.utils.duplicate(this.actor.system.skills ?? {});
-      const currentRank = Number(skills[key] ?? 0);
-      const nextRank = currentRank + 1;
-      const cost = 2 * nextRank;
-      const availableXP = Number(this.actor.system?.xp ?? 0);
-
-      if (availableXP < cost) {
-        flashSkillCard(skillCard, true);
-        ui.notifications?.warn("Not enough XP to increase this skill.");
+    root.addEventListener("click", (event) => {
+      const actionEl = event.target.closest("[data-action]");
+      if (actionEl && root.contains(actionEl)) {
+        event.preventDefault();
+        this.#handleAction(actionEl.dataset.action, actionEl, event);
         return;
       }
 
-      skills[key] = nextRank;
-      const updatedDisciplines = this._applyDisciplineSkillXP(key, cost);
-      const updateData = {
-        [`system.skills.${key}`]: nextRank,
-        "system.xp": availableXP - cost
-      };
-
-      if (updatedDisciplines) {
-        updateData["system.disciplines"] = updatedDisciplines;
+      const tabEl = event.target.closest(".nav-link[data-tab]");
+      if (tabEl && root.contains(tabEl)) {
+        event.preventDefault();
+        this.#activateTab(tabEl.dataset.tab);
       }
 
-      await this.actor.update(updateData);
-      flashSkillCard(skillCard);
-    });
-
-    // Decrease skill rank and refund XP
-    html.on("click", "[data-action='skill-decrease']", async ev => {
-      const key = ev.currentTarget?.dataset?.skill;
-      if (!key) return;
-
-      const skillCard = ev.currentTarget.closest?.("[data-skill-card]");
-      const skills = foundry.utils.duplicate(this.actor.system.skills ?? {});
-      const currentRank = Number(skills[key] ?? 0);
-      if (currentRank <= 0) return;
-
-      const refund = 2 * currentRank;
-      const availableXP = Number(this.actor.system?.xp ?? 0);
-      const newRank = currentRank - 1;
-
-      skills[key] = newRank;
-      const updatedDisciplines = this._applyDisciplineSkillXP(key, -refund);
-      const updateData = {
-        [`system.skills.${key}`]: newRank,
-        "system.xp": availableXP + refund
-      };
-
-      if (updatedDisciplines) {
-        updateData["system.disciplines"] = updatedDisciplines;
+      const skillCard = event.target.closest("[data-skill-card]");
+      if (skillCard && root.contains(skillCard)) {
+        if (event.target.closest("button")) return;
+        const key = skillCard.dataset.skillKey;
+        const label = skillCard.querySelector("[data-action='roll-skill']")?.textContent?.trim() || key;
+        if (key) this.#rollSkill(key, label);
       }
 
-      await this.actor.update(updateData);
-      flashSkillCard(skillCard);
-    });
-
-    // Increase approach rank using XP (cost 3x next rank)
-    html.on("click", "[data-action='approach-increase']", async ev => {
-      const key = ev.currentTarget?.dataset?.approach;
-      if (!key) return;
-
-      const card = ev.currentTarget.closest?.("[data-approach-card]");
-      const approaches = foundry.utils.duplicate(this.actor.system.approaches ?? {});
-      const currentRank = Number(approaches[key] ?? 0);
-      const nextRank = currentRank + 1;
-      const cost = 3 * nextRank;
-      const availableXP = Number(this.actor.system?.xp ?? 0);
-
-      if (availableXP < cost) {
-        flashSkillCard(card, true);
-        ui.notifications?.warn("Not enough XP to increase this approach.");
-        return;
+      const itemContainer = event.target.closest("[data-item-id]");
+      if (itemContainer && root.contains(itemContainer) && !event.target.closest("button")) {
+        const itemId = itemContainer.dataset.itemId;
+        if (itemId) this.#maybeRollItem(itemId);
       }
+    }, { signal });
 
-      approaches[key] = nextRank;
-      await this.actor.update({
-        [`system.approaches.${key}`]: nextRank,
-        "system.xp": availableXP - cost
-      });
-      flashSkillCard(card);
+    root.addEventListener("change", (event) => {
+      const target = event.target;
+      const action = target.dataset?.action;
+      if (!action) return;
+      switch (action) {
+        case "discipline-xp":
+          this.#updateDisciplineXP(target);
+          break;
+        case "discipline-rank":
+          this.#updateDisciplineRank(target);
+          break;
+        default:
+          break;
+      }
+    }, { signal });
+
+    root.addEventListener("dragover", (event) => {
+      event.preventDefault();
+    }, { signal });
+
+    root.addEventListener("drop", (event) => {
+      event.preventDefault();
+      this._onDrop(event);
+    }, { signal });
+  }
+
+  async close(options) {
+    this.#renderAbort?.abort();
+    return super.close(options);
+  }
+
+  async #handleAction(action, target, event) {
+    switch (action) {
+      case "open-character-builder":
+        new CharacterBuilderApp(this.actor).render(true);
+        break;
+      case "delete-item":
+        await this.#deleteItem(target);
+        break;
+      case "edit-item":
+        await this.#editItem(target);
+        break;
+      case "skill-increase":
+        await this.#changeSkill(target, 1);
+        break;
+      case "skill-decrease":
+        await this.#changeSkill(target, -1);
+        break;
+      case "approach-increase":
+        await this.#changeApproach(target, 1);
+        break;
+      case "approach-decrease":
+        await this.#changeApproach(target, -1);
+        break;
+      case "remove-discipline":
+        await this.#removeDiscipline(target);
+        break;
+      case "remove-discipline-ability":
+        await this.#removeDisciplineAbility(target);
+        break;
+      case "roll-skill":
+        await this.#rollSkill(target.dataset.skill, target.textContent.trim());
+        break;
+      default:
+        break;
+    }
+  }
+
+  #flashSkillCard(element, danger = false) {
+    if (!element) return;
+    element.classList.add(danger ? "xp-flash-danger" : "xp-flash");
+    setTimeout(() => element.classList.remove("xp-flash", "xp-flash-danger"), 450);
+  }
+
+  async #rollSkill(key, skillLabel) {
+    const approaches = this.actor.system?.approaches ?? {};
+
+    const content = await renderTemplate(`systems/${game.system.id}/templates/roll-prompt.html`, {
+      approaches,
+      defaultTN: 2
     });
 
-    // Decrease approach rank and refund XP (refund 3x current rank)
-    html.on("click", "[data-action='approach-decrease']", async ev => {
-      const key = ev.currentTarget?.dataset?.approach;
-      if (!key) return;
+    new Dialog({
+      title: `Roll ${skillLabel}`,
+      content,
+      buttons: {
+        roll: {
+          label: "Roll",
+          callback: async (dlg) => {
+            const form = dlg[0].querySelector("form");
+            const approachName = form.elements["approach"].value;
+            const tnHidden = form.elements["hiddenTN"].checked;
+            const tnVal = Number(form.elements["tn"].value || 0);
+            const approachVal = Number(approaches[approachName] ?? 0);
 
-      const card = ev.currentTarget.closest?.("[data-approach-card]");
-      const approaches = foundry.utils.duplicate(this.actor.system.approaches ?? {});
-      const currentRank = Number(approaches[key] ?? 0);
-      if (currentRank <= 0) return;
-
-      const refund = 3 * currentRank;
-      const availableXP = Number(this.actor.system?.xp ?? 0);
-      const newRank = currentRank - 1;
-
-      approaches[key] = newRank;
-      await this.actor.update({
-        [`system.approaches.${key}`]: newRank,
-        "system.xp": availableXP + refund
-      });
-      flashSkillCard(card);
-    });
-
-    // Remove discipline from slot
-    html.on("click", "[data-action='remove-discipline']", async ev => {
-      const slotKey = ev.currentTarget?.dataset?.slotKey;
-      if (!slotKey) return;
-      
-      const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
-      if (disciplines[slotKey]) {
-        const toDelete = [];
-        const disciplineId = disciplines[slotKey].disciplineId;
-        
-        // Check if discipline exists before adding to delete list
-        if (disciplineId && this.actor.items.get(disciplineId)) {
-          toDelete.push(disciplineId);
-        }
-        
-        // Check if abilities exist before adding to delete list
-        if (disciplines[slotKey].abilities?.length) {
-          for (const abilityId of disciplines[slotKey].abilities) {
-            if (this.actor.items.get(abilityId)) {
-              toDelete.push(abilityId);
-            }
+            const { GFLRollerApp } = await import("./dice.js");
+            const app = new GFLRollerApp({
+              actor: this.actor,
+              skillKey: key,
+              skillLabel,
+              approach: approachVal,
+              approachName,
+              tn: tnHidden ? null : tnVal,
+              hiddenTN: tnHidden
+            });
+            await app.start();
           }
-        }
-        
-        // Delete all items that exist
-        if (toDelete.length > 0) {
-          await this.actor.deleteEmbeddedDocuments("Item", toDelete);
-        }
-        
-        // Reset slot
-        disciplines[slotKey] = {
-          disciplineId: null,
-          xp: 0,
-          rank: 1,
-          abilities: []
-        };
-        
-        await this.actor.update({ "system.disciplines": disciplines });
-      }
-    });
+        },
+        cancel: { label: "Cancel" }
+      },
+      default: "roll"
+    }, {
+      classes: ["sheet"]
+    }).render(true);
+  }
 
-    // Update discipline XP
-    html.on("change", "[data-action='discipline-xp']", async ev => {
-      const slotKey = ev.currentTarget?.dataset?.slotKey;
-      const xp = Number(ev.currentTarget.value) || 0;
-      if (!slotKey) return;
-      
-      const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
-      if (disciplines[slotKey]) {
-        disciplines[slotKey].xp = xp;
-        disciplines[slotKey].rank = GFL5R_CONFIG.getRankFromXP(xp);
-        await this.actor.update({ "system.disciplines": disciplines });
-      }
-    });
+  async #deleteItem(target) {
+    const id = target?.dataset?.itemId;
+    if (!id) return;
+    await this.actor.deleteEmbeddedDocuments("Item", [id]);
+  }
 
-    // Update discipline rank
-    html.on("change", "[data-action='discipline-rank']", async ev => {
-      const slotKey = ev.currentTarget?.dataset?.slotKey;
-      const rank = Number(ev.currentTarget.value) || 1;
-      if (!slotKey) return;
-      
-      const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
-      if (disciplines[slotKey]) {
-        disciplines[slotKey].rank = rank;
-        await this.actor.update({ "system.disciplines": disciplines });
-      }
-    });
+  async #editItem(target) {
+    const id = target?.dataset?.itemId;
+    if (!id) return;
+    const item = this.actor.items.get(id);
+    if (item) item.sheet.render(true);
+  }
 
-    // Remove ability from discipline
-    html.on("click", "[data-action='remove-discipline-ability']", async ev => {
-      const slotKey = ev.currentTarget?.dataset?.slotKey;
-      const abilityId = ev.currentTarget?.dataset?.abilityId;
-      if (!slotKey || !abilityId) return;
-      
-      const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
-      if (disciplines[slotKey]?.abilities) {
-        // Remove from abilities list
-        disciplines[slotKey].abilities = disciplines[slotKey].abilities.filter(id => id !== abilityId);
-        await this.actor.update({ "system.disciplines": disciplines });
-        
-        // Delete the ability if it exists
+  async #changeSkill(target, delta) {
+    const key = target?.dataset?.skill;
+    if (!key) return;
+
+    const skillCard = target.closest?.("[data-skill-card]");
+    const skills = foundry.utils.duplicate(this.actor.system.skills ?? {});
+    const currentRank = Number(skills[key] ?? 0);
+    const nextRank = currentRank + delta;
+
+    if (nextRank < 0) return;
+
+    const cost = 2 * (delta > 0 ? nextRank : currentRank);
+    const availableXP = Number(this.actor.system?.xp ?? 0);
+
+    if (delta > 0 && availableXP < cost) {
+      this.#flashSkillCard(skillCard, true);
+      ui.notifications?.warn("Not enough XP to increase this skill.");
+      return;
+    }
+
+    skills[key] = nextRank;
+    const updatedDisciplines = this._applyDisciplineSkillXP(key, delta > 0 ? cost : -cost);
+    const updateData = {
+      [`system.skills.${key}`]: nextRank,
+      "system.xp": delta > 0 ? availableXP - cost : availableXP + cost
+    };
+
+    if (updatedDisciplines) {
+      updateData["system.disciplines"] = updatedDisciplines;
+    }
+
+    await this.actor.update(updateData);
+    this.#flashSkillCard(skillCard);
+  }
+
+  async #changeApproach(target, delta) {
+    const key = target?.dataset?.approach;
+    if (!key) return;
+
+    const card = target.closest?.("[data-approach-card]");
+    const approaches = foundry.utils.duplicate(this.actor.system.approaches ?? {});
+    const currentRank = Number(approaches[key] ?? 0);
+    const nextRank = currentRank + delta;
+    if (nextRank < 0) return;
+
+    const cost = 3 * (delta > 0 ? nextRank : currentRank);
+    const availableXP = Number(this.actor.system?.xp ?? 0);
+
+    if (delta > 0 && availableXP < cost) {
+      this.#flashSkillCard(card, true);
+      ui.notifications?.warn("Not enough XP to increase this approach.");
+      return;
+    }
+
+    approaches[key] = nextRank;
+    await this.actor.update({
+      [`system.approaches.${key}`]: nextRank,
+      "system.xp": delta > 0 ? availableXP - cost : availableXP + cost
+    });
+    this.#flashSkillCard(card);
+  }
+
+  async #removeDiscipline(target) {
+    const slotKey = target?.dataset?.slotKey;
+    if (!slotKey) return;
+
+    const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
+    if (!disciplines[slotKey]) return;
+
+    const toDelete = [];
+    const disciplineId = disciplines[slotKey].disciplineId;
+    if (disciplineId && this.actor.items.get(disciplineId)) {
+      toDelete.push(disciplineId);
+    }
+
+    if (disciplines[slotKey].abilities?.length) {
+      for (const abilityId of disciplines[slotKey].abilities) {
         if (this.actor.items.get(abilityId)) {
-          await this.actor.deleteEmbeddedDocuments("Item", [abilityId]);
+          toDelete.push(abilityId);
         }
       }
-    });
+    }
 
-    // Click skill NAME (label) to roll
-    html.on("click", "[data-action='roll-skill']", async ev => {
-      const labelEl = ev.currentTarget;
-      const key = labelEl.dataset.skill;            // e.g. "blades"
-      const skillLabel = labelEl.textContent.trim();
-      await rollSkill(key, skillLabel);
-    });
+    if (toDelete.length > 0) {
+      await this.actor.deleteEmbeddedDocuments("Item", toDelete);
+    }
 
-    // Click anywhere on the skill card to roll (unless clicking buttons)
-    html.on("click", "[data-skill-card]", async ev => {
-      if (ev.target.closest("button")) return;
-      const card = ev.currentTarget;
-      const key = card.dataset.skillKey;
-      const label = card.querySelector("[data-action='roll-skill']")?.textContent?.trim() || key;
-      if (!key) return;
-      await rollSkill(key, label);
-    });
+    disciplines[slotKey] = {
+      disciplineId: null,
+      xp: 0,
+      rank: 1,
+      abilities: []
+    };
 
-    // Click on discipline ability to roll associated skill
-    html.on("click", "[data-item-id]", async ev => {
-      if (ev.target.closest("button")) return;
-      const container = ev.currentTarget.closest("[data-item-id]");
-      if (!container) return;
-      const itemId = container.dataset.itemId;
-      if (!itemId) return;
-      
-      const item = this.actor.items.get(itemId);
-      if (!item) return;
-      
-      // Check if this item is an ability or weapon with a skill
-      if ((item.type === "ability" || item.type === "weaponry") && item.system.skill) {
-        const skillKey = item.system.skill;
-        const skillLabel = item.name;
-        await rollSkill(skillKey, skillLabel);
+    await this.actor.update({ "system.disciplines": disciplines });
+  }
+
+  async #updateDisciplineXP(input) {
+    const slotKey = input?.dataset?.slotKey;
+    const xp = Number(input?.value) || 0;
+    if (!slotKey) return;
+
+    const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
+    if (disciplines[slotKey]) {
+      disciplines[slotKey].xp = xp;
+      disciplines[slotKey].rank = GFL5R_CONFIG.getRankFromXP(xp);
+      await this.actor.update({ "system.disciplines": disciplines });
+    }
+  }
+
+  async #updateDisciplineRank(input) {
+    const slotKey = input?.dataset?.slotKey;
+    const rank = Number(input?.value) || 1;
+    if (!slotKey) return;
+
+    const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
+    if (disciplines[slotKey]) {
+      disciplines[slotKey].rank = rank;
+      await this.actor.update({ "system.disciplines": disciplines });
+    }
+  }
+
+  async #removeDisciplineAbility(target) {
+    const slotKey = target?.dataset?.slotKey;
+    const abilityId = target?.dataset?.abilityId;
+    if (!slotKey || !abilityId) return;
+
+    const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
+    if (disciplines[slotKey]?.abilities) {
+      disciplines[slotKey].abilities = disciplines[slotKey].abilities.filter(id => id !== abilityId);
+      await this.actor.update({ "system.disciplines": disciplines });
+
+      if (this.actor.items.get(abilityId)) {
+        await this.actor.deleteEmbeddedDocuments("Item", [abilityId]);
       }
+    }
+  }
+
+  async #maybeRollItem(itemId) {
+    const item = this.actor.items.get(itemId);
+    if (!item) return;
+    if ((item.type === "ability" || item.type === "weaponry") && item.system.skill) {
+      await this.#rollSkill(item.system.skill, item.name);
+    }
+  }
+
+  #activateTab(tabId) {
+    const root = this.element;
+    if (!root) return;
+
+    const navLinks = Array.from(root.querySelectorAll(".nav-link[data-tab]"));
+    navLinks.forEach(link => {
+      link.classList.toggle("active", link.dataset.tab === tabId);
     });
 
+    const panes = Array.from(root.querySelectorAll(".tab[data-tab][data-group='primary']"));
+    panes.forEach(pane => {
+      const isActive = pane.dataset.tab === tabId;
+      pane.classList.toggle("active", isActive);
+      pane.classList.toggle("show", isActive);
+    });
   }
 
   _applyDisciplineSkillXP(skillKey, deltaXP) {
@@ -1526,32 +1533,26 @@ export class GFL5RActorSheet extends ActorSheet {
   }
 }
 
-export class GFL5RNPCSheet extends ActorSheet {
-  static get defaultOptions() {
-    const opts = super.defaultOptions;
-    return foundry.utils.mergeObject(opts, {
-      classes: ["sheet", "actor", "npc"],
-      width: 700,
-      height: 600,
-      tabs: [{ navSelector: ".tabs", contentSelector: ".sheet-body", initial: "features" }]
-    });
-  }
+export class GFL5RNPCSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
+  static DEFAULT_OPTIONS = {
+    id: "gfl5r-npc-sheet",
+    classes: ["sheet", "actor", "npc"],
+    position: { width: 700, height: 600 },
+    window: { title: "NPC" }
+  };
 
-  get template() {
-    return `systems/${game.system.id}/templates/npc-sheet.html`;
-  }
+  static PARTS = {
+    sheet: { template: `systems/${game.system.id}/templates/npc-sheet.html` }
+  };
 
-  async getData(options) {
-    console.log("GFL5R | NPC getData()");
-    const context = await super.getData(options);
+  #renderAbort = null;
+
+  async _prepareContext(options) {
+    const context = await super._prepareContext(options);
     const data = context.actor.system ?? {};
 
     context.derived = computeDerivedStats(data.approaches, data.resources);
-
-    // Expose simplified skills
     context.skills = data.skills ?? {};
-
-    // Features - all items (abilities, weapons, armor, narrative items, etc.)
     context.features = this.actor.items.map(i => ({
       id: i.id,
       name: i.name,
@@ -1563,37 +1564,54 @@ export class GFL5RNPCSheet extends ActorSheet {
     return context;
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
-    console.log("GFL5R | NPC activateListeners()");
+  _onRender() {
+    const root = this.element;
+    if (!root) return;
 
-    // Delete item
-    html.on("click", "[data-action='delete-item']", ev => {
-      const id = ev.currentTarget?.dataset?.itemId;
-      if (!id) return;
-      return this.actor.deleteEmbeddedDocuments("Item", [id]);
-    });
+    this.#renderAbort?.abort();
+    this.#renderAbort = new AbortController();
+    const { signal } = this.#renderAbort;
 
-    // Edit item
-    html.on("click", "[data-action='edit-item']", ev => {
-      const id = ev.currentTarget?.dataset?.itemId;
-      if (!id) return;
-      const item = this.actor.items.get(id);
-      if (item) item.sheet.render(true);
-    });
+    root.addEventListener("click", (event) => {
+      const actionEl = event.target.closest("[data-action]");
+      if (!actionEl || !root.contains(actionEl)) return;
+      event.preventDefault();
+      const action = actionEl.dataset.action;
+      if (action === "delete-item") {
+        const id = actionEl.dataset.itemId;
+        if (id) this.actor.deleteEmbeddedDocuments("Item", [id]);
+      } else if (action === "edit-item") {
+        const id = actionEl.dataset.itemId;
+        if (id) {
+          const item = this.actor.items.get(id);
+          if (item) item.sheet.render(true);
+        }
+      }
+    }, { signal });
+
+    const dropZone = root.querySelector("[data-drop-zone='features']");
+    if (dropZone) {
+      dropZone.addEventListener("dragover", (event) => event.preventDefault(), { signal });
+      dropZone.addEventListener("drop", async (event) => {
+        event.preventDefault();
+        await this._onDropItem(event, getDragEventDataSafe(event));
+      }, { signal });
+    }
+  }
+
+  async close(options) {
+    this.#renderAbort?.abort();
+    return super.close(options);
   }
 
   async _onDropItem(event, data) {
     if (!this.actor.isOwner) return false;
 
-    // Get the item
-    let itemData = await Item.fromDropData(data);
+    const itemData = await Item.fromDropData(data);
     if (!itemData) return false;
 
-    // Create on actor
     await this.actor.createEmbeddedDocuments("Item", [itemData]);
 
-    // Subtle UI feedback
     event.currentTarget.classList.add("border", "border-success", "bg-success-subtle");
     setTimeout(() => event.currentTarget.classList.remove("border-success", "bg-success-subtle"), 400);
   }
