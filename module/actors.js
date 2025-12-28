@@ -38,6 +38,30 @@ const HUMAN_BACKGROUNDS = [
   { key: "scholar", label: "Scholar", approach: "swiftness", skill: "computers" }
 ];
 
+const FLAVOR_DEFAULTS = {
+  human: {
+    step1: {
+      lead1: "In the year 2070 most surviving Green Zones sit under the URNC, but people still hold onto nationality. Where you were born and raised shapes how others see you, and how you see the world.",
+      lead2: "Every Commander begins with all Approaches at 1; your nationality grants +1 to two approaches."
+    },
+    step2: {
+      lead1: "Your background defines what you did before bounty hunting—military halls, corporate desks, scavenger runs, or mercenary contracts. It grants +1 to one approach and sets one starting skill."
+    },
+    step3: {
+      lead1: "Sooner or later you chose what kind of Commander you are. Select one Discipline—it's unlocked for you and becomes your starting slot.",
+      lead2: "Drop your starting Discipline below; it will occupy slot 1."
+    },
+    advantage: "Drop one Advantage (Distinction). It's the quality that elevates you above the rest.",
+    disadvantage: "Drop one Disadvantage (Adversity). It's the faultline that threatens to crack under pressure.",
+    passion: "Drop one Passion. This is the habit, interest, or fixation that marks you as yourself.",
+    anxiety: "Drop one Anxiety. It's the shadow you dread most.",
+    viewDolls: "Your attitude shapes the bond. Respect makes them partners; seeing them as tools changes how you fight.",
+    goal: "Choose a personal goal that drives your Commander.",
+    nameMeaning: "Inherited, gifted, earned, or chosen?",
+    storyEnd: "No mechanical effect—capture the vision you hold."
+  }
+};
+
 const flattenSkillList = () => {
   return GFL5R_CONFIG.skillGroups.flatMap(group => group.items.map(item => ({
     key: item.key,
@@ -73,6 +97,7 @@ class CharacterBuilderApp extends FormApplication {
   }
 
   async getData() {
+    const flavor = await CharacterBuilderApp.getFlavor();
     const skillOptions = flattenSkillList();
     const existingDisciplines = this.actor.items
       .filter(i => i.type === "discipline")
@@ -91,6 +116,7 @@ class CharacterBuilderApp extends FormApplication {
 
     return {
       actorName: this.actor.name,
+      flavor,
       humanNationalities: HUMAN_NATIONALITIES.map(n => ({
         ...n,
         approachesText: n.approaches.map(a => APPROACH_LABELS[a] ?? a).join(" & ")
@@ -107,6 +133,20 @@ class CharacterBuilderApp extends FormApplication {
       selections: this.builderState,
       formValues
     };
+  }
+
+  static async getFlavor() {
+    if (this.flavorCache) return this.flavorCache;
+    const defaults = FLAVOR_DEFAULTS;
+    try {
+      const url = `systems/${game.system.id}/data/character-builder-flavor.json`;
+      const external = await foundry.utils.fetchJsonWithTimeout(url, { cache: "no-cache" });
+      this.flavorCache = foundry.utils.mergeObject(foundry.utils.duplicate(defaults), external, { inplace: false });
+    } catch (err) {
+      console.warn("GFL5R | Unable to load flavor JSON, using defaults", err);
+      this.flavorCache = defaults;
+    }
+    return this.flavorCache;
   }
 
   activateListeners(html) {
@@ -293,6 +333,16 @@ class CharacterBuilderApp extends FormApplication {
       ensureSkillAtLeast(viewDollsSkill, 1);
     }
 
+    const addSkillRanks = (key, delta = 1) => {
+      if (!key || !delta) return;
+      const current = Number(skills[key] ?? 0);
+      skills[key] = current + delta;
+    };
+
+    const { label: disciplineLabel, associatedSkills } = await this._applyDisciplineFromBuilder();
+    const uniqueAssociatedSkills = [...new Set(Array.isArray(associatedSkills) ? associatedSkills : [])];
+    uniqueAssociatedSkills.forEach(skillKey => addSkillRanks(skillKey, 1));
+
     const updates = {};
     for (const [k, v] of Object.entries(approaches)) {
       updates[`system.approaches.${k}`] = v;
@@ -309,7 +359,6 @@ class CharacterBuilderApp extends FormApplication {
     notesPieces.push(`Nationality: ${nationality.label}`);
     notesPieces.push(`Background: ${background.label}`);
 
-    const disciplineLabel = await this._applyDisciplineFromBuilder();
     if (disciplineLabel) notesPieces.push(`Discipline: ${disciplineLabel}`);
 
     const advantageName = await this._ensureNarrativeFromBuilder("advantage", formData["human.advantageText"], "distinction");
@@ -343,7 +392,7 @@ class CharacterBuilderApp extends FormApplication {
 
   async _applyDisciplineFromBuilder() {
     const drop = this.builderState.discipline;
-    if (!drop?.uuid) return "";
+    if (!drop?.uuid) return { label: drop?.name || "", associatedSkills: [] };
 
     let source;
     try {
@@ -352,7 +401,11 @@ class CharacterBuilderApp extends FormApplication {
       console.error(err);
     }
 
-    if (!source) return drop.name || "";
+    const associatedSkills = Array.isArray(source?.system?.associatedSkills)
+      ? [...source.system.associatedSkills]
+      : [];
+
+    if (!source) return { label: drop.name || "", associatedSkills };
 
     let targetId = null;
     let createdName = drop.name;
@@ -368,7 +421,7 @@ class CharacterBuilderApp extends FormApplication {
       createdName = created?.name ?? drop.name;
     }
 
-    if (!targetId) return createdName || "";
+    if (!targetId) return { label: createdName || "", associatedSkills };
 
     const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
     const slotKey = "slot1";
@@ -387,7 +440,7 @@ class CharacterBuilderApp extends FormApplication {
     };
 
     await this.actor.update({ "system.disciplines": disciplines });
-    return created.name;
+    return { label: createdName, associatedSkills };
   }
 
   async _ensureNarrativeFromBuilder(key, fallbackName, narrativeType) {

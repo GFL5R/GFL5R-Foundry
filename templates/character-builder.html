@@ -18,8 +18,8 @@
       {{#if (eq step 1)}}
         <div class="mb-3">
           <h3 class="h5 mb-2">Where are you from?</h3>
-          <p class="text-muted mb-2">In the year 2070 most surviving Green Zones sit under the URNC, but people still hold onto nationality. Where you were born and raised shapes how others see you, and how you see the world.</p>
-          <p class="text-muted mb-3">Every Commander begins with all Approaches at 1; your nationality grants +1 to two approaches.</p>
+          <p class="text-muted mb-2">{{flavor.human.step1.lead1}}</p>
+          <p class="text-muted mb-3">{{flavor.human.step1.lead2}}</p>
           <div class="row g-3">
             {{#each humanNationalities as |nat|}}
               <div class="col-12 col-md-6">
@@ -41,7 +41,7 @@
       {{#if (eq step 2)}}
         <div class="mb-3">
           <h3 class="h5 mb-2">What is your background?</h3>
-          <p class="text-muted mb-2">Your background defines what you did before bounty hunting—military halls, corporate desks, scavenger runs, or mercenary contracts. It grants +1 to one approach and sets one starting skill.</p>
+          <p class="text-muted mb-2">{{flavor.human.step2.lead1}}</p>
           <div class="row g-3">
             {{#each humanBackgrounds as |bg|}}
               <div class="col-12 col-md-6">
@@ -63,8 +63,8 @@
       {{#if (eq step 3)}}
         <div class="mb-4">
           <h3 class="h5 mb-1">What path have you chosen?</h3>
-          <p class="text-muted mb-2">Sooner or later you chose what kind of Commander you are. Select one Discipline—it's unlocked for you and becomes your starting slot.</p>
-          <p class="text-muted mb-3">Drop your starting Discipline below; it will occupy slot 1.</p>
+          <p class="text-muted mb-2">{{flavor.human.step3.lead1}}</p>
+          <p class="text-muted mb-3">{{flavor.human.step3.lead2}}</p>
           <div class="drop-zone p-3 text-center" data-drop-target="discipline">
             <div class="fw-semibold">Drop a Discipline item here</div>
             {{#if selections.discipline}}
@@ -79,7 +79,7 @@
 
         <div class="mb-3">
           <h3 class="h6">How do you stand out?</h3>
-          <p class="text-muted">Drop one Advantage (Distinction). It's the quality that elevates you above the rest.</p>
+          <p class="text-muted">{{flavor.human.advantage}}</p>
           <div class="drop-zone p-3" data-drop-target="advantage">
             <div class="fw-semibold">Drop Advantage here</div>
             {{#if selections.advantage}}
@@ -95,7 +95,7 @@
 
         <div class="mb-3">
           <h3 class="h6">What holds you back?</h3>
-          <p class="text-muted">Drop one Disadvantage (Adversity). It's the faultline that threatens to crack under pressure.</p>
+          <p class="text-muted">{{flavor.human.disadvantage}}</p>
           <div class="drop-zone p-3" data-drop-target="disadvantage">
             <div class="fw-semibold">Drop Disadvantage here</div>
             {{#if selections.disadvantage}}
@@ -112,7 +112,7 @@
         <div class="row g-3">
           <div class="col-md-6">
             <h3 class="h6">What sets you apart?</h3>
-            <p class="text-muted">Drop one Passion. This is the habit, interest, or fixation that marks you as yourself.</p>
+            <p class="text-muted">{{flavor.human.passion}}</p>
             <div class="drop-zone p-3" data-drop-target="passion">
               <div class="fw-semibold">Drop Passion here</div>
               {{#if selections.passion}}
@@ -127,7 +127,7 @@
           </div>
           <div class="col-md-6">
             <h3 class="h6">What do you fear?</h3>
-            <p class="text-muted">Drop one Anxiety. It's the shadow you dread most.</p>
+            <p class="text-muted">{{flavor.human.anxiety}}</p>
             <div class="drop-zone p-3" data-drop-target="anxiety">
               <div class="fw-semibold">Drop Anxiety here</div>
               {{#if selections.anxiety}}
@@ -146,7 +146,7 @@
       {{#if (eq step 4)}}
         <div class="mb-3">
           <h3 class="h5 mb-1">How do you view Dolls?</h3>
-          <p class="text-muted">Your attitude shapes the bond. Respect makes them partners; seeing them as tools changes how you fight.</p>
+          <p class="text-muted">{{flavor.human.viewDolls}}</p>
           <div class="d-flex flex-column gap-2">
             <div class="form-check">
               <input class="form-check-input" type="radio" name="human.viewDolls" id="view-dolls-favor" value="favor" {{#if (eq formValues.human.viewDolls "favor")}}checked{{/if}}>
@@ -170,13 +170,13 @@
 
         <div class="mb-3">
           <h3 class="h6">What do you fight for?</h3>
-          <p class="text-muted">Choose a personal goal that drives your Commander.</p>
+          <p class="text-muted">{{flavor.human.goal}}</p>
           <textarea class="form-control" name="human.goal" rows="2" placeholder="Credits, rebuilding, revenge, legacy...">{{formValues.human.goal}}</textarea>
         </div>
 
         <div class="mb-3">
           <h3 class="h6">What does your name mean?</h3>
-          <p class="text-muted">Inherited, gifted, earned, or chosen?</p>
+          <p class="text-muted">{{flavor.human.nameMeaning}}</p>
           <textarea class="form-control" name="human.nameMeaning" rows="2">{{formValues.human.nameMeaning}}</textarea>
         </div>
 
@@ -187,7 +187,7 @@
 
         <div class="mb-3">
           <h3 class="h6">How will your story end?</h3>
-          <p class="text-muted">No mechanical effect—capture the vision you hold.</p>
+          <p class="text-muted">{{flavor.human.storyEnd}}</p>
           <textarea class="form-control" name="human.storyEnd" rows="2">{{formValues.human.storyEnd}}</textarea>
         </div>
 

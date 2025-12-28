@@ -1,0 +1,23 @@
+{
+  "human": {
+    "step1": {
+      "lead1": "In the year 2070, most surviving Green Zones are nominally under the umbrella of the URNC, a multinational council born to stabilize what remained of human civilization. But most people still hold onto the idea of nationality. Where you were born and raised shapes how others see you, and how you see the world.",
+      "lead2": "Every Commander begins with all Approaches at 1. Your nationality grants +1 to two Approaches."
+    },
+    "step2": {
+      "lead1": "Your nationality defines where you were born, but your background defines what you did before you became a bounty hunter. Were you raised in the rigid halls of a military academy, the fluorescent sprawl of a corporate office, or the scavenger's life among ruins and forgotten battlefields?"
+    },
+    "step3": {
+      "lead1": "Sooner or later, you had to make a choice: what kind of Commander are you? Some Commanders fight shoulder-to-shoulder with their Dolls, while others coordinate from the rear, negotiate with allies, or outthink their rivals.",
+      "lead2": "Select one Discipline. It is now unlocked for you, and you gain its starting perk and one rank in all its associated skills. Over time, you'll advance further into this Discipline, or branch out into others."
+    },
+    "advantage": "Select one Advantage from the list of advantages. This represents the quality that elevates you above the rest, the edge that's carried you this far, and might carry you farther still.",
+    "disadvantage": "Select one Disadvantage from the list of disadvantages. This represents the faultline in your character, the thing that threatens to crack when the pressure mounts.",
+    "passion": "Select one Passion from the list of passions. This is the habit, interest, or fixation that marks you as yourself. It may grant you a minor benefit in play, but more importantly, it's the detail that makes your Commander more than just another gun for hire.",
+    "anxiety": "Select one Anxiety from the list of anxieties. This is the shadow that follows you, the risk or outcome you dread most, even if you never say it out loud.",
+    "viewDolls": "Decide how your Commander views Dolls. If you view dolls favorably, increase your humanity by 5. If you view dolls as tools, choose a skill you don't yet have a rank and set it to 1.",
+    "goal": "Choose a personal goal. This is what your Commander wants to achieve in their lifetime, even at the cost of everyone around you.",
+    "nameMeaning": "Whatever you choose, this is who you are to the world, the name your Doll will call in the heat of battle, and the one people will remember when you're gone.",
+    "storyEnd": "This question has no bearing on mechanics, but keep your answer in mind. Your GM certainly will..."
+  }
+}
