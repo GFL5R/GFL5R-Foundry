@@ -1137,6 +1137,12 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     setTimeout(() => element.classList.remove("xp-flash", "xp-flash-danger"), 450);
   }
 
+  #getAvailableXP() {
+    const formXP = this.element?.querySelector?.("[name='system.xp']")?.value;
+    const parsed = Number(formXP);
+    return Number.isNaN(parsed) ? Number(this.actor.system?.xp ?? 0) : parsed;
+  }
+
   async #rollSkill(key, skillLabel) {
     const approaches = this.actor.system?.approaches ?? {};
 
@@ -1204,7 +1210,7 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     if (nextRank < 0) return;
 
     const cost = 2 * (delta > 0 ? nextRank : currentRank);
-    const availableXP = Number(this.actor.system?.xp ?? 0);
+    const availableXP = this.#getAvailableXP();
 
     if (delta > 0 && availableXP < cost) {
       this.#flashSkillCard(skillCard, true);
@@ -1238,7 +1244,7 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     if (nextRank < 0) return;
 
     const cost = 3 * (delta > 0 ? nextRank : currentRank);
-    const availableXP = Number(this.actor.system?.xp ?? 0);
+    const availableXP = this.#getAvailableXP();
 
     if (delta > 0 && availableXP < cost) {
       this.#flashSkillCard(card, true);
@@ -1320,13 +1326,15 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     if (!slotKey || !abilityId) return;
 
     const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
-    if (disciplines[slotKey]?.abilities) {
-      disciplines[slotKey].abilities = disciplines[slotKey].abilities.filter(id => id !== abilityId);
-      await this.actor.update({ "system.disciplines": disciplines });
+    const slot = disciplines[slotKey];
+    if (slot?.abilities) {
+      slot.abilities = slot.abilities.filter(id => String(id) !== String(abilityId));
+    }
 
-      if (this.actor.items.get(abilityId)) {
-        await this.actor.deleteEmbeddedDocuments("Item", [abilityId]);
-      }
+    await this.actor.update({ "system.disciplines": disciplines });
+
+    if (this.actor.items.get(abilityId)) {
+      await this.actor.deleteEmbeddedDocuments("Item", [abilityId]);
     }
   }
 
@@ -1472,7 +1480,7 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
       const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
       if (!disciplines[slotKey]) return;
 
-      const availableXP = Number(this.actor.system?.xp ?? 0);
+      const availableXP = this.#getAvailableXP();
       const cost = 3;
       if (availableXP < cost) {
         dropTarget.classList.add("border", "border-danger", "bg-danger-subtle");
