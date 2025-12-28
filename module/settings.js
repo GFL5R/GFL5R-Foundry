@@ -37,4 +37,14 @@ export function registerSettings() {
         type: String,
         default: "true",
     });
+
+    // Roll & Keep behavior
+    game.settings.register("gfl5r", "rnk-deleteOldMessage", {
+        name: "Delete previous Roll & Keep message",
+        hint: "When enabled, replacing a roll via Roll & Keep will delete the previous chat message in the series.",
+        scope: "world",
+        config: true,
+        type: Boolean,
+        default: false,
+    });
 }

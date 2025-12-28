@@ -1,4 +1,6 @@
 // Central registration for Handlebars helpers
+import { GFL5R_CONFIG } from "../config.js";
+
 export function registerHandlebarsHelpers() {
   const hbs = Handlebars;
   if (!hbs) return;
@@ -61,5 +63,10 @@ export function registerHandlebarsHelpers() {
     const cls = game.gfl5r?.[diceClass];
     if (!cls || typeof cls.getResultSrc !== "function") return "";
     return cls.getResultSrc(faceId);
+  });
+
+  hbs.registerHelper("skillLabel", function (key) {
+    if (!key) return "";
+    return GFL5R_CONFIG.getSkillLabel?.(key) ?? key;
   });
 }
