@@ -6,6 +6,251 @@ import { computeDerivedStats } from "./utils/derived.js";
 
 const ActorSheet = foundry.appv1.sheets.ActorSheet;
 
+const APPROACH_LABELS = {
+  power: "Power",
+  swiftness: "Swiftness",
+  resilience: "Resilience",
+  precision: "Precision",
+  fortune: "Fortune"
+};
+
+const HUMAN_NATIONALITIES = [
+  { key: "united-states", label: "United States", approaches: ["swiftness", "power"] },
+  { key: "neo-soviet-union", label: "Neo-Soviet Union (NUSSR)", approaches: ["resilience", "power"] },
+  { key: "china", label: "China", approaches: ["precision", "fortune"] },
+  { key: "latin-america", label: "Latin America Alliance", approaches: ["precision", "power"] },
+  { key: "japan", label: "Japan", approaches: ["resilience", "swiftness"] },
+  { key: "pan-europe", label: "Pan-European Union", approaches: ["precision", "swiftness"] },
+  { key: "yugoslavian-federation", label: "Yugoslavian Federation", approaches: ["fortune", "swiftness"] },
+  { key: "north-african-union", label: "North African Union", approaches: ["precision", "resilience"] },
+  { key: "australia", label: "Australia", approaches: ["fortune", "resilience"] },
+  { key: "yellow-zone", label: "Yellow Zone Native", approaches: ["fortune", "power"] }
+];
+
+const HUMAN_BACKGROUNDS = [
+  { key: "military", label: "Military", approach: "resilience", skill: "tactics" },
+  { key: "pmc-commander", label: "PMC Commander", approach: "power", skill: "command" },
+  { key: "corporate-drone", label: "Corporate Drone", approach: "precision", skill: "negotiation" },
+  { key: "scavenger", label: "Scavenger", approach: "swiftness", skill: "survival" },
+  { key: "technician", label: "Technician", approach: "precision", skill: "mechanics" },
+  { key: "medic", label: "Medic", approach: "resilience", skill: "medicine" },
+  { key: "criminal", label: "Criminal", approach: "fortune", skill: "stealth" },
+  { key: "scholar", label: "Scholar", approach: "swiftness", skill: "computers" }
+];
+
+const flattenSkillList = () => {
+  return GFL5R_CONFIG.skillGroups.flatMap(group => group.items.map(item => ({
+    key: item.key,
+    label: item.label
+  })));
+};
+
+class CharacterBuilderApp extends FormApplication {
+  constructor(actor, options = {}) {
+    super(options);
+    this.actor = actor;
+  }
+
+  static get defaultOptions() {
+    return foundry.utils.mergeObject(super.defaultOptions, {
+      id: "gfl5r-character-builder",
+      title: "Character Builder",
+      template: `systems/${game.system.id}/templates/character-builder.html`,
+      width: 760,
+      height: "auto",
+      classes: ["sheet", "gfl5r-builder"],
+      submitOnChange: false
+    });
+  }
+
+  async getData() {
+    const skillOptions = flattenSkillList();
+    const existingDisciplines = this.actor.items
+      .filter(i => i.type === "discipline")
+      .map(i => ({ id: i.id, name: i.name }));
+
+    return {
+      actorName: this.actor.name,
+      defaultNotes: "",
+      humanNationalities: HUMAN_NATIONALITIES.map(n => ({
+        ...n,
+        approachesText: n.approaches.map(a => APPROACH_LABELS[a] ?? a).join(" & ")
+      })),
+      humanBackgrounds: HUMAN_BACKGROUNDS.map(bg => ({
+        ...bg,
+        approachLabel: APPROACH_LABELS[bg.approach] ?? bg.approach,
+        skillLabel: GFL5R_CONFIG.getSkillLabel(bg.skill)
+      })),
+      skillOptions,
+      existingDisciplines
+    };
+  }
+
+  async _updateObject(event, formData) {
+    const buildType = formData["buildType"] ?? "human";
+    if (buildType !== "human") {
+      ui.notifications?.info("T-Doll builder is coming soon.");
+      return;
+    }
+
+    const nationalityKey = formData["human.nationality"];
+    const backgroundKey = formData["human.background"];
+    const disciplineExisting = formData["human.disciplineExisting"] || "";
+    const disciplineName = (formData["human.disciplineName"] || "").trim();
+    const advantage = (formData["human.advantage"] || "").trim();
+    const disadvantage = (formData["human.disadvantage"] || "").trim();
+    const passion = (formData["human.passion"] || "").trim();
+    const anxiety = (formData["human.anxiety"] || "").trim();
+    const viewDolls = formData["human.viewDolls"] || "favor";
+    const viewDollsSkill = (formData["human.viewDollsSkill"] || "").trim();
+    const goal = (formData["human.goal"] || "").trim();
+    const nameMeaning = (formData["human.nameMeaning"] || "").trim();
+    const newName = (formData["human.name"] || "").trim();
+    const storyEnd = (formData["human.storyEnd"] || "").trim();
+    const additionalNotes = (formData["human.additionalNotes"] || "").trim();
+
+    const nationality = HUMAN_NATIONALITIES.find(n => n.key === nationalityKey);
+    const background = HUMAN_BACKGROUNDS.find(b => b.key === backgroundKey);
+
+    if (!nationality) {
+      ui.notifications?.warn("Pick a nationality to continue.");
+      return;
+    }
+    if (!background) {
+      ui.notifications?.warn("Pick a background to continue.");
+      return;
+    }
+
+    const approaches = {
+      power: 1,
+      swiftness: 1,
+      resilience: 1,
+      precision: 1,
+      fortune: 1
+    };
+
+    const bumpApproach = (key) => {
+      if (!key) return;
+      approaches[key] = Number(approaches[key] ?? 0) + 1;
+    };
+
+    nationality.approaches.forEach(bumpApproach);
+    bumpApproach(background.approach);
+
+    const skills = foundry.utils.duplicate(this.actor.system.skills ?? {});
+    const ensureSkillAtLeast = (key, min) => {
+      if (!key) return;
+      const current = Number(skills[key] ?? 0);
+      if (current < min) skills[key] = min;
+    };
+
+    ensureSkillAtLeast(background.skill, 1);
+    if (viewDolls === "tools" && viewDollsSkill) {
+      ensureSkillAtLeast(viewDollsSkill, 1);
+    }
+
+    const updates = {};
+    for (const [k, v] of Object.entries(approaches)) {
+      updates[`system.approaches.${k}`] = v;
+    }
+    updates["system.skills"] = skills;
+    updates["system.characterType"] = "human";
+
+    const currentHumanity = Number(this.actor.system?.humanity ?? 0);
+    updates["system.humanity"] = viewDolls === "favor" ? currentHumanity + 5 : currentHumanity;
+
+    if (newName) updates["name"] = newName;
+
+    const notesPieces = [];
+    notesPieces.push(`Nationality: ${nationality.label}`);
+    notesPieces.push(`Background: ${background.label}`);
+    if (disciplineName || disciplineExisting) {
+      const chosenLabel = disciplineName || this.actor.items.get(disciplineExisting)?.name || "";
+      if (chosenLabel) notesPieces.push(`Discipline: ${chosenLabel}`);
+    }
+    if (advantage) notesPieces.push(`Advantage: ${advantage}`);
+    if (disadvantage) notesPieces.push(`Disadvantage: ${disadvantage}`);
+    if (passion) notesPieces.push(`Passion: ${passion}`);
+    if (anxiety) notesPieces.push(`Anxiety: ${anxiety}`);
+    if (viewDolls === "favor") {
+      notesPieces.push("Views Dolls as partners (+5 Humanity)");
+    } else if (viewDollsSkill) {
+      notesPieces.push(`Views Dolls as tools (Skill: ${GFL5R_CONFIG.getSkillLabel(viewDollsSkill)} to 1)`);
+    }
+    if (goal) notesPieces.push(`Goal: ${goal}`);
+    if (nameMeaning) notesPieces.push(`Name meaning: ${nameMeaning}`);
+    if (storyEnd) notesPieces.push(`Story end: ${storyEnd}`);
+    if (additionalNotes) notesPieces.push(additionalNotes);
+
+    const existingNotes = this.actor.system?.notes ?? "";
+    const notesBlock = `Character Builder (Human)\n${notesPieces.join("\n")}`;
+    updates["system.notes"] = existingNotes ? `${existingNotes}\n\n${notesBlock}` : notesBlock;
+
+    const disciplinesUpdate = await this._prepareDisciplineUpdate(disciplineExisting, disciplineName);
+    if (disciplinesUpdate) updates["system.disciplines"] = disciplinesUpdate;
+
+    await this.actor.update(updates);
+
+    await this._ensureNarrativeItem(advantage, "distinction");
+    await this._ensureNarrativeItem(disadvantage, "adversity");
+    await this._ensureNarrativeItem(passion, "passion");
+    await this._ensureNarrativeItem(anxiety, "anxiety");
+
+    ui.notifications?.info("Character builder applied to this actor.");
+  }
+
+  async _prepareDisciplineUpdate(selectedId, disciplineName) {
+    const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
+    const slotKey = "slot1";
+    const slot = disciplines[slotKey] ?? { disciplineId: null, xp: 0, rank: 1, abilities: [] };
+
+    let targetDisciplineId = selectedId || null;
+
+    if (disciplineName) {
+      const [created] = await this.actor.createEmbeddedDocuments("Item", [{
+        name: disciplineName,
+        type: "discipline",
+        system: {}
+      }]);
+      targetDisciplineId = created?.id ?? targetDisciplineId;
+    }
+
+    if (!targetDisciplineId) return null;
+
+    if (slot.disciplineId && slot.disciplineId !== targetDisciplineId) {
+      const toDelete = [slot.disciplineId, ...(slot.abilities ?? [])].filter(id => this.actor.items.get(id));
+      if (toDelete.length) {
+        await this.actor.deleteEmbeddedDocuments("Item", toDelete);
+      }
+    }
+
+    disciplines[slotKey] = {
+      disciplineId: targetDisciplineId,
+      xp: 0,
+      rank: 1,
+      abilities: []
+    };
+
+    return disciplines;
+  }
+
+  async _ensureNarrativeItem(name, narrativeType) {
+    const trimmed = (name || "").trim();
+    if (!trimmed) return null;
+    const existing = this.actor.items.find(i => i.type === "narrative" && i.name === trimmed && i.system?.narrativeType === narrativeType);
+    if (existing) return existing;
+    const [created] = await this.actor.createEmbeddedDocuments("Item", [{
+      name: trimmed,
+      type: "narrative",
+      system: {
+        narrativeType,
+        description: ""
+      }
+    }]);
+    return created;
+  }
+}
+
 export class GFL5RActorSheet extends ActorSheet {
   static get defaultOptions() {
     const opts = super.defaultOptions;
@@ -220,6 +465,10 @@ export class GFL5RActorSheet extends ActorSheet {
   activateListeners(html) {
     super.activateListeners(html);
     console.log("GFL5R | activateListeners()");
+
+    html.on("click", "[data-action='open-character-builder']", () => {
+      new CharacterBuilderApp(this.actor).render(true);
+    });
 
     // Delete item (works for abilities and any other items)
     html.on("click", "[data-action='delete-item']", ev => {

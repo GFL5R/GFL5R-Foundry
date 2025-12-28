@@ -1,0 +1,138 @@
+<form class="gfl5r-builder text-light" autocomplete="off">
+  <div class="mb-3">
+    <label class="form-label fw-semibold">Choose Archetype</label>
+    <div class="d-flex gap-3 align-items-center flex-wrap">
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="buildType" id="builder-human" value="human" checked>
+        <label class="form-check-label" for="builder-human">Human</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="buildType" id="builder-tdoll" value="tdoll" disabled>
+        <label class="form-check-label text-muted" for="builder-tdoll">T-Doll (coming soon)</label>
+      </div>
+      <span class="small text-muted">Only the Human flow is available right now.</span>
+    </div>
+  </div>
+
+  <fieldset class="border rounded p-3 mb-3" data-builder-section="human">
+    <legend class="float-none w-auto px-2">Human — Guided Questions</legend>
+
+    <div class="mb-3">
+      <label class="form-label fw-semibold">1. Where are you from?</label>
+      <select class="form-select" name="human.nationality" required>
+        <option value="">Select nationality</option>
+        {{#each humanNationalities as |nat|}}
+          <option value="{{nat.key}}">{{nat.label}} — +1 {{nat.approachesText}}</option>
+        {{/each}}
+      </select>
+      <div class="form-text">All approaches start at 1; your nationality grants +1 to its two listed approaches.</div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label fw-semibold">2. What is your background?</label>
+      <select class="form-select" name="human.background" required>
+        <option value="">Select background</option>
+        {{#each humanBackgrounds as |bg|}}
+          <option value="{{bg.key}}">{{bg.label}} — +1 {{bg.approachLabel}}; Skill: {{bg.skillLabel}}</option>
+        {{/each}}
+      </select>
+      <div class="form-text">Background adds +1 to the listed approach and sets its skill to at least 1.</div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label fw-semibold">3. What path have you chosen? (Discipline)</label>
+      <div class="row g-2">
+        <div class="col-12 col-md-6">
+          <label class="form-label small">Existing discipline on this actor</label>
+          <select class="form-select" name="human.disciplineExisting">
+            <option value="">-- None / create new --</option>
+            {{#each existingDisciplines as |disc|}}
+              <option value="{{disc.id}}">{{disc.name}}</option>
+            {{/each}}
+          </select>
+        </div>
+        <div class="col-12 col-md-6">
+          <label class="form-label small">New discipline name</label>
+          <input class="form-control" type="text" name="human.disciplineName" placeholder="e.g., Tactician" />
+          <div class="form-text">If provided, a new Discipline item will be created in slot 1.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label fw-semibold">4. What is your Advantage?</label>
+      <input class="form-control" type="text" name="human.advantage" placeholder="Edge, talent, or quality" />
+      <div class="form-text">Recorded as a Distinction narrative item.</div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label fw-semibold">5. What is your Disadvantage?</label>
+      <input class="form-control" type="text" name="human.disadvantage" placeholder="Flaw, habit, or baggage" />
+      <div class="form-text">Recorded as an Adversity narrative item.</div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label fw-semibold">6. What sets you apart? (Passion)</label>
+      <input class="form-control" type="text" name="human.passion" placeholder="Hobby, ritual, superstition" />
+      <div class="form-text">Recorded as a Passion narrative item.</div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label fw-semibold">7. What do you fear most? (Anxiety)</label>
+      <input class="form-control" type="text" name="human.anxiety" placeholder="Fear, shadow, or risk" />
+      <div class="form-text">Recorded as an Anxiety narrative item.</div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label fw-semibold">8. How do you view Dolls?</label>
+      <div class="d-flex flex-column gap-2">
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="human.viewDolls" id="view-dolls-favor" value="favor" checked>
+          <label class="form-check-label" for="view-dolls-favor">They are partners/comrades (+5 Humanity)</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="human.viewDolls" id="view-dolls-tools" value="tools">
+          <label class="form-check-label" for="view-dolls-tools">They are tools (set one new skill to 1)</label>
+        </div>
+        <div class="ps-4">
+          <label class="form-label small">Skill to raise if treating Dolls as tools</label>
+          <select class="form-select" name="human.viewDollsSkill">
+            <option value="">Select skill (only used for tools option)</option>
+            {{#each skillOptions as |skill|}}
+              <option value="{{skill.key}}">{{skill.label}}</option>
+            {{/each}}
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label fw-semibold">9. What do you fight for? (Goal)</label>
+      <textarea class="form-control" name="human.goal" rows="2" placeholder="Your personal goal"></textarea>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label fw-semibold">10. What does your name mean?</label>
+      <textarea class="form-control" name="human.nameMeaning" rows="2" placeholder="Inherited, gifted, earned, or chosen?"></textarea>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label fw-semibold">11. What is your name?</label>
+      <input class="form-control" type="text" name="human.name" value="{{actorName}}" placeholder="Commander name" required />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label fw-semibold">12. How will your story end?</label>
+      <textarea class="form-control" name="human.storyEnd" rows="2" placeholder="How do you think it ends?"></textarea>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label fw-semibold">Notes</label>
+      <textarea class="form-control" name="human.additionalNotes" rows="3" placeholder="Anything else to capture?">{{defaultNotes}}</textarea>
+    </div>
+  </fieldset>
+
+  <div class="d-flex justify-content-end gap-2">
+    <button type="submit" class="btn btn-primary">Apply to Sheet</button>
+  </div>
+</form>
