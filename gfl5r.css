@@ -176,3 +176,87 @@ button[class*="fa-"]::before,
   padding: 2px 8px;
   font-size: 0.85rem;
 }
+
+/* Dice roller (chat + dialog) */
+.gfl5r.chat.dice-roll .card {
+  background: #121827;
+  border: 1px solid #273143;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+}
+
+.gfl5r.chat.dice-roll .profile-img {
+  width: 42px;
+  height: 42px;
+  object-fit: cover;
+}
+
+.gfl5r.chat.dice-roll .dice-formula {
+  font-family: "JetBrains Mono", Consolas, monospace;
+  color: #9fb7ff;
+}
+
+.gfl5r.chat.dice-roll .chat-dice {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #1b2435;
+  border: 1px solid #273143;
+  border-radius: 8px;
+  padding: 2px 4px;
+  margin: 2px;
+  min-width: 38px;
+  min-height: 38px;
+}
+
+.gfl5r.chat.dice-roll .dice-total-rnk {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 8px 0;
+}
+
+.gfl5r.chat.dice-roll .dice-result-rnk {
+  font-weight: 600;
+}
+
+.gfl5r.chat.dice-roll .dice-result-rnk.success {
+  color: #8fffd1;
+}
+
+.gfl5r.chat.dice-roll .dice-result-rnk.fail {
+  color: #ff9b9b;
+}
+
+.gfl5r.chat.dice-roll .btn.chat-dice-rnk {
+  margin-bottom: 8px;
+}
+
+.roll-keep .profile-img {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+}
+
+.roll-keep .dice {
+  width: 64px;
+  height: 64px;
+}
+
+.roll-keep .dropbox {
+  min-height: 90px;
+  background: rgba(39, 49, 67, 0.25);
+  padding: 8px;
+}
+
+.roll-keep table.table td {
+  padding: 6px;
+}
+
+.roll-keep .legend-face {
+  width: 24px;
+  height: 24px;
+}
+
+.roll-keep .legend-row {
+  flex-wrap: wrap;
+}

@@ -56,4 +56,10 @@ export function registerHandlebarsHelpers() {
     }
     return "slot1";
   });
+
+  hbs.registerHelper("getDiceFaceUrl", function (diceClass, faceId) {
+    const cls = game.gfl5r?.[diceClass];
+    if (!cls || typeof cls.getResultSrc !== "function") return "";
+    return cls.getResultSrc(faceId);
+  });
 }
