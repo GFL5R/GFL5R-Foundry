@@ -51,7 +51,11 @@
             <div class="alert alert-info mt-3">
               <strong>Note:</strong> Typically, T-Dolls are most often female presenting. However, since you're creating your own here, there's no reason yours has to be!
             </div>
-            <p class="text-muted mt-3">{{flavor.tdoll.intro}}</p>
+            {{#if (isArray flavor.tdoll.intro)}}
+              {{#each flavor.tdoll.intro}}<p class="text-muted mt-3">{{this}}</p>{{/each}}
+            {{else}}
+              <p class="text-muted mt-3">{{flavor.tdoll.intro}}</p>
+            {{/if}}
           {{/if}}
         </div>
       {{/if}}
@@ -60,8 +64,16 @@
         {{#if (eq buildType "human")}}
         <div class="mb-3">
           <h3 class="h5 mb-2">Question 1. Where are you from?</h3>
-          <p class="text-muted mb-2">{{flavor.human.step1.lead1}}</p>
-          <p class="text-muted mb-3">{{flavor.human.step1.lead2}}</p>
+          {{#if (isArray flavor.human.step1.lead1)}}
+            {{#each flavor.human.step1.lead1}}<p class="text-muted mb-2">{{this}}</p>{{/each}}
+          {{else}}
+            <p class="text-muted mb-2">{{flavor.human.step1.lead1}}</p>
+          {{/if}}
+          {{#if (isArray flavor.human.step1.lead2)}}
+            {{#each flavor.human.step1.lead2}}<p class="text-muted mb-3">{{this}}</p>{{/each}}
+          {{else}}
+            <p class="text-muted mb-3">{{flavor.human.step1.lead2}}</p>
+          {{/if}}
           <div class="row g-3">
             {{#each humanNationalities as |nat|}}
               <div class="col-12 col-md-6">
@@ -107,7 +119,11 @@
         {{#if (eq buildType "human")}}
         <div class="mb-3">
           <h3 class="h5 mb-2">Question 2. What is your background?</h3>
-          <p class="text-muted mb-2">{{flavor.human.step2.lead1}}</p>
+          {{#if (isArray flavor.human.step2.lead1)}}
+            {{#each flavor.human.step2.lead1}}<p class="text-muted mb-2">{{this}}</p>{{/each}}
+          {{else}}
+            <p class="text-muted mb-2">{{flavor.human.step2.lead1}}</p>
+          {{/if}}
           <div class="row g-3">
             {{#each humanBackgrounds as |bg|}}
               <div class="col-12 col-md-6">
@@ -158,8 +174,16 @@
         {{#if (eq buildType "human")}}
         <div class="mb-4">
           <h3 class="h5 mb-1">Question 3. What path have you chosen?</h3>
-          <p class="text-muted mb-2">{{flavor.human.step3.lead1}}</p>
-          <p class="text-muted mb-3">{{flavor.human.step3.lead2}}</p>
+          {{#if (isArray flavor.human.step3.lead1)}}
+            {{#each flavor.human.step3.lead1}}<p class="text-muted mb-2">{{this}}</p>{{/each}}
+          {{else}}
+            <p class="text-muted mb-2">{{flavor.human.step3.lead1}}</p>
+          {{/if}}
+          {{#if (isArray flavor.human.step3.lead2)}}
+            {{#each flavor.human.step3.lead2}}<p class="text-muted mb-3">{{this}}</p>{{/each}}
+          {{else}}
+            <p class="text-muted mb-3">{{flavor.human.step3.lead2}}</p>
+          {{/if}}
           <div class="drop-zone p-3 text-center" data-drop-target="discipline">
             <div class="fw-semibold">Drop a Discipline item here</div>
             {{#if selectedCards.discipline}}
@@ -185,7 +209,11 @@
 
         <div class="mb-3">
           <h3 class="h6">Question 4. How do you stand out in your field?</h3>
-          <p class="text-muted">{{flavor.human.advantage}}</p>
+          {{#if (isArray flavor.human.advantage)}}
+            {{#each flavor.human.advantage}}<p class="text-muted">{{this}}</p>{{/each}}
+          {{else}}
+            <p class="text-muted">{{flavor.human.advantage}}</p>
+          {{/if}}
           <div class="drop-zone p-3" data-drop-target="advantage">
             <div class="fw-semibold">Drop Advantage here</div>
             {{#if selectedCards.advantage}}
@@ -205,7 +233,11 @@
 
         <div class="mb-3">
           <h3 class="h6">Question 5. What holds you back the most?</h3>
-          <p class="text-muted">{{flavor.human.disadvantage}}</p>
+          {{#if (isArray flavor.human.disadvantage)}}
+            {{#each flavor.human.disadvantage}}<p class="text-muted">{{this}}</p>{{/each}}
+          {{else}}
+            <p class="text-muted">{{flavor.human.disadvantage}}</p>
+          {{/if}}
           <div class="drop-zone p-3" data-drop-target="disadvantage">
             <div class="fw-semibold">Drop Disadvantage here</div>
             {{#if selectedCards.disadvantage}}
@@ -226,7 +258,11 @@
         <div class="row g-3">
           <div class="col-md-6">
             <h3 class="h6">Question 6. What makes you unique?</h3>
-            <p class="text-muted">{{flavor.human.passion}}</p>
+            {{#if (isArray flavor.human.passion)}}
+              {{#each flavor.human.passion}}<p class="text-muted">{{this}}</p>{{/each}}
+            {{else}}
+              <p class="text-muted">{{flavor.human.passion}}</p>
+            {{/if}}
             <div class="drop-zone p-3" data-drop-target="passion">
               <div class="fw-semibold">Drop Passion here</div>
               {{#if selectedCards.passion}}
@@ -245,7 +281,11 @@
           </div>
           <div class="col-md-6">
             <h3 class="h6">Question 7. What do you fear the most?</h3>
-            <p class="text-muted">{{flavor.human.anxiety}}</p>
+            {{#if (isArray flavor.human.anxiety)}}
+              {{#each flavor.human.anxiety}}<p class="text-muted">{{this}}</p>{{/each}}
+            {{else}}
+              <p class="text-muted">{{flavor.human.anxiety}}</p>
+            {{/if}}
             <div class="drop-zone p-3" data-drop-target="anxiety">
               <div class="fw-semibold">Drop Anxiety here</div>
               {{#if selectedCards.anxiety}}
@@ -266,8 +306,16 @@
         {{else}}
         <div class="mb-3">
           <h3 class="h5 mb-2">Question 3. What upgrades set you apart?</h3>
-          <p class="text-muted mb-2">{{flavor.tdoll.step3.lead1}}</p>
-          <p class="text-muted mb-3">{{flavor.tdoll.step3.lead2}}</p>
+          {{#if (isArray flavor.tdoll.step3.lead1)}}
+            {{#each flavor.tdoll.step3.lead1}}<p class="text-muted mb-2">{{this}}</p>{{/each}}
+          {{else}}
+            <p class="text-muted mb-2">{{flavor.tdoll.step3.lead1}}</p>
+          {{/if}}
+          {{#if (isArray flavor.tdoll.step3.lead2)}}
+            {{#each flavor.tdoll.step3.lead2}}<p class="text-muted mb-3">{{this}}</p>{{/each}}
+          {{else}}
+            <p class="text-muted mb-3">{{flavor.tdoll.step3.lead2}}</p>
+          {{/if}}
           <div class="alert alert-warning">
             <strong>Upgrade Point Allocation:</strong> You have 10 points to spend. Track your choices here (not yet implemented in this prototype).
           </div>
@@ -275,7 +323,11 @@
 
         <div class="mb-3">
           <h3 class="h6">Question 4. What is your greatest achievement?</h3>
-          <p class="text-muted">{{flavor.tdoll.advantage}}</p>
+          {{#if (isArray flavor.tdoll.advantage)}}
+            {{#each flavor.tdoll.advantage}}<p class="text-muted">{{this}}</p>{{/each}}
+          {{else}}
+            <p class="text-muted">{{flavor.tdoll.advantage}}</p>
+          {{/if}}
           <div class="drop-zone p-3" data-drop-target="advantage">
             <div class="fw-semibold">Drop Advantage here</div>
             {{#if selectedCards.advantage}}
@@ -295,7 +347,11 @@
 
         <div class="mb-3">
           <h3 class="h6">Question 5. What holds you back most?</h3>
-          <p class="text-muted">{{flavor.tdoll.disadvantage}}</p>
+          {{#if (isArray flavor.tdoll.disadvantage)}}
+            {{#each flavor.tdoll.disadvantage}}<p class="text-muted">{{this}}</p>{{/each}}
+          {{else}}
+            <p class="text-muted">{{flavor.tdoll.disadvantage}}</p>
+          {{/if}}
           <div class="drop-zone p-3" data-drop-target="disadvantage">
             <div class="fw-semibold">Drop Disadvantage here</div>
             {{#if selectedCards.disadvantage}}
@@ -316,7 +372,11 @@
         <div class="row g-3">
           <div class="col-md-6">
             <h3 class="h6">Question 6. What makes you different?</h3>
-            <p class="text-muted">{{flavor.tdoll.passion}}</p>
+            {{#if (isArray flavor.tdoll.passion)}}
+              {{#each flavor.tdoll.passion}}<p class="text-muted">{{this}}</p>{{/each}}
+            {{else}}
+              <p class="text-muted">{{flavor.tdoll.passion}}</p>
+            {{/if}}
             <div class="drop-zone p-3" data-drop-target="passion">
               <div class="fw-semibold">Drop Passion here</div>
               {{#if selectedCards.passion}}
@@ -335,7 +395,11 @@
           </div>
           <div class="col-md-6">
             <h3 class="h6">Question 7. What are you most afraid of?</h3>
-            <p class="text-muted">{{flavor.tdoll.anxiety}}</p>
+            {{#if (isArray flavor.tdoll.anxiety)}}
+              {{#each flavor.tdoll.anxiety}}<p class="text-muted">{{this}}</p>{{/each}}
+            {{else}}
+              <p class="text-muted">{{flavor.tdoll.anxiety}}</p>
+            {{/if}}
             <div class="drop-zone p-3" data-drop-target="anxiety">
               <div class="fw-semibold">Drop Anxiety here</div>
               {{#if selectedCards.anxiety}}
@@ -360,7 +424,11 @@
         {{#if (eq buildType "human")}}
         <div class="mb-3">
           <h3 class="h5 mb-1">Question 8. How do you view Dolls?</h3>
-          <p class="text-muted">{{flavor.human.viewDolls}}</p>
+          {{#if (isArray flavor.human.viewDolls)}}
+            {{#each flavor.human.viewDolls}}<p class="text-muted">{{this}}</p>{{/each}}
+          {{else}}
+            <p class="text-muted">{{flavor.human.viewDolls}}</p>
+          {{/if}}
           <div class="d-flex flex-column gap-2">
             <div class="form-check">
               <input class="form-check-input" type="radio" name="human.viewDolls" id="view-dolls-favor" value="favor" {{#if (eq formValues.human.viewDolls "favor")}}checked{{/if}}>
@@ -384,13 +452,21 @@
 
         <div class="mb-3">
           <h3 class="h6">Question 9. What do you fight for?</h3>
-          <p class="text-muted">{{flavor.human.goal}}</p>
+          {{#if (isArray flavor.human.goal)}}
+            {{#each flavor.human.goal}}<p class="text-muted">{{this}}</p>{{/each}}
+          {{else}}
+            <p class="text-muted">{{flavor.human.goal}}</p>
+          {{/if}}
           <textarea class="form-control" name="human.goal" rows="2" placeholder="Credits, rebuilding, revenge, legacy...">{{formValues.human.goal}}</textarea>
         </div>
 
         <div class="mb-3">
           <h3 class="h6">Question 10. What does your name mean?</h3>
-          <p class="text-muted">{{flavor.human.nameMeaning}}</p>
+          {{#if (isArray flavor.human.nameMeaning)}}
+            {{#each flavor.human.nameMeaning}}<p class="text-muted">{{this}}</p>{{/each}}
+          {{else}}
+            <p class="text-muted">{{flavor.human.nameMeaning}}</p>
+          {{/if}}
           <textarea class="form-control" name="human.nameMeaning" rows="2">{{formValues.human.nameMeaning}}</textarea>
         </div>
 
@@ -401,7 +477,11 @@
 
         <div class="mb-3">
           <h3 class="h6">Question 12. How will your story end?</h3>
-          <p class="text-muted">{{flavor.human.storyEnd}}</p>
+          {{#if (isArray flavor.human.storyEnd)}}
+            {{#each flavor.human.storyEnd}}<p class="text-muted">{{this}}</p>{{/each}}
+          {{else}}
+            <p class="text-muted">{{flavor.human.storyEnd}}</p>
+          {{/if}}
           <textarea class="form-control" name="human.storyEnd" rows="2">{{formValues.human.storyEnd}}</textarea>
         </div>
 
@@ -412,19 +492,31 @@
         {{else}}
         <div class="mb-3">
           <h3 class="h5 mb-2">Question 8. When did you meet your Commander?</h3>
-          <p class="text-muted">{{flavor.tdoll.metCommander}}</p>
+          {{#if (isArray flavor.tdoll.metCommander)}}
+            {{#each flavor.tdoll.metCommander}}<p class="text-muted">{{this}}</p>{{/each}}
+          {{else}}
+            <p class="text-muted">{{flavor.tdoll.metCommander}}</p>
+          {{/if}}
           <textarea class="form-control" name="tdoll.metCommander" rows="3" placeholder="Describe your first meeting...">{{formValues.tdoll.metCommander}}</textarea>
         </div>
 
         <div class="mb-3">
           <h3 class="h6">Question 9. What do you want for yourself?</h3>
-          <p class="text-muted">{{flavor.tdoll.goal}}</p>
+          {{#if (isArray flavor.tdoll.goal)}}
+            {{#each flavor.tdoll.goal}}<p class="text-muted">{{this}}</p>{{/each}}
+          {{else}}
+            <p class="text-muted">{{flavor.tdoll.goal}}</p>
+          {{/if}}
           <textarea class="form-control" name="tdoll.goal" rows="2" placeholder="Freedom, learning, revenge, a home...">{{formValues.tdoll.goal}}</textarea>
         </div>
 
         <div class="mb-3">
           <h3 class="h6">Question 10. How were you named?</h3>
-          <p class="text-muted">{{flavor.tdoll.nameOrigin}}</p>
+          {{#if (isArray flavor.tdoll.nameOrigin)}}
+            {{#each flavor.tdoll.nameOrigin}}<p class="text-muted">{{this}}</p>{{/each}}
+          {{else}}
+            <p class="text-muted">{{flavor.tdoll.nameOrigin}}</p>
+          {{/if}}
           <div class="d-flex flex-column gap-2">
             <div class="form-check">
               <input class="form-check-input" type="radio" name="tdoll.nameOrigin" id="name-human" value="human" {{#if (eq formValues.tdoll.nameOrigin "human")}}checked{{/if}}>
@@ -452,7 +544,11 @@
 
         <div class="mb-3">
           <h3 class="h6">Question 12. How does your story end?</h3>
-          <p class="text-muted">{{flavor.tdoll.storyEnd}}</p>
+          {{#if (isArray flavor.tdoll.storyEnd)}}
+            {{#each flavor.tdoll.storyEnd}}<p class="text-muted">{{this}}</p>{{/each}}
+          {{else}}
+            <p class="text-muted">{{flavor.tdoll.storyEnd}}</p>
+          {{/if}}
           <textarea class="form-control" name="tdoll.storyEnd" rows="2">{{formValues.tdoll.storyEnd}}</textarea>
         </div>
 

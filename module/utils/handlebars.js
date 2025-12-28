@@ -48,6 +48,7 @@ export function registerHandlebarsHelpers() {
   hbs.registerHelper("lt", (a, b) => a < b);
   hbs.registerHelper("add", (a, b) => (a || 0) + (b || 0));
   hbs.registerHelper("join", (arr, sep) => Array.isArray(arr) ? arr.join(sep ?? ", ") : "");
+  hbs.registerHelper("isArray", (value) => Array.isArray(value));
   hbs.registerHelper("getNextEmptySlot", function (slots) {
     if (!Array.isArray(slots)) return "slot1";
     for (const slot of slots) {
