@@ -202,36 +202,17 @@ export class GFLDicePickerDialog extends HandlebarsApplicationMixin(ApplicationV
   activateListeners(html) {
     super.activateListeners?.(html);
     const root = html instanceof HTMLElement ? html : html?.[0];
-    const form = root?.querySelector?.("form");
-    if (form) {
-      const handler = (ev) => {
-        ev.preventDefault();
-        ev.stopPropagation();
-        console.log("GFL5R | Dice picker submit intercepted", ev);
-        this.onSubmit(ev);
-        return false;
-      };
-      form.addEventListener("submit", handler, { capture: true });
-    }
-    // Global capture as last resort to stop navigation
-    this._globalSubmitHandler = (ev) => {
-      if (!(ev.target instanceof HTMLFormElement)) return;
-      if (!root || !root.contains(ev.target)) return;
-      ev.preventDefault();
-      ev.stopPropagation();
-      console.log("GFL5R | Dice picker global submit intercepted", ev);
-      this.onSubmit(ev);
-      return false;
-    };
-    window.addEventListener("submit", this._globalSubmitHandler, true);
+    // V2 eventListeners handle submit; no extra global hooks needed
+    this._globalSubmitHandler = null;
   }
 
   async _updateObject(event, formData) {
     console.log("GFL5R | Dice picker _updateObject", { formData });
-    if (!this.actor || !this.skillKey) {
-      await this._finish();
-      return;
-    }
+    try {
+      if (!this.actor || !this.skillKey) {
+        await this._finish();
+        return;
+      }
     const approachName = formData.approach || this.defaultApproach || "";
     const tnHidden =
       this.lockHiddenTN ||
@@ -310,15 +291,23 @@ export class GFLDicePickerDialog extends HandlebarsApplicationMixin(ApplicationV
       }
     }
 
-    const flavor = `<strong>${this.actor.name}</strong> rolls <em>${this.skillLabel || this.skillKey}</em> with <em>${approachName}</em>`;
-    console.log("GFL5R | Dice picker sending roll", { formula, flavor, difficulty: tnVal, tnHidden, keepBonus, ringDice, skillDice });
-    await roll.toMessage({ flavor });
-    console.log("GFL5R | Dice picker roll sent");
-    await this._finish();
+      const flavor = `<strong>${this.actor.name}</strong> rolls <em>${this.skillLabel || this.skillKey}</em> with <em>${approachName}</em>`;
+      console.log("GFL5R | Dice picker sending roll", { formula, flavor, difficulty: tnVal, tnHidden, keepBonus, ringDice, skillDice });
+      await roll.toMessage({ flavor });
+      console.log("GFL5R | Dice picker roll sent");
+      await this._finish();
+    } catch (err) {
+      console.error("GFL5R | Dice picker submit failed", err);
+      ui.notifications?.error("Dice picker failed to roll. See console for details.");
+    }
   }
 
   async close(options) {
-    await this._finish();
+    try {
+      await this._finish();
+    } catch (err) {
+      console.warn("GFL5R | Dice picker close finish warning", err);
+    }
     return super.close(options);
   }
 
