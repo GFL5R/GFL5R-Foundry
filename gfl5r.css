@@ -16,6 +16,11 @@ a {
   text-decoration: revert-layer;
 }
 
+a:hover {
+  color: revert-layer;
+  text-decoration: revert-layer;
+}
+
 /* Sheet styling previously inlined in templates */
 
 .gfl5r-sheet {
