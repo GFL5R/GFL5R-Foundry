@@ -63,7 +63,6 @@
   2. Add UI elements in templates, wire with jQuery handlers
   3. Keep chat updates/notifications consistent with existing roller/combat patterns
   4. Update derived stat logic in [module/utils/derived.js](module/utils/derived.js) if needed
-- **Version bump rule**: Always increment patch version in [system.json](system.json) line 5 when making any change
 
 ## Compatibility & Assets
 - **Foundry compatibility**: Minimum v12, verified v13—some code has v12 shims (Hooks, `Item.implementation`), don't remove unless dropping v12

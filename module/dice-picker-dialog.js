@@ -173,7 +173,13 @@ export class GFLDicePickerDialog extends HandlebarsApplicationMixin(ApplicationV
   }
 
   // V2 event callbacks
-  onSubmit(ev) { return this._onSubmit(ev); }
+  onSubmit(ev) {
+    ev?.preventDefault?.();
+    ev?.stopPropagation?.();
+    const form = ev?.currentTarget ?? ev?.target?.closest?.("form");
+    const data = form ? foundry.utils.expandObject(Object.fromEntries(new FormData(form).entries())) : {};
+    return this._updateObject(ev, data);
+  }
   onRingMinus(ev) { ev.preventDefault(); this.ringAdjust = Math.max(this.ringAdjust - 1, -9); this.render(false); }
   onRingPlus(ev) { ev.preventDefault(); this.ringAdjust = Math.min(this.ringAdjust + 1, 9); this.render(false); }
   onSkillMinus(ev) { ev.preventDefault(); this.skillAdjust = Math.max(this.skillAdjust - 1, -9); this.render(false); }
