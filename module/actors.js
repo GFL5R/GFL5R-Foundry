@@ -4,7 +4,7 @@ console.log("GFL5R | actors.js loaded");
 import { GFL5R_CONFIG } from "./config.js";
 import { computeDerivedStats } from "./utils/derived.js";
 
-const SHEET_DEBUG = true;
+const SHEET_DEBUG = false;
 const sheetDebug = (...args) => {
   if (!SHEET_DEBUG) return;
   console.debug("GFL5R | Sheet", ...args);
@@ -118,7 +118,8 @@ class CharacterBuilderApp extends FormApplication {
   constructor(actor, options = {}) {
     super(options);
     this.actor = actor;
-    this.builderState = {
+    const saved = actor.getFlag("gfl5r", "builderState") ?? null;
+    this.builderState = saved ?? {
       step: 1,
       discipline: null,
       advantage: null,
@@ -127,6 +128,14 @@ class CharacterBuilderApp extends FormApplication {
       anxiety: null,
       formValues: { human: {} }
     };
+  }
+
+  async _persistBuilderState() {
+    try {
+      await this.actor.setFlag("gfl5r", "builderState", this.builderState);
+    } catch (err) {
+      console.warn("GFL5R | Unable to persist builder state", err);
+    }
   }
 
   static get defaultOptions() {
@@ -148,6 +157,39 @@ class CharacterBuilderApp extends FormApplication {
     const existingDisciplines = this.actor.items
       .filter(i => i.type === "discipline")
       .map(i => ({ id: i.id, name: i.name }));
+
+    const selectedCards = {};
+    const disciplineSel = this.builderState.discipline;
+    if (disciplineSel) {
+      const associated = Array.isArray(disciplineSel.data?.system?.associatedSkills)
+        ? disciplineSel.data.system.associatedSkills
+        : [];
+      const associatedLabels = associated
+        .map(key => GFL5R_CONFIG.getSkillLabel(key))
+        .filter(Boolean);
+      selectedCards.discipline = {
+        name: disciplineSel.name,
+        img: disciplineSel.data?.img ?? "icons/svg/book.svg",
+        associatedLabels,
+        description: disciplineSel.data?.system?.description ?? ""
+      };
+    }
+
+    const mapNarrative = (key) => {
+      const sel = this.builderState[key];
+      if (!sel) return null;
+      return {
+        name: sel.name,
+        narrativeType: sel.narrativeType,
+        img: sel.data?.img ?? "icons/svg/book.svg",
+        description: sel.data?.system?.description ?? ""
+      };
+    };
+
+    selectedCards.advantage = mapNarrative("advantage");
+    selectedCards.disadvantage = mapNarrative("disadvantage");
+    selectedCards.passion = mapNarrative("passion");
+    selectedCards.anxiety = mapNarrative("anxiety");
 
     const steps = [
       { num: 1, label: "Nationality" },
@@ -177,6 +219,7 @@ class CharacterBuilderApp extends FormApplication {
       step: this.builderState.step,
       steps,
       selections: this.builderState,
+      selectedCards,
       formValues
     };
   }
@@ -244,6 +287,7 @@ class CharacterBuilderApp extends FormApplication {
       }
     }
     this.builderState.formValues = { human };
+    this._persistBuilderState();
   }
 
   async _onDrop(event) {
@@ -275,6 +319,7 @@ class CharacterBuilderApp extends FormApplication {
         data: dropData
       };
       this.render(false);
+      this._persistBuilderState();
       return false;
     }
 
@@ -299,6 +344,7 @@ class CharacterBuilderApp extends FormApplication {
         data: dropData
       };
       this.render(false);
+      this._persistBuilderState();
       return false;
     }
 
@@ -311,6 +357,7 @@ class CharacterBuilderApp extends FormApplication {
     if (next !== this.builderState.step) {
       this.builderState.step = next;
       this.render(false);
+      this._persistBuilderState();
     }
   }
 
@@ -355,6 +402,11 @@ class CharacterBuilderApp extends FormApplication {
       return;
     }
 
+    // Overwrite sheet from a clean state
+    const allItemIds = this.actor.items.map(i => i.id);
+    if (allItemIds.length) await this.actor.deleteEmbeddedDocuments("Item", allItemIds);
+    await this.actor.update({ "system.disciplines": {} });
+
     const approaches = {
       power: 1,
       swiftness: 1,
@@ -371,7 +423,8 @@ class CharacterBuilderApp extends FormApplication {
     nationality.approaches.forEach(bumpApproach);
     bumpApproach(background.approach);
 
-    const skills = foundry.utils.duplicate(this.actor.system.skills ?? {});
+    // Start from a clean skill slate
+    const skills = {};
     const ensureSkillAtLeast = (key, min) => {
       if (!key) return;
       const current = Number(skills[key] ?? 0);
@@ -400,7 +453,7 @@ class CharacterBuilderApp extends FormApplication {
     updates["system.skills"] = skills;
     updates["system.characterType"] = "human";
 
-    const currentHumanity = Number(this.actor.system?.humanity ?? 0);
+    const currentHumanity = 0;
     updates["system.humanity"] = viewDolls === "favor" ? currentHumanity + 5 : currentHumanity;
 
     if (newName) updates["name"] = newName;
@@ -411,10 +464,10 @@ class CharacterBuilderApp extends FormApplication {
 
     if (disciplineLabel) notesPieces.push(`Discipline: ${disciplineLabel}`);
 
-    const advantageName = await this._ensureNarrativeFromBuilder("advantage", formData["human.advantageText"], "distinction");
-    const disadvantageName = await this._ensureNarrativeFromBuilder("disadvantage", formData["human.disadvantageText"], "adversity");
-    const passionName = await this._ensureNarrativeFromBuilder("passion", formData["human.passionText"], "passion");
-    const anxietyName = await this._ensureNarrativeFromBuilder("anxiety", formData["human.anxietyText"], "anxiety");
+    const advantageName = await this._ensureNarrativeFromBuilder("advantage", "distinction");
+    const disadvantageName = await this._ensureNarrativeFromBuilder("disadvantage", "adversity");
+    const passionName = await this._ensureNarrativeFromBuilder("passion", "passion");
+    const anxietyName = await this._ensureNarrativeFromBuilder("anxiety", "anxiety");
 
     if (advantageName) notesPieces.push(`Advantage: ${advantageName}`);
     if (disadvantageName) notesPieces.push(`Disadvantage: ${disadvantageName}`);
@@ -431,11 +484,13 @@ class CharacterBuilderApp extends FormApplication {
     if (storyEnd) notesPieces.push(`Story end: ${storyEnd}`);
     if (additionalNotes) notesPieces.push(additionalNotes);
 
-    const existingNotes = this.actor.system?.notes ?? "";
     const notesBlock = `Character Builder (Human)\n${notesPieces.join("\n")}`;
-    updates["system.notes"] = existingNotes ? `${existingNotes}\n\n${notesBlock}` : notesBlock;
+    updates["system.notes"] = notesBlock;
 
     await this.actor.update(updates);
+
+    // Keep builder state so the user can tweak and reapply later
+    await this._persistBuilderState();
 
     ui.notifications?.info("Character builder applied to this actor.");
   }
@@ -502,9 +557,9 @@ class CharacterBuilderApp extends FormApplication {
     return { label: createdName, associatedSkills };
   }
 
-  async _ensureNarrativeFromBuilder(key, fallbackName, narrativeType) {
+  async _ensureNarrativeFromBuilder(key, narrativeType) {
     const drop = this.builderState[key];
-    const name = (drop?.name || fallbackName || "").trim();
+    const name = (drop?.name || "").trim();
     if (!name) return "";
 
     const existing = this.actor.items.find(i => i.type === "narrative" && i.name === name && i.system?.narrativeType === narrativeType);

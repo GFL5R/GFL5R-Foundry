@@ -67,9 +67,20 @@
           <p class="text-muted mb-3">{{flavor.human.step3.lead2}}</p>
           <div class="drop-zone p-3 text-center" data-drop-target="discipline">
             <div class="fw-semibold">Drop a Discipline item here</div>
-            {{#if selections.discipline}}
-              <div class="mt-2">Selected: {{selections.discipline.name}}
-                <button type="button" class="btn btn-link btn-sm text-danger" data-action="clear-drop" data-drop-key="discipline">Clear</button>
+            {{#if selectedCards.discipline}}
+              <div class="card bg-secondary bg-opacity-25 border mt-2 text-start">
+                <div class="card-body d-flex gap-2 align-items-start">
+                  <img src="{{selectedCards.discipline.img}}" alt="" class="rounded" style="width:48px; height:48px;" />
+                  <div class="flex-grow-1">
+                    <div class="fw-semibold">{{selectedCards.discipline.name}}</div>
+                    {{#if selectedCards.discipline.associatedLabels.length}}
+                      <div class="small text-muted">Associated: {{join selectedCards.discipline.associatedLabels ", "}}</div>
+                    {{else}}
+                      <div class="small text-muted">No associated skills listed</div>
+                    {{/if}}
+                  </div>
+                  <button type="button" class="btn btn-link btn-sm text-danger" data-action="clear-drop" data-drop-key="discipline">Clear</button>
+                </div>
               </div>
             {{else}}
               <div class="text-muted small">Drag from sidebar or compendium.</div>
@@ -82,14 +93,18 @@
           <p class="text-muted">{{flavor.human.advantage}}</p>
           <div class="drop-zone p-3" data-drop-target="advantage">
             <div class="fw-semibold">Drop Advantage here</div>
-            {{#if selections.advantage}}
-              <div class="mt-2">Selected: {{selections.advantage.name}}
-                <button type="button" class="btn btn-link btn-sm text-danger" data-action="clear-drop" data-drop-key="advantage">Clear</button>
+            {{#if selectedCards.advantage}}
+              <div class="card bg-secondary bg-opacity-25 border mt-2">
+                <div class="card-body d-flex gap-2 align-items-start">
+                  <img src="{{selectedCards.advantage.img}}" alt="" class="rounded" style="width:40px; height:40px;" />
+                  <div class="flex-grow-1">
+                    <div class="fw-semibold">{{selectedCards.advantage.name}}</div>
+                    <div class="small text-muted">Distinction</div>
+                  </div>
+                  <button type="button" class="btn btn-link btn-sm text-danger" data-action="clear-drop" data-drop-key="advantage">Clear</button>
+                </div>
               </div>
             {{/if}}
-            <div class="mt-2">
-              <input class="form-control form-control-sm" type="text" name="human.advantageText" placeholder="Or type a custom advantage" value="{{formValues.human.advantageText}}" />
-            </div>
           </div>
         </div>
 
@@ -98,14 +113,18 @@
           <p class="text-muted">{{flavor.human.disadvantage}}</p>
           <div class="drop-zone p-3" data-drop-target="disadvantage">
             <div class="fw-semibold">Drop Disadvantage here</div>
-            {{#if selections.disadvantage}}
-              <div class="mt-2">Selected: {{selections.disadvantage.name}}
-                <button type="button" class="btn btn-link btn-sm text-danger" data-action="clear-drop" data-drop-key="disadvantage">Clear</button>
+            {{#if selectedCards.disadvantage}}
+              <div class="card bg-secondary bg-opacity-25 border mt-2">
+                <div class="card-body d-flex gap-2 align-items-start">
+                  <img src="{{selectedCards.disadvantage.img}}" alt="" class="rounded" style="width:40px; height:40px;" />
+                  <div class="flex-grow-1">
+                    <div class="fw-semibold">{{selectedCards.disadvantage.name}}</div>
+                    <div class="small text-muted">Adversity</div>
+                  </div>
+                  <button type="button" class="btn btn-link btn-sm text-danger" data-action="clear-drop" data-drop-key="disadvantage">Clear</button>
+                </div>
               </div>
             {{/if}}
-            <div class="mt-2">
-              <input class="form-control form-control-sm" type="text" name="human.disadvantageText" placeholder="Or type a custom disadvantage" value="{{formValues.human.disadvantageText}}" />
-            </div>
           </div>
         </div>
 
@@ -115,14 +134,18 @@
             <p class="text-muted">{{flavor.human.passion}}</p>
             <div class="drop-zone p-3" data-drop-target="passion">
               <div class="fw-semibold">Drop Passion here</div>
-              {{#if selections.passion}}
-                <div class="mt-2">Selected: {{selections.passion.name}}
-                  <button type="button" class="btn btn-link btn-sm text-danger" data-action="clear-drop" data-drop-key="passion">Clear</button>
+              {{#if selectedCards.passion}}
+                <div class="card bg-secondary bg-opacity-25 border mt-2">
+                  <div class="card-body d-flex gap-2 align-items-start">
+                    <img src="{{selectedCards.passion.img}}" alt="" class="rounded" style="width:40px; height:40px;" />
+                    <div class="flex-grow-1">
+                      <div class="fw-semibold">{{selectedCards.passion.name}}</div>
+                      <div class="small text-muted">Passion</div>
+                    </div>
+                    <button type="button" class="btn btn-link btn-sm text-danger" data-action="clear-drop" data-drop-key="passion">Clear</button>
+                  </div>
                 </div>
               {{/if}}
-              <div class="mt-2">
-                <input class="form-control form-control-sm" type="text" name="human.passionText" placeholder="Or type a custom passion" value="{{formValues.human.passionText}}" />
-              </div>
             </div>
           </div>
           <div class="col-md-6">
@@ -130,14 +153,18 @@
             <p class="text-muted">{{flavor.human.anxiety}}</p>
             <div class="drop-zone p-3" data-drop-target="anxiety">
               <div class="fw-semibold">Drop Anxiety here</div>
-              {{#if selections.anxiety}}
-                <div class="mt-2">Selected: {{selections.anxiety.name}}
-                  <button type="button" class="btn btn-link btn-sm text-danger" data-action="clear-drop" data-drop-key="anxiety">Clear</button>
+              {{#if selectedCards.anxiety}}
+                <div class="card bg-secondary bg-opacity-25 border mt-2">
+                  <div class="card-body d-flex gap-2 align-items-start">
+                    <img src="{{selectedCards.anxiety.img}}" alt="" class="rounded" style="width:40px; height:40px;" />
+                    <div class="flex-grow-1">
+                      <div class="fw-semibold">{{selectedCards.anxiety.name}}</div>
+                      <div class="small text-muted">Anxiety</div>
+                    </div>
+                    <button type="button" class="btn btn-link btn-sm text-danger" data-action="clear-drop" data-drop-key="anxiety">Clear</button>
+                  </div>
                 </div>
               {{/if}}
-              <div class="mt-2">
-                <input class="form-control form-control-sm" type="text" name="human.anxietyText" placeholder="Or type a custom anxiety" value="{{formValues.human.anxietyText}}" />
-              </div>
             </div>
           </div>
         </div>
