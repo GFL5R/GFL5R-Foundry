@@ -310,9 +310,10 @@ class CharacterBuilderApp extends FormApplication {
       return;
     }
 
-    // Foundry expands dot-notation field names into nested objects.
+    // Foundry expands dot-notation field names into nested objects; fall back to stored wizard state.
     const formHuman = formData.human ?? {};
-    const getHuman = (key) => formHuman[key] ?? formData[`human.${key}`];
+    const storedHuman = this.builderState?.formValues?.human ?? {};
+    const getHuman = (key) => formHuman[key] ?? formData[`human.${key}`] ?? storedHuman[key];
 
     const nationalityKey = getHuman("nationality");
     const backgroundKey = getHuman("background");
