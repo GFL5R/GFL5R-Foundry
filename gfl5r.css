@@ -10,33 +10,25 @@ button[class*="fa-"]::before,
   font-weight: revert-layer;
 }
 
-/* Keep Foundry UI links from inheriting Bootstrap blue link styles */
+/* Keep Foundry UI links from inheriting Bootstrap link styling using revert-layer */
 .directory .entry-name,
-.directory .entry-name:visited {
-  color: inherit;
-  text-decoration: none;
-}
-
-.directory .entry-name:hover,
-.directory .entry-name:focus {
-  color: inherit;
-  text-decoration: underline;
-}
-
+.directory .entry-name:visited,
 .window-app .window-header .header-button,
 .window-app .window-header .header-button:visited,
 .window-app .window-header .window-title,
 .window-app .window-header .window-title .document-id-link {
-  color: inherit;
-  text-decoration: none;
+  color: revert-layer;
+  text-decoration: revert-layer;
 }
 
+.directory .entry-name:hover,
+.directory .entry-name:focus,
 .window-app .window-header .header-button:hover,
 .window-app .window-header .header-button:focus,
 .window-app .window-header .window-title .document-id-link:hover,
 .window-app .window-header .window-title .document-id-link:focus {
-  color: inherit;
-  text-decoration: underline;
+  color: revert-layer;
+  text-decoration: revert-layer;
 }
 
 /* Sheet styling previously inlined in templates */
