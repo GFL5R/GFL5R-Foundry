@@ -10,11 +10,7 @@
           <div class="col-md-3">
             <label class="form-label">Activation</label>
             <select class="form-select" name="system.activation">
-              {{#select item.system.activation}}
-                <option value="passive">Passive</option>
-                <option value="movement">Movement</option>
-                <option value="action">Action</option>
-              {{/select}}
+              {{selectOptions (object "passive" "Passive" "movement" "Movement" "action" "Action") selected=item.system.activation localize=false}}
             </select>
           </div>
           <div class="col-md-3">

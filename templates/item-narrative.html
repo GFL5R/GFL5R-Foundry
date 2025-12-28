@@ -10,24 +10,13 @@
           <div class="col-md-6">
             <label class="form-label">Approach</label>
             <select class="form-select" name="system.approach">
-              {{#select item.system.approach}}
-                <option value="power">Power</option>
-                <option value="swiftness">Swiftness</option>
-                <option value="resilience">Resilience</option>
-                <option value="precision">Precision</option>
-                <option value="fortune">Fortune</option>
-              {{/select}}
+              {{selectOptions (object "power" "Power" "swiftness" "Swiftness" "resilience" "Resilience" "precision" "Precision" "fortune" "Fortune") selected=item.system.approach localize=false}}
             </select>
           </div>
           <div class="col-md-6">
             <label class="form-label">Type</label>
             <select class="form-select" name="system.narrativeType">
-              {{#select item.system.narrativeType}}
-                <option value="distinction">Distinction</option>
-                <option value="passion">Passion</option>
-                <option value="adversity">Adversity</option>
-                <option value="anxiety">Anxiety</option>
-              {{/select}}
+              {{selectOptions (object "distinction" "Distinction" "passion" "Passion" "adversity" "Adversity" "anxiety" "Anxiety") selected=item.system.narrativeType localize=false}}
             </select>
           </div>
         </div>

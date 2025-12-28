@@ -14,10 +14,7 @@
           <div class="col-md-4">
             <label class="form-label">Type</label>
             <select class="form-select" name="system.weaponType">
-              {{#select item.system.weaponType}}
-                <option value="ranged">Ranged</option>
-                <option value="melee">Melee</option>
-              {{/select}}
+              {{selectOptions (object "ranged" "Ranged" "melee" "Melee") selected=item.system.weaponType localize=false}}
             </select>
           </div>
           <div class="col-md-4">
@@ -38,13 +35,7 @@
           <div class="col-md-6">
             <label class="form-label">Rarity</label>
             <select class="form-select" name="system.rarity">
-              {{#select item.system.rarity}}
-                <option value="common">Common</option>
-                <option value="uncommon">Uncommon</option>
-                <option value="rare">Rare</option>
-                <option value="very rare">Very Rare</option>
-                <option value="legendary">Legendary</option>
-              {{/select}}
+              {{selectOptions (object "common" "Common" "uncommon" "Uncommon" "rare" "Rare" "very rare" "Very Rare" "legendary" "Legendary") selected=item.system.rarity localize=false}}
             </select>
           </div>
           <div class="col-md-6">

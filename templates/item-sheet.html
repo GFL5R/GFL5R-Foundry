@@ -14,13 +14,7 @@
           <div class="col-sm-6">
             <label class="form-label">Rarity</label>
             <select class="form-select" name="system.rarity">
-              {{#select item.system.rarity}}
-                <option value="common">Common</option>
-                <option value="uncommon">Uncommon</option>
-                <option value="rare">Rare</option>
-                <option value="very rare">Very Rare</option>
-                <option value="legendary">Legendary</option>
-              {{/select}}
+              {{selectOptions (object "common" "Common" "uncommon" "Uncommon" "rare" "Rare" "very rare" "Very Rare" "legendary" "Legendary") selected=item.system.rarity localize=false}}
             </select>
           </div>
         </div>

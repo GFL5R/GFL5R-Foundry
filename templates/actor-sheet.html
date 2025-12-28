@@ -13,11 +13,7 @@
               <div class="col-12 col-md-4">
                 <label class="form-label pill-muted mb-1">Type</label>
                 <select class="form-select" name="system.characterType" title="Character type affects available features">
-                  {{#select actor.system.characterType}}
-                    <option value="human">Human</option>
-                    <option value="transhumanist">Transhumanist</option>
-                    <option value="doll">Doll</option>
-                  {{/select}}
+                  {{selectOptions (object "human" "Human" "transhumanist" "Transhumanist" "doll" "Doll") selected=actor.system.characterType localize=false}}
                 </select>
               </div>
               <div class="col-12 col-md-4">
