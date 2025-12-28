@@ -4,6 +4,12 @@ console.log("GFL5R | actors.js loaded");
 import { GFL5R_CONFIG } from "./config.js";
 import { computeDerivedStats } from "./utils/derived.js";
 
+const SHEET_DEBUG = true;
+const sheetDebug = (...args) => {
+  if (!SHEET_DEBUG) return;
+  console.debug("GFL5R | Sheet", ...args);
+};
+
 const ActorSheet = foundry.appv1.sheets.ActorSheet;
 
 const APPROACH_LABELS = {
@@ -136,6 +142,7 @@ class CharacterBuilderApp extends FormApplication {
   }
 
   async getData() {
+    sheetDebug("CharacterBuilderApp#getData");
     const flavor = await CharacterBuilderApp.getFlavor();
     const skillOptions = flattenSkillList();
     const existingDisciplines = this.actor.items
@@ -190,6 +197,7 @@ class CharacterBuilderApp extends FormApplication {
 
   activateListeners(html) {
     super.activateListeners(html);
+    sheetDebug("CharacterBuilderApp#activateListeners");
 
     html.on("click", "[data-action='builder-next']", ev => {
       ev.preventDefault();
@@ -225,6 +233,7 @@ class CharacterBuilderApp extends FormApplication {
   }
 
   _captureForm(formEl) {
+    sheetDebug("CharacterBuilderApp#_captureForm");
     if (!formEl) return;
     const fd = new FormData(formEl);
     const human = {};
@@ -237,6 +246,7 @@ class CharacterBuilderApp extends FormApplication {
   }
 
   async _onDrop(event) {
+    sheetDebug("CharacterBuilderApp#_onDrop", { dropTarget: event.target?.dataset?.dropTarget });
     event.preventDefault();
     const dropTarget = event.target.closest?.("[data-drop-target]");
     if (!dropTarget) return false;
@@ -304,6 +314,7 @@ class CharacterBuilderApp extends FormApplication {
   }
 
   async _updateObject(event, formData) {
+    sheetDebug("CharacterBuilderApp#_updateObject", { formData });
     const buildType = formData["buildType"] ?? formData.buildType ?? "human";
     if (buildType !== "human") {
       ui.notifications?.info("T-Doll builder is coming soon.");
@@ -552,7 +563,7 @@ export class GFL5RActorSheet extends ActorSheet {
   }
 
   async getData(options) {
-    console.log("GFL5R | getData()");
+    sheetDebug("ActorSheet#getData", { actor: this.actor?.id, name: this.actor?.name });
     const context = await super.getData(options);
     const data = context.actor.system ?? {};
 
@@ -749,7 +760,7 @@ export class GFL5RActorSheet extends ActorSheet {
 
   activateListeners(html) {
     super.activateListeners(html);
-    console.log("GFL5R | activateListeners()");
+    sheetDebug("ActorSheet#activateListeners", { actor: this.actor?.id });
 
     html.on("click", "[data-action='open-character-builder']", () => {
       new CharacterBuilderApp(this.actor).render(true);
@@ -1083,6 +1094,7 @@ export class GFL5RActorSheet extends ActorSheet {
 
   /** Accept dropped Items (from compendia or sidebar) into the drop zones */
   async _onDrop(event) {
+    sheetDebug("ActorSheet#_onDrop", { target: event.target?.dataset?.dropTarget });
     const data = getDragEventDataSafe(event);
     const flashDropTarget = (el) => {
       if (!el) return;
