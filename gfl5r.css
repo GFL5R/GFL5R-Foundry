@@ -10,30 +10,10 @@ button[class*="fa-"]::before,
   font-weight: revert-layer;
 }
 
-/* Override Bootstrap link styling for Foundry UI elements */
-#sidebar a,
-#sidebar button,
-.sidebar-tab a,
-.directory a,
-.directory-list a,
-.window-app .window-header a,
-.window-app .window-header button {
-  color: #fff !important;
-  text-decoration: none !important;
-}
-
-#sidebar a:hover,
-#sidebar a:focus,
-.sidebar-tab a:hover,
-.sidebar-tab a:focus,
-.directory a:hover,
-.directory a:focus,
-.directory-list a:hover,
-.directory-list a:focus,
-.window-app .window-header a:hover,
-.window-app .window-header a:focus {
-  color: #fff !important;
-  text-decoration: none !important;
+/* Revert Bootstrap's link styling to Foundry defaults */
+a {
+  color: revert-layer;
+  text-decoration: revert-layer;
 }
 
 /* Sheet styling previously inlined in templates */
