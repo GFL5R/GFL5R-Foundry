@@ -99,8 +99,24 @@ button[class*="fa-"]::before,
 }
 
 .gfl5r-sheet .nav-tabs {
+  display: flex;
+  flex-wrap: wrap;
   border-bottom: none;
   margin-top: 8px;
+  gap: 8px;
+  padding-left: 0;
+  list-style: none;
+  position: relative;
+  z-index: 2;
+}
+
+/* Ensure legacy .tabs class (Foundry) stays visible when combined with nav-tabs */
+.gfl5r-sheet .tabs {
+  display: flex !important;
+  flex-wrap: wrap;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .gfl5r-sheet .nav-tabs .nav-link {
@@ -108,12 +124,13 @@ button[class*="fa-"]::before,
   background: linear-gradient(135deg, #1b2230 0%, #131925 100%);
   border: 1px solid #273143;
   border-bottom: none;
-  margin-right: 10px;
+  margin-right: 0;
   padding: 0.7rem 1.25rem;
   border-radius: 12px 12px 0 0;
   position: relative;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
   overflow: hidden;
+  display: block;
 }
 
 .gfl5r-sheet .nav-tabs .nav-link::after {
