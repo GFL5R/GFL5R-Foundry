@@ -3,6 +3,7 @@ console.log("GFL5R | actors.js loaded");
 
 import { GFL5R_CONFIG } from "./config.js";
 import { computeDerivedStats } from "./utils/derived.js";
+import { GFL5RPickerDialog } from "./dialogs/dice-picker-dialog.js";
 
 const SHEET_DEBUG = false;
 const sheetDebug = (...args) => {
@@ -119,7 +120,7 @@ const FLAVOR_DEFAULTS = {
   }
 };
 
-const resolveItemFromDropData = async (data) => {
+const resolveItemFromDropData = async (data = {}) => {
   if (!data) return { item: null, uuid: null, itemData: null };
 
   const documentName = data.documentName ?? data.type;
@@ -300,6 +301,160 @@ class CharacterBuilderApp extends FormApplication {
     return this.flavorCache;
   }
 
+  _buildApproachList(approachesData = {}) {
+    const src = approachesData ?? {};
+    return [
+      { key: "power", label: "Power", value: Number(src.power ?? 0) },
+      { key: "swiftness", label: "Swiftness", value: Number(src.swiftness ?? 0) },
+      { key: "resilience", label: "Resilience", value: Number(src.resilience ?? 0) },
+      { key: "precision", label: "Precision", value: Number(src.precision ?? 0) },
+      { key: "fortune", label: "Fortune", value: Number(src.fortune ?? 0) }
+    ];
+  }
+
+  _buildCollapse(approachesList, resources = {}) {
+    const collapseCurrent = Number(resources?.collapse ?? 0);
+    const totalApproaches = (approachesList ?? []).reduce((sum, a) => sum + Number(a.value ?? 0), 0);
+    const collapseCapacity = Math.max(0, totalApproaches * 5);
+    const collapsePercent = collapseCapacity > 0 ? Math.min(1, Math.max(0, collapseCurrent / collapseCapacity)) : 0;
+    const collapseHue = 120 - (collapsePercent * 120);
+    return {
+      current: collapseCurrent,
+      capacity: collapseCapacity,
+      percent: collapsePercent,
+      barWidth: `${(collapsePercent * 100).toFixed(1)}%`,
+      barColor: `hsl(${collapseHue}, 70%, 45%)`
+    };
+  }
+
+  _buildPreparedState(preparedFlag) {
+    const preparedDefaultSetting = game.settings.get("gfl5r", "initiative-prepared-character") || "true";
+    if (typeof preparedFlag === "boolean") return preparedFlag;
+    if (preparedFlag === "true") return true;
+    if (preparedFlag === "false") return false;
+    return preparedDefaultSetting === "true";
+  }
+
+  _buildOriginDisplay(characterType, data) {
+    if (characterType === "human" && (data.nationality || data.background)) {
+      const nat = HUMAN_NATIONALITIES.find(n => n.key === data.nationality);
+      const bg = HUMAN_BACKGROUNDS.find(b => b.key === data.background);
+      const parts = [];
+      if (nat) parts.push(nat.label);
+      if (bg) parts.push(bg.label);
+      return parts.join(" / ");
+    }
+    if (characterType === "doll" && data.frame) {
+      const frame = TDOLL_FRAMES.find(f => f.key === data.frame);
+      if (frame) {
+        const manufacturerShort = frame.manufacturer.split("(")[0].trim();
+        return `${manufacturerShort} ${frame.model}`;
+      }
+    }
+    return "";
+  }
+
+  _buildDisciplineSlots(disciplinesData) {
+    const slots = [];
+    for (let i = 1; i <= GFL5R_CONFIG.maxDisciplineSlots; i++) {
+      const slotKey = `slot${i}`;
+      const slotData = disciplinesData[slotKey] ?? {
+        disciplineId: null,
+        xp: 0,
+        rank: 1,
+        abilities: []
+      };
+
+      const disciplineItem = slotData.disciplineId ? this.actor.items.get(slotData.disciplineId) : null;
+      const associatedSkills = Array.isArray(disciplineItem?.system?.associatedSkills)
+        ? disciplineItem.system.associatedSkills
+        : [];
+      const associatedSkillLabels = associatedSkills
+        .map((key) => GFL5R_CONFIG.getSkillLabel(key))
+        .filter(Boolean);
+
+      const disciplineAbilities = (slotData.abilities ?? [])
+        .map((abilityId) => this.actor.items.get(abilityId))
+        .filter(Boolean);
+
+      const xpForNextRank = GFL5R_CONFIG.getXPForNextRank(slotData.rank ?? 1);
+      const xpRemaining = xpForNextRank ? (xpForNextRank - (slotData.xp ?? 0)) : null;
+
+      slots.push({
+        slotKey,
+        slotNumber: i,
+        discipline: disciplineItem ? {
+          id: disciplineItem.id,
+          name: disciplineItem.name,
+          img: disciplineItem.img,
+          system: disciplineItem.system ?? {}
+        } : null,
+        xp: slotData.xp ?? 0,
+        rank: slotData.rank ?? 1,
+        xpForNext: xpForNextRank,
+        xpRemaining: xpRemaining > 0 ? xpRemaining : null,
+        abilities: disciplineAbilities.map(a => ({
+          id: a.id,
+          name: a.name,
+          img: a.img,
+          system: a.system ?? {}
+        })),
+        associatedSkills,
+        associatedSkillText: associatedSkillLabels.join(", ")
+      });
+    }
+    return slots;
+  }
+
+  _collectDisciplineAbilityIds(slots) {
+    const ids = new Set();
+    (slots ?? []).forEach(slot => {
+      (slot.abilities ?? []).forEach(ability => ids.add(ability.id));
+    });
+    return ids;
+  }
+
+  _mapItemsByType(type, predicate = () => true) {
+    return this.actor.items
+      .filter(i => i.type === type && predicate(i))
+      .map(i => ({
+        id: i.id,
+        name: i.name,
+        img: i.img,
+        system: i.system ?? {}
+      }));
+  }
+
+  _filterNarratives(items, allowedTypes) {
+    return items
+      .filter(i => allowedTypes.includes(i.system?.narrativeType))
+      .map(i => ({
+        id: i.id,
+        name: i.name,
+        img: i.img,
+        system: i.system ?? {}
+      }));
+  }
+
+  _buildInventory(disciplineIds, disciplineAbilityIds) {
+    return this.actor.items
+      .filter(i =>
+        i.type !== "discipline" &&
+        i.type !== "narrative" &&
+        i.type !== "module" &&
+        i.type !== "condition" &&
+        !disciplineIds.has(i.id) &&
+        !disciplineAbilityIds.has(i.id)
+      )
+      .map(i => ({
+        id: i.id,
+        name: i.name,
+        type: i.type,
+        img: i.img,
+        system: i.system ?? {}
+      }));
+  }
+
   activateListeners(html) {
     super.activateListeners(html);
     sheetDebug("CharacterBuilderApp#activateListeners");
@@ -395,7 +550,7 @@ class CharacterBuilderApp extends FormApplication {
       };
       this.render(false);
       this._persistBuilderState();
-      return false;
+      return true;
     }
 
     const narrativeKeyMap = {
@@ -420,10 +575,10 @@ class CharacterBuilderApp extends FormApplication {
       };
       this.render(false);
       this._persistBuilderState();
-      return false;
+      return true;
     }
 
-    return false;
+    return true;
   }
 
   _changeStep(delta) {
@@ -466,104 +621,35 @@ class CharacterBuilderApp extends FormApplication {
     const nationality = HUMAN_NATIONALITIES.find(n => n.key === nationalityKey);
     const background = HUMAN_BACKGROUNDS.find(b => b.key === backgroundKey);
 
-    if (!nationality) {
-      ui.notifications?.warn("Pick a nationality to continue.");
-      return;
-    }
-    if (!background) {
-      ui.notifications?.warn("Pick a background to continue.");
-      return;
-    }
-    if (!this.builderState.discipline) {
-      ui.notifications?.warn("Drop a starting Discipline before applying.");
-      this.builderState.step = 3;
-      this.render(false);
-      return;
-    }
+    if (!this._validateHumanBuilder(nationality, background)) return;
 
-    // Overwrite sheet from a clean state
-    const allItemIds = this.actor.items.map(i => i.id);
-    if (allItemIds.length) await this.actor.deleteEmbeddedDocuments("Item", allItemIds);
-    await this.actor.update({ "system.disciplines": {} });
+    await this._resetActorForBuilder();
 
-    const approaches = {
-      power: 1,
-      swiftness: 1,
-      resilience: 1,
-      precision: 1,
-      fortune: 1
-    };    const bumpApproach = (key) => {
-      if (!key) return;
-      approaches[key] = Number(approaches[key] ?? 0) + 1;
-    };
-
-    nationality.approaches.forEach(bumpApproach);
-    bumpApproach(background.approach);
-
-    // Start from a clean skill slate
-    const skills = {};
-    const ensureSkillAtLeast = (key, min) => {
-      if (!key) return;
-      const current = Number(skills[key] ?? 0);
-      if (current < min) skills[key] = min;
-    };
-
-    ensureSkillAtLeast(background.skill, 1);
-    if (viewDolls === "tools" && viewDollsSkill) {
-      ensureSkillAtLeast(viewDollsSkill, 1);
-    }
-
-    const addSkillRanks = (key, delta = 1) => {
-      if (!key || !delta) return;
-      const current = Number(skills[key] ?? 0);
-      skills[key] = current + delta;
-    };
+    const approaches = this._initHumanApproaches(nationality, background);
+    const skills = this._initHumanSkills(background, viewDolls, viewDollsSkill);
 
     const { label: disciplineLabel, associatedSkills } = await this._applyDisciplineFromBuilder();
-    const uniqueAssociatedSkills = [...new Set(Array.isArray(associatedSkills) ? associatedSkills : [])];
-    uniqueAssociatedSkills.forEach(skillKey => addSkillRanks(skillKey, 1));
+    [...new Set(Array.isArray(associatedSkills) ? associatedSkills : [])]
+      .forEach(skillKey => this._addSkillRanks(skills, skillKey, 1));
 
-    const updates = {};
-    for (const [k, v] of Object.entries(approaches)) {
-      updates[`system.approaches.${k}`] = v;
-    }
-    updates["system.skills"] = skills;
-    updates["system.characterType"] = "human";
-    updates["system.nationality"] = nationalityKey;
-    updates["system.background"] = backgroundKey;
+    const updates = this._buildHumanUpdates(approaches, skills, {
+      nationalityKey,
+      backgroundKey,
+      viewDolls,
+      newName
+    });
 
-    const currentHumanity = 0;
-    updates["system.humanity"] = viewDolls === "favor" ? currentHumanity + 5 : currentHumanity;
-
-    if (newName) updates["name"] = newName;
-
-    const notesPieces = [];
-    notesPieces.push(`Nationality: ${nationality.label}`);
-    notesPieces.push(`Background: ${background.label}`);
-
-    if (disciplineLabel) notesPieces.push(`Discipline: ${disciplineLabel}`);
-
-    const advantageName = await this._ensureNarrativeFromBuilder("advantage", "distinction");
-    const disadvantageName = await this._ensureNarrativeFromBuilder("disadvantage", "adversity");
-    const passionName = await this._ensureNarrativeFromBuilder("passion", "passion");
-    const anxietyName = await this._ensureNarrativeFromBuilder("anxiety", "anxiety");
-
-    if (advantageName) notesPieces.push(`Advantage: ${advantageName}`);
-    if (disadvantageName) notesPieces.push(`Disadvantage: ${disadvantageName}`);
-    if (passionName) notesPieces.push(`Passion: ${passionName}`);
-    if (anxietyName) notesPieces.push(`Anxiety: ${anxietyName}`);
-
-    if (viewDolls === "favor") {
-      notesPieces.push("Views Dolls as partners (+5 Humanity)");
-    } else if (viewDollsSkill) {
-      notesPieces.push(`Views Dolls as tools (Skill: ${GFL5R_CONFIG.getSkillLabel(viewDollsSkill)} to 1)`);
-    }
-    if (goal) notesPieces.push(`Goal: ${goal}`);
-    if (nameMeaning) notesPieces.push(`Name meaning: ${nameMeaning}`);
-    if (storyEnd) notesPieces.push(`Story end: ${storyEnd}`);
-    if (additionalNotes) notesPieces.push(additionalNotes);
-
-    const notesBlock = `Character Builder (Human)\n${notesPieces.join("\n")}`;
+    const notesBlock = await this._buildHumanNotes({
+      nationality,
+      background,
+      disciplineLabel,
+      viewDolls,
+      viewDollsSkill,
+      goal,
+      nameMeaning,
+      storyEnd,
+      additionalNotes
+    });
     updates["system.notes"] = notesBlock;
 
     await this.actor.update(updates);
@@ -572,6 +658,140 @@ class CharacterBuilderApp extends FormApplication {
     await this._persistBuilderState();
 
     ui.notifications?.info("Character builder applied to this actor.");
+  }
+
+  _validateHumanBuilder(nationality, background) {
+    if (!nationality) {
+      ui.notifications?.warn("Pick a nationality to continue.");
+      return false;
+    }
+    if (!background) {
+      ui.notifications?.warn("Pick a background to continue.");
+      return false;
+    }
+    if (!this.builderState.discipline) {
+      ui.notifications?.warn("Drop a starting Discipline before applying.");
+      this.builderState.step = 3;
+      this.render(false);
+      return false;
+    }
+    return true;
+  }
+
+  async _resetActorForBuilder() {
+    const allItemIds = this.actor.items.map(i => i.id);
+    if (allItemIds.length) await this.actor.deleteEmbeddedDocuments("Item", allItemIds);
+    await this.actor.update({ "system.disciplines": {} });
+  }
+
+  _initHumanApproaches(nationality, background) {
+    const approaches = { power: 1, swiftness: 1, resilience: 1, precision: 1, fortune: 1 };
+    const bump = (key) => {
+      if (!key) return;
+      approaches[key] = Number(approaches[key] ?? 0) + 1;
+    };
+    nationality.approaches.forEach(bump);
+    bump(background.approach);
+    return approaches;
+  }
+
+  _initHumanSkills(background, viewDolls, viewDollsSkill) {
+    const skills = {};
+    const ensureSkillAtLeast = (key, min) => {
+      if (!key) return;
+      const current = Number(skills[key] ?? 0);
+      if (current < min) skills[key] = min;
+    };
+    ensureSkillAtLeast(background.skill, 1);
+    if (viewDolls === "tools" && viewDollsSkill) {
+      ensureSkillAtLeast(viewDollsSkill, 1);
+    }
+    return skills;
+  }
+
+  _addSkillRanks(skills, key, delta = 1) {
+    if (!key || !delta) return;
+    const current = Number(skills[key] ?? 0);
+    skills[key] = current + delta;
+  }
+
+  _buildHumanUpdates(approaches, skills, meta) {
+    const updates = {};
+    for (const [k, v] of Object.entries(approaches)) {
+      updates[`system.approaches.${k}`] = v;
+    }
+    updates["system.skills"] = skills;
+    updates["system.characterType"] = "human";
+    updates["system.nationality"] = meta.nationalityKey;
+    updates["system.background"] = meta.backgroundKey;
+    updates["system.humanity"] = meta.viewDolls === "favor" ? 5 : 0;
+    if (meta.newName) updates["name"] = meta.newName;
+    return updates;
+  }
+
+  _buildHumanNotes({
+    nationality,
+    background,
+    disciplineLabel,
+    viewDolls,
+    viewDollsSkill,
+    goal,
+    nameMeaning,
+    storyEnd,
+    additionalNotes
+  }) {
+    const notesPieces = [
+      `Nationality: ${nationality.label}`,
+      `Background: ${background.label}`
+    ];
+    if (disciplineLabel) notesPieces.push(`Discipline: ${disciplineLabel}`);
+
+    const narratives = [
+      { label: "Advantage", key: "advantage", type: "distinction" },
+      { label: "Disadvantage", key: "disadvantage", type: "adversity" },
+      { label: "Passion", key: "passion", type: "passion" },
+      { label: "Anxiety", key: "anxiety", type: "anxiety" }
+    ];
+
+    const narrativePromises = narratives.map(cfg => this._ensureNarrativeFromBuilder(cfg.key, cfg.type)
+      .then(value => (value ? `${cfg.label}: ${value}` : "")));
+
+    // This helper is synchronous to keep complexity low in the caller; async narratives handled there.
+    const addDynamicNotes = async () => {
+      const narrativeStrings = await Promise.all(narrativePromises);
+      narrativeStrings.filter(Boolean).forEach(str => notesPieces.push(str));
+    };
+
+    const addViewDollsNote = () => {
+      if (viewDolls === "favor") {
+        notesPieces.push("Views Dolls as partners (+5 Humanity)");
+      } else if (viewDollsSkill) {
+        notesPieces.push(`Views Dolls as tools (Skill: ${GFL5R_CONFIG.getSkillLabel(viewDollsSkill)} to 1)`);
+      }
+    };
+
+    const addOptionalText = () => {
+      [
+        ["Goal", goal],
+        ["Name meaning", nameMeaning],
+        ["Story end", storyEnd],
+        ["", additionalNotes]
+      ].forEach(([label, value]) => {
+        if (!value) return;
+        notesPieces.push(label ? `${label}: ${value}` : value);
+      });
+    };
+
+    // Compose notes
+    const build = async () => {
+      await addDynamicNotes();
+      addViewDollsNote();
+      addOptionalText();
+      return `Character Builder (Human)\n${notesPieces.join("\n")}`;
+    };
+
+    // Caller awaits this function, so return a promise.
+    return build();
   }
 
   async _applyTdollBuilder(formData) {
@@ -589,15 +809,11 @@ class CharacterBuilderApp extends FormApplication {
 
     const frame = TDOLL_FRAMES.find(f => f.key === frameKey);
 
-    if (!frame) {
-      ui.notifications?.warn("Pick a frame to continue.");
-      return;
-    }
+    if (!frame) return ui.notifications?.warn("Pick a frame to continue.");
     if (!this.builderState.discipline) {
       ui.notifications?.warn("Drop a weapon imprint Discipline before applying.");
       this.builderState.step = 2;
-      this.render(false);
-      return;
+      return this.render(false);
     }
 
     // Overwrite sheet from a clean state
@@ -629,54 +845,51 @@ class CharacterBuilderApp extends FormApplication {
     updates["system.characterType"] = "doll";
     updates["system.frame"] = frameKey;
 
-    let currentHumanity = 0;
-    let currentFame = 0;
+    const { humanityDelta, fameDelta, note: nameOriginNote } = (() => {
+      switch (nameOrigin) {
+        case "human":
+          return { humanityDelta: 5, fameDelta: 0, note: "Human Name (+5 Humanity)" };
+        case "callsign":
+          return { humanityDelta: 0, fameDelta: 5, note: "Callsign (+5 Fame)" };
+        case "weapon":
+          ensureSkillAtLeast("firearms", (skills["firearms"] ?? 0) + 1);
+          return { humanityDelta: -5, fameDelta: 0, note: "Weapon Imprint (+1 Firearms, -5 Humanity)" };
+        case "weird":
+          return { humanityDelta: 0, fameDelta: -5, note: "Weird Name (-5 Fame, +1 Module point)" };
+        default:
+          return { humanityDelta: 0, fameDelta: 0, note: "" };
+      }
+    })();
 
-    // Apply name origin bonuses
-    if (nameOrigin === "human") {
-      currentHumanity += 5;
-    } else if (nameOrigin === "callsign") {
-      currentFame += 5;
-    } else if (nameOrigin === "weapon") {
-      ensureSkillAtLeast("firearms", (skills["firearms"] ?? 0) + 1);
-      currentHumanity -= 5;
-    } else if (nameOrigin === "weird") {
-      currentFame -= 5;
-      // +1 Upgrade Module point (not yet implemented in system)
-    }
-
-    updates["system.humanity"] = currentHumanity;
-    updates["system.fame"] = currentFame;
+    updates["system.humanity"] = humanityDelta;
+    updates["system.fame"] = fameDelta;
 
     if (newName) updates["name"] = newName;
 
-    const notesPieces = [];
-    notesPieces.push(`Frame: ${frame.manufacturer} ${frame.model}`);
-
+    const notesPieces = [`Frame: ${frame.manufacturer} ${frame.model}`];
     if (disciplineLabel) notesPieces.push(`Weapon Imprint: ${disciplineLabel}`);
+    if (nameOriginNote) notesPieces.push(nameOriginNote);
 
-    const advantageName = await this._ensureNarrativeFromBuilder("advantage", "distinction");
-    const disadvantageName = await this._ensureNarrativeFromBuilder("disadvantage", "adversity");
-    const passionName = await this._ensureNarrativeFromBuilder("passion", "passion");
-    const anxietyName = await this._ensureNarrativeFromBuilder("anxiety", "anxiety");
+    const narrativeConfigs = [
+      { label: "Advantage", key: "advantage", type: "distinction" },
+      { label: "Disadvantage", key: "disadvantage", type: "adversity" },
+      { label: "Passion", key: "passion", type: "passion" },
+      { label: "Anxiety", key: "anxiety", type: "anxiety" }
+    ];
+    for (const cfg of narrativeConfigs) {
+      const value = await this._ensureNarrativeFromBuilder(cfg.key, cfg.type);
+      if (value) notesPieces.push(`${cfg.label}: ${value}`);
+    }
 
-    if (advantageName) notesPieces.push(`Advantage: ${advantageName}`);
-    if (disadvantageName) notesPieces.push(`Disadvantage: ${disadvantageName}`);
-    if (passionName) notesPieces.push(`Passion: ${passionName}`);
-    if (anxietyName) notesPieces.push(`Anxiety: ${anxietyName}`);
-
-    const nameOriginLabels = {
-      human: "Human Name (+5 Humanity)",
-      callsign: "Callsign (+5 Fame)",
-      weapon: "Weapon Imprint (+1 Firearms, -5 Humanity)",
-      weird: "Weird Name (-5 Fame, +1 Module point)"
-    };
-    notesPieces.push(`Name Origin: ${nameOriginLabels[nameOrigin] ?? nameOrigin}`);
-
-    if (metCommander) notesPieces.push(`Met Commander: ${metCommander}`);
-    if (goal) notesPieces.push(`Goal: ${goal}`);
-    if (storyEnd) notesPieces.push(`Story end: ${storyEnd}`);
-    if (additionalNotes) notesPieces.push(additionalNotes);
+    [
+      ["Met Commander", metCommander],
+      ["Goal", goal],
+      ["Story end", storyEnd],
+      ["", additionalNotes]
+    ].forEach(([label, value]) => {
+      if (!value) return;
+      notesPieces.push(label ? `${label}: ${value}` : value);
+    });
 
     const notesBlock = `Character Builder (T-Doll)\n${notesPieces.join("\n")}`;
     updates["system.notes"] = notesBlock;
@@ -692,51 +905,19 @@ class CharacterBuilderApp extends FormApplication {
     const drop = this.builderState.discipline;
     if (!drop) return { label: "", associatedSkills: [] };
 
-    let source = null;
-    if (drop.uuid) {
-      try {
-        source = await fromUuid(drop.uuid);
-      } catch (err) {
-        console.error(err);
-      }
-    }
-
-    if (!source && drop.data) {
-      const ItemCls = Item.implementation ?? Item;
-      source = new ItemCls(foundry.utils.duplicate(drop.data), { temporary: true });
-    }
-
-    const associatedSkills = Array.isArray(source?.system?.associatedSkills)
-      ? [...source.system.associatedSkills]
-      : Array.isArray(drop.data?.system?.associatedSkills)
-        ? [...drop.data.system.associatedSkills]
-        : [];
-
+    const source = await this._resolveDisciplineSource(drop);
+    const associatedSkills = this._collectAssociatedSkills(source, drop);
     if (!source) return { label: drop.name || "", associatedSkills };
 
-    let targetId = null;
-    let createdName = drop.name;
-
-    if (source.parent === this.actor) {
-      targetId = source.id;
-      createdName = source.name;
-    } else {
-      const itemData = source.toObject();
-      itemData.type = "discipline";
-      const [created] = await this.actor.createEmbeddedDocuments("Item", [itemData]);
-      targetId = created?.id ?? null;
-      createdName = created?.name ?? drop.name;
-    }
-
-    if (!targetId) return { label: createdName || "", associatedSkills };
+    const targetId = await this._ensureDisciplineItemOnActor(source);
+    if (!targetId) return { label: source.name || drop.name || "", associatedSkills };
 
     const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
     const slotKey = "slot1";
     const slot = disciplines[slotKey] ?? { disciplineId: null, xp: 0, rank: 1, abilities: [] };
 
     if (slot.disciplineId && slot.disciplineId !== targetId) {
-      const toDelete = [slot.disciplineId, ...(slot.abilities ?? [])].filter(id => this.actor.items.get(id));
-      if (toDelete.length) await this.actor.deleteEmbeddedDocuments("Item", toDelete);
+      await this._removeDisciplineSlotItems(slot);
     }
 
     disciplines[slotKey] = {
@@ -747,7 +928,49 @@ class CharacterBuilderApp extends FormApplication {
     };
 
     await this.actor.update({ "system.disciplines": disciplines });
-    return { label: createdName, associatedSkills };
+    return { label: source.name || drop.name || "", associatedSkills };
+  }
+
+  async _resolveDisciplineSource(drop) {
+    if (drop.uuid) {
+      try {
+        return await fromUuid(drop.uuid);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    if (drop.data) {
+      const ItemCls = Item.implementation ?? Item;
+      return new ItemCls(foundry.utils.duplicate(drop.data), { temporary: true });
+    }
+    return null;
+  }
+
+  _collectAssociatedSkills(source, drop) {
+    if (Array.isArray(source?.system?.associatedSkills)) {
+      return [...source.system.associatedSkills];
+    }
+    if (Array.isArray(drop.data?.system?.associatedSkills)) {
+      return [...drop.data.system.associatedSkills];
+    }
+    return [];
+  }
+
+  async _ensureDisciplineItemOnActor(source) {
+    if (source.parent === this.actor) return source.id;
+
+    const itemData = source.toObject();
+    itemData.type = "discipline";
+    const [created] = await this.actor.createEmbeddedDocuments("Item", [itemData]);
+    return created?.id ?? null;
+  }
+
+  async _removeDisciplineSlotItems(slot) {
+    const ids = [slot.disciplineId, ...(slot.abilities ?? [])]
+      .filter(id => id && this.actor.items.has(id));
+    if (ids.length) {
+      await this.actor.deleteEmbeddedDocuments("Item", ids);
+    }
   }
 
   async _ensureNarrativeFromBuilder(key, narrativeType) {
@@ -811,6 +1034,45 @@ export class GFL5RActorSheet extends ActorSheet {
     return `systems/${game.system.id}/templates/actor-sheet.html`;
   }
 
+  /**
+   * Reuse builder helper methods for the sheet context.
+   */
+  _buildApproachList(approachesData = {}) {
+    return CharacterBuilderApp.prototype._buildApproachList.call(this, approachesData);
+  }
+
+  _buildCollapse(approachesList, resources = {}) {
+    return CharacterBuilderApp.prototype._buildCollapse.call(this, approachesList, resources);
+  }
+
+  _buildPreparedState(preparedFlag) {
+    return CharacterBuilderApp.prototype._buildPreparedState.call(this, preparedFlag);
+  }
+
+  _buildOriginDisplay(characterType, data) {
+    return CharacterBuilderApp.prototype._buildOriginDisplay.call(this, characterType, data);
+  }
+
+  _buildDisciplineSlots(disciplinesData) {
+    return CharacterBuilderApp.prototype._buildDisciplineSlots.call(this, disciplinesData);
+  }
+
+  _collectDisciplineAbilityIds(slots) {
+    return CharacterBuilderApp.prototype._collectDisciplineAbilityIds.call(this, slots);
+  }
+
+  _mapItemsByType(type, predicate = () => true) {
+    return CharacterBuilderApp.prototype._mapItemsByType.call(this, type, predicate);
+  }
+
+  _filterNarratives(items, allowedTypes) {
+    return CharacterBuilderApp.prototype._filterNarratives.call(this, items, allowedTypes);
+  }
+
+  _buildInventory(disciplineIds, disciplineAbilityIds) {
+    return CharacterBuilderApp.prototype._buildInventory.call(this, disciplineIds, disciplineAbilityIds);
+  }
+
   async getData(options) {
     sheetDebug("ActorSheet#getData", { actor: this.actor?.id, name: this.actor?.name });
     const context = await super.getData(options);
@@ -818,210 +1080,34 @@ export class GFL5RActorSheet extends ActorSheet {
 
     context.derived = computeDerivedStats(data.approaches, data.resources);
     context.availableXP = Number(data.xp ?? 0);
+    context.approachesList = this._buildApproachList(data.approaches);
+    context.collapse = this._buildCollapse(context.approachesList, data.resources);
+    context.preparedState = this._buildPreparedState(data.prepared);
 
-    // Approaches for card rendering
-    const approachesData = data.approaches ?? {};
-    context.approachesList = [
-      { key: "power", label: "Power", value: Number(approachesData.power ?? 0) },
-      { key: "swiftness", label: "Swiftness", value: Number(approachesData.swiftness ?? 0) },
-      { key: "resilience", label: "Resilience", value: Number(approachesData.resilience ?? 0) },
-      { key: "precision", label: "Precision", value: Number(approachesData.precision ?? 0) },
-      { key: "fortune", label: "Fortune", value: Number(approachesData.fortune ?? 0) }
-    ];
-
-    const collapseCurrent = Number(data.resources?.collapse ?? 0);
-    const collapseCapacity = Math.max(0, context.approachesList.reduce((sum, a) => sum + (Number(a.value ?? 0)), 0) * 5);
-    const collapsePercent = collapseCapacity > 0 ? Math.min(1, Math.max(0, collapseCurrent / collapseCapacity)) : 0;
-    const collapseHue = 120 - (collapsePercent * 120);
-    context.collapse = {
-      current: collapseCurrent,
-      capacity: collapseCapacity,
-      percent: collapsePercent,
-      barWidth: `${(collapsePercent * 100).toFixed(1)}%`,
-      barColor: `hsl(${collapseHue}, 70%, 45%)`
-    };
-
-    const preparedDefaultSetting = game.settings.get("gfl5r", "initiative-prepared-character") || "true";
-    const preparedFlag = data.prepared;
-    context.preparedState = typeof preparedFlag === "boolean"
-      ? preparedFlag
-      : (preparedFlag === "true" ? true : (preparedFlag === "false" ? false : preparedDefaultSetting === "true"));
-
-    // Character type for modules visibility
     context.characterType = data.characterType ?? "human";
     context.showModules = (context.characterType === "doll" || context.characterType === "transhumanist");
+    context.originDisplay = this._buildOriginDisplay(context.characterType, data);
 
-    // Origin display for humans and dolls
-    let originDisplay = "";
-    if (context.characterType === "human" && (data.nationality || data.background)) {
-      const nat = HUMAN_NATIONALITIES.find(n => n.key === data.nationality);
-      const bg = HUMAN_BACKGROUNDS.find(b => b.key === data.background);
-      const parts = [];
-      if (nat) parts.push(nat.label);
-      if (bg) parts.push(bg.label);
-      originDisplay = parts.join(" • ");
-    } else if (context.characterType === "doll" && data.frame) {
-      const frame = TDOLL_FRAMES.find(f => f.key === data.frame);
-      if (frame) {
-        // Extract manufacturer name without location (remove parenthetical)
-        const manufacturerShort = frame.manufacturer.split('(')[0].trim();
-        originDisplay = `${manufacturerShort} ${frame.model}`;
-      }
-    }
-    context.originDisplay = originDisplay;
-
-    // Expose skills and labels for rendering
     context.skills = data.skills ?? {};
     context.skillGroups = GFL5R_CONFIG.skillGroups;
 
-    // Process disciplines
-    const disciplinesData = data.disciplines ?? {};
-    context.disciplineSlots = [];
-    
-    for (let i = 1; i <= GFL5R_CONFIG.maxDisciplineSlots; i++) {
-      const slotKey = `slot${i}`;
-      const slotData = disciplinesData[slotKey] ?? {
-        disciplineId: null,
-        xp: 0,
-        rank: 1,
-        abilities: []
-      };
-      
-      let disciplineItem = null;
-      if (slotData.disciplineId) {
-        disciplineItem = this.actor.items.get(slotData.disciplineId);
-      }
+    context.disciplineSlots = this._buildDisciplineSlots(data.disciplines ?? {});
+    const disciplineAbilityIds = this._collectDisciplineAbilityIds(context.disciplineSlots);
+    context.abilities = this._mapItemsByType("ability", (i) => !disciplineAbilityIds.has(i.id));
 
-      const associatedSkills = Array.isArray(disciplineItem?.system?.associatedSkills)
-        ? disciplineItem.system.associatedSkills
-        : [];
-      const associatedSkillLabels = associatedSkills
-        .map(key => GFL5R_CONFIG.getSkillLabel(key))
-        .filter(label => label);
-      
-      // Get abilities for this discipline
-      const disciplineAbilities = (slotData.abilities ?? [])
-        .map(abilityId => this.actor.items.get(abilityId))
-        .filter(a => a); // Remove null entries
-      
-      // Calculate XP remaining for next rank
-      const xpForNextRank = GFL5R_CONFIG.getXPForNextRank(slotData.rank ?? 1);
-      const xpRemaining = xpForNextRank ? (xpForNextRank - (slotData.xp ?? 0)) : null;
-      
-      context.disciplineSlots.push({
-        slotKey,
-        slotNumber: i,
-        discipline: disciplineItem ? {
-          id: disciplineItem.id,
-          name: disciplineItem.name,
-          img: disciplineItem.img,
-          system: disciplineItem.system ?? {}
-        } : null,
-        xp: slotData.xp ?? 0,
-        rank: slotData.rank ?? 1,
-        xpForNext: xpForNextRank,
-        xpRemaining: xpRemaining > 0 ? xpRemaining : null,
-        abilities: disciplineAbilities.map(a => ({
-          id: a.id,
-          name: a.name,
-          img: a.img,
-          system: a.system ?? {}
-        })),
-        associatedSkills,
-        associatedSkillText: associatedSkillLabels.join(", ")
-      });
-    }
-
-    // Filter items by type
-    // Get all discipline ability IDs to exclude from general abilities
-    const disciplineAbilityIds = new Set();
-    context.disciplineSlots.forEach(slot => {
-      if (slot.abilities) {
-        slot.abilities.forEach(ability => disciplineAbilityIds.add(ability.id));
-      }
-    });
-    
-    // Only show abilities that are NOT assigned to any discipline
-    context.abilities = this.actor.items
-      .filter(i => i.type === "ability" && !disciplineAbilityIds.has(i.id))
-      .map(i => ({
-        id: i.id,
-        name: i.name,
-        img: i.img,
-        system: i.system ?? {}
-      }));
-
-    // Narrative items - split by type
     const narrativeItems = this.actor.items.filter(i => i.type === "narrative");
-    context.narrativePositive = narrativeItems
-      .filter(i => i.system.narrativeType === "distinction" || i.system.narrativeType === "passion")
-      .map(i => ({
-        id: i.id,
-        name: i.name,
-        img: i.img,
-        system: i.system ?? {}
-      }));
-    context.narrativeNegative = narrativeItems
-      .filter(i => i.system.narrativeType === "adversity" || i.system.narrativeType === "anxiety")
-      .map(i => ({
-        id: i.id,
-        name: i.name,
-        img: i.img,
-        system: i.system ?? {}
-      }));
+    context.narrativePositive = this._filterNarratives(narrativeItems, ["distinction", "passion"]);
+    context.narrativeNegative = this._filterNarratives(narrativeItems, ["adversity", "anxiety"]);
 
-    context.conditions = this.actor.items.filter(i => i.type === "condition").map(i => ({
-      id: i.id,
-      name: i.name,
-      img: i.img,
-      system: i.system ?? {}
-    }));
+    context.conditions = this._mapItemsByType("condition");
+    context.weapons = this._mapItemsByType("weaponry");
+    context.armor = this._mapItemsByType("armor");
+    context.modules = this._mapItemsByType("module");
 
-    // Combat tab - weapons and armor
-    context.weapons = this.actor.items.filter(i => i.type === "weaponry").map(i => ({
-      id: i.id,
-      name: i.name,
-      img: i.img,
-      system: i.system ?? {}
-    }));
-    context.armor = this.actor.items.filter(i => i.type === "armor").map(i => ({
-      id: i.id,
-      name: i.name,
-      img: i.img,
-      system: i.system ?? {}
-    }));
-
-    // Modules tab
-    context.modules = this.actor.items.filter(i => i.type === "module").map(i => ({
-      id: i.id,
-      name: i.name,
-      img: i.img,
-      system: i.system ?? {}
-    }));
-
-    // Inventory - exclude disciplines, their abilities, and narrative items
     const disciplineIds = new Set(
-      context.disciplineSlots
-        .filter(slot => slot.discipline)
-        .map(slot => slot.discipline.id)
+      context.disciplineSlots.filter(slot => slot.discipline).map(slot => slot.discipline.id)
     );
-    
-    context.inventory = this.actor.items
-      .filter(i => 
-        i.type !== "discipline" && 
-        i.type !== "narrative" &&
-        i.type !== "module" &&
-        i.type !== "condition" &&
-        !disciplineIds.has(i.id) && 
-        !disciplineAbilityIds.has(i.id)
-      )
-      .map(i => ({
-        id: i.id,
-        name: i.name,
-        type: i.type,
-        img: i.img,
-        system: i.system ?? {}
-      }));
+    context.inventory = this._buildInventory(disciplineIds, disciplineAbilityIds);
 
     return context;
   }
@@ -1056,45 +1142,8 @@ export class GFL5RActorSheet extends ActorSheet {
     };
 
     const rollSkill = async (key, skillLabel) => {
-      const approaches = this.actor.system?.approaches ?? {};
-
-      const content = await renderTemplate(`systems/${game.system.id}/templates/roll-prompt.html`, {
-        approaches,
-        defaultTN: 2
-      });
-
-      new Dialog({
-        title: `Roll ${skillLabel}`,
-        content,
-        buttons: {
-          roll: {
-            label: "Roll",
-            callback: async (dlg) => {
-              const form = dlg[0].querySelector("form");
-              const approachName = form.elements["approach"].value;
-              const tnHidden = form.elements["hiddenTN"].checked;
-              const tnVal = Number(form.elements["tn"].value || 0);
-              const approachVal = Number(approaches[approachName] ?? 0);
-
-              const { GFLRollerApp } = await import("./dice.js");
-              const app = new GFLRollerApp({
-                actor: this.actor,
-                skillKey: key,
-                skillLabel,
-                approach: approachVal,
-                approachName,
-                tn: tnHidden ? null : tnVal,
-                hiddenTN: tnHidden
-              });
-              await app.start();
-            }
-          },
-          cancel: { label: "Cancel" }
-        },
-        default: "roll"
-      }, {
-        classes: ["sheet"]
-      }).render(true);
+      const dlg = new GFL5RPickerDialog(this.actor, { skillKey: key });
+      dlg.render(true);
     };
 
     // Increase skill rank using XP
@@ -1211,41 +1260,33 @@ export class GFL5RActorSheet extends ActorSheet {
     html.on("click", "[data-action='remove-discipline']", async ev => {
       const slotKey = ev.currentTarget?.dataset?.slotKey;
       if (!slotKey) return;
-      
+
       const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
-      if (disciplines[slotKey]) {
-        const toDelete = [];
-        const disciplineId = disciplines[slotKey].disciplineId;
-        
-        // Check if discipline exists before adding to delete list
-        if (disciplineId && this.actor.items.get(disciplineId)) {
-          toDelete.push(disciplineId);
-        }
-        
-        // Check if abilities exist before adding to delete list
-        if (disciplines[slotKey].abilities?.length) {
-          for (const abilityId of disciplines[slotKey].abilities) {
-            if (this.actor.items.get(abilityId)) {
-              toDelete.push(abilityId);
-            }
-          }
-        }
-        
-        // Delete all items that exist
-        if (toDelete.length > 0) {
-          await this.actor.deleteEmbeddedDocuments("Item", toDelete);
-        }
-        
-        // Reset slot
-        disciplines[slotKey] = {
-          disciplineId: null,
-          xp: 0,
-          rank: 1,
-          abilities: []
-        };
-        
-        await this.actor.update({ "system.disciplines": disciplines });
+      const slot = disciplines[slotKey];
+      if (!slot) return;
+
+      const toDelete = [];
+      const disciplineId = slot.disciplineId;
+      if (disciplineId && this.actor.items.has(disciplineId)) {
+        toDelete.push(disciplineId);
       }
+
+      (slot.abilities ?? []).forEach(id => {
+        if (this.actor.items.has(id)) toDelete.push(id);
+      });
+
+      if (toDelete.length) {
+        await this.actor.deleteEmbeddedDocuments("Item", toDelete);
+      }
+
+      disciplines[slotKey] = {
+        disciplineId: null,
+        xp: 0,
+        rank: 1,
+        abilities: []
+      };
+
+      await this.actor.update({ "system.disciplines": disciplines });
     });
 
     // Update discipline XP
@@ -1363,169 +1404,153 @@ export class GFL5RActorSheet extends ActorSheet {
     return changed ? disciplines : null;
   }
 
-  /** Accept dropped Items (from compendia or sidebar) into the drop zones */
-  async _onDrop(event) {
-    sheetDebug("ActorSheet#_onDrop", { target: event.target?.dataset?.dropTarget });
-    const data = getDragEventDataSafe(event);
-    const flashDropTarget = (el) => {
-      if (!el) return;
-      el.classList.add("border", "border-success", "bg-success-subtle");
-      setTimeout(() => el.classList.remove("border-success", "bg-success-subtle"), 400);
+  _flashDropTarget(el) {
+    if (!el) return;
+    el.classList.add("border", "border-success", "bg-success-subtle");
+    setTimeout(() => el.classList.remove("border-success", "bg-success-subtle"), 400);
+  }
+
+  _getDropTarget(event) {
+    const finder = (selector) => event.target?.closest?.(selector);
+    const targets = [
+      ["abilities", "[data-drop-target='abilities']"],
+      ["narrative-positive", "[data-drop-target='narrative-positive']"],
+      ["narrative-negative", "[data-drop-target='narrative-negative']"],
+      ["inventory", "[data-drop-target='inventory']"],
+      ["modules", "[data-drop-target='modules']"],
+      ["condition", "[data-drop-target='condition']"],
+      ["discipline", "[data-drop-target='discipline']"],
+      ["discipline-ability", "[data-drop-target='discipline-ability']"]
+    ];
+
+    for (const [type, selector] of targets) {
+      const target = finder(selector);
+      if (target) return { target, type };
+    }
+    return { target: null, type: null };
+  }
+
+  async _applyDisciplineDrop(slotKey, itemDoc, rawItemData) {
+    if (!slotKey) return false;
+    let itemData = itemDoc.toObject?.() ?? foundry.utils.duplicate(rawItemData) ?? {};
+    itemData.type = "discipline";
+
+    const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
+    disciplines[slotKey] ??= { disciplineId: null, xp: 0, rank: 1, abilities: [] };
+
+    const current = disciplines[slotKey];
+    if (current.disciplineId) {
+      const toDelete = [current.disciplineId, ...(current.abilities ?? [])].filter(id => this.actor.items.has(id));
+      if (toDelete.length) await this.actor.deleteEmbeddedDocuments("Item", toDelete);
+    }
+
+    const [createdItem] = await this.actor.createEmbeddedDocuments("Item", [itemData]);
+    if (!createdItem) return false;
+
+    disciplines[slotKey] = {
+      disciplineId: createdItem.id,
+      xp: 0,
+      rank: 1,
+      abilities: []
     };
 
-    // Check which drop zone was targeted
-    const dropAbilities = event.target?.closest?.("[data-drop-target='abilities']");
-    const dropNarrativePos = event.target?.closest?.("[data-drop-target='narrative-positive']");
-    const dropNarrativeNeg = event.target?.closest?.("[data-drop-target='narrative-negative']");
-    const dropInventory = event.target?.closest?.("[data-drop-target='inventory']");
-    const dropModules = event.target?.closest?.("[data-drop-target='modules']");
-    const dropCondition = event.target?.closest?.("[data-drop-target='condition']");
-    
-    // Check for discipline slot drops
-    const dropDiscipline = event.target?.closest?.("[data-drop-target='discipline']");
-    const dropDisciplineAbility = event.target?.closest?.("[data-drop-target='discipline-ability']");
-    
-    const dropTarget = dropAbilities || dropNarrativePos || dropNarrativeNeg || dropInventory || dropModules || dropCondition || dropDiscipline || dropDisciplineAbility;
-    if (!dropTarget) return super._onDrop(event);
+    await this.actor.update({ "system.disciplines": disciplines });
+    return true;
+  }
 
-    const { item: itemDoc, itemData: rawItemData } = await resolveItemFromDropData(data);
-    if (!itemDoc) {
-      ui.notifications?.warn("Drop an Item from the sidebar or compendium.");
-      return;
+  async _applyDisciplineAbilityDrop(slotKey, itemDoc, dropTarget) {
+    if (!slotKey) return false;
+
+    const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
+    const slot = disciplines[slotKey];
+    if (!slot) return false;
+
+    const availableXP = Number(this.actor.system?.xp ?? 0);
+    const cost = 3;
+    if (availableXP < cost) {
+      dropTarget?.classList.add("border", "border-danger", "bg-danger-subtle");
+      setTimeout(() => dropTarget?.classList.remove("border-danger", "bg-danger-subtle"), 500);
+      ui.notifications?.warn("Not enough XP to add an ability to this discipline (costs 3 XP).");
+      return false;
     }
 
-    // Handle discipline slot drops
-    if (dropDiscipline) {
-      const slotKey = dropTarget.dataset.slotKey;
-      if (!slotKey) return;
-      
-      // Clone the item data
-      let itemData = itemDoc.toObject?.() ?? foundry.utils.duplicate(rawItemData) ?? {};
-      itemData.type = "discipline";
-      
-      // Update disciplines data
-      const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
-      if (!disciplines[slotKey]) {
-        disciplines[slotKey] = { disciplineId: null, xp: 0, rank: 1, abilities: [] };
-      }
-      
-      // Remove old discipline if exists
-      if (disciplines[slotKey].disciplineId) {
-        const oldDiscipline = this.actor.items.get(disciplines[slotKey].disciplineId);
-        const toDelete = [];
-        
-        // Add discipline to delete list if it exists
-        if (oldDiscipline) {
-          toDelete.push(disciplines[slotKey].disciplineId);
-        }
-        
-        // Add abilities to delete list if they exist
-        if (disciplines[slotKey].abilities?.length) {
-          for (const abilityId of disciplines[slotKey].abilities) {
-            if (this.actor.items.get(abilityId)) {
-              toDelete.push(abilityId);
-            }
-          }
-        }
-        
-        // Delete all items that exist
-        if (toDelete.length > 0) {
-          await this.actor.deleteEmbeddedDocuments("Item", toDelete);
-        }
-      }
-      
-      // Create the discipline item
-      const [createdItem] = await this.actor.createEmbeddedDocuments("Item", [itemData]);
-      
-      disciplines[slotKey].disciplineId = createdItem.id;
-      disciplines[slotKey].abilities = []; // Reset abilities list
-      await this.actor.update({ "system.disciplines": disciplines });
-      
-      flashDropTarget(dropTarget);
-      return;
-    }
+    const itemData = itemDoc.toObject?.() ?? {};
+    itemData.type = "ability";
+    const [createdItem] = await this.actor.createEmbeddedDocuments("Item", [itemData]);
+    if (!createdItem) return false;
 
-    // Handle discipline ability drops
-    if (dropDisciplineAbility) {
-      const slotKey = dropTarget.dataset.slotKey;
-      if (!slotKey) return;
+    slot.abilities ||= [];
+    slot.abilities.push(createdItem.id);
 
-      const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
-      if (!disciplines[slotKey]) return;
+    const updatedXP = Number(slot.xp ?? 0) + cost;
+    slot.xp = updatedXP;
+    slot.rank = GFL5R_CONFIG.getRankFromXP(updatedXP);
 
-      const availableXP = Number(this.actor.system?.xp ?? 0);
-      const cost = 3;
-      if (availableXP < cost) {
-        dropTarget.classList.add("border", "border-danger", "bg-danger-subtle");
-        setTimeout(() => dropTarget.classList.remove("border-danger", "bg-danger-subtle"), 500);
-        ui.notifications?.warn("Not enough XP to add an ability to this discipline (costs 3 XP).");
-        return;
-      }
+    await this.actor.update({
+      "system.xp": availableXP - cost,
+      "system.disciplines": disciplines
+    });
+    return true;
+  }
 
-      // Clone the item data
-      let itemData = itemDoc.toObject();
-      itemData.type = "ability";
+  _cloneItemDataForDrop(itemDoc, rawItemData, targetType) {
+    const itemData = itemDoc.toObject?.() ?? foundry.utils.duplicate(rawItemData) ?? {};
+    itemData.system ??= {};
 
-      // Create the ability item
-      const [createdItem] = await this.actor.createEmbeddedDocuments("Item", [itemData]);
-      if (!createdItem) return;
-
-      // Update disciplines data and actor XP
-      disciplines[slotKey].abilities ||= [];
-      disciplines[slotKey].abilities.push(createdItem.id);
-
-      const updatedXP = Number(disciplines[slotKey].xp ?? 0) + cost;
-      disciplines[slotKey].xp = updatedXP;
-      disciplines[slotKey].rank = GFL5R_CONFIG.getRankFromXP(updatedXP);
-
-      await this.actor.update({
-        "system.xp": availableXP - cost,
-        "system.disciplines": disciplines
-      });
-
-      flashDropTarget(dropTarget);
-      return;
-    }
-
-    // Clone the item data
-    let itemData = itemDoc.toObject?.() ?? foundry.utils.duplicate(rawItemData) ?? {};
-    if (!itemData.system) itemData.system = {};
-
-    // Handle different drop zones
-    if (dropAbilities) {
-      // Force type to ability
+    if (targetType === "abilities") {
       itemData.type = "ability";
       itemData.system.description ??= itemDoc.system?.description ?? "";
-    } else if (dropNarrativePos || dropNarrativeNeg) {
-      // Force type to narrative
+    } else if (targetType === "narrative-positive" || targetType === "narrative-negative") {
       itemData.type = "narrative";
       itemData.system.description ??= itemDoc.system?.description ?? "";
-      // Set narrative type based on drop zone
-      if (dropNarrativePos && !itemData.system.narrativeType) {
-        itemData.system.narrativeType = "distinction";
-      } else if (dropNarrativeNeg && !itemData.system.narrativeType) {
-        itemData.system.narrativeType = "adversity";
+      if (!itemData.system.narrativeType) {
+        itemData.system.narrativeType = targetType === "narrative-positive" ? "distinction" : "adversity";
       }
-    } else if (dropModules) {
-      // Force type to module
+    } else if (targetType === "modules") {
       itemData.type = "module";
       itemData.system.description ??= itemDoc.system?.description ?? "";
-    } else if (dropCondition) {
-      // Force type to condition
+    } else if (targetType === "condition") {
       itemData.type = "condition";
       itemData.system.description ??= itemDoc.system?.description ?? "";
       itemData.system.duration ??= itemDoc.system?.duration ?? "";
       itemData.system.tags ??= itemDoc.system?.tags ?? "";
-    } else if (dropInventory) {
-      // Keep original type for inventory (accepts all types)
+    } else if (targetType === "inventory") {
       itemData.system.description ??= itemDoc.system?.description ?? "";
     }
+    return itemData;
+  }
 
-    // Create on actor
+  /** Accept dropped Items (from compendia or sidebar) into the drop zones */
+  async _onDrop(event) {
+    sheetDebug("ActorSheet#_onDrop", { target: event.target?.dataset?.dropTarget });
+    const { target: dropTarget, type: targetType } = this._getDropTarget(event);
+    if (!dropTarget || !targetType) return super._onDrop(event);
+
+    const data = getDragEventDataSafe(event);
+    const { item: itemDoc, itemData: rawItemData } = await resolveItemFromDropData(data);
+    if (!itemDoc) {
+      ui.notifications?.warn("Drop an Item from the sidebar or compendium.");
+      return false;
+    }
+
+    if (targetType === "discipline") {
+      const slotKey = dropTarget.dataset.slotKey;
+      const handled = await this._applyDisciplineDrop(slotKey, itemDoc, rawItemData);
+      if (handled) this._flashDropTarget(dropTarget);
+      return handled;
+    }
+
+    if (targetType === "discipline-ability") {
+      const slotKey = dropTarget.dataset.slotKey;
+      const handled = await this._applyDisciplineAbilityDrop(slotKey, itemDoc, dropTarget);
+      if (handled) this._flashDropTarget(dropTarget);
+      return handled;
+    }
+
+    const itemData = this._cloneItemDataForDrop(itemDoc, rawItemData, targetType);
     await this.actor.createEmbeddedDocuments("Item", [itemData]);
-
-    // Subtle UI feedback
-    flashDropTarget(dropTarget);
+    this._flashDropTarget(dropTarget);
+    return true;
   }
 }
 
@@ -1545,25 +1570,8 @@ export class GFL5RNPCSheet extends ActorSheet {
   }
 
   async getData(options) {
-    console.log("GFL5R | NPC getData()");
-    const context = await super.getData(options);
-    const data = context.actor.system ?? {};
-
-    context.derived = computeDerivedStats(data.approaches, data.resources);
-
-    // Expose simplified skills
-    context.skills = data.skills ?? {};
-
-    // Features - all items (abilities, weapons, armor, narrative items, etc.)
-    context.features = this.actor.items.map(i => ({
-      id: i.id,
-      name: i.name,
-      type: i.type,
-      img: i.img,
-      system: i.system ?? {}
-    }));
-
-    return context;
+    // Reuse the primary actor sheet data builder for NPCs
+    return GFL5RActorSheet.prototype.getData.call(this, options);
   }
 
   activateListeners(html) {
@@ -1613,3 +1621,4 @@ export function registerActorSheets() {
     types: ["npc"]
   });
 }
+

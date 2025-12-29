@@ -31,15 +31,8 @@ export class GFL5RCombat extends Combat {
             if (!combatant || !actor) continue;
 
             const approaches = actor.system?.approaches ?? {};
-            const preparedFlag = actor.system?.prepared;
-            const preparedSetting = game.settings.get("gfl5r", "initiative-prepared-character") || "true";
-            const prepared = typeof preparedFlag === "boolean"
-                ? preparedFlag
-                : (preparedFlag === "true" ? true : (preparedFlag === "false" ? false : preparedSetting === "true"));
-
-            const baseInitiative = prepared
-                ? (approaches.power || 0) + (approaches.precision || 0)
-                : Math.ceil(((approaches.precision || 0) + (approaches.swiftness || 0)) / 2);
+            const prepared = this._isPrepared(actor);
+            const baseInitiative = this._computeBaseInitiative(approaches, prepared);
 
             if (actor.type === "character") {
                 const defaultApproach = prepared ? "precision" : "swiftness";
@@ -114,5 +107,22 @@ export class GFL5RCombat extends Combat {
             return a.name.localeCompare(b.name);
         }
         return b.initiative - a.initiative;
+    }
+
+    _isPrepared(actor) {
+        const preparedFlag = actor.system?.prepared;
+        if (typeof preparedFlag === "boolean") return preparedFlag;
+        if (preparedFlag === "true") return true;
+        if (preparedFlag === "false") return false;
+        const preparedSetting = game.settings.get("gfl5r", "initiative-prepared-character") || "true";
+        return preparedSetting === "true";
+    }
+
+    _computeBaseInitiative(approaches, prepared) {
+        const power = Number(approaches.power ?? 0);
+        const precision = Number(approaches.precision ?? 0);
+        const swiftness = Number(approaches.swiftness ?? 0);
+        if (prepared) return power + precision;
+        return Math.ceil((precision + swiftness) / 2);
     }
 }

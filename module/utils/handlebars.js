@@ -21,19 +21,22 @@ export function registerHandlebarsHelpers() {
   hbs.registerHelper("includes", (array, value) => Array.isArray(array) && array.includes(value));
 
   hbs.registerHelper("ifCond", function (v1, operator, v2, options) {
-    switch (operator) {
-      case "==": return v1 == v2 ? options.fn(this) : options.inverse(this);
-      case "===": return v1 === v2 ? options.fn(this) : options.inverse(this);
-      case "!=": return v1 != v2 ? options.fn(this) : options.inverse(this);
-      case "!==": return v1 !== v2 ? options.fn(this) : options.inverse(this);
-      case "<": return v1 < v2 ? options.fn(this) : options.inverse(this);
-      case "<=": return v1 <= v2 ? options.fn(this) : options.inverse(this);
-      case ">": return v1 > v2 ? options.fn(this) : options.inverse(this);
-      case ">=": return v1 >= v2 ? options.fn(this) : options.inverse(this);
-      case "&&": return v1 && v2 ? options.fn(this) : options.inverse(this);
-      case "||": return v1 || v2 ? options.fn(this) : options.inverse(this);
-      default: return options.inverse(this);
-    }
+    const pass = (() => {
+      switch (operator) {
+        case "==": return v1 == v2;
+        case "===": return v1 === v2;
+        case "!=": return v1 != v2;
+        case "!==": return v1 !== v2;
+        case "<": return v1 < v2;
+        case "<=": return v1 <= v2;
+        case ">": return v1 > v2;
+        case ">=": return v1 >= v2;
+        case "&&": return Boolean(v1 && v2);
+        case "||": return Boolean(v1 || v2);
+        default: return false;
+      }
+    })();
+    return pass ? options.fn(this) : options.inverse(this);
   });
 
   // Discipline helpers shared by actor sheets
@@ -53,10 +56,8 @@ export function registerHandlebarsHelpers() {
   hbs.registerHelper("isArray", (value) => Array.isArray(value));
   hbs.registerHelper("getNextEmptySlot", function (slots) {
     if (!Array.isArray(slots)) return "slot1";
-    for (const slot of slots) {
-      if (!slot.discipline) return slot.slotKey;
-    }
-    return "slot1";
+    const empty = slots.find((slot) => !slot.discipline);
+    return empty ? empty.slotKey : "slot1";
   });
 
   hbs.registerHelper("getDiceFaceUrl", function (diceClass, faceId) {
@@ -71,6 +72,17 @@ export function registerHandlebarsHelpers() {
   });
 
   hbs.registerHelper("stanceLabel", function (key) {
+    if (!key) return "";
+    return GFL5R_CONFIG.getApproachLabel?.(key) ?? key;
+  });
+
+  // Compatibility helpers used by imported L5R5E templates
+  hbs.registerHelper("localizeSkill", function (key /*, scope */) {
+    if (!key) return "";
+    return GFL5R_CONFIG.getSkillLabel?.(key) ?? key;
+  });
+
+  hbs.registerHelper("localizeRing", function (key) {
     if (!key) return "";
     return GFL5R_CONFIG.getApproachLabel?.(key) ?? key;
   });

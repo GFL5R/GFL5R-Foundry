@@ -56,7 +56,7 @@ function expandRoll(roll) {
     for (const r of d.results) {
       const m = mapResult(d, r.result);
       const dieObj = {
-        id: randomID(),
+        id: foundry.utils.randomID(),
         type: m.type,                   // "B" | "W"
         face: r.result,
         label: m.label,
@@ -198,7 +198,7 @@ export class GFLRollerApp extends Application {
       whiteCount > 0 ? `${whiteCount}ds` : null
     ].filter(Boolean).join(" + ") || "0";
 
-    const roll = await (new Roll(expr)).evaluate({ async:true });
+    const roll = await (new Roll(expr)).evaluate();
     this.pool = expandRoll(roll);
   }
 
@@ -242,6 +242,41 @@ export class GFLRollerApp extends Application {
     this.tally = t;
   }
 
+  _countRerolls() {
+    const count = { b: 0, w: 0, bExploded: 0, wExploded: 0 };
+    for (const die of this.toReroll) {
+      if (die.type === "B") {
+        if (die._fromExplosion) count.bExploded++; else count.b++;
+      } else if (die.type === "W") {
+        if (die._fromExplosion) count.wExploded++; else count.w++;
+      }
+    }
+    this.toReroll = [];
+    return count;
+  }
+
+  _countPendingExplosions() {
+    const count = { b: 0, w: 0 };
+    for (const e of this.pendingExplosions) {
+      if (e.type === "B") count.b++;
+      else if (e.type === "W") count.w++;
+    }
+    this.pendingExplosions = [];
+    return count;
+  }
+
+  _markExplosionDice(dice, remainingB, remainingW) {
+    for (const die of dice) {
+      if (die.type === "B" && remainingB > 0) {
+        die._fromExplosion = true;
+        remainingB--;
+      } else if (die.type === "W" && remainingW > 0) {
+        die._fromExplosion = true;
+        remainingW--;
+      }
+    }
+  }
+
   _generateChatContent() {
     this._recomputeTally();
     
@@ -279,37 +314,25 @@ export class GFLRollerApp extends Application {
   async _updateChatMessage() {
     const content = this._generateChatContent();
     
-    if (!this.chatMessageId) {
-      // Create new message
-      const msg = await ChatMessage.create({
-        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-        content,
-        flavor: `<strong>GFL5R Roll in Progress...</strong>`
-      });
-      this.chatMessageId = msg.id;
-    } else {
-      // Update existing message
+    if (this.chatMessageId) {
       const msg = game.messages.get(this.chatMessageId);
-      if (msg) {
-        await msg.update({ content });
-      }
+      if (msg) await msg.update({ content });
+      return;
     }
+
+    const msg = await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      content,
+      flavor: `<strong>GFL5R Roll in Progress...</strong>`
+    });
+    this.chatMessageId = msg.id;
   }
 
   async _continue() {
     this._recomputeTally();
 
-    // Track rerolls that were originally explosions
-    const bR = this.toReroll.filter(d => d.type === "B" && !d._fromExplosion).length;
-    const wR = this.toReroll.filter(d => d.type === "W" && !d._fromExplosion).length;
-    const bRE = this.toReroll.filter(d => d.type === "B" && d._fromExplosion).length;
-    const wRE = this.toReroll.filter(d => d.type === "W" && d._fromExplosion).length;
-    this.toReroll = [];
-
-    const bE = this.pendingExplosions.filter(e => e.type === "B").length;
-    const wE = this.pendingExplosions.filter(e => e.type === "W").length;
-    this.pendingExplosions = [];
-
+    const { b: bR, w: wR, bExploded: bRE, wExploded: wRE } = this._countRerolls();
+    const { b: bE, w: wE } = this._countPendingExplosions();
     const countB = bR + bRE + bE;
     const countW = wR + wRE + wE;
 
@@ -322,26 +345,14 @@ export class GFLRollerApp extends Application {
     this.stepNumber++;
 
     const expr = [
-      countB > 0 ? `${countB}d6` : null,
-      countW > 0 ? `${countW}d12` : null
+      countB > 0 ? `${countB}dr` : null,
+      countW > 0 ? `${countW}ds` : null
     ].filter(Boolean).join(" + ") || "0";
 
-    const roll = await (new Roll(expr)).evaluate({ async:true });
+    const roll = await (new Roll(expr)).evaluate();
     const next = expandRoll(roll);
 
-    // Mark explosion dice so they don't count against keep limit when kept
-    // This includes both new explosions and rerolled explosions
-    let remainingBE = bE + bRE;
-    let remainingWE = wE + wRE;
-    for (const d of next) {
-      if (d.type === "B" && remainingBE > 0) { 
-        d._fromExplosion = true; 
-        remainingBE--; 
-      } else if (d.type === "W" && remainingWE > 0) { 
-        d._fromExplosion = true; 
-        remainingWE--; 
-      }
-    }
+    this._markExplosionDice(next, bE + bRE, wE + wRE);
 
     // Auto-keep dice that came FROM explosions, put others in pool
     for (const d of next) {
@@ -383,8 +394,11 @@ export class GFLRollerApp extends Application {
     }
 
     const tnText = this.hiddenTN ? "(Hidden TN)" : `TN ${this.tn ?? 0}`;
-    const pass = this.hiddenTN ? null : (s >= (this.tn ?? 0));
-    const flavor = `<strong>${this.actor.name}</strong> rolls <em>${this.skillLabel}</em> with <em>${this.approachName}</em> — ${tnText}`;
+    let passText = "";
+    if (!this.hiddenTN) {
+      passText = s >= (this.tn ?? 0) ? "Success" : "Fail";
+    }
+    const flavor = `<strong>${this.actor.name}</strong> rolls <em>${this.skillLabel}</em> with <em>${this.approachName}</em> - ${tnText}`;
 
     const html = `
       <div class="card">
@@ -392,7 +406,7 @@ export class GFLRollerApp extends Application {
           <div><b>Final Successes:</b> ${s}</div>
           <div><b>Final Opportunity:</b> ${o}</div>
           <div><b>Final Strife:</b> ${r}</div>
-          ${pass === null ? "" : `<div><b>Result:</b> ${pass ? "Success" : "Fail"}</div>`}
+          ${this.hiddenTN ? "" : `<div><b>Result:</b> ${passText}</div>`}
         </div>
       </div>`;
 
@@ -413,14 +427,18 @@ export class GFLRollerApp extends Application {
 export function registerDiceTerms() {
   CONFIG.Dice ??= {};
   CONFIG.Dice.terms ??= {};
+
+  // Prefer the v2 namespaced Die to avoid deprecation warnings; fall back to global Die if needed.
+  const BaseDie = foundry?.dice?.terms?.Die ?? globalThis.Die;
+
   // Register denomination shortcuts for our faces (ring = r, ability = s)
-  CONFIG.Dice.terms["r"] = class RingTerm extends Die {
+  CONFIG.Dice.terms["r"] = class RingTerm extends BaseDie {
     constructor(termData) {
       super(termData);
       this.faces = 6;
     }
   };
-  CONFIG.Dice.terms["s"] = class AbilityTerm extends Die {
+  CONFIG.Dice.terms["s"] = class AbilityTerm extends BaseDie {
     constructor(termData) {
       super(termData);
       this.faces = 12;

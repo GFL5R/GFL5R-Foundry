@@ -97,24 +97,20 @@ export const GFL5R_CONFIG = {
   getRankFromXP(xp) {
     let rank = 1;
     let totalXP = 0;
-    for (let i = 0; i < this.disciplineXPPerRank.length; i++) {
-      if (xp >= totalXP + this.disciplineXPPerRank[i]) {
-        totalXP += this.disciplineXPPerRank[i];
-        rank++;
-      } else {
-        break;
-      }
+    for (const segment of this.disciplineXPPerRank) {
+      if (xp < totalXP + segment) break;
+      totalXP += segment;
+      rank++;
     }
     return rank;
   },
 
-  getSkillLabel(key) {
-    const safeKey = key ?? "";
+  getSkillLabel(key = "") {
     for (const group of this.skillGroups) {
-      const match = group.items.find(item => item.key === safeKey);
+      const match = group.items.find(item => item.key === key);
       if (match) return match.label;
     }
-    return safeKey;
+    return key;
   },
 
   getApproachLabel(key) {

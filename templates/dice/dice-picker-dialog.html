@@ -1,0 +1,89 @@
+<form class="l5r5e dice-picker-dialog" autocomplete="off">
+    <table>
+        <tr>
+            <td class="profil center">
+                <img class="profile-img" src="{{#if actor.img}}{{actor.img}}{{else}}icons/svg/mystery-man.svg{{/if}}" data-edit="img" alt="{{#if actor.name}}{{actor.name}}{{else}}mystery-man{{/if}}" />
+            </td>
+            <td class="center">
+                <ul class="rings">
+                    {{#each ringsList}}
+                    <li id="{{this.id}}">
+                        <label class="attribute-label {{this.id}} centered-input ring-selection pointer-choice">
+                            <i class="i_{{this.id}}"></i>
+                            <strong>{{this.label}}</strong>
+                            <input class="centered-input approach_{{this.id}}" type="radio" name="approach" data-ringid="{{this.id}}" value="{{this.id}}" {{#ifCond ../skill.ring '==' this.id}}checked{{/ifCond}} />
+                        </label>
+                    </li>
+                    {{/each}}
+                </ul>
+            </td>
+            <td class="skill">
+                <label>{{localizeSkill skill.cat 'title'}}</label>
+                <select class="attribute-dtype" name="skill">
+                    {{selectOptions skillList selected=skill.id valueAttr='id' labelAttr='label'}}
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td class="action center" colspan="3">
+                <button type="submit" class="btn-roll">{{localize "l5r5e.dice.dicepicker.roll"}}</button>
+            </td>
+        </tr>
+        <tr>
+            <td class="keep">
+                <div class="field">
+                    <label>{{localize "l5r5e.dice.dicepicker.keep"}}</label>
+                    <span class="adjuster">
+                        <button type="button" class="adjust-up">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <input type="number" name="keep" value="{{keep}}" min="1" max="10" />
+                        <button type="button" class="adjust-down">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </span>
+                </div>
+            </td>
+            <td class="dice">
+                <div class="dice-section">
+                    <label>{{localize "l5r5e.ring"}}</label>
+                    <span class="adjuster">
+                        <button type="button" class="adjust-up">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <input type="number" name="ring" value="{{skill.ringValue}}" min="0" max="10" />
+                        <button type="button" class="adjust-down">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </span>
+                </div>
+                <div class="dice-section">
+                    <label>{{localize "l5r5e.skill"}}</label>
+                    <span class="adjuster">
+                        <button type="button" class="adjust-up">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <input type="number" name="skill_dice" value="{{skill.value}}" min="0" max="10" />
+                        <button type="button" class="adjust-down">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </span>
+                </div>
+            </td>
+            <td class="options">
+                <div class="field">
+                    <label>{{localize "l5r5e.dice.dicepicker.difficulty"}}</label>
+                    <input type="number" name="difficulty" value="{{difficulty}}" min="0" max="10" />
+                </div>
+                <div class="field">
+                    <label>{{localize "l5r5e.dice.dicepicker.void_point"}}</label>
+                    <input type="checkbox" name="voidPointUsed" {{#if voidPointUsed}}checked{{/if}} />
+                </div>
+                <div class="field">
+                    <label>{{localize "l5r5e.dice.dicepicker.difficulty_hidden_label"}}</label>
+                    <input type="checkbox" name="difficultyHidden" {{#if difficultyHidden}}checked{{/if}} />
+                </div>
+            </td>
+        </tr>
+    </table>
+</form>
