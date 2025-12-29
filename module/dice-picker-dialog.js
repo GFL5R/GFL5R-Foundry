@@ -7,6 +7,7 @@ const getSystemId = () => CONFIG?.system?.id ?? game?.system?.id ?? "gfl5r";
 export class GFLDicePickerDialog extends HandlebarsApplicationMixin(ApplicationV2) {
   constructor(options = {}) {
     super(options);
+    console.log("GFL5R | dice picker constructor", { options });
     this.actor = options.actor || null;
     this.skillKey = options.skillKey || "";
     this.skillLabel = options.skillLabel || "";
@@ -28,7 +29,25 @@ export class GFLDicePickerDialog extends HandlebarsApplicationMixin(ApplicationV
     this._completed = false;
     this._hiddenAwarded = false;
 
+    // Pre-bind handlers for reliable attach/remove
+    this._boundRootClick = (ev) => {
+      const submit = ev?.target?.closest?.("[data-action='submit-roll']");
+      if (submit) {
+        console.log("GFL5R | dice picker root click -> submit", { target: ev?.target });
+        ev.preventDefault();
+        ev.stopPropagation();
+        this.onSubmit(ev);
+      }
+    };
+    this._boundRootSubmit = (ev) => {
+      console.log("GFL5R | dice picker root submit", { target: ev?.target });
+      this.onSubmit(ev);
+    };
+
     this._normalizeCat = (s) => (s || "").toString().toLowerCase().replace(/[^a-z0-9]/g, "");
+
+    // Legacy render hook (v1-style) to ensure we attach listeners even if ApplicationV2 bypasses activateListeners
+    Hooks.on("renderGFLDicePickerDialog", this._legacyRenderHook.bind(this));
 
     // Local adjustments (let user tweak dice without changing actor)
     this.ringAdjust = 0;
@@ -120,6 +139,7 @@ export class GFLDicePickerDialog extends HandlebarsApplicationMixin(ApplicationV
   static get eventListeners() {
     return [
       { event: "submit", selector: "form", callback: "onSubmit", preventDefault: true, stopPropagation: true },
+      { event: "click", selector: "[data-action='submit-roll']", callback: "onSubmit", preventDefault: true, stopPropagation: true },
       { event: "click", selector: "[data-action='ring-minus']", callback: "onRingMinus" },
       { event: "click", selector: "[data-action='ring-plus']", callback: "onRingPlus" },
       { event: "click", selector: "[data-action='skill-minus']", callback: "onSkillMinus" },
@@ -174,10 +194,15 @@ export class GFLDicePickerDialog extends HandlebarsApplicationMixin(ApplicationV
 
   // V2 event callbacks
   onSubmit(ev) {
+    console.log("GFL5R | dice picker onSubmit handler invoked", { source: ev?.type, target: ev?.target });
     ev?.preventDefault?.();
     ev?.stopPropagation?.();
-    const form = ev?.currentTarget ?? ev?.target?.closest?.("form");
-    const data = form ? foundry.utils.expandObject(Object.fromEntries(new FormData(form).entries())) : {};
+    const form = ev?.target?.closest?.("form") || this.element?.querySelector?.("form");
+    if (!(form instanceof HTMLFormElement)) {
+      console.warn("GFL5R | Dice picker onSubmit without form", { target: ev?.target, currentTarget: ev?.currentTarget });
+      return false;
+    }
+    const data = foundry.utils.expandObject(Object.fromEntries(new FormData(form).entries()));
     console.log("GFL5R | Dice picker onSubmit", { data });
     this._updateObject(ev, data);
     return false;
@@ -201,8 +226,21 @@ export class GFLDicePickerDialog extends HandlebarsApplicationMixin(ApplicationV
 
   activateListeners(html) {
     super.activateListeners?.(html);
-    const root = html instanceof HTMLElement ? html : html?.[0];
-    // V2 eventListeners handle submit; no extra global hooks needed
+    const root = html instanceof HTMLElement ? html : html?.[0] || this.element;
+    console.log("GFL5R | dice picker activateListeners", { rootExists: !!root, elementExists: !!this.element });
+    const form = root?.querySelector?.("form");
+    if (form) {
+      console.log("GFL5R | dice picker binding form submit", { formExists: true });
+      form.addEventListener("submit", this._boundRootSubmit, { capture: true });
+    } else {
+      console.warn("GFL5R | dice picker NO FORM FOUND IN ROOT", { root });
+    }
+    if (root?.addEventListener) {
+      root.addEventListener("click", this._boundRootClick, { capture: true });
+      console.log("GFL5R | dice picker bound root click listener");
+    } else {
+      console.warn("GFL5R | dice picker no root click binding");
+    }
     this._globalSubmitHandler = null;
   }
 
@@ -302,7 +340,31 @@ export class GFLDicePickerDialog extends HandlebarsApplicationMixin(ApplicationV
     }
   }
 
+  // Legacy render hook binder for safety
+  _legacyRenderHook(app, html) {
+    if (app !== this) return;
+    try {
+      const root = html?.[0] || html || this.element;
+      console.log("GFL5R | dice picker legacy render hook", { rootExists: !!root });
+      const form = root?.querySelector?.("form") || root?.querySelector?.("[data-part='picker'] form");
+      if (form) {
+        form.addEventListener("submit", this._boundRootSubmit, { capture: true });
+      }
+      root?.addEventListener?.("click", this._boundRootClick, { capture: true });
+    } catch (err) {
+      console.warn("GFL5R | dice picker legacy hook failed", err);
+    }
+  }
+
   async close(options) {
+    try {
+      const root = this.element;
+      root?.removeEventListener?.("click", this._boundRootClick, { capture: true });
+      const form = root?.querySelector?.("form");
+      form?.removeEventListener?.("submit", this._boundRootSubmit, { capture: true });
+    } catch (err) {
+      console.warn("GFL5R | dice picker close cleanup warning", err);
+    }
     try {
       await this._finish();
     } catch (err) {
@@ -353,3 +415,5 @@ export class GFLDicePickerDialog extends HandlebarsApplicationMixin(ApplicationV
     }
   }
 }
+
+console.log("GFL5R | dice-picker-dialog.js loaded");
