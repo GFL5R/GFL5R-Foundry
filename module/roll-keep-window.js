@@ -265,6 +265,7 @@ export class GFLDiceResultWindow extends HandlebarsApplicationMixin(ApplicationV
       speaker: ChatMessage.getSpeaker()
     });
     this.chatMessageId = message.id;
+    this._playDiceSound();
   }
 
   /**
@@ -275,6 +276,7 @@ export class GFLDiceResultWindow extends HandlebarsApplicationMixin(ApplicationV
     if (this.chatMessageId) {
       const content = this._generateKeptContent();
       await ChatMessage.updateDocuments([{ _id: this.chatMessageId, content: content }]);
+      this._playDiceSound();
     }
   }
 
@@ -283,8 +285,9 @@ export class GFLDiceResultWindow extends HandlebarsApplicationMixin(ApplicationV
    * @private
    */
   _generateInitialContent() {
-    const diceIcons = this.results.map(d => `<img src="${d.icon}" alt="${d.label}" style="width:32px; height:32px; margin:2px;">`).join('');
-    return `<h3>Roll & Keep: ${this.skillLabel} via ${this.approachLabel} (TN ${this.tn})</h3><p style="white-space: nowrap;">Rolled: ${diceIcons}</p>`;
+    const subtitle = `TN ${this.tn} · Rolled ${this.results.length} dice`;
+    const stats = `<span class="dice-result-rnk">Rolled ${this.results.length} dice</span>`;
+    return this._buildChatMessage({ subtitle, stats, dice: this._renderDiceIcons(this.results) });
   }
 
   /**
@@ -292,19 +295,91 @@ export class GFLDiceResultWindow extends HandlebarsApplicationMixin(ApplicationV
    * @private
    */
   _generateKeptContent() {
-    const keptIcons = this.kept.map(d => {
-      let icon = `<img src="${d.icon}" alt="${d.label}" style="width:32px; height:32px; margin:2px;">`;
-      if (d.explosion) {
-        icon += `<span style="position:relative; top:-10px; left:-5px; font-size:16px;">✨</span>`;
-      }
-      return icon;
-    }).join('');
     const totalSuccesses = this.kept.reduce((sum, d) => sum + d.s + (d.explosive ? 1 : 0), 0);
     const totalStrife = this.kept.reduce((sum, d) => sum + d.r, 0);
     const totalOpportunity = this.kept.reduce((sum, d) => sum + d.o, 0);
     const isSuccess = totalSuccesses >= this.tn;
     const bonusSuccesses = Math.max(0, totalSuccesses - this.tn);
-    return `<h3>Roll & Keep: ${this.skillLabel} via ${this.approachLabel} (TN ${this.tn})</h3><p style="white-space: nowrap;">Kept: ${keptIcons}</p><p>Success: ${isSuccess ? 'Yes' : 'No'} | Bonus Successes: ${bonusSuccesses} | Strife: ${totalStrife} | Opportunity: ${totalOpportunity}</p>`;
+    const successClass = isSuccess ? 'success' : 'fail';
+    const subtitle = `TN ${this.tn} · Kept ${this.kept.length} dice`;
+    const stats = [
+      `<span class="dice-result-rnk ${successClass}">Successes ${totalSuccesses}</span>`,
+      `<span class="dice-result-rnk">Bonus ${bonusSuccesses}</span>`,
+      `<span class="pill-muted">Strife ${totalStrife}</span>`,
+      `<span class="pill-muted">Opportunity ${totalOpportunity}</span>`,
+      `<span class="dice-result-rnk ${successClass}">${isSuccess ? 'Success' : 'Failure'}</span>`
+    ].join('');
+    return this._buildChatMessage({ subtitle, stats, dice: this._renderDiceIcons(this.kept) });
+  }
+
+  _buildChatMessage({ subtitle, stats, dice }) {
+    const skill = this._escapeHtml(this.skillLabel) || 'Skill';
+    const approach = this._escapeHtml(this.approachLabel) || 'Approach';
+    const header = `${skill} via ${approach}`;
+    const avatar = this._getChatAvatar();
+    const statsMarkup = stats || '<span class="text-muted small">No totals yet.</span>';
+    const diceMarkup = dice || '<span class="text-muted small">No dice yet.</span>';
+    return `
+      <article class="gfl5r chat dice-roll">
+        <div class="card roll-keep">
+          <div class="card-body">
+            <div class="d-flex gap-2 align-items-center mb-3">
+              <img class="profile-img" src="${avatar}" alt="Roll author">
+              <div>
+                <div class="fw-semibold">${header}</div>
+                <div class="text-muted small">${subtitle}</div>
+              </div>
+            </div>
+            <div class="dice-total-rnk mb-2">
+              ${statsMarkup}
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+              ${diceMarkup}
+            </div>
+          </div>
+        </div>
+      </article>`;
+  }
+
+  _renderDiceIcons(dice) {
+    if (!Array.isArray(dice) || dice.length === 0) return '';
+    return dice.map(d => this._renderDieTile(d)).join('');
+  }
+
+  _renderDieTile(die) {
+    const label = this._escapeHtml(die.label);
+    const explosion = die.explosion ? '<span class="dice-explosion">✨</span>' : '';
+    const stats = `S:${die.s ?? 0} O:${die.o ?? 0} R:${die.r ?? 0}`;
+    return `
+      <div class="chat-dice" title="${label} · ${stats}">
+        <img src="${die.icon}" alt="${label}">
+        ${explosion}
+      </div>`;
+  }
+
+  _getChatAvatar() {
+    return game.user?.avatar || 'icons/svg/d20.svg';
+  }
+
+  _playDiceSound() {
+    const src = this._getDiceSoundSource();
+    if (!src) return;
+    AudioHelper.play({ src, volume: 0.7, autoplay: true }, true);
+  }
+
+  _getDiceSoundSource() {
+    const diceSounds = CONFIG?.sounds?.dice;
+    if (Array.isArray(diceSounds) && diceSounds.length) {
+      return diceSounds[Math.floor(Math.random() * diceSounds.length)];
+    }
+    if (typeof diceSounds === 'string') {
+      return diceSounds;
+    }
+    return 'sounds/dice-roll.wav';
+  }
+
+  _escapeHtml(value) {
+    return foundry.utils?.escapeHtml ? foundry.utils.escapeHtml(String(value ?? '')) : String(value ?? '');
   }
 
   /**
