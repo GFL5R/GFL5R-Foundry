@@ -21,19 +21,8 @@ export function registerHandlebarsHelpers() {
   hbs.registerHelper("includes", (array, value) => Array.isArray(array) && array.includes(value));
 
   hbs.registerHelper("ifCond", function (v1, operator, v2, options) {
-    switch (operator) {
-      case "==": return v1 == v2 ? options.fn(this) : options.inverse(this);
-      case "===": return v1 === v2 ? options.fn(this) : options.inverse(this);
-      case "!=": return v1 != v2 ? options.fn(this) : options.inverse(this);
-      case "!==": return v1 !== v2 ? options.fn(this) : options.inverse(this);
-      case "<": return v1 < v2 ? options.fn(this) : options.inverse(this);
-      case "<=": return v1 <= v2 ? options.fn(this) : options.inverse(this);
-      case ">": return v1 > v2 ? options.fn(this) : options.inverse(this);
-      case ">=": return v1 >= v2 ? options.fn(this) : options.inverse(this);
-      case "&&": return v1 && v2 ? options.fn(this) : options.inverse(this);
-      case "||": return v1 || v2 ? options.fn(this) : options.inverse(this);
-      default: return options.inverse(this);
-    }
+    const pass = evaluateCondition(v1, operator, v2);
+    return pass ? options.fn(this) : options.inverse(this);
   });
 
   // Discipline helpers shared by actor sheets
@@ -84,4 +73,20 @@ export function registerHandlebarsHelpers() {
     if (!key) return "";
     return GFL5R_CONFIG.getSkillCategoryLabel?.(key) ?? key;
   });
+}
+
+function evaluateCondition(v1, operator, v2) {
+  switch (operator) {
+    case "==": return v1 == v2;
+    case "===": return v1 === v2;
+    case "!=": return v1 != v2;
+    case "!==": return v1 !== v2;
+    case "<": return v1 < v2;
+    case "<=": return v1 <= v2;
+    case ">": return v1 > v2;
+    case ">=": return v1 >= v2;
+    case "&&": return Boolean(v1 && v2);
+    case "||": return Boolean(v1 || v2);
+    default: return false;
+  }
 }

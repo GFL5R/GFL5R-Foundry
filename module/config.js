@@ -1,7 +1,7 @@
 // module/config.js
 console.log("GFL5R | config.js loaded");
 
-const normalizeId = (id) => (id ?? "").toString().trim().toLowerCase().replace(/[^a-z0-9]+/g, "-");
+const normalizeId = (id) => (id ?? "").toString().trim().toLowerCase().replaceAll(/[^a-z0-9]+/g, "-");
 const capitalize = (val) => {
   const safe = (val ?? "").toString();
   return safe.charAt(0).toUpperCase() + safe.slice(1);
@@ -152,23 +152,19 @@ export const GFL5R_CONFIG = {
   getRankFromXP(xp) {
     let rank = 1;
     let totalXP = 0;
-    for (let i = 0; i < this.disciplineXPPerRank.length; i++) {
-      if (xp >= totalXP + this.disciplineXPPerRank[i]) {
-        totalXP += this.disciplineXPPerRank[i];
-        rank++;
-      } else {
-        break;
-      }
+    for (const cost of this.disciplineXPPerRank) {
+      if (xp < totalXP + cost) break;
+      totalXP += cost;
+      rank++;
     }
     return rank;
   },
 
-  getSkillLabel(key) {
-    const safeKey = key ?? "";
+  getSkillLabel(key = "") {
     const map = this.getSkillsMap();
-    const found = map.get(safeKey);
+    const found = map.get(key);
     if (found?.label) return found.label;
-    return capitalize(safeKey);
+    return capitalize(key);
   },
 
   getApproachLabel(key) {

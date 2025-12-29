@@ -6,7 +6,7 @@
       <div class="row g-3 align-items-end">
         <div class="col-md-6">
           <label class="form-label" for="roll-approach">Approach</label>
-          <select id="roll-approach" name="approach" class="form-select" aria-label="Select approach">
+          <select id="roll-approach" name="approach" class="form-select">
             {{#each approachList as |a|}}
               <option value="{{a.key}}" {{#if (eq a.key ../defaultApproach)}}selected{{/if}}>{{stanceLabel a.key}} ({{a.value}})</option>
             {{/each}}
@@ -35,26 +35,26 @@
 
       <div class="row g-3 align-items-center">
         <div class="col-md-4">
-          <label class="form-label mb-1">Ring Dice</label>
+          <label class="form-label mb-1" for="roll-ring-dice">Ring Dice</label>
           <div class="input-group">
             <button class="btn btn-outline-secondary" type="button" data-action="ring-minus">-</button>
-            <input class="form-control text-center" type="number" readonly value="{{ringValue}}" aria-label="Ring dice value" />
+            <input id="roll-ring-dice" class="form-control text-center" type="number" readonly value="{{ringValue}}" aria-label="Ring dice value" />
             <button class="btn btn-outline-secondary" type="button" data-action="ring-plus">+</button>
           </div>
         </div>
         <div class="col-md-4">
-          <label class="form-label mb-1">Skill Dice</label>
+          <label class="form-label mb-1" for="roll-skill-dice">Skill Dice</label>
           <div class="input-group">
             <button class="btn btn-outline-secondary" type="button" data-action="skill-minus">-</button>
-            <input class="form-control text-center" type="number" readonly value="{{skillValue}}" aria-label="Skill dice value" />
+            <input id="roll-skill-dice" class="form-control text-center" type="number" readonly value="{{skillValue}}" aria-label="Skill dice value" />
             <button class="btn btn-outline-secondary" type="button" data-action="skill-plus">+</button>
           </div>
         </div>
         <div class="col-md-4">
-          <label class="form-label mb-1">Assistance (keeps)</label>
+          <label class="form-label mb-1" for="roll-assist-keeps">Assistance (keeps)</label>
           <div class="input-group">
             <button class="btn btn-outline-secondary" type="button" data-action="assist-minus">-</button>
-            <input class="form-control text-center" type="number" readonly value="{{assistance}}" aria-label="Assistance keeps value" />
+            <input id="roll-assist-keeps" class="form-control text-center" type="number" readonly value="{{assistance}}" aria-label="Assistance keeps value" />
             <button class="btn btn-outline-secondary" type="button" data-action="assist-plus">+</button>
           </div>
         </div>

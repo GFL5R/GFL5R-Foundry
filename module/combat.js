@@ -22,8 +22,14 @@ export class GFL5RCombat extends Combat {
             difficultyHidden: game.settings.get("gfl5r", "initiative-difficulty-hidden") || false,
         };
 
-        const encounter = game.settings.get("gfl5r", "initiative-encounter") || "skirmish";
-        const skillId = messageOptions.skillId || GFL5R_CONFIG.initiativeSkills[encounter];
+const encounter = game.settings.get("gfl5r", "initiative-encounter") || "skirmish";
+const skillId = messageOptions.skillId || GFL5R_CONFIG.initiativeSkills[encounter];
+const resolvePrepared = (preparedFlag, preparedSetting) => {
+    if (typeof preparedFlag === "boolean") return preparedFlag;
+    if (preparedFlag === "true") return true;
+    if (preparedFlag === "false") return false;
+    return preparedSetting === "true";
+};
 
         const updatedCombatants = [];
         for (const combatantId of targetIds) {
@@ -39,9 +45,7 @@ export class GFL5RCombat extends Combat {
             const approaches = actor.system?.approaches ?? {};
             const preparedFlag = actor.system?.prepared;
             const preparedSetting = game.settings.get("gfl5r", "initiative-prepared-character") || "true";
-            const prepared = typeof preparedFlag === "boolean"
-                ? preparedFlag
-                : (preparedFlag === "true" ? true : (preparedFlag === "false" ? false : preparedSetting === "true"));
+            const prepared = resolvePrepared(preparedFlag, preparedSetting);
 
             const baseInitiative = prepared
                 ? (approaches.power || 0) + (approaches.precision || 0)
