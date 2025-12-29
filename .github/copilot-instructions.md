@@ -67,4 +67,4 @@
 ## Compatibility & Assets
 - **Foundry compatibility**: Minimum v12, verified v13—some code has v12 shims (Hooks, `Item.implementation`), don't remove unless dropping v12
 - **Templates**: Located in [templates/](templates/) for actor/item sheets, roller, roll prompt, GM UI
-- **Assets**: Dice face icons in [assets/dice/black/](assets/dice/black/) and [assets/dice/white/](assets/dice/white/), paths built dynamically as `systems/gfl5r/assets/dice/{black|white}/{face-key}.png`
+- **Assets**: Dice face icons in [assets/dice/black/](assets/dice/black/) and [assets/dice/white/](assets/dice/white/), paths built dynamically as `systems/gfl5r/assets/dice/{black|white}/{face-key}.svg`
