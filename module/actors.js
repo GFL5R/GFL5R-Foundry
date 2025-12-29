@@ -274,6 +274,13 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
 
     // Fallback delegations for skill clicks so we can see events even if V2 wiring fails
     root.addEventListener("click", (event) => {
+      const nav = event.target.closest(".nav-link[data-tab]");
+      if (nav && root.contains(nav)) {
+        event.preventDefault();
+        this.activateTab(nav.dataset.tab);
+        return;
+      }
+
       const btn = event.target.closest?.("[data-action='roll-skill']");
       if (btn && root.contains(btn)) {
         const key = btn.dataset.skill;
