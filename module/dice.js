@@ -1,56 +1,34 @@
 // module/dice.js
-/* GFL5R Dice Roller — using native d6 (black) and d12 (white)
-   Now updates a chat message at each step! */
+/* GFL5R Dice Roller - using native Ring/Ability terms with face metadata */
 
-function payloadBlack(face) {
-  // 1..6
-  switch (face) {
-    case 1: return { s:0, o:0, r:0, x:false, text:"Blank" };
-    case 2: return { s:0, o:1, r:1, x:false, text:"Opp+Strife" };
-    case 3: return { s:0, o:1, r:0, x:false, text:"Opportunity" };
-    case 4: return { s:1, o:0, r:1, x:false, text:"Success+Strife" };
-    case 5: return { s:1, o:0, r:0, x:false, text:"Success" };
-    case 6: return { s:1, o:0, r:1, x:true,  text:"Explosive+Strife" };
-    default: return { s:0, o:0, r:0, x:false, text:"Blank" };
-  }
-}
+// Face metadata keyed by result number
+const RING_FACES = {
+  1: { s: 0, o: 0, r: 0, x: false, key: "blank", text: "Blank" },
+  2: { s: 0, o: 1, r: 1, x: false, key: "opp-strife", text: "Opp+Strife" },
+  3: { s: 0, o: 1, r: 0, x: false, key: "opp", text: "Opportunity" },
+  4: { s: 1, o: 0, r: 1, x: false, key: "success-strife", text: "Success+Strife" },
+  5: { s: 1, o: 0, r: 0, x: false, key: "success", text: "Success" },
+  6: { s: 1, o: 0, r: 1, x: true, key: "explosive-strife", text: "Explosive+Strife" },
+};
 
-function payloadWhite(face) {
-  // 1..12
-  switch (face) {
-    case 1:  return { s:0, o:0, r:0, x:false, text:"Blank" };
-    case 2:  return { s:0, o:0, r:0, x:false, text:"Blank" };
-    case 3:  return { s:0, o:1, r:0, x:false, text:"Opportunity" };
-    case 4:  return { s:0, o:1, r:0, x:false, text:"Opportunity" };
-    case 5:  return { s:0, o:1, r:0, x:false, text:"Opportunity" };
-    case 6:  return { s:1, o:0, r:1, x:false, text:"Success+Strife" };
-    case 7:  return { s:1, o:0, r:1, x:false, text:"Success+Strife" };
-    case 8:  return { s:1, o:0, r:0, x:false, text:"Success" };
-    case 9:  return { s:1, o:0, r:0, x:false, text:"Success" };
-    case 10: return { s:1, o:1, r:0, x:false, text:"Success+Opportunity" };
-    case 11: return { s:1, o:0, r:1, x:true,  text:"Explosive+Strife" };
-    case 12: return { s:1, o:0, r:0, x:true,  text:"Explosive" };
-    default: return { s:0, o:0, r:0, x:false, text:"Blank" };
-  }
-}
+const ABILITY_FACES = {
+  1: { s: 0, o: 0, r: 0, x: false, key: "blank", text: "Blank" },
+  2: { s: 0, o: 0, r: 0, x: false, key: "blank", text: "Blank" },
+  3: { s: 0, o: 1, r: 0, x: false, key: "opp", text: "Opportunity" },
+  4: { s: 0, o: 1, r: 0, x: false, key: "opp", text: "Opportunity" },
+  5: { s: 0, o: 1, r: 0, x: false, key: "opp", text: "Opportunity" },
+  6: { s: 1, o: 0, r: 1, x: false, key: "success-strife", text: "Success+Strife" },
+  7: { s: 1, o: 0, r: 1, x: false, key: "success-strife", text: "Success+Strife" },
+  8: { s: 1, o: 0, r: 0, x: false, key: "success", text: "Success" },
+  9: { s: 1, o: 0, r: 0, x: false, key: "success", text: "Success" },
+  10: { s: 1, o: 1, r: 0, x: false, key: "success-opp", text: "Success+Opportunity" },
+  11: { s: 1, o: 0, r: 1, x: true, key: "explosive-strife", text: "Explosive+Strife" },
+  12: { s: 1, o: 0, r: 0, x: true, key: "explosive", text: "Explosive" },
+};
 
-function _dieKeyFromFlags({ success, opportunity, strife, explosive }) {
-  if (!success && !opportunity && !strife && !explosive) return "blank";
-  if (explosive && strife) return "explosive-strife";
-  if (explosive) return "explosive";
-  if (success && opportunity) return "success-opp";
-  if (success && strife) return "success-strife";
-  if (success) return "success";
-  if (opportunity && strife) return "opp-strife";
-  if (opportunity) return "opp";
-  return "blank";
-}
-
-function _iconPathForDie(type, flags) {
-  // type: "B" or "W"
+function _iconPathForFace(type, key) {
   const base = `systems/${game.system.id}/assets/dice`;
   const folder = type === "B" ? "black" : "white";
-  const key = _dieKeyFromFlags(flags);
   return `${base}/${folder}/${key}.png`;
 }
 
@@ -58,10 +36,16 @@ function _iconPathForDie(type, flags) {
 function mapResult(dieTerm, result) {
   // dieTerm.faces === 6 -> black ; 12 -> white
   const isBlack = dieTerm.faces === 6;
-  const p = isBlack ? payloadBlack(result) : payloadWhite(result);
+  const face = isBlack ? RING_FACES[result] : ABILITY_FACES[result];
+  const fallback = { s: 0, o: 0, r: 0, x: false, key: "blank", text: "Blank" };
+  const p = face || fallback;
   return {
     label: p.text,
-    success: p.s, opportunity: p.o, strife: p.r, explosive: p.x,
+    success: p.s,
+    opportunity: p.o,
+    strife: p.r,
+    explosive: p.x,
+    key: p.key,
     type: isBlack ? "B" : "W"
   };
 }
@@ -81,7 +65,7 @@ function expandRoll(roll) {
         strife: m.strife,
         explosive: m.explosive
       };
-      dieObj.icon = _iconPathForDie(dieObj.type, dieObj);
+      dieObj.icon = _iconPathForFace(dieObj.type, m.key);
       out.push(dieObj);
     }
   }
@@ -210,8 +194,8 @@ export class GFLRollerApp extends Application {
     const whiteCount = Math.max(0, Number(foundry.utils.getProperty(this.actor.system, `skills.${this.skillKey}`)) || 0);
 
     const expr = [
-      blacks > 0 ? `${blacks}d6` : null,
-      whiteCount > 0 ? `${whiteCount}d12` : null
+      blacks > 0 ? `${blacks}dr` : null,
+      whiteCount > 0 ? `${whiteCount}ds` : null
     ].filter(Boolean).join(" + ") || "0";
 
     const roll = await (new Roll(expr)).evaluate({ async:true });
@@ -427,5 +411,19 @@ export class GFLRollerApp extends Application {
 
 /* No custom dice to register, but leave the export for consistency */
 export function registerDiceTerms() {
-  // Intentionally empty (we use d6/d12 and map faces)
+  CONFIG.Dice ??= {};
+  CONFIG.Dice.terms ??= {};
+  // Register denomination shortcuts for our faces (ring = r, ability = s)
+  CONFIG.Dice.terms["r"] = class RingTerm extends Die {
+    constructor(termData) {
+      super(termData);
+      this.faces = 6;
+    }
+  };
+  CONFIG.Dice.terms["s"] = class AbilityTerm extends Die {
+    constructor(termData) {
+      super(termData);
+      this.faces = 12;
+    }
+  };
 }

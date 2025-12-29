@@ -1296,6 +1296,8 @@ export class GFL5RActorSheet extends ActorSheet {
 
     // Click skill NAME (label) to roll
     html.on("click", "[data-action='roll-skill']", async ev => {
+      ev.preventDefault();
+      ev.stopPropagation();
       const labelEl = ev.currentTarget;
       const key = labelEl.dataset.skill;            // e.g. "blades"
       const skillLabel = labelEl.textContent.trim();
@@ -1305,6 +1307,7 @@ export class GFL5RActorSheet extends ActorSheet {
     // Click anywhere on the skill card to roll (unless clicking buttons)
     html.on("click", "[data-skill-card]", async ev => {
       if (ev.target.closest("button")) return;
+      if (ev.target.closest("[data-action='roll-skill']")) return;
       const card = ev.currentTarget;
       const key = card.dataset.skillKey;
       const label = card.querySelector("[data-action='roll-skill']")?.textContent?.trim() || key;
