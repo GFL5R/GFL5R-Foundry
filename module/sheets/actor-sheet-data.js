@@ -31,7 +31,7 @@ export function buildOriginDisplay(characterType, data) {
     const parts = [];
     if (nat) parts.push(nat.label);
     if (bg) parts.push(bg.label);
-    return parts.join(" ƒ?› ");
+    return parts.join(" - ");
   }
   if (characterType === "doll" && data.frame) {
     const frame = TDOLL_FRAMES.find((f) => f.key === data.frame);
