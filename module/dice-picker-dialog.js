@@ -248,7 +248,7 @@ export class GFLDicePickerDialog extends HandlebarsApplicationMixin(ApplicationV
     console.log("GFL5R | Dice picker _updateObject", { formData });
     try {
       if (!this.actor || !this.skillKey) {
-        await this._finish();
+        await this.close();
         return;
       }
     const approachName = formData.approach || this.defaultApproach || "";
@@ -333,7 +333,7 @@ export class GFLDicePickerDialog extends HandlebarsApplicationMixin(ApplicationV
       console.log("GFL5R | Dice picker sending roll", { formula, flavor, difficulty: tnVal, tnHidden, keepBonus, ringDice, skillDice });
       await roll.toMessage({ flavor });
       console.log("GFL5R | Dice picker roll sent");
-      await this._finish();
+      return this.close();
     } catch (err) {
       console.error("GFL5R | Dice picker submit failed", err);
       ui.notifications?.error("Dice picker failed to roll. See console for details.");
