@@ -156,48 +156,35 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
       }
     }, { signal });
 
-    // Increase skill rank using XP
-    html.on("click", "[data-action='skill-increase']", async ev => {
-      const key = ev.currentTarget?.dataset?.skill;
-      if (!key) return;
+    // Spend or refund XP on a skill
+    root.addEventListener("click", async (event) => {
+      const actionEl = event.target.closest("[data-action]");
+      if (!actionEl || !root.contains(actionEl)) return;
 
-      const skillCard = ev.currentTarget.closest?.("[data-skill-card]");
-      const skills = foundry.utils.duplicate(this.actor.system.skills ?? {});
-      const currentRank = Number(skills[key] ?? 0);
-      const nextRank = currentRank + 1;
-      const cost = 2 * nextRank;
-      const availableXP = Number(this.actor.system?.xp ?? 0);
+      const action = actionEl.dataset.action;
+      if (action !== "skill-increase" && action !== "skill-decrease") return;
 
-      if (availableXP < cost) {
-        this.#flashSkillCard(skillCard, true);
-        ui.notifications?.warn("Not enough XP to increase this skill.");
+      event.preventDefault();
+      event.stopPropagation();
+
+      const skillKey = actionEl.dataset.skill;
+      const delta = action === "skill-increase" ? 1 : -1;
+      const skillCard = actionEl.closest("[data-skill-card]");
+
+      await this.#adjustSkillRank(skillKey, delta, skillCard);
+    }, { signal });
+
+    root.addEventListener("change", async (event) => {
+      const target = event.target;
+      const action = target.dataset?.action;
+
+      // Persist free-typed XP immediately so refreshes keep the value
+      if (!action && target.name === "system.xp") {
+        const xp = Number(target.value) || 0;
+        await this.actor.update({ "system.xp": xp });
         return;
       }
 
-      const tabEl = ev.target.closest(".nav-link[data-tab]");
-      if (tabEl && root.contains(tabEl)) {
-        ev.preventDefault();
-        this.activateTab(tabEl.dataset.tab);
-      }
-
-      const clickedSkillCard = ev.target.closest("[data-skill-card]");
-      if (clickedSkillCard && root.contains(clickedSkillCard)) {
-        if (ev.target.closest("button")) return;
-        const key = clickedSkillCard.dataset.skillKey;
-        const label = clickedSkillCard.querySelector("[data-action='roll-skill']")?.textContent?.trim() || key;
-        if (key) this.#rollSkill(key, label);
-      }
-
-      const itemContainer = ev.target.closest("[data-item-id]");
-      if (itemContainer && root.contains(itemContainer) && !ev.target.closest("button")) {
-        const itemId = itemContainer.dataset.itemId;
-        if (itemId) this.#maybeRollItem(itemId);
-      }
-    }, { signal });
-
-    root.addEventListener("change", (event) => {
-      const target = event.target;
-      const action = target.dataset?.action;
       if (!action) return;
       switch (action) {
         case "discipline-xp":
@@ -230,6 +217,40 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     if (!element) return;
     element.classList.add(danger ? "xp-flash-danger" : "xp-flash");
     setTimeout(() => element.classList.remove("xp-flash", "xp-flash-danger"), 450);
+  }
+
+  async #adjustSkillRank(skillKey, delta, skillCard) {
+    if (!skillKey || !delta) return;
+
+    const skills = foundry.utils.duplicate(this.actor.system.skills ?? {});
+    const currentRank = Number(skills[skillKey] ?? 0);
+
+    if (delta < 0 && currentRank <= 0) {
+      this.#flashSkillCard(skillCard, true);
+      return;
+    }
+
+    const nextRank = Math.max(0, currentRank + delta);
+    if (nextRank === currentRank) return;
+
+    const availableXP = this.#getAvailableXP();
+    const xpDelta = delta > 0 ? 2 * nextRank : -2 * currentRank; // cost (positive) or refund (negative)
+
+    if (delta > 0 && availableXP < xpDelta) {
+      this.#flashSkillCard(skillCard, true);
+      ui.notifications?.warn("Not enough XP to increase this skill.");
+      return;
+    }
+
+    skills[skillKey] = nextRank;
+
+    const updateData = {
+      "system.skills": skills,
+      "system.xp": availableXP - xpDelta,
+    };
+
+    await this.actor.update(updateData);
+    this.#flashSkillCard(skillCard, false);
   }
 
   #getAvailableXP() {

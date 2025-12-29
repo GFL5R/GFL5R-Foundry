@@ -2,7 +2,7 @@
   "id": "gfl5r",
   "title": "GFL5R",
   "description": "A shoddy attempt to port L5R's dice system and techniques to a near-future setting.",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "compatibility": {
     "minimum": "12",
     "verified": "13"
