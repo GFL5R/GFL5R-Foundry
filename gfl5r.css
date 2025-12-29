@@ -43,11 +43,19 @@ button[class*="fa-"]::before,
 
 /* Utility sizes */
 .avatar-96 { width: 96px; height: 96px; }
+.icon-64 { width: 64px; height: 64px; }
 .icon-32 { width: 32px; height: 32px; }
 .min-w-220 { min-width: 220px; }
 .min-w-240 { min-width: 240px; }
+.max-w-360 { max-width: 360px; }
 .w-80 { width: 80px; }
 .w-90 { width: 90px; }
+.w-110 { width: 110px; }
+
+.collapse-bar {
+  width: 100%;
+  accent-color: var(--collapse-bar-color, #6c757d);
+}
 
 .gfl5r-sheet .card-header {
   background: linear-gradient(135deg, #232b3a 0%, #161d2a 100%);

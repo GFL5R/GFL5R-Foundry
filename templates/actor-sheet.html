@@ -3,37 +3,38 @@
   <header class="mb-4">
     <div class="row g-3 align-items-start">
       <div class="col-auto">
-        <img class="img-thumbnail" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" style="width:96px; height:96px;" />
+        <img class="img-thumbnail avatar-96" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" alt="{{actor.name}} portrait"/>
       </div>
       <div class="col">
         <div class="d-flex flex-column gap-3">
-          <div>
-            <input class="form-control form-control-lg fw-bold" name="name" type="text" value="{{actor.name}}" placeholder="Character Name"/>
-            {{#if originDisplay}}
-              <div class="small text-muted mt-1">{{originDisplay}}</div>
-            {{/if}}
-          </div>
-          <div class="row g-3 align-items-end">
-            <div class="col-12 col-md-4">
-              <label class="form-label pill-muted mb-1">Type</label>
-              <select class="form-select" name="system.characterType" title="Character type affects available features">
-                {{selectOptions (object "human" "Human" "transhumanist" "Transhumanist" "doll" "Doll") selected=actor.system.characterType localize=false}}
-              </select>
+            <div>
+              <label class="visually-hidden" for="actor-name">Character Name</label>
+              <input id="actor-name" class="form-control form-control-lg fw-bold" name="name" type="text" value="{{actor.name}}" placeholder="Character Name" aria-label="Character name"/>
+              {{#if originDisplay}}
+                <div class="small text-muted mt-1">{{originDisplay}}</div>
+              {{/if}}
             </div>
-            <div class="col-12 col-md-4">
-              <label class="form-label pill-muted mb-1">Humanity</label>
-              <input class="form-control" type="number" name="system.humanity" value="{{actor.system.humanity}}" min="0"/>
-            </div>
-            <div class="col-12 col-md-4">
-              <label class="form-label pill-muted mb-1">Fame</label>
-              <input class="form-control" type="number" name="system.fame" value="{{actor.system.fame}}" min="0"/>
+            <div class="row g-3 align-items-end">
+              <div class="col-12 col-md-4">
+                <label class="form-label pill-muted mb-1" for="char-type">Type</label>
+                <select id="char-type" class="form-select" name="system.characterType" title="Character type affects available features">
+                  {{selectOptions (object "human" "Human" "transhumanist" "Transhumanist" "doll" "Doll") selected=actor.system.characterType localize=false}}
+                </select>
+              </div>
+              <div class="col-12 col-md-4">
+                <label class="form-label pill-muted mb-1" for="humanity">Humanity</label>
+                <input id="humanity" class="form-control" type="number" name="system.humanity" value="{{actor.system.humanity}}" min="0" aria-label="Humanity"/>
+              </div>
+              <div class="col-12 col-md-4">
+                <label class="form-label pill-muted mb-1" for="fame">Fame</label>
+                <input id="fame" class="form-control" type="number" name="system.fame" value="{{actor.system.fame}}" min="0" aria-label="Fame"/>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="col-12 col-md-3">
-        <label class="form-label pill-muted mb-1 d-block">Experience</label>
-        <input class="form-control form-control-lg text-end" type="number" name="system.xp" value="{{actor.system.xp}}" min="0" />
+        <div class="col-12 col-md-3">
+          <label class="form-label pill-muted mb-1 d-block" for="xp">Experience</label>
+          <input id="xp" class="form-control form-control-lg text-end" type="number" name="system.xp" value="{{actor.system.xp}}" min="0" aria-label="Experience points" />
         <div class="small text-muted mt-1">Saved XP</div>
         <div class="mt-2 d-flex justify-content-md-end">
           <button type="button" class="btn btn-outline-light btn-sm" data-action="open-character-builder" title="Guided character creation">
@@ -51,7 +52,7 @@
         <div class="card-body">
           <div class="d-flex flex-wrap gap-3">
             {{#each approachesList as |approach|}}
-              <div class="card skill-card flex-grow-1" style="min-width: 220px;" data-approach-card data-approach-key="{{approach.key}}">
+              <div class="card skill-card flex-grow-1 min-w-220" data-approach-card data-approach-key="{{approach.key}}">
                 <div class="card-body">
                   <div class="d-flex flex-column">
                     <div class="fw-semibold">{{approach.label}}</div>
@@ -74,32 +75,32 @@
         <div class="card-body">
           <div class="d-flex flex-column gap-2 align-items-end">
             <div class="d-flex align-items-center gap-2">
-              <label class="form-label mb-0">Fatigue</label>
-              <input class="form-control form-control-sm text-end" type="number" name="system.resources.fatigue" value="{{actor.system.resources.fatigue}}" min="0" style="width:80px;"/>
+              <label class="form-label mb-0" for="fatigue">Fatigue</label>
+              <input id="fatigue" class="form-control form-control-sm text-end w-80" type="number" name="system.resources.fatigue" value="{{actor.system.resources.fatigue}}" min="0" aria-label="Fatigue"/>
               <span>/</span>
-              <label class="form-label mb-0">Endurance</label>
-              <input class="form-control form-control-sm text-end" type="text" value="{{derived.endurance}}" disabled style="width:80px;"/>
+              <label class="form-label mb-0" for="endurance">Endurance</label>
+              <input id="endurance" class="form-control form-control-sm text-end w-80" type="text" value="{{derived.endurance}}" disabled aria-label="Endurance"/>
             </div>
             <div class="d-flex align-items-center gap-2">
-              <label class="form-label mb-0">Strife</label>
-              <input class="form-control form-control-sm text-end" type="number" name="system.resources.strife" value="{{actor.system.resources.strife}}" min="0" style="width:80px;"/>
+              <label class="form-label mb-0" for="strife">Strife</label>
+              <input id="strife" class="form-control form-control-sm text-end w-80" type="number" name="system.resources.strife" value="{{actor.system.resources.strife}}" min="0" aria-label="Strife"/>
               <span>/</span>
-              <label class="form-label mb-0">Composure</label>
-              <input class="form-control form-control-sm text-end" type="text" value="{{derived.composure}}" disabled style="width:80px;"/>
+              <label class="form-label mb-0" for="composure">Composure</label>
+              <input id="composure" class="form-control form-control-sm text-end w-80" type="text" value="{{derived.composure}}" disabled aria-label="Composure"/>
             </div>
             <div class="d-flex align-items-center gap-2">
-              <label class="form-label mb-0">Vigilance</label>
-              <input class="form-control form-control-sm text-end" type="text" value="{{derived.vigilance}}" disabled style="width:90px;"/>
+              <label class="form-label mb-0" for="vigilance">Vigilance</label>
+              <input id="vigilance" class="form-control form-control-sm text-end w-90" type="text" value="{{derived.vigilance}}" disabled aria-label="Vigilance"/>
             </div>
             <div class="d-flex align-items-center gap-2">
-              <label class="form-label mb-0">Focus</label>
-              <input class="form-control form-control-sm text-end" type="text" value="{{derived.focus}}" disabled style="width:90px;"/>
+              <label class="form-label mb-0" for="focus">Focus</label>
+              <input id="focus" class="form-control form-control-sm text-end w-90" type="text" value="{{derived.focus}}" disabled aria-label="Focus"/>
             </div>
             <div class="d-flex align-items-center gap-2">
-              <label class="form-label mb-0">Fortune Points</label>
-              <input class="form-control form-control-sm text-end" type="number" name="system.resources.fortunePoints" value="{{actor.system.resources.fortunePoints}}" min="0" style="width:80px;"/>
+              <label class="form-label mb-0" for="fortune-current">Fortune Points</label>
+              <input id="fortune-current" class="form-control form-control-sm text-end w-80" type="number" name="system.resources.fortunePoints" value="{{actor.system.resources.fortunePoints}}" min="0" aria-label="Fortune points current"/>
               <span>/</span>
-              <input class="form-control form-control-sm text-end" type="text" value="{{derived.fortunePointsMax}}" disabled style="width:80px;"/>
+              <input id="fortune-max" class="form-control form-control-sm text-end w-80" type="text" value="{{derived.fortunePointsMax}}" disabled aria-label="Fortune points maximum"/>
             </div>
           </div>
         </div>
@@ -132,10 +133,12 @@
               <div class="card-body">
                 <div class="d-flex flex-wrap gap-3">
                   {{#each group.items as |skill|}}
-                    <div class="card skill-card skill-roll flex-grow-1" style="min-width: 240px;" data-skill-card data-skill-key="{{skill.key}}">
+                    <div class="card skill-card skill-roll flex-grow-1 min-w-240" data-skill-card data-skill-key="{{skill.key}}">
                       <div class="card-body">
                           <div class="d-flex flex-column">
-                            <div class="fw-semibold" data-action="roll-skill" data-skill="{{skill.key}}" role="button">{{skill.label}}</div>
+                            <button type="button" class="fw-semibold text-start btn btn-link p-0" data-action="roll-skill" data-skill="{{skill.key}}">
+                              {{skill.label}}
+                            </button>
                             {{#if skill.itemId}}<input type="hidden" data-item-id="{{skill.itemId}}" />{{/if}}
                           </div>
                         <div class="d-flex align-items-center gap-2">
@@ -163,7 +166,7 @@
                       <div class="list-group list-group-flush">
                         {{#each slot.abilities as |ability|}}
                           <div class="list-group-item d-flex align-items-center gap-2" data-item-id="{{ability.id}}">
-                            <img src="{{ability.img}}" alt="" class="rounded" style="width:32px; height:32px;" />
+                            <img src="{{ability.img}}" alt="" class="rounded icon-32" />
                             <div class="flex-grow-1">
                               <div class="fw-semibold">{{ability.name}}</div>
                               <div class="small text-muted">
@@ -212,20 +215,20 @@
                 <div class="card-body">
                   <div class="row g-3 align-items-start mb-3">
                     <div class="col-auto">
-                      <img src="{{slot.discipline.img}}" alt="" class="img-thumbnail" style="width:64px; height:64px;"/>
+                      <img src="{{slot.discipline.img}}" alt="" class="img-thumbnail icon-64"/>
                     </div>
                     <div class="col">
                       {{#if slot.discipline.system.category}}
                         <div class="small text-muted mb-2">Category: {{slot.discipline.system.category}}</div>
                       {{/if}}
-                      <div class="row g-3" style="max-width:360px;">
+                      <div class="row g-3 max-w-360">
                         <div class="col-sm-6">
-                          <label class="form-label">XP</label>
-                          <input class="form-control" type="number" value="{{slot.xp}}" disabled />
+                          <label class="form-label" for="slot-{{slot.slotKey}}-xp">XP</label>
+                          <input id="slot-{{slot.slotKey}}-xp" class="form-control" type="number" value="{{slot.xp}}" disabled aria-label="Discipline XP"/>
                         </div>
                         <div class="col-sm-6">
-                          <label class="form-label">Rank</label>
-                          <input class="form-control" type="number" value="{{slot.rank}}" disabled />
+                          <label class="form-label" for="slot-{{slot.slotKey}}-rank">Rank</label>
+                          <input id="slot-{{slot.slotKey}}-rank" class="form-control" type="number" value="{{slot.rank}}" disabled aria-label="Discipline rank"/>
                         </div>
                       </div>
                       {{#if slot.associatedSkillText}}
@@ -252,7 +255,7 @@
                       <div class="list-group list-group-flush">
                         {{#each slot.abilities as |ability|}}
                           <div class="list-group-item d-flex align-items-center gap-2" data-item-id="{{ability.id}}">
-                            <img src="{{ability.img}}" alt="" class="rounded" style="width:32px; height:32px;" />
+                            <img src="{{ability.img}}" alt="" class="rounded icon-32" />
                             <div class="flex-grow-1">
                               <div class="fw-semibold">{{ability.name}}</div>
                               <div class="small text-muted">
@@ -306,7 +309,7 @@
               <div class="list-group list-group-flush">
                 {{#each modules as |module|}}
                   <div class="list-group-item d-flex align-items-center gap-2" data-item-id="{{module.id}}">
-                    <img src="{{module.img}}" alt="" class="rounded" style="width:32px; height:32px;" />
+                    <img src="{{module.img}}" alt="" class="rounded icon-32" />
                     <div class="flex-grow-1">
                       <div class="fw-semibold">{{module.name}}</div>
                       <div class="small text-muted">
@@ -337,16 +340,16 @@
             <div class="card-header fw-semibold">Collapse</div>
             <div class="card-body">
               <div class="d-flex justify-content-between align-items-center mb-2">
-                <div class="pill-muted">Exposure</div>
+                <div class="pill-muted" id="collapse-exposure-label">Exposure</div>
                 <div class="fw-semibold">{{collapse.current}} / {{collapse.capacity}}</div>
               </div>
               <div class="collapse-progress mb-2">
-                <div class="progress-bar" role="progressbar" aria-valuenow="{{collapse.current}}" aria-valuemin="0" aria-valuemax="{{collapse.capacity}}" style="width: {{collapse.barWidth}}; background-color: {{collapse.barColor}};"></div>
+                <progress class="collapse-bar" aria-labelledby="collapse-exposure-label" value="{{collapse.current}}" max="{{collapse.capacity}}" aria-valuetext="{{collapse.current}} of {{collapse.capacity}}"></progress>
               </div>
               <div class="small text-muted mb-3">Maximum collapse equals the sum of all approaches times 5.</div>
               <div class="d-flex align-items-center gap-2">
-                <label class="form-label mb-0">Current Collapse</label>
-                <input class="form-control form-control-sm text-end" type="number" name="system.resources.collapse" value="{{actor.system.resources.collapse}}" min="0" style="width:110px;" />
+                <label class="form-label mb-0" for="collapse-current">Current Collapse</label>
+                <input id="collapse-current" class="form-control form-control-sm text-end w-110" type="number" name="system.resources.collapse" value="{{actor.system.resources.collapse}}" min="0" aria-label="Current collapse" />
               </div>
             </div>
           </div>
@@ -366,7 +369,7 @@
                 <div class="list-group list-group-flush">
                   {{#each conditions as |condition|}}
                     <div class="list-group-item d-flex align-items-center gap-2" data-item-id="{{condition.id}}">
-                      <img src="{{condition.img}}" alt="" class="rounded" style="width:32px; height:32px;" />
+                      <img src="{{condition.img}}" alt="" class="rounded icon-32" />
                       <div class="flex-grow-1">
                         <div class="fw-semibold">{{condition.name}}</div>
                         <div class="small text-muted">
@@ -396,8 +399,8 @@
         <div class="card-body">
           <div class="row g-3 align-items-center">
             <div class="col-md-8">
-              <label class="form-label pill-muted">Posture</label>
-              <div class="d-flex flex-wrap gap-3 align-items-center">
+              <div class="form-label pill-muted" id="posture-label">Posture</div>
+              <div class="d-flex flex-wrap gap-3 align-items-center" role="radiogroup" aria-labelledby="posture-label">
                 {{#each (object
                   "power" "Power"
                   "swiftness" "Swiftness"
@@ -438,7 +441,7 @@
                 <div class="list-group list-group-flush">
                   {{#each weapons as |weapon|}}
                     <div class="list-group-item d-flex align-items-center gap-2" data-item-id="{{weapon.id}}">
-                      <img src="{{weapon.img}}" alt="" class="rounded" style="width:32px; height:32px;" />
+                      <img src="{{weapon.img}}" alt="" class="rounded icon-32" />
                       <div class="flex-grow-1">
                         <div class="fw-semibold">{{weapon.name}}</div>
                         <div class="small text-muted">Range: {{weapon.system.idealRange}} | Threat: {{weapon.system.threat}}</div>
@@ -461,7 +464,7 @@
                 <div class="list-group list-group-flush">
                   {{#each armor as |armorItem|}}
                     <div class="list-group-item d-flex align-items-center gap-2" data-item-id="{{armorItem.id}}">
-                      <img src="{{armorItem.img}}" alt="" class="rounded" style="width:32px; height:32px;" />
+                      <img src="{{armorItem.img}}" alt="" class="rounded icon-32" />
                       <div class="flex-grow-1">
                         <div class="fw-semibold">{{armorItem.name}}</div>
                         <div class="small text-muted">Protection: {{armorItem.system.protection}} | Weight: {{armorItem.system.weight}}</div>
@@ -502,17 +505,17 @@
                   <tr data-item-id="{{item.id}}">
                     <td>
                       <div class="d-flex align-items-center gap-2">
-                        <img src="{{item.img}}" alt="" class="rounded" style="width:32px; height:32px;"/>
+                        <img src="{{item.img}}" alt="" class="rounded icon-32"/>
                         <strong>{{item.name}}</strong>
                       </div>
                     </td>
                     <td class="text-capitalize">{{item.type}}</td>
-                    <td class="text-center" style="width:90px;">
-                      <input class="form-control form-control-sm text-center" type="number" name="items.{{item.id}}.system.quantity" value="{{item.system.quantity}}" min="0" />
+                    <td class="text-center w-90">
+                      <input class="form-control form-control-sm text-center" type="number" name="items.{{item.id}}.system.quantity" value="{{item.system.quantity}}" min="0" aria-label="Quantity for {{item.name}}" />
                     </td>
                     <td class="text-end">{{#if item.system.price}}{{item.system.price}}¤{{else}}—{{/if}}</td>
-                    <td class="text-center" style="width:110px;">
-                      <div class="btn-group btn-group-sm" role="group">
+                    <td class="text-center w-110">
+                      <div class="btn-group btn-group-sm">
                         <button type="button" class="btn btn-outline-secondary" data-action="edit-item" data-item-id="{{item.id}}" title="Edit item"><i class="fas fa-edit"></i></button>
                         <button type="button" class="btn btn-outline-danger" data-action="delete-item" data-item-id="{{item.id}}" title="Delete item"><i class="fas fa-trash"></i></button>
                       </div>
@@ -541,7 +544,7 @@
                 <div class="list-group list-group-flush">
                   {{#each narrativePositive as |item|}}
                     <div class="list-group-item d-flex align-items-center gap-2" data-item-id="{{item.id}}">
-                      <img src="{{item.img}}" alt="" class="rounded" style="width:32px; height:32px;" />
+                        <img src="{{item.img}}" alt="" class="rounded icon-32" />
                       <div class="flex-grow-1">
                         <div class="fw-semibold">{{item.name}}</div>
                         <div class="small text-muted">{{item.system.approach}} - {{item.system.narrativeType}}</div>
@@ -566,7 +569,7 @@
                 <div class="list-group list-group-flush">
                   {{#each narrativeNegative as |item|}}
                     <div class="list-group-item d-flex align-items-center gap-2" data-item-id="{{item.id}}">
-                      <img src="{{item.img}}" alt="" class="rounded" style="width:32px; height:32px;" />
+                        <img src="{{item.img}}" alt="" class="rounded icon-32" />
                       <div class="flex-grow-1">
                         <div class="fw-semibold">{{item.name}}</div>
                         <div class="small text-muted">{{item.system.approach}} - {{item.system.narrativeType}}</div>
@@ -586,13 +589,15 @@
           <div class="card mb-3">
             <div class="card-header fw-semibold">Backstory</div>
             <div class="card-body">
-              <textarea class="form-control" name="system.backstory" rows="10">{{actor.system.backstory}}</textarea>
+              <label class="visually-hidden" for="backstory">Backstory</label>
+              <textarea id="backstory" class="form-control" name="system.backstory" rows="10">{{actor.system.backstory}}</textarea>
             </div>
           </div>
           <div class="card">
             <div class="card-header fw-semibold">Notes</div>
             <div class="card-body">
-              <textarea class="form-control" name="system.notes" rows="10">{{actor.system.notes}}</textarea>
+              <label class="visually-hidden" for="notes">Notes</label>
+              <textarea id="notes" class="form-control" name="system.notes" rows="10">{{actor.system.notes}}</textarea>
             </div>
           </div>
         </div>
