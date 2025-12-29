@@ -1,4 +1,5 @@
 import { PATHS } from "../dice-constants.js";
+import { createDragDropHandlers, handleDragStart, handleDropItem } from "./rnk-dragdrop.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -299,19 +300,7 @@ export class RollnKeepDialog extends HandlebarsApplicationMixin(ApplicationV2) {
    * @return An array of DragDrop handlers
    */
   _createDragDropHandlers() {
-    const DragDropCls =
-      foundry.applications.api?.DragDrop?.implementation ||
-      foundry.applications.api?.DragDrop ||
-      foundry.applications.ux?.DragDrop?.implementation ||
-      foundry.applications.ux?.DragDrop;
-    return [
-      new DragDropCls({
-        dragSelector: ".dice.draggable",
-        dropSelector: ".dropbox",
-        permissions: { dragstart: this.isEditable, drop: this.isEditable },
-        callbacks: { dragstart: this._onDragStart.bind(this), drop: this._onDropItem.bind(this) },
-      }),
-    ];
+    return createDragDropHandlers(this, this.isEditable);
   }
 
   /**
@@ -319,14 +308,7 @@ export class RollnKeepDialog extends HandlebarsApplicationMixin(ApplicationV2) {
    * @param {DragEvent} event	The originating DragEvent
    */
   _onDragStart(event) {
-    const target = $(event.currentTarget);
-    event.dataTransfer.setData(
-      "text/plain",
-      JSON.stringify({
-        step: target.data("step"),
-        die: target.data("die"),
-      })
-    );
+    handleDragStart(event);
   }
 
   /**
@@ -392,64 +374,7 @@ export class RollnKeepDialog extends HandlebarsApplicationMixin(ApplicationV2) {
    * Handle dropped items
    */
   async _onDropItem(event) {
-    // *** Everything below here is only needed if the sheet is editable ***
-    if (!this.isEditable) {
-      return;
-    }
-
-    const target = event.currentTarget;
-    const type = target?.dataset?.type;
-    const json = event.dataTransfer?.getData("text/plain");
-    if (!json || !Object.values(RollnKeepDialog.CHOICES).some((e) => !!e && e === type)) {
-      return;
-    }
-
-    const data = JSON.parse(json);
-    if (!data) {
-      return;
-    }
-
-    const current = this.object.dicesList[data.step]?.[data.die];
-    if (!current) {
-      return;
-    }
-    delete current.newFace;
-
-    switch (type) {
-      case RollnKeepDialog.CHOICES.swap: {
-        // Dice Type Ring/Skill
-        const diceType = target?.dataset?.die;
-        const diceNewFace = target?.dataset?.face ? Number(target.dataset.face) : undefined;
-
-        if (current.type !== diceType || current.face === diceNewFace || Number.isNaN(diceNewFace)) {
-          current.choice = RollnKeepDialog.CHOICES.nothing;
-          this.render(false);
-          return false;
-        }
-
-        current.newFace = diceNewFace;
-        this._forceChoiceForDiceWithoutOne(RollnKeepDialog.CHOICES.keep);
-        break;
-      }
-
-      case RollnKeepDialog.CHOICES.reroll:
-        // If reroll, we need to keep all the line by default
-        this._forceChoiceForDiceWithoutOne(RollnKeepDialog.CHOICES.keep);
-        break;
-    }
-
-    current.choice = type;
-
-    // Little time saving : if we reach the max kept dices, discard all dices without a choice
-    if (
-      this._checkKeepCount(this.object.currentStep) &&
-      this._getKeepCount(this.object.currentStep) === (this.roll?.gfl5r?.keepLimit ?? 0)
-    ) {
-      this._forceChoiceForDiceWithoutOne(RollnKeepDialog.CHOICES.discard);
-    }
-
-    this.render(false);
-    return false;
+    handleDropItem(this, event);
   }
 
   /**

@@ -353,32 +353,6 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     return changed ? disciplines : null;
   }
 
-  #resolveDropTarget(event) {
-    const dropAbilities = event.target?.closest?.("[data-drop-target='abilities']");
-    const dropNarrativePos = event.target?.closest?.("[data-drop-target='narrative-positive']");
-    const dropNarrativeNeg = event.target?.closest?.("[data-drop-target='narrative-negative']");
-    const dropInventory = event.target?.closest?.("[data-drop-target='inventory']");
-    const dropModules = event.target?.closest?.("[data-drop-target='modules']");
-    const dropCondition = event.target?.closest?.("[data-drop-target='condition']");
-    const dropDiscipline = event.target?.closest?.("[data-drop-target='discipline']");
-    const dropDisciplineAbility = event.target?.closest?.("[data-drop-target='discipline-ability']");
-
-    const dropTarget =
-      dropAbilities || dropNarrativePos || dropNarrativeNeg || dropInventory || dropModules || dropCondition || dropDiscipline || dropDisciplineAbility;
-
-    return {
-      dropTarget,
-      dropAbilities,
-      dropNarrativePos,
-      dropNarrativeNeg,
-      dropInventory,
-      dropModules,
-      dropCondition,
-      dropDiscipline,
-      dropDisciplineAbility
-    };
-  }
-
   /** Accept dropped Items (from compendia or sidebar) into the drop zones */
   async _onDrop(event) {
     sheetDebug("ActorSheet#_onDrop", { target: event.target?.dataset?.dropTarget });
