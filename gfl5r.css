@@ -151,10 +151,6 @@ button[class*="fa-"]::before,
   transform: translateY(-1px);
 }
 
-.skill-card.skill-roll {
-  cursor: pointer;
-}
-
 .skill-card .card-body {
   display: flex;
   flex-direction: row;
