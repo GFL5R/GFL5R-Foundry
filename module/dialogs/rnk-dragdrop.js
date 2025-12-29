@@ -11,6 +11,9 @@ export function createDragDropHandlers(dialog, isEditable) {
       permissions: { dragstart: isEditable, drop: isEditable },
       callbacks: {
         dragstart: dialog._onDragStart.bind(dialog),
+        dragenter: (event) => handleDragEnterLeave(event, true),
+        dragleave: (event) => handleDragEnterLeave(event, false),
+        dragover: handleDragOver,
         drop: dialog._onDropItem.bind(dialog),
       },
     }),
@@ -19,6 +22,9 @@ export function createDragDropHandlers(dialog, isEditable) {
 
 export function handleDragStart(event) {
   const target = $(event.currentTarget);
+  if (event?.dataTransfer) {
+    event.dataTransfer.effectAllowed = "move";
+  }
   event.dataTransfer.setData(
     "text/plain",
     JSON.stringify({
@@ -28,8 +34,31 @@ export function handleDragStart(event) {
   );
 }
 
+export function handleDragOver(event) {
+  event?.preventDefault?.();
+  if (event?.dataTransfer) {
+    event.dataTransfer.dropEffect = "move";
+  }
+  return false;
+}
+
+function handleDragEnterLeave(event, add) {
+  const box = event?.target?.closest?.(".dropbox");
+  if (!box) return;
+  if (add) {
+    box.classList.add("drag-over");
+  } else {
+    box.classList.remove("drag-over");
+  }
+}
+
 export function handleDropItem(dialog, event) {
+  event?.preventDefault?.();
+  event?.stopPropagation?.();
+  console.debug?.("GFL5R | RNK drop", { editable: dialog.isEditable, target: event?.currentTarget });
   if (!dialog.isEditable) return;
+  const dropTarget = event?.currentTarget?.closest?.(".dropbox");
+  dropTarget?.classList?.remove?.("drag-over");
 
   const target = event.currentTarget;
   const type = target?.dataset?.type;

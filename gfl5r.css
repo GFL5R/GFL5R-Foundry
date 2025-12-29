@@ -98,6 +98,41 @@ button[class*="fa-"]::before,
   background: #131926;
 }
 
+.roll-n-keep-dialog .dropbox {
+  cursor: grab;
+}
+
+/* when a dice is dragged over a dropbox, show a stronger affordance */
+.roll-n-keep-dialog .dropbox.drag-over {
+  outline: 2px dashed #6cb2ff;
+  outline-offset: 2px;
+}
+
+.roll-n-keep-dialog .dice-ct {
+  display: inline-flex;
+  padding: 4px;
+  border-radius: 8px;
+}
+
+.roll-n-keep-dialog .dice-ct.keep img {
+  box-shadow: 0 0 0 2px #4caf50;
+  border-radius: 6px;
+}
+
+.roll-n-keep-dialog .dice-ct.discard img {
+  opacity: 0.35;
+}
+
+.roll-n-keep-dialog .dice-ct.reroll img {
+  box-shadow: 0 0 0 2px #ffc107;
+  border-radius: 6px;
+}
+
+.roll-n-keep-dialog .dice-ct.swap img {
+  box-shadow: 0 0 0 2px #6ea8fe;
+  border-radius: 6px;
+}
+
 .gfl5r-sheet .nav-tabs {
   display: flex;
   flex-wrap: wrap;

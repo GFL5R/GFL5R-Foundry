@@ -308,6 +308,7 @@ export class RollnKeepDialog extends HandlebarsApplicationMixin(ApplicationV2) {
    * @param {DragEvent} event	The originating DragEvent
    */
   _onDragStart(event) {
+    console.debug?.("GFL5R | RNK dragstart", { target: event?.currentTarget });
     handleDragStart(event);
   }
 
@@ -374,7 +375,7 @@ export class RollnKeepDialog extends HandlebarsApplicationMixin(ApplicationV2) {
    * Handle dropped items
    */
   async _onDropItem(event) {
-    handleDropItem(this, event);
+    return handleDropItem(this, event);
   }
 
   /**
