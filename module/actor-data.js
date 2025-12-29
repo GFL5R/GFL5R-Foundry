@@ -31,7 +31,7 @@ export const HUMAN_BACKGROUNDS = [
   { key: "medic", label: "Medic", approach: "resilience", skill: "medicine" },
   { key: "criminal", label: "Criminal", approach: "fortune", skill: "stealth" },
   { key: "scholar", label: "Scholar", approach: "swiftness", skill: "computers" }
-};
+];
 
 export const TDOLL_FRAMES = [
   {
