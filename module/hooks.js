@@ -14,7 +14,6 @@ export class GFL5RHooks {
 
         if (message.isRoll) {
             $root.addClass("roll");
-            $root.on("click", ".chat-dice-rnk", game.gfl5r.RollnKeepDialog.onChatAction.bind(this));
 
             if (game.user.isGM) {
                 $root.find(".player-only").remove();

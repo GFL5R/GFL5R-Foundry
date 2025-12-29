@@ -98,48 +98,6 @@ button[class*="fa-"]::before,
   background: #131926;
 }
 
-.roll-n-keep-dialog .dropbox {
-  cursor: grab;
-}
-
-/* when a dice is dragged over a dropbox, show a stronger affordance */
-.roll-n-keep-dialog .dropbox.drag-over {
-  outline: 2px dashed #6cb2ff;
-  outline-offset: 2px;
-}
-
-.roll-n-keep-dialog .window-content,
-.roll-n-keep-dialog form {
-  min-height: 400px;
-  max-height: 80vh;
-  overflow-y: auto;
-}
-
-.roll-n-keep-dialog .dice-ct {
-  display: inline-flex;
-  padding: 4px;
-  border-radius: 8px;
-}
-
-.roll-n-keep-dialog .dice-ct.keep img {
-  box-shadow: 0 0 0 2px #4caf50;
-  border-radius: 6px;
-}
-
-.roll-n-keep-dialog .dice-ct.discard img {
-  opacity: 0.35;
-}
-
-.roll-n-keep-dialog .dice-ct.reroll img {
-  box-shadow: 0 0 0 2px #ffc107;
-  border-radius: 6px;
-}
-
-.roll-n-keep-dialog .dice-ct.swap img {
-  box-shadow: 0 0 0 2px #6ea8fe;
-  border-radius: 6px;
-}
-
 .gfl5r-sheet .nav-tabs {
   display: flex;
   flex-wrap: wrap;
@@ -326,10 +284,6 @@ button[class*="fa-"]::before,
   color: #ff9b9b;
 }
 
-.gfl5r.chat.dice-roll .btn.chat-dice-rnk {
-  margin-bottom: 8px;
-}
-
 .roll-keep .profile-img {
   width: 48px;
   height: 48px;
@@ -358,4 +312,123 @@ button[class*="fa-"]::before,
 
 .roll-keep .legend-row {
   flex-wrap: wrap;
+}
+
+/* Dice picker dialog */
+.gfl5r-dice-picker {
+  background: #0d1118;
+  color: #e6eaf0;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.gfl5r-dice-picker .picker-panel {
+  background: linear-gradient(145deg, #1b2232 0%, #131a27 100%);
+  border: 1px solid #2c3547;
+  border-radius: 14px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+  padding: 16px 14px;
+}
+
+.gfl5r-dice-picker .fw-semibold {
+  color: #f4f6fb;
+}
+
+.gfl5r-dice-picker .btn-primary {
+  background: linear-gradient(135deg, #4d7cff 0%, #335bcc 100%);
+  border: 1px solid #2c4ca5;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.35);
+}
+
+.gfl5r-dice-picker .btn-outline-secondary {
+  color: #d7dbe4;
+  border-color: #3a455b;
+  background: #141b29;
+  height: 42px;
+  min-width: 30px;
+  padding: 6px 10px;
+}
+
+.gfl5r-dice-picker .btn-outline-secondary:hover,
+.gfl5r-dice-picker .btn-outline-secondary:focus {
+  border-color: #6ea8fe;
+  color: #ffffff;
+}
+
+.gfl5r-dice-picker .form-check-input {
+  background-color: #0f141f;
+  border: 1px solid #2c3547;
+  box-shadow: none;
+}
+
+.gfl5r-dice-picker .form-check-input:checked {
+  background-color: #4d7cff;
+  border-color: #4d7cff;
+}
+
+.gfl5r-dice-picker .approach-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  align-items: stretch;
+  margin: 0 auto;
+  max-width: 660px;
+}
+
+.gfl5r-dice-picker .approach-row > .col {
+  flex: 1 1 180px;
+  max-width: 210px;
+  padding: 0;
+}
+
+.gfl5r-dice-picker .approach-card {
+  background: #0f1726;
+  border: 2px solid #e6eaf0;
+  color: #f4f6fb;
+  border-radius: 12px;
+  padding: 10px 14px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
+  transition: border-color 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-height: 64px;
+  width: 100%;
+}
+
+.gfl5r-dice-picker .approach-card:hover {
+  border-color: #9dc2ff;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.4);
+}
+
+.gfl5r-dice-picker .approach-card.active {
+  border-color: #ff8a7a;
+  box-shadow: 0 0 0 1px rgba(255, 138, 122, 0.7), 0 10px 22px rgba(0, 0, 0, 0.42);
+}
+
+.gfl5r-dice-picker .approach-card .text-muted {
+  color: #cfd4df !important;
+  font-weight: 600;
+}
+
+.gfl5r-dice-picker .dice-value {
+  max-width: 80px;
+  min-width: 66px;
+  background: #0f141f;
+  border: 1px solid #2c3547;
+  color: #f4f6fb;
+  border-radius: 10px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.05rem;
+}
+
+.gfl5r-dice-picker .dice-row {
+  margin-top: 6px;
+  row-gap: 12px;
 }

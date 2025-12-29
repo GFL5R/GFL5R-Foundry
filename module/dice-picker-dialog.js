@@ -1,493 +1,237 @@
-// GFL5R Dice Picker Dialog (Application V2)
+// module/dice-picker-dialog.js
+// Lightweight picker dialog for selecting approach, TN, and bonus dice.
+
 import { GFL5R_CONFIG } from "./config.js";
+import { rollRingDie, rollSkillDie } from "./dice.js";
+import { GFLDiceResultWindow } from "./roll-keep-window.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
-const getSystemId = () => CONFIG?.system?.id ?? game?.system?.id ?? "gfl5r";
+const systemId = () => game?.system?.id ?? CONFIG?.system?.id ?? "gfl5r";
+const templatePath = (relativePath) => `systems/${systemId()}/${relativePath}`;
 
 export class GFLDicePickerDialog extends HandlebarsApplicationMixin(ApplicationV2) {
   constructor(options = {}) {
     super(options);
-    console.log("GFL5R | dice picker constructor", { options });
-    this.#assignOptions(options);
-    this.#bindHandlers();
-    this._normalizeCat = (s) => (s || "").toString().toLowerCase().replaceAll(/[^a-z0-9]/g, "");
+    this.actor = options.actor ?? null;
+    this.skillKey = options.skillKey ?? "";
+    const resolvedLabel = options.skillLabel?.label ?? options.skillLabel ?? GFL5R_CONFIG.getSkillLabel?.(this.skillKey) ?? this.skillKey;
+    this.skillLabel = String(resolvedLabel ?? "");
+    this.approaches = options.approaches ?? {};
 
-    // Legacy render hook (v1-style) to ensure we attach listeners even if ApplicationV2 bypasses activateListeners
-    Hooks.on("renderGFLDicePickerDialog", this._legacyRenderHook.bind(this));
+    const defaultApproach = options.defaultApproach || Object.keys(this.approaches)[0] || "";
+    const defaultTN = Number.isFinite(options.defaultTN) ? Number(options.defaultTN) : 2;
 
-    this.#initAdjustments();
-    this.#buildSkillOptions();
-    this.#ensureSkillSelection();
-    this.#resolveItemAndTarget();
-    this.#applyItemSkillFallback();
-    this.#ensureSkillSelection();
+    this.#state = {
+      selectedApproach: defaultApproach,
+      tn: Math.max(0, defaultTN),
+      bonusApproachDice: 0,
+      bonusSkillDice: 0
+    };
+
+    this.onComplete = typeof options.onComplete === "function" ? options.onComplete : null;
   }
 
-  static DEFAULT_OPTIONS = {
-    id: "gfl5r-dice-picker-dialog",
-    classes: ["sheet", "gfl5r", "dice-picker-dialog"],
-    window: { title: "Roll Dice", resizable: true },
-    position: { width: 420, height: "auto" },
-  };
+  #completed = false;
+  #renderAbort = null;
+  #state;
+
+  static get defaultOptions() {
+    return foundry.utils.mergeObject(super.defaultOptions, {
+      id: "gfl5r-dice-picker",
+      classes: ["gfl5r", "dialog", "dice-picker"],
+      tag: "form",
+      resizable: false,
+      width: 460,
+      height: "auto",
+      title: "Dice Picker",
+      submitOnChange: false,
+      closeOnSubmit: false
+    });
+  }
 
   static PARTS = {
-    picker: {
-      template: `systems/${getSystemId()}/templates/dice/dice-picker-dialog.html`,
+    form: {
+      template: templatePath("templates/dice-picker.html"),
       scrollable: []
     }
   };
 
-  static get eventListeners() {
-    return [
-      { event: "submit", selector: "form", callback: "onSubmit", preventDefault: true, stopPropagation: true },
-      { event: "click", selector: "[data-action='submit-roll']", callback: "onSubmit", preventDefault: true, stopPropagation: true },
-      { event: "click", selector: "[data-action='ring-minus']", callback: "onRingMinus" },
-      { event: "click", selector: "[data-action='ring-plus']", callback: "onRingPlus" },
-      { event: "click", selector: "[data-action='skill-minus']", callback: "onSkillMinus" },
-      { event: "click", selector: "[data-action='skill-plus']", callback: "onSkillPlus" },
-      { event: "click", selector: "[data-action='assist-minus']", callback: "onAssistMinus" },
-      { event: "click", selector: "[data-action='assist-plus']", callback: "onAssistPlus" },
-      { event: "change", selector: "#roll-approach", callback: "onApproachChange" },
-      { event: "change", selector: "#roll-skill", callback: "onSkillChange" },
-    ];
+  get title() {
+    const skill = typeof this.skillLabel === "string" ? this.skillLabel : (this.skillKey || "Skill");
+    return `Roll ${skill}`;
   }
 
-  async _prepareContext() {
-    const skillOptions = Array.isArray(this.skillList)
-      ? this.skillList.map((s) => ({
-          key: s.key || s.id,
-          label: s.label || GFL5R_CONFIG.getSkillLabel?.(s.key || s.id) || (s.key || s.id),
-          group: s.group || "",
-          groupId: s.groupSlug || s.groupId || this._normalizeCat(s.group || ""),
-        }))
-      : null;
+  async _prepareContext(options) {
+    const skillLabel = typeof this.skillLabel === "string" ? this.skillLabel : String(this.skillKey ?? "");
+    const skillRank = Number(this.actor?.system?.skills?.[this.skillKey] ?? 0);
+    const approachBase = Number(this.approaches?.[this.#state.selectedApproach] ?? 0);
+    const approachLabel = GFL5R_CONFIG.getApproachLabel?.(this.#state.selectedApproach) || this.#state.selectedApproach;
 
-    const ringValue = Math.max(
-      0,
-      Number(this.approaches?.[this.defaultApproach] ?? 0) + this.ringAdjust
-    );
-    const skillValue = Math.max(
-      0,
-      Number(this.actor?.system?.skills?.[this.skillKey] ?? 0) + this.skillAdjust
-    );
-
-    const approachList = Object.entries(this.approaches || {}).map(([key, value]) => ({
-      key,
-      label: GFL5R_CONFIG.getApproachLabel?.(key) || (key.charAt(0).toUpperCase() + key.slice(1)),
-      value: Number(value || 0),
-    }));
+    const approachTotal = Math.max(0, approachBase + this.#state.bonusApproachDice);
+    const skillTotal = Math.max(0, skillRank + this.#state.bonusSkillDice);
 
     return {
-      skillLabel: this.skillLabel || this.skillKey,
       skillKey: this.skillKey,
-      skillOptions,
-      approachList,
-      defaultApproach: this.defaultApproach,
-      defaultTN: this.defaultTN,
-      ringValue,
-      skillValue,
-      assistance: this.assistance,
-      defaultHiddenTN: this.defaultHiddenTN,
-      hiddenLocked: this.lockHiddenTN,
-      hiddenChecked: this.defaultHiddenTN || this.lockHiddenTN,
+      skillLabel,
+      tn: this.#state.tn,
+      approachLabel,
+      approachOptions: this.#buildApproachOptions(),
+      approachBase,
+      bonusApproachDice: this.#state.bonusApproachDice,
+      approachTotal,
+      skillRank,
+      bonusSkillDice: this.#state.bonusSkillDice,
+      skillTotal
     };
   }
 
-  // V2 event callbacks
-  onSubmit(ev) {
-    console.log("GFL5R | dice picker onSubmit handler invoked", { source: ev?.type, target: ev?.target });
-    ev?.preventDefault?.();
-    ev?.stopPropagation?.();
-    const form = ev?.target?.closest?.("form") || this.element?.querySelector?.("form");
-    if (!(form instanceof HTMLFormElement)) {
-      console.warn("GFL5R | Dice picker onSubmit without form", { target: ev?.target, currentTarget: ev?.currentTarget });
-      return false;
-    }
-    const data = foundry.utils.expandObject(Object.fromEntries(new FormData(form).entries()));
-    console.log("GFL5R | Dice picker onSubmit", { data });
-    this._updateObject(ev, data);
-    return true;
-  }
-  onRingMinus(ev) { ev.preventDefault(); this.ringAdjust = Math.max(this.ringAdjust - 1, -9); this.render(false); }
-  onRingPlus(ev) { ev.preventDefault(); this.ringAdjust = Math.min(this.ringAdjust + 1, 9); this.render(false); }
-  onSkillMinus(ev) { ev.preventDefault(); this.skillAdjust = Math.max(this.skillAdjust - 1, -9); this.render(false); }
-  onSkillPlus(ev) { ev.preventDefault(); this.skillAdjust = Math.min(this.skillAdjust + 1, 9); this.render(false); }
-  onAssistMinus(ev) { ev.preventDefault(); this.assistance = Math.max(this.assistance - 1, 0); this.render(false); }
-  onAssistPlus(ev) { ev.preventDefault(); this.assistance = Math.min(this.assistance + 1, 9); this.render(false); }
-  onApproachChange(ev) { this.defaultApproach = ev.currentTarget.value; this.render(false); }
-  onSkillChange(ev) {
-    this.skillKey = ev.currentTarget.value;
-    const found = this.skillList?.find((s) => s.key === this.skillKey || s.id === this.skillKey);
-    if (found) {
-      this.skillLabel = found.label || this.skillLabel;
-      this.skillCatId = found.groupSlug || found.groupId || this._normalizeCat(found.group || this.skillCatId || "");
-    }
-    this.render(false);
-  }
-
-  #normalizeSkillList(skillList) {
-    if (Array.isArray(skillList)) return skillList;
-    if (!skillList) return null;
-    return String(skillList).split(",").map((s) => s.trim()).filter(Boolean);
-  }
-
-  #filterSkillsByContext(allSkills, targetCat) {
-    if (this.skillList && !Array.isArray(this.skillList[0])) {
-      const keys = new Set(this.skillList.map((s) => (typeof s === "string" ? s : s.key || s.id)).filter(Boolean));
-      return allSkills.filter((s) => keys.has(s.key));
-    }
-    if (!this.skillList || this.skillList.length === 0) {
-      return targetCat ? allSkills.filter((s) => s.groupSlug === targetCat) : allSkills;
-    }
-    if (targetCat) {
-      return this.skillList.filter((s) => this._normalizeCat(s.group || "") === targetCat);
-    }
-    return this.skillList;
-  }
-
-  activateListeners(html) {
-    super.activateListeners?.(html);
-    const root = html instanceof HTMLElement ? html : html?.[0] || this.element;
-    console.log("GFL5R | dice picker activateListeners", { rootExists: !!root, elementExists: !!this.element });
-    const form = root?.querySelector?.("form");
-    if (form) {
-      console.log("GFL5R | dice picker binding form submit", { formExists: true });
-      form.addEventListener("submit", this._boundRootSubmit, { capture: true });
-    } else {
-      console.warn("GFL5R | dice picker NO FORM FOUND IN ROOT", { root });
-    }
-    if (root?.addEventListener) {
-      root.addEventListener("click", this._boundRootClick, { capture: true });
-      console.log("GFL5R | dice picker bound root click listener");
-    } else {
-      console.warn("GFL5R | dice picker no root click binding");
-    }
-    this._globalSubmitHandler = null;
-  }
-
-  async _updateObject(event, formData) {
-    console.log("GFL5R | Dice picker _updateObject", { formData });
-    try {
-      if (!this.actor || !this.skillKey) {
-        await this.close();
-        return;
-      }
-      const approachName = formData.approach || this.defaultApproach || "";
-      const tnHidden = this.#isHiddenTN(formData);
-      const tnVal = Number(formData.tn || 0);
-      const useFortune = formData.useFortune === "on" || formData.useFortune === true || formData.useFortune === "true";
-
-      const { ringDice, skillDice, keepBonus, assistanceVal } = this.#calculateDice(approachName, useFortune);
-
-      await this.#maybeAwardHiddenFortune(tnHidden);
-      await this.#maybeSpendFortune(useFortune);
-
-      const roll = this.#buildRoll({
-        approachName,
-        tnVal,
-        tnHidden,
-        useFortune,
-        ringDice,
-        skillDice,
-        keepBonus,
-        assistanceVal
-      });
-
-      await this.#maybeUpdateStance(approachName);
-
-      const flavor = `<strong>${this.actor.name}</strong> rolls <em>${this.skillLabel || this.skillKey}</em> with <em>${approachName}</em>`;
-      console.log("GFL5R | Dice picker sending roll", { formula: roll.formula, flavor, difficulty: tnVal, tnHidden, keepBonus, ringDice, skillDice });
-      await roll.toMessage({ flavor });
-      console.log("GFL5R | Dice picker roll sent");
-      return this.close();
-    } catch (err) {
-      console.error("GFL5R | Dice picker submit failed", err);
-      ui.notifications?.error("Dice picker failed to roll. See console for details.");
-    }
-  }
-
-  // Legacy render hook binder for safety
-  _legacyRenderHook(app, html) {
-    if (app !== this) return;
-    try {
-      const root = html?.[0] || html || this.element;
-      console.log("GFL5R | dice picker legacy render hook", { rootExists: !!root });
-      const form = root?.querySelector?.("form") || root?.querySelector?.("[data-part='picker'] form");
-      if (form) {
-        form.addEventListener("submit", this._boundRootSubmit, { capture: true });
-      }
-      root?.addEventListener?.("click", this._boundRootClick, { capture: true });
-    } catch (err) {
-      console.warn("GFL5R | dice picker legacy hook failed", err);
-    }
-  }
-
   async close(options) {
-    try {
-      const root = this.element;
-      root?.removeEventListener?.("click", this._boundRootClick, { capture: true });
-      const form = root?.querySelector?.("form");
-      form?.removeEventListener?.("submit", this._boundRootSubmit, { capture: true });
-    } catch (err) {
-      console.warn("GFL5R | dice picker close cleanup warning", err);
-    }
-    try {
-      await this._finish();
-    } catch (err) {
-      console.warn("GFL5R | Dice picker close finish warning", err);
+    this.#renderAbort?.abort();
+    if (!this.#completed) {
+      this.#finish("close");
     }
     return super.close(options);
   }
 
-  /**
-   * Avoid positioning before the element is attached to the DOM.
-   */
-  setPosition(opts = {}) {
-    if (!this.element?.parentElement) return this;
-    try {
-      return super.setPosition(opts);
-    } catch (err) {
-      console.warn("GFL5R | Picker setPosition skipped", err);
-      return this;
-    }
-  }
+  _onRender(context, options) {
+    super._onRender(context, options);
+    this.#renderAbort?.abort();
+    this.#renderAbort = new AbortController();
+    const { signal } = this.#renderAbort;
+    const root = this.element;
+    if (!root) return;
 
-  /**
-   * Guard position updates when element is not yet in DOM (prevents null offsetWidth errors).
-   */
-  _updatePosition(...args) {
-    if (!this.element?.parentElement) return this;
-    try {
-      return super._updatePosition(...args);
-    } catch (err) {
-      console.warn("GFL5R | Picker position update skipped", err);
-      return this;
-    }
-  }
-
-  #isHiddenTN(formData) {
-    return (
-      this.lockHiddenTN ||
-      formData?.hiddenTN === "on" ||
-      formData?.hiddenTN === true ||
-      formData?.hiddenTN === "true"
-    );
-  }
-
-  #calculateDice(approachName, useFortune) {
-    const approaches = this.actor?.system?.approaches ?? {};
-    const approachVal = Math.max(0, Number(approaches[approachName] ?? 0) + this.ringAdjust);
-    const skillVal = Math.max(0, Number(this.actor?.system?.skills?.[this.skillKey] ?? 0) + this.skillAdjust);
-    const assistanceVal = Math.max(0, Number(this.assistance || 0));
-    const ringDice = Math.max(0, approachVal + (useFortune ? 1 : 0));
-    const skillDice = Math.max(0, skillVal);
-    const keepBonus = assistanceVal;
-    return { ringDice, skillDice, keepBonus, assistanceVal };
-  }
-
-  async #maybeAwardHiddenFortune(tnHidden) {
-    if (!tnHidden || this._hiddenAwarded) return;
-    const currentFortune = Number(this.actor?.system?.resources?.fortunePoints ?? 0);
-    const fortuneMax =
-      Number(this.actor?.system?.resources?.fortunePointsMax ?? 0) ||
-      Number(this.actor?.system?.approaches?.fortune ?? 0) ||
-      0;
-    const nextFortune = fortuneMax ? Math.min(fortuneMax, currentFortune + 1) : currentFortune + 1;
-    if (nextFortune !== currentFortune) {
-      await this.actor.update({ "system.resources.fortunePoints": nextFortune });
-    }
-    ui.notifications?.info("Hidden TN: +1 Fortune Point gained.");
-    this._hiddenAwarded = true;
-  }
-
-  async #maybeSpendFortune(useFortune) {
-    if (!useFortune) return;
-    const currentFortune = Number(this.actor?.system?.resources?.fortunePoints ?? 0);
-    if (currentFortune > 0) {
-      await this.actor.update({ "system.resources.fortunePoints": Math.max(0, currentFortune - 1) });
-    } else {
-      ui.notifications?.warn("No Fortune points left; applying spend anyway.");
-    }
-  }
-
-  #buildRoll({ approachName, tnVal, tnHidden, useFortune, ringDice, skillDice, keepBonus, assistanceVal }) {
-    const parts = [];
-    if (ringDice > 0) parts.push(`${ringDice}dr[${approachName}]`);
-    if (skillDice > 0) parts.push(`${skillDice}ds[${this.skillKey}]`);
-    const formula = parts.join(" + ") || "0";
-
-    const roll = new game.gfl5r.RollGFL5R(formula);
-    roll.actor = this.actor;
-    if (this.item) roll.gfl5r.item = this.item;
-    else if (this.itemUuid) roll.gfl5r.item = { uuid: this.itemUuid };
-    if (this.target) roll.gfl5r.target = this.target;
-    else if (this.targetUuid) roll.gfl5r.target = { uuid: this.targetUuid };
-    roll.gfl5r.difficulty = tnVal;
-    roll.gfl5r.difficultyHidden = tnHidden;
-    roll.gfl5r.skillId = this.skillKey;
-    roll.gfl5r.skillCatId = this.skillCatId || "";
-    roll.gfl5r.stance = approachName;
-    roll.gfl5r.voidPointUsed = useFortune;
-    roll.gfl5r.skillAssistance = assistanceVal;
-    if (keepBonus > 0) {
-      const baseKeep = roll.gfl5r.keepLimit || ringDice;
-      roll.gfl5r.keepLimit = baseKeep + keepBonus;
-    }
-    if (this.isInitiativeRoll) {
-      roll.gfl5r.isInitiativeRoll = true;
-      roll.gfl5r.baseInitiative = this.baseInitiative || 0;
-      roll.gfl5r.initiativeCombatantId = this.initiativeCombatantId || null;
-    }
-    return roll;
-  }
-
-  async #maybeUpdateStance(approachName) {
-    if (!this.isInitiativeRoll) return;
-    if (this.actor?.system?.stance === undefined) return;
-    try {
-      await this.actor.update({ "system.stance": approachName });
-    } catch (err) {
-      console.warn("GFL5R | Unable to update stance", err);
-    }
-  }
-
-  #assignOptions(options) {
-    this.actor = options.actor || null;
-    this.skillKey = options.skillKey || "";
-    this.skillLabel = options.skillLabel || "";
-    this.skillList = this.#normalizeSkillList(options.skillList);
-    this.skillCatId = options.skillCatId || "";
-    this.approaches = options.approaches || {};
-    this.defaultTN = options.defaultTN ?? 2;
-    this.defaultApproach = options.defaultApproach || Object.keys(this.approaches || {})[0] || "";
-    this.defaultHiddenTN = options.defaultHiddenTN ?? false;
-    this.lockHiddenTN = options.lockHiddenTN ?? false;
-    this.isInitiativeRoll = !!options.isInitiativeRoll;
-    this.baseInitiative = options.baseInitiative ?? 0;
-    this.initiativeCombatantId = options.initiativeCombatantId ?? null;
-    this.item = options.item || null;
-    this.itemUuid = options.itemUuid || null;
-    this.target = options.target || null;
-    this.targetUuid = options.targetUuid || null;
-    this.onComplete = typeof options.onComplete === "function" ? options.onComplete : null;
-    this._completed = false;
-    this._hiddenAwarded = false;
-  }
-
-  #bindHandlers() {
-    // Pre-bind handlers for reliable attach/remove
-    this._boundRootClick = (ev) => {
-      const submit = ev?.target?.closest?.("[data-action='submit-roll']");
-      if (submit) {
-        console.log("GFL5R | dice picker root click -> submit", { target: ev?.target });
-        ev.preventDefault();
-        ev.stopPropagation();
-        this.onSubmit(ev);
+    root.addEventListener("click", (event) => {
+      const target = event.target?.closest?.("[data-action]");
+      if (!target || !root.contains(target)) return;
+      const action = target.dataset.action;
+      switch (action) {
+        case "select-approach":
+          this.#state.selectedApproach = target.dataset.approach || target.value;
+          this.render(false);
+          break;
+        case "tn-inc":
+          this.#adjustTN(1);
+          break;
+        case "tn-dec":
+          this.#adjustTN(-1);
+          break;
+        case "approach-inc":
+          this.#adjustApproachBonus(1);
+          break;
+        case "approach-dec":
+          this.#adjustApproachBonus(-1);
+          break;
+        case "skill-inc":
+          this.#adjustSkillBonus(1);
+          break;
+        case "skill-dec":
+          this.#adjustSkillBonus(-1);
+          break;
+        default:
+          break;
       }
+    }, { signal });
+
+    root.addEventListener("submit", (event) => {
+      event.preventDefault();
+      this.#finish("submit");
+      this.close();
+    }, { signal });
+  }
+
+  #buildApproachOptions() {
+    const entries = Object.entries(this.approaches ?? {});
+    if (!entries.length) return [];
+
+    return entries.map(([key, value]) => ({
+      key,
+      label: GFL5R_CONFIG.getApproachLabel?.(key) || key,
+      value: Number(value) || 0,
+      selected: key === this.#state.selectedApproach
+    }));
+  }
+
+  #adjustTN(delta) {
+    const next = Math.max(0, Number(this.#state.tn) + delta);
+    this.#state.tn = next;
+    this.render(false);
+  }
+
+  #adjustApproachBonus(delta) {
+    const next = Math.max(0, Number(this.#state.bonusApproachDice) + delta);
+    this.#state.bonusApproachDice = next;
+    this.render(false);
+  }
+
+  #adjustSkillBonus(delta) {
+    const next = Math.max(0, Number(this.#state.bonusSkillDice) + delta);
+    this.#state.bonusSkillDice = next;
+    this.render(false);
+  }
+
+  #finish(reason) {
+    if (this.#completed) return;
+    this.#completed = true;
+
+    const skillLabel = typeof this.skillLabel === "string" ? this.skillLabel : `${this.skillKey ?? ""}`;
+
+    const summary = {
+      approach: this.#state.selectedApproach,
+      approachValue: Number(this.approaches?.[this.#state.selectedApproach] ?? 0),
+      bonusApproachDice: this.#state.bonusApproachDice,
+      approachTotal: Math.max(0, Number(this.approaches?.[this.#state.selectedApproach] ?? 0) + this.#state.bonusApproachDice),
+      skillKey: this.skillKey,
+      skillLabel,
+      skillRank: Number(this.actor?.system?.skills?.[this.skillKey] ?? 0),
+      bonusSkillDice: this.#state.bonusSkillDice,
+      skillTotal: Math.max(0, Number(this.actor?.system?.skills?.[this.skillKey] ?? 0) + this.#state.bonusSkillDice),
+      tn: this.#state.tn,
+      reason
     };
-    this._boundRootSubmit = (ev) => {
-      console.log("GFL5R | dice picker root submit", { target: ev?.target });
-      this.onSubmit(ev);
-    };
-  }
 
-  #initAdjustments() {
-    // Local adjustments (let user tweak dice without changing actor)
-    this.ringAdjust = 0;
-    this.skillAdjust = 0;
-    this.assistance = 0;
-  }
+    console.log("GFL5R | Dice Picker", {
+      ringDice: summary.approachTotal,
+      skillDice: summary.skillTotal,
+      tn: summary.tn,
+      skill: summary.skillKey,
+      approach: summary.approach
+    });
 
-  #buildSkillOptions() {
-    const targetCat = this._normalizeCat(this.skillCatId);
-    const allSkills = Array.isArray(GFL5R_CONFIG?.skillGroups)
-      ? GFL5R_CONFIG.skillGroups.flatMap((grp) => {
-          const grpSlug = this._normalizeCat(grp.title);
-          return grp.items.map((item) => ({ key: item.key, label: item.label, group: grp.title, groupSlug: grpSlug }));
-        })
-      : [];
-    this.skillList = this.#filterSkillsByContext(allSkills, targetCat);
-  }
-
-  #ensureSkillSelection() {
-    // Default skill from list if provided
-    if (!this.skillKey && this.skillList?.length) {
-      this.skillKey = this.skillList[0].key || this.skillList[0].id || "";
-      this.skillLabel = this.skillList[0].label || this.skillLabel;
+    if (reason === "submit") {
+      const results = this.#rollPoolFaces(summary);
+      this.#openResultsWindow(summary, results);
     }
-    const found = this.skillList?.find((s) => s.key === this.skillKey || s.id === this.skillKey);
-    if (found) {
-      this.skillLabel ||= found.label || this.skillLabel;
-      this.skillCatId ||= found.groupSlug || found.groupId || this._normalizeCat(found.group || "");
-    }
-  }
 
-  #resolveItemAndTarget() {
-    this.#resolveItemFromUuid();
-    this.#resolveTargetFromUuid();
-    if (!this.target) this.#resolveTargetFromUserSelection();
-    if (!this.target) this.#resolveTargetFromActorTokens();
-  }
-
-  #resolveItemFromUuid() {
-    if (this.item || !this.itemUuid) return;
-    try {
-      const it = fromUuidSync(this.itemUuid);
-      if (it) this.item = it;
-    } catch (err) {
-      console.warn("GFL5R | Unable to resolve item uuid", err);
-    }
-  }
-
-  #resolveTargetFromUuid() {
-    if (this.target || !this.targetUuid) return;
-    try {
-      const t = fromUuidSync(this.targetUuid);
-      if (t) this.target = t;
-    } catch (err) {
-      console.warn("GFL5R | Unable to resolve target uuid", err);
-    }
-  }
-
-  #resolveTargetFromUserSelection() {
-    const targetToken = Array.from(game.user.targets).values().next()?.value?.document;
-    if (targetToken) this.target = targetToken;
-  }
-
-  #resolveTargetFromActorTokens() {
-    if (!this.actor) return;
-    const actorTokens = this.actor.getActiveTokens?.() || [];
-    const firstTok = actorTokens.find((t) => !!t.document)?.document;
-    if (firstTok) this.target = firstTok;
-  }
-
-  #applyItemSkillFallback() {
-    // If an item was provided and has a skill, use it as default
-    if (this.item?.system?.skill && !this.skillKey) {
-      this.skillKey = this.item.system.skill;
-      this.skillLabel = this.item.name || this.skillLabel;
-    }
-  }
-
-  async _finish() {
-    if (this._completed) return;
-    if (this._formSubmitHandler && this.element) {
-      try {
-        const form = this.element.querySelector("form");
-        if (form) form.removeEventListener("submit", this._formSubmitHandler, { capture: true });
-      } catch (err) {
-        console.warn("GFL5R | Dice picker submit cleanup", err);
-      }
-      this._formSubmitHandler = null;
-    }
-    this._completed = true;
     if (this.onComplete) {
       try {
-        await this.onComplete();
+        this.onComplete(summary);
       } catch (err) {
-        console.warn("GFL5R | dice picker onComplete callback error", err);
+        console.error("GFL5R | Picker onComplete error", err);
       }
     }
+  }
+
+  #rollPoolFaces(summary) {
+    const faces = [];
+    for (let i = 0; i < (summary.approachTotal || 0); i += 1) {
+      faces.push({ ...rollRingDie(), order: faces.length + 1 });
+    }
+    for (let i = 0; i < (summary.skillTotal || 0); i += 1) {
+      faces.push({ ...rollSkillDie(), order: faces.length + 1 });
+    }
+    return faces;
+  }
+
+  #openResultsWindow(summary, results) {
+    const title = `Roll & Keep: ${summary.skillLabel || summary.skillKey || "Skill"}`;
+    new GFLDiceResultWindow({
+      title,
+      results,
+      skillLabel: summary.skillLabel,
+      approachLabel: summary.approach,
+      tn: summary.tn
+    }).render(true);
   }
 }
 

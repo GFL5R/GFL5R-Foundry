@@ -1,0 +1,200 @@
+<section class="py-3">
+  <header class="mb-3">
+    <div class="h5 mb-1">{{skillLabel}} via {{approachLabel}}</div>
+    <div class="text-muted small">TN {{tn}} · {{results.length}} dice</div>
+  </header>
+
+  <div class="row g-3 align-items-start">
+    <div class="col-12 col-md-3">
+      <div class="card h-100">
+        <div class="card-header">Swap</div>
+        <div class="card-body d-flex flex-column align-items-center" style="min-height: 140px; gap: 8px;">
+          {{#each ringFaces as |face|}}
+            <img
+              src="{{face.icon}}"
+              alt="{{face.label}}"
+              class="img-fluid"
+              style="max-width:64px; height:auto; object-fit:contain;"
+              data-drag-die
+              data-die-type="{{face.type}}"
+              data-die-key="{{face.key}}"
+              data-die-label="{{face.label}}"
+              data-die-icon="{{face.icon}}"
+              data-die-s="{{face.s}}"
+              data-die-o="{{face.o}}"
+              data-die-r="{{face.r}}"
+              data-die-explosive="{{face.explosive}}"
+            />
+          {{/each}}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6">
+      <div class="d-flex flex-column gap-3">
+        <!-- Top row for Discard and Reroll -->
+        <div class="row g-3">
+          <div class="col-6">
+            <div class="card h-100">
+              <div class="card-header">Discard</div>
+              <div class="card-body d-flex flex-wrap gap-2 justify-content-center align-items-center" style="min-height: 100px;" data-drop-discard>
+                {{#each discarded as |d|}}
+                  <img
+                    src="{{d.icon}}"
+                    alt="{{d.label}}"
+                    class="img-fluid"
+                    style="max-width:64px; height:auto; object-fit:contain;"
+                    data-drag-die
+                    data-from="discarded"
+                    data-die-index="{{@index}}"
+                    data-die-type="{{d.type}}"
+                    data-die-key="{{d.key}}"
+                    data-die-label="{{d.label}}"
+                    data-die-icon="{{d.icon}}"
+                    data-die-s="{{d.s}}"
+                    data-die-o="{{d.o}}"
+                    data-die-r="{{d.r}}"
+                    data-die-explosive="{{d.explosive}}"
+                  />
+                {{/each}}
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="card h-100">
+              <div class="card-header">Reroll</div>
+              <div class="card-body d-flex flex-wrap gap-2 justify-content-center align-items-center" style="min-height: 100px;" data-drop-reroll>
+                {{#each rerolled as |d|}}
+                  <img
+                    src="{{d.icon}}"
+                    alt="{{d.label}}"
+                    class="img-fluid"
+                    style="max-width:64px; height:auto; object-fit:contain;"
+                    data-drag-die
+                    data-from="rerolled"
+                    data-die-index="{{@index}}"
+                    data-die-type="{{d.type}}"
+                    data-die-key="{{d.key}}"
+                    data-die-label="{{d.label}}"
+                    data-die-icon="{{d.icon}}"
+                    data-die-s="{{d.s}}"
+                    data-die-o="{{d.o}}"
+                    data-die-r="{{d.r}}"
+                    data-die-explosive="{{d.explosive}}"
+                  />
+                {{/each}}
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Middle: Rolled Dice -->
+        <div class="card">
+          <div class="card-header">Rolled Dice</div>
+          <div class="card-body">
+            <div class="row g-3 align-items-center justify-content-center flex-wrap">
+              {{#each results as |d|}}
+                <div class="col-auto text-center" style="min-width:72px;" data-drop-die-index="{{@index}}">
+                  <img
+                    src="{{d.icon}}"
+                    alt="{{d.label}}"
+                    class="img-fluid"
+                    style="max-width:64px; height:auto; object-fit:contain;"
+                    data-drag-die
+                    data-from="results"
+                    data-die-index="{{@index}}"
+                    data-die-type="{{d.type}}"
+                    data-die-key="{{d.key}}"
+                    data-die-label="{{d.label}}"
+                    data-die-icon="{{d.icon}}"
+                    data-die-s="{{d.s}}"
+                    data-die-o="{{d.o}}"
+                    data-die-r="{{d.r}}"
+                    data-die-explosive="{{d.explosive}}"
+                  />
+                </div>
+              {{/each}}
+            </div>
+          </div>
+        </div>
+        <!-- Bottom: Keep -->
+        <div class="card">
+          <div class="card-header">Keep (max {{maxKeep}})</div>
+          <div class="card-body d-flex flex-wrap gap-2 justify-content-center align-items-center" style="min-height: 100px;" data-drop-keep>
+            {{#each kept as |d|}}
+              <div class="position-relative d-inline-block">
+                <img
+                  src="{{d.icon}}"
+                  alt="{{d.label}}"
+                  class="img-fluid"
+                  style="max-width:64px; height:auto; object-fit:contain;"
+                  data-drag-die
+                  data-from="kept"
+                  data-die-index="{{@index}}"
+                  data-die-type="{{d.type}}"
+                  data-die-key="{{d.key}}"
+                  data-die-label="{{d.label}}"
+                  data-die-icon="{{d.icon}}"
+                  data-die-s="{{d.s}}"
+                  data-die-o="{{d.o}}"
+                  data-die-r="{{d.r}}"
+                  data-die-explosive="{{d.explosive}}"
+                />
+                {{#if d.explosion}}
+                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark" style="font-size: 0.75rem;">✨</span>
+                {{/if}}
+              </div>
+            {{/each}}
+          </div>
+        </div>
+        <!-- Continue Button -->
+        <div class="mt-3 text-center">
+          <button type="button" class="btn btn-primary" data-action="{{#if isFinalize}}finalize{{else}}continue{{/if}}" {{#unless canContinue}}disabled{{/unless}}>{{#if isFinalize}}Finalize{{else}}Continue{{/if}}</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-3">
+      <div class="card h-100">
+        <div class="card-header">Swap</div>
+        <div class="card-body d-flex flex-column align-items-center" style="min-height: 140px; gap: 8px;">
+          {{#each skillFaces as |face|}}
+            <img
+              src="{{face.icon}}"
+              alt="{{face.label}}"
+              class="img-fluid"
+              style="max-width:64px; height:auto; object-fit:contain;"
+              data-drag-die
+              data-die-type="{{face.type}}"
+              data-die-key="{{face.key}}"
+              data-die-label="{{face.label}}"
+              data-die-icon="{{face.icon}}"
+              data-die-s="{{face.s}}"
+              data-die-o="{{face.o}}"
+              data-die-r="{{face.r}}"
+              data-die-explosive="{{face.explosive}}"
+            />
+          {{/each}}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="mt-3">
+    <h6>Legend</h6>
+    <div class="d-flex flex-wrap gap-3">
+      <div class="d-flex align-items-center">
+        <img src="systems/gfl5r/assets/symbols/Success.svg" alt="Success" style="width:24px; height:24px; margin-right:8px;"> Success
+      </div>
+      <div class="d-flex align-items-center">
+        <img src="systems/gfl5r/assets/symbols/Opportunity.svg" alt="Opportunity" style="width:24px; height:24px; margin-right:8px;"> Opportunity
+      </div>
+      <div class="d-flex align-items-center">
+        <img src="systems/gfl5r/assets/symbols/Strife.svg" alt="Strife" style="width:24px; height:24px; margin-right:8px;"> Strife
+      </div>
+      <div class="d-flex align-items-center">
+        <img src="systems/gfl5r/assets/symbols/Explosion.svg" alt="Explosion" style="width:24px; height:24px; margin-right:8px;"> Explosion
+      </div>
+    </div>
+  </div>
+</section>

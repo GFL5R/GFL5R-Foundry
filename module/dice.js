@@ -1,40 +1,61 @@
-// Facade for dice-related exports
-import { PATHS } from "./dice-constants.js";
-import { L5rBaseDie, RingDie, AbilityDie, RollGFL5R, patchRollFromData } from "./rolls/roll-gfl5r.js";
-import { RollnKeepDialog } from "./dialogs/roll-n-keep.js";
+// module/dice.js
+// Utility helpers to roll a single GFL5R ring (black d6) or skill (white d12) die.
 
-// Ensure Roll.fromData is patched early
-patchRollFromData();
+const { randomID } = foundry.utils ?? {};
+const systemId = () => game?.system?.id ?? CONFIG?.system?.id ?? "gfl5r";
+const iconPath = (color, file) => `systems/${systemId()}/assets/dice/${color}/${file}`;
 
-export function registerDiceTerms() {
-  CONFIG.Dice.terms ??= {};
-  CONFIG.Dice.terms["r"] = RingDie;
-  CONFIG.Dice.terms["s"] = AbilityDie;
-  if (!Array.isArray(CONFIG.Dice.rolls)) {
-    CONFIG.Dice.rolls = [];
-  }
-  if (!CONFIG.Dice.rolls.includes(RollGFL5R)) {
-    CONFIG.Dice.rolls.push(RollGFL5R);
-  }
-  // also support legacy object-style lookup used by some modules
-  CONFIG.Dice.rolls[RollGFL5R.name] = RollGFL5R;
-  CONFIG.Dice.rolls["RollGFL5R"] = RollGFL5R;
-  CONFIG.Dice.rolls["rollgfl5r"] = RollGFL5R;
+const buildFace = (type, key, label, { icon, s = 0, o = 0, r = 0, explosive = false } = {}) => ({
+  type,
+  key,
+  label,
+  icon,
+  s,
+  o,
+  r,
+  explosive
+});
 
-  CONFIG.gfl5r = CONFIG.gfl5r || {};
-  CONFIG.gfl5r.paths = PATHS;
+// Ring (approach) die faces — one face per side.
+export const RING_DIE_FACES = [
+  buildFace("ring", "blank", "Blank", { icon: iconPath("black", "blank.png") }),
+  buildFace("ring", "opp-strife", "Opportunity + Strife", { icon: iconPath("black", "opp-strife.png"), o: 1, r: 1 }),
+  buildFace("ring", "opp", "Opportunity", { icon: iconPath("black", "opp.png"), o: 1 }),
+  buildFace("ring", "success-strife", "Success + Strife", { icon: iconPath("black", "success-strife.png"), s: 1, r: 1 }),
+  buildFace("ring", "success", "Success", { icon: iconPath("black", "success.png"), s: 1 }),
+  buildFace("ring", "explosive-strife", "Explosive Success + Strife", { icon: iconPath("black", "explosive-strife.png"), s: 1, r: 1, explosive: true })
+];
 
-  game.gfl5r = game.gfl5r || {};
-  game.gfl5r.L5rBaseDie = L5rBaseDie;
-  game.gfl5r.RingDie = RingDie;
-  game.gfl5r.AbilityDie = AbilityDie;
-  game.gfl5r.RollGFL5R = RollGFL5R;
-  game.gfl5r.RollnKeepDialog = RollnKeepDialog;
+// Skill die faces — duplicates reflect the 12 sides of the d12.
+export const SKILL_DIE_FACES = [
+  buildFace("skill", "blank", "Blank", { icon: iconPath("white", "blank.png") }),
+  buildFace("skill", "blank", "Blank", { icon: iconPath("white", "blank.png") }),
+  buildFace("skill", "opp", "Opportunity", { icon: iconPath("white", "opp.png"), o: 1 }),
+  buildFace("skill", "opp", "Opportunity", { icon: iconPath("white", "opp.png"), o: 1 }),
+  buildFace("skill", "opp", "Opportunity", { icon: iconPath("white", "opp.png"), o: 1 }),
+  buildFace("skill", "success-strife", "Success + Strife", { icon: iconPath("white", "success-strife.png"), s: 1, r: 1 }),
+  buildFace("skill", "success-strife", "Success + Strife", { icon: iconPath("white", "success-strife.png"), s: 1, r: 1 }),
+  buildFace("skill", "success", "Success", { icon: iconPath("white", "success.png"), s: 1 }),
+  buildFace("skill", "success", "Success", { icon: iconPath("white", "success.png"), s: 1 }),
+  buildFace("skill", "success-opp", "Success + Opportunity", { icon: iconPath("white", "success-opp.png"), s: 1, o: 1 }),
+  buildFace("skill", "explosive-strife", "Explosive Success + Strife", { icon: iconPath("white", "explosive-strife.png"), s: 1, r: 1, explosive: true }),
+  buildFace("skill", "explosive", "Explosive Success", { icon: iconPath("white", "explosive.png"), s: 1, explosive: true })
+];
 
-  // Ensure Roll.fromData patch exists
-  patchRollFromData();
-}
+const rollFace = (faces) => {
+  const idx = Math.floor(Math.random() * faces.length);
+  const face = faces[idx];
+  const id = typeof randomID === "function" ? randomID() : crypto.randomUUID?.() ?? `die-${Date.now()}-${idx}`;
+  return { ...face, id };
+};
 
-export { PATHS, L5rBaseDie, RingDie, AbilityDie, RollGFL5R, RollnKeepDialog };
+export const rollRingDie = () => rollFace(RING_DIE_FACES);
+export const rollSkillDie = () => rollFace(SKILL_DIE_FACES);
 
-console.log("GFL5R | dice.js facade loaded");
+export const rollDie = (type = "ring") => {
+  if (type === "ring") return rollRingDie();
+  if (type === "skill") return rollSkillDie();
+  throw new Error(`Unknown die type: ${type}`);
+};
+
+console.log("GFL5R | dice.js loaded");
