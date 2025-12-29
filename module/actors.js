@@ -822,6 +822,12 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     };
   }
 
+  static get actions() {
+    return {
+      "roll-skill": "onRollSkillClick"
+    };
+  }
+
   onDeleteItemClick(ev) {
     const id = ev.currentTarget?.dataset?.itemId;
     if (!id) return;

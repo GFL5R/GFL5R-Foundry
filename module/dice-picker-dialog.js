@@ -119,15 +119,15 @@ export class GFLDicePickerDialog extends HandlebarsApplicationMixin(ApplicationV
 
   static get eventListeners() {
     return [
-      { event: "submit", selector: "form", callback: "onSubmit", preventDefault: true, stopPropagation: true },
-      { event: "click", selector: "[data-action='ring-minus']", callback: "onRingMinus" },
-      { event: "click", selector: "[data-action='ring-plus']", callback: "onRingPlus" },
-      { event: "click", selector: "[data-action='skill-minus']", callback: "onSkillMinus" },
-      { event: "click", selector: "[data-action='skill-plus']", callback: "onSkillPlus" },
-      { event: "click", selector: "[data-action='assist-minus']", callback: "onAssistMinus" },
-      { event: "click", selector: "[data-action='assist-plus']", callback: "onAssistPlus" },
-      { event: "change", selector: "#roll-approach", callback: "onApproachChange" },
-      { event: "change", selector: "#roll-skill", callback: "onSkillChange" },
+      { event: "submit", selector: "form", callback: "onSubmit", preventDefault: true, stopPropagation: true, part: "picker" },
+      { event: "click", selector: "[data-action='ring-minus']", callback: "onRingMinus", part: "picker" },
+      { event: "click", selector: "[data-action='ring-plus']", callback: "onRingPlus", part: "picker" },
+      { event: "click", selector: "[data-action='skill-minus']", callback: "onSkillMinus", part: "picker" },
+      { event: "click", selector: "[data-action='skill-plus']", callback: "onSkillPlus", part: "picker" },
+      { event: "click", selector: "[data-action='assist-minus']", callback: "onAssistMinus", part: "picker" },
+      { event: "click", selector: "[data-action='assist-plus']", callback: "onAssistPlus", part: "picker" },
+      { event: "change", selector: "#roll-approach", callback: "onApproachChange", part: "picker" },
+      { event: "change", selector: "#roll-skill", callback: "onSkillChange", part: "picker" },
     ];
   }
 
@@ -202,8 +202,17 @@ export class GFLDicePickerDialog extends HandlebarsApplicationMixin(ApplicationV
   activateListeners(html) {
     super.activateListeners?.(html);
     const root = html instanceof HTMLElement ? html : html?.[0];
-    // V2 eventListeners handle submit; no extra global hooks needed
-    this._globalSubmitHandler = null;
+    const form = root?.querySelector?.("form");
+    if (form) {
+      const handler = (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        this.onSubmit(ev);
+        return false;
+      };
+      form.addEventListener("submit", handler, { capture: true });
+      this._formSubmitHandler = handler;
+    }
   }
 
   async _updateObject(event, formData) {
@@ -339,9 +348,14 @@ export class GFLDicePickerDialog extends HandlebarsApplicationMixin(ApplicationV
 
   async _finish() {
     if (this._completed) return;
-    if (this._globalSubmitHandler) {
-      window.removeEventListener("submit", this._globalSubmitHandler, true);
-      this._globalSubmitHandler = null;
+    if (this._formSubmitHandler && this.element) {
+      try {
+        const form = this.element.querySelector("form");
+        if (form) form.removeEventListener("submit", this._formSubmitHandler, { capture: true });
+      } catch (err) {
+        console.warn("GFL5R | Dice picker submit cleanup", err);
+      }
+      this._formSubmitHandler = null;
     }
     this._completed = true;
     if (this.onComplete) {
