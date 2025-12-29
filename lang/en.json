@@ -1,0 +1,15 @@
+{
+  "gfl5r": {
+    "dice": {
+      "dicepicker": {
+        "roll": "Roll",
+        "keep": "Keep",
+        "difficulty": "TN",
+        "void_point": "Spend Fortune (+1 Ring die)",
+        "difficulty_hidden_label": "Hide TN (+1 Fortune)"
+      }
+    },
+    "ring": "Approach",
+    "skill": "Skill"
+  }
+}

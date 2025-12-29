@@ -11,6 +11,9 @@
   "esmodules": ["module/main.js"],
   "styles": ["bootstrap.min.css", "gfl5r.css"],
   "scripts": ["bootstrap.bundle.min.js"],
+  "languages": [
+    { "lang": "en", "name": "English", "path": "lang/en.json" }
+  ],
   "gridDistance": 1,
   "gridUnits": "meter",
   "template": "template.json",
