@@ -42,8 +42,8 @@ function patchRollFromData() {
         console.warn("GFL5R | Roll.fromData fallback for RollGFL5R", err, data);
         try {
           return new targetCls(data?.formula || "0", data?.data || {}, data?.options || {});
-        } catch (e2) {
-          console.warn("GFL5R | Roll.fromData ultimate fallback failed", e2);
+        } catch (error_) {
+          console.warn("GFL5R | Roll.fromData ultimate fallback failed", error_);
         }
       }
     }
@@ -153,8 +153,10 @@ export class L5rBaseDie extends foundry.dice.terms.DiceTerm {
     });
   }
 
-  roll(options = { minimize: false, maximize: false }) {
-    return super.roll(options);
+  roll(options) {
+    const extra = options ?? {};
+    const opts = { minimize: false, maximize: false, ...extra };
+    return super.roll(opts);
   }
 
   static fromData(data) {
@@ -367,7 +369,7 @@ export class RollGFL5R extends Roll {
   _l5rTermSummary(term) {
     if (!(term instanceof game.gfl5r.L5rBaseDie)) return;
     ["success", "explosive", "opportunity", "strife"].forEach((props) => {
-      this.gfl5r.summary[props] += parseInt(term.gfl5r[props]);
+      this.gfl5r.summary[props] += Number.parseInt(term.gfl5r[props]);
     });
     this.gfl5r.summary.totalSuccess += term.totalSuccess;
   }
@@ -548,6 +550,41 @@ export class RollGFL5R extends Roll {
   }
 
   static fromData(data) {
+    const resolveActor = (ref) => {
+      if (!ref) return null;
+      if (ref instanceof Actor) return ref;
+      if (ref.uuid) {
+        const doc = fromUuidSync(ref.uuid);
+        if (doc instanceof Actor) return doc;
+        if (doc instanceof TokenDocument) return doc.actor;
+      }
+      if (ref.id) {
+        const actor = game.actors.get(ref.id);
+        if (actor) return actor;
+      }
+      return null;
+    };
+
+    const resolveItem = (ref) => {
+      if (!ref) return null;
+      if (ref instanceof Item) return ref;
+      if (ref.uuid) {
+        const doc = fromUuidSync(ref.uuid);
+        if (doc) return doc;
+      }
+      return null;
+    };
+
+    const resolveTarget = (ref) => {
+      if (!ref) return null;
+      if (ref instanceof TokenDocument) return ref;
+      if (ref.uuid) {
+        const doc = fromUuidSync(ref.uuid);
+        if (doc) return doc;
+      }
+      return null;
+    };
+
     if (!data || typeof data !== "object") {
       return new RollGFL5R("0", {}, {});
     }
@@ -555,38 +592,9 @@ export class RollGFL5R extends Roll {
       const roll = BASE_ROLL_FROM_DATA.call(this, data);
       roll.data = foundry.utils.duplicate(data.data);
       roll.gfl5r = foundry.utils.duplicate(data.gfl5r);
-
-      if (data.gfl5r?.actor) {
-        if (data.gfl5r.actor instanceof Actor) {
-          roll.gfl5r.actor = data.gfl5r.actor;
-        } else if (data.gfl5r.actor.uuid) {
-          const tmpItem = fromUuidSync(data.gfl5r.actor.uuid);
-          if (tmpItem instanceof Actor) roll.gfl5r.actor = tmpItem;
-          else if (tmpItem instanceof TokenDocument) roll.gfl5r.actor = tmpItem.actor;
-        } else if (data.gfl5r.actor.id) {
-          const actor = game.actors.get(data.gfl5r.actor.id);
-          if (actor) roll.gfl5r.actor = actor;
-        }
-      }
-
-      if (data.gfl5r?.item) {
-        if (data.gfl5r.item instanceof Item) {
-          roll.gfl5r.item = data.gfl5r.item;
-        } else if (data.gfl5r.item.uuid) {
-          const tmpItem = fromUuidSync(data.gfl5r.item.uuid);
-          if (tmpItem) roll.gfl5r.item = tmpItem;
-        }
-      }
-
-      if (data.gfl5r?.target) {
-        if (data.gfl5r.target instanceof TokenDocument) {
-          roll.gfl5r.target = data.gfl5r.target;
-        } else if (data.gfl5r.target.uuid) {
-          const tmpItem = fromUuidSync(data.gfl5r.target.uuid);
-          if (tmpItem) roll.gfl5r.target = tmpItem;
-        }
-      }
-
+      roll.gfl5r.actor = resolveActor(data.gfl5r?.actor);
+      roll.gfl5r.item = resolveItem(data.gfl5r?.item);
+      roll.gfl5r.target = resolveTarget(data.gfl5r?.target);
       return roll;
     } catch (err) {
       console.warn("GFL5R | RollGFL5R.fromData fell back to safe roll", err);
@@ -661,7 +669,7 @@ export class RollnKeepDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     id: "gfl5r-roll-n-keep-dialog",
     classes: ["gfl5r", "roll-n-keep-dialog"],
     window: { title: "Roll & Keep", resizable: true },
-    position: { width: "auto", height: "auto" },
+    position: { width: 900, height: "auto" },
   };
 
   static PARTS = {
@@ -917,8 +925,13 @@ export class RollnKeepDialog extends HandlebarsApplicationMixin(ApplicationV2) {
    * @return An array of DragDrop handlers
    */
   _createDragDropHandlers() {
+    const DragDropCls =
+      foundry.applications.api?.DragDrop?.implementation ||
+      foundry.applications.api?.DragDrop ||
+      foundry.applications.ux?.DragDrop?.implementation ||
+      foundry.applications.ux?.DragDrop;
     return [
-      new foundry.applications.ux.DragDrop.implementation({
+      new DragDropCls({
         dragSelector: ".dice.draggable",
         dropSelector: ".dropbox",
         permissions: { dragstart: this.isEditable, drop: this.isEditable },
@@ -1107,10 +1120,7 @@ export class RollnKeepDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     if (!Array.isArray(choices)) {
       choices = [choices];
     }
-    return (
-      this.object.dicesList[currentStep] &&
-      this.object.dicesList[currentStep].some((e) => !!e && choices.includes(e.choice))
-    );
+    return this.object.dicesList[currentStep]?.some((e) => !!e && choices.includes(e.choice));
   }
 
   /**
@@ -1123,11 +1133,10 @@ export class RollnKeepDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     if (!Array.isArray(current)) return;
     current
       .filter((e) => !!e)
-      .map((e) => {
+      .forEach((e) => {
         if (e.choice === RollnKeepDialog.CHOICES.nothing) {
           e.choice = newChoice;
         }
-        return e;
       });
   }
 
@@ -1138,7 +1147,7 @@ export class RollnKeepDialog extends HandlebarsApplicationMixin(ApplicationV2) {
    */
   _initializeDicesListStep(step) {
     if (!this.object.dicesList[step]) {
-      this.object.dicesList[step] = Array(this.object.dicesList[0].length).fill(null);
+      this.object.dicesList[step] = new Array(this.object.dicesList[0].length).fill(null);
     }
   }
 
@@ -1438,58 +1447,69 @@ export class RollnKeepDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       return;
     }
 
+    const applyStrife = async () => {
+      const actor = resolveActorFromRoll() || resolveActorFromSpeaker();
+      if (!actor?.isOwner || actor.type !== "character" || !actor.system?.resources) return;
+
+      const currentApplied = Number.isFinite(Number(this._strifeInitial ?? this.roll.gfl5r.strifeApplied))
+        ? Number(this._strifeInitial ?? this.roll.gfl5r.strifeApplied)
+        : 0;
+      const maxStrife = Math.max(0, Number(this.roll.gfl5r.summary?.strife ?? 0));
+      const composureCap = (() => {
+        const approaches = actor.system?.approaches || {};
+        const resilience = Number(approaches.resilience ?? 0);
+        const swiftness = Number(approaches.swiftness ?? 0);
+        const cap = (resilience + swiftness) * 2;
+        return Number.isFinite(cap) && cap > 0 ? cap : maxStrife || 0;
+      })();
+      const requestedRaw = Number(formData.strifeApplied ?? this.roll.gfl5r.strifeApplied ?? 0);
+      const requested = Math.max(
+        0,
+        Math.min(
+          maxStrife || 0,
+          composureCap || maxStrife || 0,
+          Number.isFinite(requestedRaw) ? requestedRaw : 0
+        )
+      );
+      const delta = requested - currentApplied;
+      const cur = Number(actor.system.resources?.strife ?? 0);
+      const newStrife = Math.max(0, Number.isFinite(cur + delta) ? cur + delta : cur || 0);
+      await actor.update({ "system.resources.strife": newStrife });
+      this.roll.gfl5r.strifeApplied = requested;
+      this._strifeInitial = requested;
+      await this._toChatMessage();
+      return this.close();
+    };
+
+    const resolveActorFromRoll = () => {
+      const ref = this.roll?.gfl5r?.actor;
+      if (ref instanceof Actor) return ref;
+      if (ref?.uuid) {
+        const doc = fromUuidSync(ref.uuid);
+        if (doc instanceof Actor) return doc;
+        if (doc instanceof TokenDocument) return doc.actor;
+      }
+      return null;
+    };
+
+    const resolveActorFromSpeaker = () => {
+      const speaker = this._message?.speaker || {};
+      if (speaker.actor) {
+        const doc = game.actors.get(speaker.actor);
+        if (doc) return doc;
+      }
+      if (speaker.token) {
+        const scene = speaker.scene ? game.scenes.get(speaker.scene) : canvas?.scene;
+        const tokDoc = scene?.tokens?.get(speaker.token) || canvas?.tokens?.get(speaker.token)?.document;
+        if (tokDoc?.actor) return tokDoc.actor;
+      }
+      return null;
+    };
+
     // Final strife application step
     if (this.roll?.gfl5r?.rnkEnded && formData.strifeApplied !== undefined) {
-      const actor = (() => {
-        const a = this.roll.gfl5r.actor;
-        if (a instanceof Actor) return a;
-        if (a?.uuid) {
-          const doc = fromUuidSync(a.uuid);
-          if (doc instanceof Actor) return doc;
-          if (doc instanceof TokenDocument) return doc.actor;
-        }
-        const speaker = this._message?.speaker || {};
-        if (speaker.actor) {
-          const doc = game.actors.get(speaker.actor);
-          if (doc) return doc;
-        }
-        if (speaker.token) {
-          const scene = speaker.scene ? game.scenes.get(speaker.scene) : canvas?.scene;
-          const tokDoc = scene?.tokens?.get(speaker.token) || canvas?.tokens?.get(speaker.token)?.document;
-          if (tokDoc?.actor) return tokDoc.actor;
-        }
-        return null;
-      })();
-      if (actor?.isOwner && actor.type === "character" && actor.system?.resources) {
-        const currentApplied = Number.isFinite(Number(this._strifeInitial ?? this.roll.gfl5r.strifeApplied))
-          ? Number(this._strifeInitial ?? this.roll.gfl5r.strifeApplied)
-          : 0;
-        const maxStrife = Math.max(0, Number(this.roll.gfl5r.summary?.strife ?? 0));
-        const composureCap = (() => {
-          const approaches = actor.system?.approaches || {};
-          const resilience = Number(approaches.resilience ?? 0);
-          const swiftness = Number(approaches.swiftness ?? 0);
-          const cap = (resilience + swiftness) * 2;
-          return Number.isFinite(cap) && cap > 0 ? cap : maxStrife || 0;
-        })();
-        const requestedRaw = Number(formData.strifeApplied ?? this.roll.gfl5r.strifeApplied ?? 0);
-        const requested = Math.max(
-          0,
-          Math.min(
-            maxStrife || 0,
-            composureCap || maxStrife || 0,
-            Number.isFinite(requestedRaw) ? requestedRaw : 0
-          )
-        );
-        const delta = requested - currentApplied;
-        const cur = Number(actor.system.resources?.strife ?? 0);
-        const newStrife = Math.max(0, Number.isFinite(cur + delta) ? cur + delta : cur || 0);
-        await actor.update({ "system.resources.strife": newStrife });
-        this.roll.gfl5r.strifeApplied = requested;
-        this._strifeInitial = requested;
-        await this._toChatMessage();
-      }
-      return this.close();
+      await applyStrife();
+      return;
     }
 
     // Discard all dices without a choice for the current step
@@ -1538,9 +1558,8 @@ export class RollnKeepDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     // Clear choices
     this.object.dicesList[this.object.currentStep]
       .filter((e) => !!e)
-      .map((e) => {
+      .forEach((e) => {
         e.choice = RollnKeepDialog.CHOICES.nothing;
-        return e;
       });
 
     this._editable = this.isOwner;
@@ -1585,20 +1604,6 @@ export class RollnKeepDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     button.attr("disabled", false);
   }
 
-  static async #onContinueAction(event) {
-    event.preventDefault();
-    await this._continue();
-  }
-
-  static async #onFinishAction(event) {
-    event.preventDefault();
-    await this._finish();
-  }
-
-  static #onCancelAction(event) {
-    event.preventDefault();
-    this.close();
-  }
 }
 
 export function registerDiceTerms() {

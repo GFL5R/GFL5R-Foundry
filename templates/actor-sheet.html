@@ -136,7 +136,7 @@
                     <div class="card skill-card skill-roll flex-grow-1 min-w-240" data-skill-card data-skill-key="{{skill.key}}">
                       <div class="card-body">
                           <div class="d-flex flex-column">
-                            <button type="button" class="fw-semibold text-start btn btn-link p-0" data-action="roll-skill" data-skill="{{skill.key}}">
+                            <button type="button" class="btn-skill-roll" data-action="roll-skill" data-skill="{{skill.key}}">
                               {{skill.label}}
                             </button>
                             {{#if skill.itemId}}<input type="hidden" data-item-id="{{skill.itemId}}" />{{/if}}

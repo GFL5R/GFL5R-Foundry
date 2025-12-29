@@ -805,7 +805,7 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
   static DEFAULT_OPTIONS = {
     id: "gfl5r-actor-sheet",
     classes: ["sheet", "actor"],
-    position: { width: 860, height: 700 },
+    position: { width: 1000, height: 720 },
     window: { title: "Character", resizable: true }
   };
 

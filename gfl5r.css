@@ -57,6 +57,26 @@ button[class*="fa-"]::before,
   accent-color: var(--collapse-bar-color, #6c757d);
 }
 
+/* Skill cards */
+.skill-card.skill-roll {
+  flex: 1 1 240px;
+}
+.btn-skill-roll {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.btn-skill-roll:hover,
+.btn-skill-roll:focus {
+  color: #9dc2ff;
+  text-decoration: underline;
+}
+
 .gfl5r-sheet .card-header {
   background: linear-gradient(135deg, #232b3a 0%, #161d2a 100%);
   border-bottom: 1px solid #2c3547;
