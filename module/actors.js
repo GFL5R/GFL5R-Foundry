@@ -1340,30 +1340,148 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     return changed ? disciplines : null;
   }
 
-  /** Accept dropped Items (from compendia or sidebar) into the drop zones */
-  async _onDrop(event) {
-    sheetDebug("ActorSheet#_onDrop", { target: event.target?.dataset?.dropTarget });
-    const data = getDragEventDataSafe(event);
-    const flashDropTarget = (el) => {
-      if (!el) return;
-      el.classList.add("border", "border-success", "bg-success-subtle");
-      setTimeout(() => el.classList.remove("border-success", "bg-success-subtle"), 400);
-    };
-
-    // Check which drop zone was targeted
+  #resolveDropTarget(event) {
     const dropAbilities = event.target?.closest?.("[data-drop-target='abilities']");
     const dropNarrativePos = event.target?.closest?.("[data-drop-target='narrative-positive']");
     const dropNarrativeNeg = event.target?.closest?.("[data-drop-target='narrative-negative']");
     const dropInventory = event.target?.closest?.("[data-drop-target='inventory']");
     const dropModules = event.target?.closest?.("[data-drop-target='modules']");
     const dropCondition = event.target?.closest?.("[data-drop-target='condition']");
-    
-    // Check for discipline slot drops
     const dropDiscipline = event.target?.closest?.("[data-drop-target='discipline']");
     const dropDisciplineAbility = event.target?.closest?.("[data-drop-target='discipline-ability']");
-    
-    const dropTarget = dropAbilities || dropNarrativePos || dropNarrativeNeg || dropInventory || dropModules || dropCondition || dropDiscipline || dropDisciplineAbility;
-    if (!dropTarget) return super._onDrop(event);
+
+    const dropTarget =
+      dropAbilities || dropNarrativePos || dropNarrativeNeg || dropInventory || dropModules || dropCondition || dropDiscipline || dropDisciplineAbility;
+
+    return {
+      dropTarget,
+      dropAbilities,
+      dropNarrativePos,
+      dropNarrativeNeg,
+      dropInventory,
+      dropModules,
+      dropCondition,
+      dropDiscipline,
+      dropDisciplineAbility
+    };
+  }
+
+  async #handleDisciplineDrop(dropTarget, itemDoc, rawItemData) {
+    const slotKey = dropTarget?.dataset?.slotKey;
+    if (!slotKey) return;
+
+    const itemData = itemDoc.toObject?.() ?? foundry.utils.duplicate(rawItemData) ?? {};
+    itemData.type = "discipline";
+
+    const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
+    disciplines[slotKey] ??= { disciplineId: null, xp: 0, rank: 1, abilities: [] };
+
+    const toDelete = [];
+    if (disciplines[slotKey].disciplineId) {
+      const oldDiscipline = this.actor.items.get(disciplines[slotKey].disciplineId);
+      if (oldDiscipline) toDelete.push(disciplines[slotKey].disciplineId);
+    }
+    if (disciplines[slotKey].abilities?.length) {
+      disciplines[slotKey].abilities.forEach((abilityId) => {
+        if (this.actor.items.get(abilityId)) toDelete.push(abilityId);
+      });
+    }
+    if (toDelete.length) {
+      await this.actor.deleteEmbeddedDocuments("Item", toDelete);
+    }
+
+    const [createdItem] = await this.actor.createEmbeddedDocuments("Item", [itemData]);
+    if (!createdItem) return;
+
+    disciplines[slotKey].disciplineId = createdItem.id;
+    disciplines[slotKey].abilities = [];
+    await this.actor.update({ "system.disciplines": disciplines });
+
+    this.#flashDropTarget(dropTarget);
+  }
+
+  async #handleDisciplineAbilityDrop(dropTarget, itemDoc) {
+    const slotKey = dropTarget?.dataset?.slotKey;
+    if (!slotKey) return;
+
+    const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
+    if (!disciplines[slotKey]) return;
+
+    const availableXP = this.#getAvailableXP();
+    const cost = 3;
+    if (availableXP < cost) {
+      dropTarget.classList.add("border", "border-danger", "bg-danger-subtle");
+      setTimeout(() => dropTarget.classList.remove("border-danger", "bg-danger-subtle"), 500);
+      ui.notifications?.warn("Not enough XP to add an ability to this discipline (costs 3 XP).");
+      return;
+    }
+
+    const itemData = itemDoc.toObject?.() ?? {};
+    itemData.type = "ability";
+
+    const [createdItem] = await this.actor.createEmbeddedDocuments("Item", [itemData]);
+    if (!createdItem) return;
+
+    disciplines[slotKey].abilities ||= [];
+    disciplines[slotKey].abilities.push(createdItem.id);
+
+    const updatedXP = Number(disciplines[slotKey].xp ?? 0) + cost;
+    disciplines[slotKey].xp = updatedXP;
+    disciplines[slotKey].rank = GFL5R_CONFIG.getRankFromXP(updatedXP);
+
+    await this.actor.update({
+      "system.xp": availableXP - cost,
+      "system.disciplines": disciplines
+    });
+
+    this.#flashDropTarget(dropTarget);
+  }
+
+  #prepareGenericDropItem(itemDoc, rawItemData, dropCtx) {
+    const itemData = itemDoc.toObject?.() ?? foundry.utils.duplicate(rawItemData) ?? {};
+    itemData.system ??= {};
+
+    if (dropCtx.dropAbilities) {
+      itemData.type = "ability";
+      itemData.system.description ??= itemDoc.system?.description ?? "";
+    } else if (dropCtx.dropNarrativePos || dropCtx.dropNarrativeNeg) {
+      itemData.type = "narrative";
+      itemData.system.description ??= itemDoc.system?.description ?? "";
+      if (dropCtx.dropNarrativePos && !itemData.system.narrativeType) {
+        itemData.system.narrativeType = "distinction";
+      } else if (dropCtx.dropNarrativeNeg && !itemData.system.narrativeType) {
+        itemData.system.narrativeType = "adversity";
+      }
+    } else if (dropCtx.dropModules) {
+      itemData.type = "module";
+      itemData.system.description ??= itemDoc.system?.description ?? "";
+    } else if (dropCtx.dropCondition) {
+      itemData.type = "condition";
+      itemData.system.description ??= itemDoc.system?.description ?? "";
+      itemData.system.duration ??= itemDoc.system?.duration ?? "";
+      itemData.system.tags ??= itemDoc.system?.tags ?? "";
+    } else if (dropCtx.dropInventory) {
+      itemData.system.description ??= itemDoc.system?.description ?? "";
+    } else {
+      return null;
+    }
+
+    this.#flashDropTarget(dropCtx.dropTarget);
+    return itemData;
+  }
+
+  #flashDropTarget(el) {
+    if (!el) return;
+    el.classList.add("border", "border-success", "bg-success-subtle");
+    setTimeout(() => el.classList.remove("border-success", "bg-success-subtle"), 400);
+  }
+
+  /** Accept dropped Items (from compendia or sidebar) into the drop zones */
+  async _onDrop(event) {
+    sheetDebug("ActorSheet#_onDrop", { target: event.target?.dataset?.dropTarget });
+    const data = getDragEventDataSafe(event);
+    const dropCtx = this.#resolveDropTarget(event);
+    if (!dropCtx.dropTarget) return super._onDrop(event);
 
     const { item: itemDoc, itemData: rawItemData } = await resolveItemFromDropData(data);
     if (!itemDoc) {
@@ -1371,138 +1489,21 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
       return;
     }
 
-    // Handle discipline slot drops
-    if (dropDiscipline) {
-      const slotKey = dropTarget.dataset.slotKey;
-      if (!slotKey) return;
-      
-      // Clone the item data
-      let itemData = itemDoc.toObject?.() ?? foundry.utils.duplicate(rawItemData) ?? {};
-      itemData.type = "discipline";
-      
-      // Update disciplines data
-      const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
-      if (!disciplines[slotKey]) {
-        disciplines[slotKey] = { disciplineId: null, xp: 0, rank: 1, abilities: [] };
-      }
-      
-      // Remove old discipline if exists
-      if (disciplines[slotKey].disciplineId) {
-        const oldDiscipline = this.actor.items.get(disciplines[slotKey].disciplineId);
-        const toDelete = [];
-        
-        // Add discipline to delete list if it exists
-        if (oldDiscipline) {
-          toDelete.push(disciplines[slotKey].disciplineId);
-        }
-        
-        // Add abilities to delete list if they exist
-        if (disciplines[slotKey].abilities?.length) {
-          for (const abilityId of disciplines[slotKey].abilities) {
-            if (this.actor.items.get(abilityId)) {
-              toDelete.push(abilityId);
-            }
-          }
-        }
-        
-        // Delete all items that exist
-        if (toDelete.length > 0) {
-          await this.actor.deleteEmbeddedDocuments("Item", toDelete);
-        }
-      }
-      
-      // Create the discipline item
-      const [createdItem] = await this.actor.createEmbeddedDocuments("Item", [itemData]);
-      
-      disciplines[slotKey].disciplineId = createdItem.id;
-      disciplines[slotKey].abilities = []; // Reset abilities list
-      await this.actor.update({ "system.disciplines": disciplines });
-      
-      flashDropTarget(dropTarget);
+    if (dropCtx.dropDiscipline) {
+      await this.#handleDisciplineDrop(dropCtx.dropTarget, itemDoc, rawItemData);
       return;
     }
 
-    // Handle discipline ability drops
-    if (dropDisciplineAbility) {
-      const slotKey = dropTarget.dataset.slotKey;
-      if (!slotKey) return;
-
-      const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
-      if (!disciplines[slotKey]) return;
-
-      const availableXP = this.#getAvailableXP();
-      const cost = 3;
-      if (availableXP < cost) {
-        dropTarget.classList.add("border", "border-danger", "bg-danger-subtle");
-        setTimeout(() => dropTarget.classList.remove("border-danger", "bg-danger-subtle"), 500);
-        ui.notifications?.warn("Not enough XP to add an ability to this discipline (costs 3 XP).");
-        return;
-      }
-
-      // Clone the item data
-      let itemData = itemDoc.toObject();
-      itemData.type = "ability";
-
-      // Create the ability item
-      const [createdItem] = await this.actor.createEmbeddedDocuments("Item", [itemData]);
-      if (!createdItem) return;
-
-      // Update disciplines data and actor XP
-      disciplines[slotKey].abilities ||= [];
-      disciplines[slotKey].abilities.push(createdItem.id);
-
-      const updatedXP = Number(disciplines[slotKey].xp ?? 0) + cost;
-      disciplines[slotKey].xp = updatedXP;
-      disciplines[slotKey].rank = GFL5R_CONFIG.getRankFromXP(updatedXP);
-
-      await this.actor.update({
-        "system.xp": availableXP - cost,
-        "system.disciplines": disciplines
-      });
-
-      flashDropTarget(dropTarget);
+    if (dropCtx.dropDisciplineAbility) {
+      await this.#handleDisciplineAbilityDrop(dropCtx.dropTarget, itemDoc);
       return;
     }
 
-    // Clone the item data
-    let itemData = itemDoc.toObject?.() ?? foundry.utils.duplicate(rawItemData) ?? {};
-    if (!itemData.system) itemData.system = {};
+    const itemData = this.#prepareGenericDropItem(itemDoc, rawItemData, dropCtx);
+    if (!itemData) return;
 
-    // Handle different drop zones
-    if (dropAbilities) {
-      // Force type to ability
-      itemData.type = "ability";
-      itemData.system.description ??= itemDoc.system?.description ?? "";
-    } else if (dropNarrativePos || dropNarrativeNeg) {
-      // Force type to narrative
-      itemData.type = "narrative";
-      itemData.system.description ??= itemDoc.system?.description ?? "";
-      // Set narrative type based on drop zone
-      if (dropNarrativePos && !itemData.system.narrativeType) {
-        itemData.system.narrativeType = "distinction";
-      } else if (dropNarrativeNeg && !itemData.system.narrativeType) {
-        itemData.system.narrativeType = "adversity";
-      }
-    } else if (dropModules) {
-      // Force type to module
-      itemData.type = "module";
-      itemData.system.description ??= itemDoc.system?.description ?? "";
-    } else if (dropCondition) {
-      // Force type to condition
-      itemData.type = "condition";
-      itemData.system.description ??= itemDoc.system?.description ?? "";
-      itemData.system.duration ??= itemDoc.system?.duration ?? "";
-      itemData.system.tags ??= itemDoc.system?.tags ?? "";
-    } else if (dropInventory) {
-      // Keep original type for inventory (accepts all types)
-      itemData.system.description ??= itemDoc.system?.description ?? "";
-    }
-
-    // Create on actor
     await this.actor.createEmbeddedDocuments("Item", [itemData]);
-
-    // Subtle UI feedback
-    flashDropTarget(dropTarget);
+    this.#flashDropTarget(dropCtx.dropTarget);
   }
 }
 
