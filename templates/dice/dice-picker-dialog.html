@@ -6,14 +6,14 @@
       <div class="row g-3 align-items-end">
         <div class="col-md-6">
           <label class="form-label" for="roll-approach">Approach</label>
-          <select id="roll-approach" name="approach" class="form-select">
+          <select id="roll-approach" name="approach" class="form-select" aria-label="Select approach">
             {{#each approachList as |a|}}
               <option value="{{a.key}}" {{#if (eq a.key ../defaultApproach)}}selected{{/if}}>{{stanceLabel a.key}} ({{a.value}})</option>
             {{/each}}
           </select>
         </div>
         <div class="col-md-6">
-          <label class="form-label">Skill</label>
+          <label class="form-label" for="roll-skill">Skill</label>
           {{#if skillOptions}}
             <select id="roll-skill" name="skill" class="form-select">
               {{#each skillOptions}}
@@ -21,15 +21,15 @@
               {{/each}}
             </select>
           {{else}}
-            <input class="form-control" type="text" value="{{skillLabel}}" readonly />
+            <input class="form-control" type="text" value="{{skillLabel}}" readonly title="Skill" placeholder="Skill" />
           {{/if}}
         </div>
       </div>
 
       <div class="row g-3 align-items-end">
         <div class="col-md-6">
-          <label class="form-label">TN</label>
-          <input id="roll-tn" class="form-control" type="number" name="tn" value="{{defaultTN}}" min="0" />
+          <label class="form-label" for="roll-tn">TN</label>
+          <input id="roll-tn" class="form-control" type="number" name="tn" value="{{defaultTN}}" min="0" aria-label="Target number" />
         </div>
       </div>
 
@@ -38,7 +38,7 @@
           <label class="form-label mb-1">Ring Dice</label>
           <div class="input-group">
             <button class="btn btn-outline-secondary" type="button" data-action="ring-minus">-</button>
-            <input class="form-control text-center" type="number" readonly value="{{ringValue}}" />
+            <input class="form-control text-center" type="number" readonly value="{{ringValue}}" aria-label="Ring dice value" />
             <button class="btn btn-outline-secondary" type="button" data-action="ring-plus">+</button>
           </div>
         </div>
@@ -46,7 +46,7 @@
           <label class="form-label mb-1">Skill Dice</label>
           <div class="input-group">
             <button class="btn btn-outline-secondary" type="button" data-action="skill-minus">-</button>
-            <input class="form-control text-center" type="number" readonly value="{{skillValue}}" />
+            <input class="form-control text-center" type="number" readonly value="{{skillValue}}" aria-label="Skill dice value" />
             <button class="btn btn-outline-secondary" type="button" data-action="skill-plus">+</button>
           </div>
         </div>
@@ -54,7 +54,7 @@
           <label class="form-label mb-1">Assistance (keeps)</label>
           <div class="input-group">
             <button class="btn btn-outline-secondary" type="button" data-action="assist-minus">-</button>
-            <input class="form-control text-center" type="number" readonly value="{{assistance}}" />
+            <input class="form-control text-center" type="number" readonly value="{{assistance}}" aria-label="Assistance keeps value" />
             <button class="btn btn-outline-secondary" type="button" data-action="assist-plus">+</button>
           </div>
         </div>
@@ -73,7 +73,7 @@
       </div>
 
       <div class="text-end">
-        <button type="button" class="btn btn-primary" data-action="submit-roll">Roll</button>
+        <button type="submit" class="btn btn-primary">Roll</button>
       </div>
     </div>
   </div>

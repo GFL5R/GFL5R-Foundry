@@ -41,6 +41,14 @@ button[class*="fa-"]::before,
   color: #e6eaf0;
 }
 
+/* Utility sizes */
+.avatar-96 { width: 96px; height: 96px; }
+.icon-32 { width: 32px; height: 32px; }
+.min-w-220 { min-width: 220px; }
+.min-w-240 { min-width: 240px; }
+.w-80 { width: 80px; }
+.w-90 { width: 90px; }
+
 .gfl5r-sheet .card-header {
   background: linear-gradient(135deg, #232b3a 0%, #161d2a 100%);
   border-bottom: 1px solid #2c3547;

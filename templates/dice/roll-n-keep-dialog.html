@@ -48,6 +48,12 @@
             </div>
             <div class="table-responsive">
               <table class="table table-sm text-center align-middle mb-2">
+                <caption class="visually-hidden">Rolled dice by step</caption>
+                <thead class="visually-hidden">
+                  <tr>
+                    <th scope="col">Dice</th>
+                  </tr>
+                </thead>
                 <tbody>
                 {{#each data.dicesList as |item idxStep|}}
                   <tr>
@@ -98,8 +104,8 @@
       <div class="w-100">
         <div class="fw-semibold mb-1">Apply Strife</div>
         <div class="d-flex align-items-center gap-3">
-          <input id="strife-applied" class="form-range flex-grow-1" type="range" name="strifeApplied" min="0" max="{{gfl5r.summary.strife}}" value="{{gfl5r.strifeApplied}}" />
-          <input class="form-control form-control-sm" type="number" name="strifeApplied" min="0" max="{{gfl5r.summary.strife}}" value="{{gfl5r.strifeApplied}}" style="width:90px;">
+          <input id="strife-applied" class="form-range flex-grow-1" type="range" name="strifeApplied" min="0" max="{{gfl5r.summary.strife}}" value="{{gfl5r.strifeApplied}}" aria-label="Strife applied slider" />
+          <input class="form-control form-control-sm w-90" type="number" name="strifeApplied" min="0" max="{{gfl5r.summary.strife}}" value="{{gfl5r.strifeApplied}}" aria-label="Strife applied value">
           <span class="text-muted small">/ {{gfl5r.summary.strife}}</span>
         </div>
       </div>
