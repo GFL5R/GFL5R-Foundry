@@ -108,6 +108,13 @@ button[class*="fa-"]::before,
   outline-offset: 2px;
 }
 
+.roll-n-keep-dialog .window-content,
+.roll-n-keep-dialog form {
+  min-height: 400px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
 .roll-n-keep-dialog .dice-ct {
   display: inline-flex;
   padding: 4px;

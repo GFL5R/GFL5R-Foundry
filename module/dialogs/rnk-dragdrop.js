@@ -20,17 +20,22 @@ export function createDragDropHandlers(dialog, isEditable) {
   ];
 }
 
-export function handleDragStart(event) {
+export function handleDragStart(event, fallbackPayload = null) {
   const target = $(event.currentTarget);
+  const payload =
+    fallbackPayload ??
+    {
+      step: target.data("step"),
+      die: target.data("die"),
+    };
+  // Use console.log so messages show even when debug is filtered out.
+  console.log?.("GFL5R | RNK dragstart payload", payload);
   if (event?.dataTransfer) {
     event.dataTransfer.effectAllowed = "move";
   }
   event.dataTransfer.setData(
     "text/plain",
-    JSON.stringify({
-      step: target.data("step"),
-      die: target.data("die"),
-    })
+    JSON.stringify(payload)
   );
 }
 
@@ -55,20 +60,30 @@ function handleDragEnterLeave(event, add) {
 export function handleDropItem(dialog, event) {
   event?.preventDefault?.();
   event?.stopPropagation?.();
-  console.debug?.("GFL5R | RNK drop", { editable: dialog.isEditable, target: event?.currentTarget });
+  console.log?.("GFL5R | RNK drop", {
+    editable: dialog.isEditable,
+    target: event?.currentTarget,
+    raw: event,
+  });
   if (!dialog.isEditable) return;
   const dropTarget = event?.currentTarget?.closest?.(".dropbox");
   dropTarget?.classList?.remove?.("drag-over");
 
-  const target = event.currentTarget;
-  const type = target?.dataset?.type;
+  const target = dropTarget || event.currentTarget;
+  const type = target?.dataset?.type || event?.target?.closest?.(".dropbox")?.dataset?.type;
   const json = event.dataTransfer?.getData("text/plain");
-  if (!json || !Object.values(dialog.constructor?.CHOICES || {}).some((e) => !!e && e === type)) return;
+  if (!Object.values(dialog.constructor?.CHOICES || {}).some((e) => !!e && e === type)) return;
 
-  const data = JSON.parse(json);
+  let data = json ? JSON.parse(json) : null;
+  if ((!data || data.step === undefined || data.die === undefined) && dialog._dragPayload) {
+    data = dialog._dragPayload;
+  }
+  console.log?.("GFL5R | RNK drop payload", { data, type });
   if (!data) return;
 
-  const current = dialog.object.dicesList[data.step]?.[data.die];
+  const stepIdx = Number(data.step);
+  const dieIdx = Number(data.die);
+  const current = dialog.object.dicesList?.[stepIdx]?.[dieIdx];
   if (!current) return;
   delete current.newFace;
 
@@ -103,6 +118,7 @@ export function handleDropItem(dialog, event) {
   }
 
   dialog.render(false);
+  dialog._dragPayload = null;
   return false;
 }
 

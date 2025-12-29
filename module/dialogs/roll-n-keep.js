@@ -44,7 +44,7 @@ export class RollnKeepDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     id: "gfl5r-roll-n-keep-dialog",
     classes: ["gfl5r", "roll-n-keep-dialog"],
     window: { title: "Roll & Keep", resizable: true },
-    position: { width: 900, height: "auto" },
+    position: { width: 1050, height: 600 },
   };
 
   static PARTS = {
@@ -309,7 +309,15 @@ export class RollnKeepDialog extends HandlebarsApplicationMixin(ApplicationV2) {
    */
   _onDragStart(event) {
     console.debug?.("GFL5R | RNK dragstart", { target: event?.currentTarget });
-    handleDragStart(event);
+    // Store a fallback payload in case the browser strips dataTransfer for some reason.
+    const step = Number(event?.currentTarget?.dataset?.step);
+    const die = Number(event?.currentTarget?.dataset?.die);
+    if (Number.isInteger(step) && Number.isInteger(die)) {
+      this._dragPayload = { step, die };
+    } else {
+      this._dragPayload = null;
+    }
+    handleDragStart(event, this._dragPayload);
   }
 
   /**
