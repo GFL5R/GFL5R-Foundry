@@ -410,7 +410,7 @@ export class GFLDiceResultWindow extends HandlebarsApplicationMixin(ApplicationV
       discarded: this.discarded ?? [],
       rerolled: this.rerolled ?? [],
       kept: this.kept ?? [],
-      canContinue: this.results.length === 0,
+      canContinue: this.rerolled.length > 0 || this.discarded.length > 0 || this.kept.some(d => d.explosive && !d.hasExploded),
       maxKeep: this.originalRingCount,
       isFinalize: this.discarded.length === 0 && this.rerolled.length === 0 && this.kept.filter(d => d.explosive && !d.hasExploded).length === 0 && this.results.length === 0,
       ringFaces: dedupeFaces(RING_DIE_FACES),
