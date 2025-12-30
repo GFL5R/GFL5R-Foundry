@@ -17,6 +17,7 @@ export class GFLDicePickerDialog extends HandlebarsApplicationMixin(ApplicationV
     const resolvedLabel = options.skillLabel?.label ?? options.skillLabel ?? GFL5R_CONFIG.getSkillLabel?.(this.skillKey) ?? this.skillKey;
     this.skillLabel = String(resolvedLabel ?? "");
     this.approaches = options.approaches ?? {};
+    this.weapon = options.weapon ?? null;
 
     const defaultApproach = options.defaultApproach || Object.keys(this.approaches)[0] || "";
     const defaultTN = Number.isFinite(options.defaultTN) ? Number(options.defaultTN) : 2;
@@ -187,7 +188,8 @@ export class GFLDicePickerDialog extends HandlebarsApplicationMixin(ApplicationV
       bonusSkillDice: this.#state.bonusSkillDice,
       skillTotal: Math.max(0, Number(this.actor?.system?.skills?.[this.skillKey] ?? 0) + this.#state.bonusSkillDice),
       tn: this.#state.tn,
-      reason
+      reason,
+      weapon: this.weapon
     };
 
     console.log("GFL5R | Dice Picker", {
@@ -224,13 +226,15 @@ export class GFLDicePickerDialog extends HandlebarsApplicationMixin(ApplicationV
   }
 
   #openResultsWindow(summary, results) {
+    console.log("GFL5R | Opening results window with weapon:", summary.weapon?.name);
     const title = `Roll & Keep: ${summary.skillLabel || summary.skillKey || "Skill"}`;
     new GFLDiceResultWindow({
       title,
       results,
       skillLabel: summary.skillLabel,
       approachLabel: summary.approach,
-      tn: summary.tn
+      tn: summary.tn,
+      weapon: summary.weapon
     }).render(true);
   }
 }

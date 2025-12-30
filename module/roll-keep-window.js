@@ -17,6 +17,7 @@ export class GFLDiceResultWindow extends HandlebarsApplicationMixin(ApplicationV
     this.skillLabel = options.skillLabel ?? "";
     this.approachLabel = options.approachLabel ?? "";
     this.tn = options.tn ?? 0;
+    this.weapon = options.weapon ?? null;
     this.discarded = options.discarded ?? [];
     this.rerolled = options.rerolled ?? [];
     this.kept = options.kept ?? [];
@@ -315,10 +316,11 @@ export class GFLDiceResultWindow extends HandlebarsApplicationMixin(ApplicationV
   _buildChatMessage({ subtitle, stats, dice }) {
     const skill = this._escapeHtml(this.skillLabel) || 'Skill';
     const approach = this._escapeHtml(this.approachLabel) || 'Approach';
-    const header = `${skill} via ${approach}`;
+    const header = this.weapon ? `${this._escapeHtml(this.weapon.name)} (${skill} via ${approach})` : `${skill} via ${approach}`;
     const avatar = this._getChatAvatar();
     const statsMarkup = stats || '<span class="text-muted small">No totals yet.</span>';
     const diceMarkup = dice || '<span class="text-muted small">No dice yet.</span>';
+    const weaponStats = this.weapon ? this._renderWeaponStats() : '';
     return `
       <article class="gfl5r chat dice-roll">
         <div class="card roll-keep">
@@ -328,6 +330,7 @@ export class GFLDiceResultWindow extends HandlebarsApplicationMixin(ApplicationV
               <div>
                 <div class="fw-semibold">${header}</div>
                 <div class="text-muted small">${subtitle}</div>
+                ${weaponStats}
               </div>
             </div>
             <div class="dice-total-rnk mb-2">
@@ -339,6 +342,19 @@ export class GFLDiceResultWindow extends HandlebarsApplicationMixin(ApplicationV
           </div>
         </div>
       </article>`;
+  }
+
+  _renderWeaponStats() {
+    if (!this.weapon) return '';
+    console.log("GFL5R | Rendering weapon stats for", this.weapon.name, this.weapon.system);
+    const stats = [
+      `Range: ${this.weapon.system.idealRange || 0}`,
+      `Damage: ${this.weapon.system.suppression || 0}`,
+      `Deadliness: ${this.weapon.system.caliber || 0}`,
+      `Threat: ${this.weapon.system.threat || 0}`,
+      `Signature: ${this.weapon.system.signature || 0}`
+    ].join(' · ');
+    return `<div class="text-muted small">${this._escapeHtml(stats)}</div>`;
   }
 
   _renderDiceIcons(dice) {

@@ -202,16 +202,21 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
       if (btn && root.contains(btn)) {
         const key = btn.dataset.skill;
         const label = (btn.textContent || "").trim() || key;
-        console.log("GFL5R | Skill click (delegate button)", { key, label });
-        if (key) this.#rollSkill(key, label);
+        const card = btn.closest?.("[data-skill-card]");
+        const item = card?.dataset.itemId ? this.actor.items.get(card.dataset.itemId) : null;
+        const weapon = item && item.type === 'weaponry' ? item : null;
+        console.log("GFL5R | Skill click (delegate button)", { key, label, weapon: weapon?.name });
+        if (key) this.#rollSkill(key, label, weapon);
       }
 
       const card = event.target.closest?.("[data-skill-card]");
       if (card && root.contains(card) && !event.target.closest("button")) {
         const key = card.dataset.skillKey;
         const label = card.querySelector("[data-action='roll-skill']")?.textContent?.trim() || key;
-        console.log("GFL5R | Skill click (delegate card)", { key, label });
-        if (key) this.#rollSkill(key, label);
+        const item = card.dataset.itemId ? this.actor.items.get(card.dataset.itemId) : null;
+        const weapon = item && item.type === 'weaponry' ? item : null;
+        console.log("GFL5R | Skill click (delegate card)", { key, label, weapon: weapon?.name });
+        if (key) this.#rollSkill(key, label, weapon);
       }
     }, { signal });
 
@@ -367,7 +372,7 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     return Number.isNaN(parsed) ? Number(this.actor.system?.xp ?? 0) : parsed;
   }
 
-  async #rollSkill(key, skillLabel) {
+  async #rollSkill(key, skillLabel, weapon = null) {
     const approaches = this.actor.system?.approaches ?? {};
     const { GFLDicePickerDialog } = await import("../dice-picker-dialog.js");
     const pickerOpts = {
@@ -376,7 +381,8 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
       skillLabel,
       approaches,
       defaultTN: 2,
-      defaultApproach: Object.keys(approaches || {})[0]
+      defaultApproach: Object.keys(approaches || {})[0],
+      weapon
     };
     new GFLDicePickerDialog(pickerOpts).render(true);
   }
@@ -389,7 +395,7 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     const label = (el.textContent || "").trim() || key;
     console.log("GFL5R | Skill click", { key, label, via: "button" });
     if (!key) return;
-    await this.#rollSkill(key, label);
+    await this.#rollSkill(key, label, null);
   }
 
   async onSkillCardClick(event) {
@@ -402,7 +408,7 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     const label = card.querySelector("[data-action='roll-skill']")?.textContent?.trim() || key;
     console.log("GFL5R | Skill click", { key, label, via: "card" });
     if (!key) return;
-    await this.#rollSkill(key, label);
+    await this.#rollSkill(key, label, null);
   }
 
   onOpenCharacterBuilder(event) {
@@ -449,7 +455,8 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     const item = this.actor.items.get(itemId);
     if (!item) return;
     if ((item.type === "ability" || item.type === "weaponry") && item.system.skill) {
-      await this.#rollSkill(item.system.skill, item.name);
+      const weapon = item.type === "weaponry" ? item : null;
+      await this.#rollSkill(item.system.skill, item.name, weapon);
     }
   }
 

@@ -438,15 +438,23 @@
             <div class="card-header fw-semibold">Weapons</div>
             <div class="card-body">
               {{#if weapons.length}}
-                <div class="list-group list-group-flush">
+                <div class="d-flex flex-wrap gap-3">
                   {{#each weapons as |weapon|}}
-                    <div class="list-group-item d-flex align-items-center gap-2" data-item-id="{{weapon.id}}">
-                      <img src="{{weapon.img}}" alt="" class="rounded icon-32" />
-                      <div class="flex-grow-1">
-                        <div class="fw-semibold">{{weapon.name}}</div>
-                        <div class="small text-muted">Range: {{weapon.system.idealRange}} | Threat: {{weapon.system.threat}}</div>
+                    <div class="card skill-card skill-roll flex-grow-1 min-w-240" data-skill-card data-skill-key="{{weapon.system.skill}}" data-item-id="{{weapon.id}}">
+                      <div class="card-body">
+                        <div class="d-flex flex-column">
+                          <button type="button" class="btn-skill-roll" data-action="roll-skill" data-skill="{{weapon.system.skill}}">
+                            {{weapon.name}}
+                          </button>
+                        </div>
+                        <div class="small text-muted">
+                          Range: {{weapon.system.idealRange}} | Damage: {{weapon.system.suppression}} | Deadliness: {{weapon.system.caliber}}<br>
+                          Threat: {{weapon.system.threat}} | Signature: {{weapon.system.signature}}
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                          <button type="button" class="btn btn-outline-secondary btn-sm" data-action="edit-item" data-item-id="{{weapon.id}}" title="Edit item"><i class="fas fa-edit"></i></button>
+                        </div>
                       </div>
-                      <button type="button" class="btn btn-outline-secondary btn-sm" data-action="edit-item" data-item-id="{{weapon.id}}" title="Edit item"><i class="fas fa-edit"></i></button>
                     </div>
                   {{/each}}
                 </div>
