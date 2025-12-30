@@ -2,6 +2,7 @@
 import { GFL5R_CONFIG } from "../config.js";
 import { computeDerivedStats } from "../utils/derived.js";
 import { resolveItemFromDropData, getDragEventDataSafe } from "../utils/drop.js";
+import { CharacterBuilderApp } from "../character-builder.js";
 import { buildCollapse, resolvePreparedState, buildOriginDisplay, buildDisciplineSlots, buildItemCollections } from "./actor-sheet-data.js";
 import {
   resolveDropTarget,
@@ -70,6 +71,7 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
       { event: "click", selector: "[data-skill-card]", callback: "onSkillCardClick", part: "sheet" },
       { event: "click", selector: "[data-item-id][data-action='delete-item']", callback: "onDeleteItemClick", part: "sheet" },
       { event: "click", selector: "[data-item-id][data-action='edit-item']", callback: "onEditItemClick", part: "sheet" },
+      { event: "click", selector: "[data-action='open-character-builder']", callback: "onOpenCharacterBuilder", part: "sheet" },
     ];
   }
 
@@ -136,6 +138,13 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
       if (nav && root.contains(nav)) {
         event.preventDefault();
         this.activateTab(nav.dataset.tab);
+        return;
+      }
+
+      const builderBtn = event.target.closest?.("[data-action='open-character-builder']");
+      if (builderBtn && root.contains(builderBtn)) {
+        event.preventDefault();
+        this.#openCharacterBuilder();
         return;
       }
 
@@ -347,6 +356,21 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     console.log("GFL5R | Skill click", { key, label, via: "card" });
     if (!key) return;
     await this.#rollSkill(key, label);
+  }
+
+  onOpenCharacterBuilder(event) {
+    event?.preventDefault?.();
+    this.#openCharacterBuilder();
+  }
+
+  #openCharacterBuilder() {
+    try {
+      const app = new CharacterBuilderApp(this.actor);
+      app.render(true);
+    } catch (err) {
+      console.error("GFL5R | Failed to open character builder", err);
+      ui.notifications?.error("Could not open character builder. Check console for details.");
+    }
   }
 
   async #updateDisciplineXP(input) {
