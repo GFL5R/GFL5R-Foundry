@@ -1,4 +1,4 @@
-<form class="item-sheet gfl5r-sheet container-fluid py-3 text-light" data-bs-theme="dark" autocomplete="off">
+<section class="item-sheet gfl5r-sheet container-fluid py-3 text-light" data-bs-theme="dark">
   <header class="mb-4">
     <div class="row g-3 align-items-center">
       <div class="col-auto">
@@ -15,35 +15,29 @@
       </div>
     </div>
   </header>
-
   <section class="card mb-3">
     <div class="card-header fw-semibold">Associated Skills</div>
     <div class="card-body">
       <p class="small text-muted mb-3">XP spent on these skills also advances this discipline.</p>
       {{#each skillGroups as |group|}}
-        <div class="mb-2">
-          <div class="small text-uppercase text-muted fw-semibold">{{group.title}}</div>
-          <div class="d-flex flex-wrap gap-3 mt-1">
-            {{#each group.items as |skill|}}
-              <label class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" name="system.associatedSkills" value="{{skill.key}}" {{#if (includes ../../associatedSkills skill.key)}}checked{{/if}} />
-                <span class="form-check-label">{{skill.label}}</span>
-              </label>
-            {{/each}}
-          </div>
+      <div class="mb-2">
+        <div class="small text-uppercase text-muted fw-semibold">{{group.title}}</div>
+        <div class="d-flex flex-wrap gap-3 mt-1">
+          {{#each group.items as |skill|}}
+          <label class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" name="system.associatedSkills" value="{{skill.key}}" {{#if (includes ../../associatedSkills skill.key)}}checked{{/if}} />
+            <span class="form-check-label">{{skill.label}}</span>
+          </label>
+          {{/each}}
         </div>
+      </div>
       {{/each}}
     </div>
   </section>
-
   <section class="card">
     <div class="card-header fw-semibold">Description</div>
     <div class="card-body">
       <textarea class="form-control" name="system.description" rows="12">{{item.system.description}}</textarea>
     </div>
   </section>
-
-  <div class="text-end mt-3">
-    <button type="submit" class="btn btn-primary">Save Changes</button>
-  </div>
-</form>
+</section>

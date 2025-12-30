@@ -11,27 +11,31 @@ class BaseGFLItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     return {
       classes: ["sheet", "item"],
       position: { width, height },
+      tag: "form",
+      form: {
+        submitOnChange: true,
+        closeOnSubmit: false
+      },
       window: { resizable: true }
     };
   }
 
   get title() {
-    const item = this.document ?? this.object ?? this.item;
+    const item = this.document;
     const type = item?.type ?? "Item";
     const typeLabel = type.charAt(0).toUpperCase() + type.slice(1);
     const name = item?.name ?? typeLabel;
     return `${typeLabel}: ${name}`;
   }
 
-  _activateListeners(html) {
-    super._activateListeners(html);
-    // Auto-submit on change
-    html.on("change", "input, select, textarea", this._onChangeForm.bind(this));
-  }
-
-  async _onChangeForm(event) {
-    event.preventDefault();
-    await this.submit();
+  async _prepareContext(options) {
+    const context = await super._prepareContext(options);
+    const item = this.document;
+    context.item = item;
+    context.source = item.toObject();
+    context.fields = item.schema.fields;
+    context.systemFields = item.system.schema?.fields ?? {};
+    return context;
   }
 }
 
@@ -115,6 +119,11 @@ export class GFL5RItemSheet extends BaseGFLItemSheet {
 export class GFL5RDisciplineSheet extends BaseGFLItemSheet {
   static DEFAULT_OPTIONS = {
     ...BaseGFLItemSheet.buildOptions({ width: 600, height: 600 }),
+    form: {
+      handler: GFL5RDisciplineSheet.#onSubmit,
+      submitOnChange: true,
+      closeOnSubmit: false
+    },
     window: { title: "Discipline", resizable: true }
   };
 
@@ -132,16 +141,21 @@ export class GFL5RDisciplineSheet extends BaseGFLItemSheet {
     return context;
   }
 
-  async _updateObject(event, formData) {
-    // Ensure associatedSkills is an array
-    if (formData["system.associatedSkills"]) {
-      if (!Array.isArray(formData["system.associatedSkills"])) {
-        formData["system.associatedSkills"] = [formData["system.associatedSkills"]];
-      }
+  static async #onSubmit(event, form, formData) {
+    event.preventDefault();
+    const data = foundry.utils.expandObject(formData.object);
+    
+    // Handle checkbox array - get all checked values from the form directly
+    const checkboxes = form.querySelectorAll('input[name="system.associatedSkills"]:checked');
+    const associatedSkills = Array.from(checkboxes).map(cb => cb.value);
+    
+    if (data.system) {
+      data.system.associatedSkills = associatedSkills;
     } else {
-      formData["system.associatedSkills"] = [];
+      data.system = { associatedSkills };
     }
-    return super._updateObject(event, formData);
+    
+    await this.document.update(data);
   }
 }
 
