@@ -402,6 +402,10 @@ export class GFLDiceResultWindow extends HandlebarsApplicationMixin(ApplicationV
       });
     };
 
+    const canContinue = this.rerolled.length > 0 || this.discarded.length > 0 || this.kept.some(d => d.explosive && !d.hasExploded);
+    const isFinalize = this.discarded.length === 0 && this.rerolled.length === 0 && this.kept.filter(d => d.explosive && !d.hasExploded).length === 0 && this.results.length === 0;
+    const buttonDisabled = !canContinue && !isFinalize;
+
     return {
       skillLabel: this.skillLabel || "Skill",
       approachLabel: this.approachLabel || "Approach",
@@ -410,9 +414,10 @@ export class GFLDiceResultWindow extends HandlebarsApplicationMixin(ApplicationV
       discarded: this.discarded ?? [],
       rerolled: this.rerolled ?? [],
       kept: this.kept ?? [],
-      canContinue: this.rerolled.length > 0 || this.discarded.length > 0 || this.kept.some(d => d.explosive && !d.hasExploded),
+      canContinue,
       maxKeep: this.originalRingCount,
-      isFinalize: this.discarded.length === 0 && this.rerolled.length === 0 && this.kept.filter(d => d.explosive && !d.hasExploded).length === 0 && this.results.length === 0,
+      isFinalize,
+      buttonDisabled,
       ringFaces: dedupeFaces(RING_DIE_FACES),
       skillFaces: dedupeFaces(SKILL_DIE_FACES)
     };
