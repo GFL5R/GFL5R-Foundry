@@ -364,7 +364,7 @@ export class GFLDiceResultWindow extends HandlebarsApplicationMixin(ApplicationV
   _playDiceSound() {
     const src = this._getDiceSoundSource();
     if (!src) return;
-    AudioHelper.play({ src, volume: 0.7, autoplay: true }, true);
+    foundry.audio.AudioHelper.play({ src, volume: 0.7, autoplay: true }, true);
   }
 
   _getDiceSoundSource() {
