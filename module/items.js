@@ -22,6 +22,17 @@ class BaseGFLItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     const name = item?.name ?? typeLabel;
     return `${typeLabel}: ${name}`;
   }
+
+  _activateListeners(html) {
+    super._activateListeners(html);
+    // Auto-submit on change
+    html.on("change", "input, select, textarea", this._onChangeForm.bind(this));
+  }
+
+  async _onChangeForm(event) {
+    event.preventDefault();
+    await this.submit();
+  }
 }
 
 export class GFL5RAbilitySheet extends BaseGFLItemSheet {
@@ -119,6 +130,18 @@ export class GFL5RDisciplineSheet extends BaseGFLItemSheet {
     const skills = context.item?.system?.associatedSkills;
     context.associatedSkills = Array.isArray(skills) ? skills : [];
     return context;
+  }
+
+  async _updateObject(event, formData) {
+    // Ensure associatedSkills is an array
+    if (formData["system.associatedSkills"]) {
+      if (!Array.isArray(formData["system.associatedSkills"])) {
+        formData["system.associatedSkills"] = [formData["system.associatedSkills"]];
+      }
+    } else {
+      formData["system.associatedSkills"] = [];
+    }
+    return super._updateObject(event, formData);
   }
 }
 
