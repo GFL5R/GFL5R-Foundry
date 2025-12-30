@@ -156,6 +156,24 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
       }
     }, { signal });
 
+    // Spend or refund XP on an approach (ring)
+    root.addEventListener("click", async (event) => {
+      const actionEl = event.target.closest("[data-action]");
+      if (!actionEl || !root.contains(actionEl)) return;
+
+      const action = actionEl.dataset.action;
+      if (action !== "approach-increase" && action !== "approach-decrease") return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      const approachKey = actionEl.dataset.approach;
+      const delta = action === "approach-increase" ? 1 : -1;
+      const card = actionEl.closest("[data-approach-card]");
+
+      await this.#adjustApproachRank(approachKey, delta, card);
+    }, { signal });
+
     // Spend or refund XP on a skill
     root.addEventListener("click", async (event) => {
       const actionEl = event.target.closest("[data-action]");
@@ -217,6 +235,40 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     if (!element) return;
     element.classList.add(danger ? "xp-flash-danger" : "xp-flash");
     setTimeout(() => element.classList.remove("xp-flash", "xp-flash-danger"), 450);
+  }
+
+  async #adjustApproachRank(approachKey, delta, card) {
+    if (!approachKey || !delta) return;
+
+    const approaches = foundry.utils.duplicate(this.actor.system.approaches ?? {});
+    const currentRank = Number(approaches[approachKey] ?? 0);
+
+    if (delta < 0 && currentRank <= 0) {
+      this.#flashSkillCard(card, true);
+      return;
+    }
+
+    const nextRank = Math.max(0, currentRank + delta);
+    if (nextRank === currentRank) return;
+
+    const availableXP = this.#getAvailableXP();
+    const xpDelta = delta > 0 ? 3 * nextRank : -3 * currentRank; // ring costs 3 x new rank
+
+    if (delta > 0 && availableXP < xpDelta) {
+      this.#flashSkillCard(card, true);
+      ui.notifications?.warn("Not enough XP to increase this approach.");
+      return;
+    }
+
+    approaches[approachKey] = nextRank;
+
+    const updateData = {
+      "system.approaches": approaches,
+      "system.xp": availableXP - xpDelta,
+    };
+
+    await this.actor.update(updateData);
+    this.#flashSkillCard(card, false);
   }
 
   async #adjustSkillRank(skillKey, delta, skillCard) {
