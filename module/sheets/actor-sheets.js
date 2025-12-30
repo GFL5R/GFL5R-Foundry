@@ -52,10 +52,21 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     };
   }
 
-  onDeleteItemClick(ev) {
+  async onDeleteItemClick(ev) {
     const id = ev.currentTarget?.dataset?.itemId;
     if (!id) return;
-    return this.actor.deleteEmbeddedDocuments("Item", [id]);
+    const item = this.actor.items.get(id);
+    if (!item) return;
+    const confirmed = await Dialog.confirm({
+      title: "Delete Item",
+      content: `Are you sure you want to delete ${item.name}?`,
+      yes: () => true,
+      no: () => false,
+      defaultYes: false
+    });
+    if (confirmed) {
+      return this.actor.deleteEmbeddedDocuments("Item", [id]);
+    }
   }
 
   onEditItemClick(ev) {
@@ -65,6 +76,22 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     if (item) item.sheet.render(true);
   }
 
+  onRemoveDisciplineClick(ev) {
+    const slotKey = ev.currentTarget?.dataset?.slotKey;
+    if (!slotKey) return;
+    const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
+    if (disciplines[slotKey]) {
+      delete disciplines[slotKey];
+      this.actor.update({ "system.disciplines": disciplines });
+    }
+  }
+
+  onRemoveDisciplineAbilityClick(ev) {
+    const abilityId = ev.currentTarget?.dataset?.abilityId;
+    if (!abilityId) return;
+    this.onDeleteItemClick({ currentTarget: { dataset: { itemId: abilityId } } });
+  }
+
   static get eventListeners() {
     return [
       { event: "click", selector: "[data-action='roll-skill']", callback: "onRollSkillClick", part: "sheet" },
@@ -72,6 +99,8 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
       { event: "click", selector: "[data-item-id][data-action='delete-item']", callback: "onDeleteItemClick", part: "sheet" },
       { event: "click", selector: "[data-item-id][data-action='edit-item']", callback: "onEditItemClick", part: "sheet" },
       { event: "click", selector: "[data-action='open-character-builder']", callback: "onOpenCharacterBuilder", part: "sheet" },
+      { event: "click", selector: "[data-action='remove-discipline']", callback: "onRemoveDisciplineClick", part: "sheet" },
+      { event: "click", selector: "[data-action='remove-discipline-ability']", callback: "onRemoveDisciplineAbilityClick", part: "sheet" },
     ];
   }
 
@@ -145,6 +174,27 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
       if (builderBtn && root.contains(builderBtn)) {
         event.preventDefault();
         this.#openCharacterBuilder();
+        return;
+      }
+
+      const deleteBtn = event.target.closest?.("[data-action='delete-item']");
+      if (deleteBtn && root.contains(deleteBtn)) {
+        event.preventDefault();
+        this.onDeleteItemClick({ currentTarget: deleteBtn });
+        return;
+      }
+
+      const removeDisciplineBtn = event.target.closest?.("[data-action='remove-discipline']");
+      if (removeDisciplineBtn && root.contains(removeDisciplineBtn)) {
+        event.preventDefault();
+        this.onRemoveDisciplineClick({ currentTarget: removeDisciplineBtn });
+        return;
+      }
+
+      const removeAbilityBtn = event.target.closest?.("[data-action='remove-discipline-ability']");
+      if (removeAbilityBtn && root.contains(removeAbilityBtn)) {
+        event.preventDefault();
+        this.onRemoveDisciplineAbilityClick({ currentTarget: removeAbilityBtn });
         return;
       }
 
@@ -229,10 +279,7 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
       event.preventDefault();
     }, { signal });
 
-    root.addEventListener("drop", (event) => {
-      event.preventDefault();
-      this._onDrop(event);
-    }, { signal });
+    // Drop handling is done by the parent's listener calling our _onDrop
   }
 
   async close(options) {

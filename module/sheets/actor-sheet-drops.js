@@ -132,7 +132,6 @@ export function prepareGenericDropItem(itemDoc, rawItemData, dropCtx) {
     return null;
   }
 
-  flashDropTarget(dropCtx.dropTarget);
   return itemData;
 }
 
