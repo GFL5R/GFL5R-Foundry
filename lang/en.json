@@ -7,9 +7,46 @@
         "difficulty": "TN",
         "void_point": "Spend Fortune (+1 Ring die)",
         "difficulty_hidden_label": "Hide TN (+1 Fortune)"
+      },
+      "chat": {
+        "difficulty": "TN",
+        "difficulty_hidden": "Hidden",
+        "successes": "Successes",
+        "explosives": "Explosives",
+        "opportunities": "Opportunities",
+        "strife": "Strife",
+        "success_text": "Success",
+        "bonus_text": "bonus successes",
+        "fail_text": "Fail",
+        "roll_n_keep": "Roll & Keep",
+        "unknown_target": "Unknown Target"
       }
     },
     "ring": "Approach",
     "skill": "Skill"
+  },
+  "gfl5r.rnk": {
+    "title": "Roll & Keep",
+    "difficulty": "TN",
+    "difficulty_hidden": "Hidden TN",
+    "void_point_used": "Fortune spent (+1 Ring die)",
+    "assistance_used": "Assistance dice",
+    "swap_drop_here": "Swap: drop a die here",
+    "discard_drop_here": "Discard: drop a die here",
+    "reroll_drop_here": "Reroll: drop a die here",
+    "keep_drop_here": "Keep: drop a die here",
+    "max": "max",
+    "bt_validate": "Finalize",
+    "bt_strife": "Apply Strife",
+    "undo": "Undo last step",
+    "successes": "Success",
+    "explosives": "Explosive",
+    "opportunities": "Opportunity",
+    "strife": "Strife"
+  },
+  "gfl5r.weapons": {
+    "range": "Range",
+    "damage": "Damage",
+    "deadliness": "Deadliness"
   }
 }

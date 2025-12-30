@@ -1,6 +1,7 @@
 // L5R5E-style dice picker dialog adapted for GFL5R; on submit it launches the existing GFLRollerApp flow.
 import { GFL5R_CONFIG } from "../config.js";
 import { GFLRollerApp } from "../dice.js";
+import { RollGFL5R } from "../roll-gfl5r.js";
 
 const FormApplicationV1 = foundry.applications?.FormApplication ?? globalThis.FormApplication;
 
@@ -82,7 +83,24 @@ export class GFL5RPickerDialog extends FormApplicationV1 {
     const tnHidden = !!formData.difficultyHidden;
     const tnVal = tnHidden ? null : Number(formData.difficulty || 0);
 
-    // Launch existing roller app so RNK routing stays intact
+    // Build a roll expression with skill in flavor for RNK/metadata
+    const exprParts = [];
+    if (ringVal > 0) exprParts.push(`${ringVal}dr[${ringId}]`);
+    const skillVal = Number(formData.skill_dice || 0);
+    if (skillVal > 0) exprParts.push(`${skillVal}ds[${skillId}]`);
+    const expr = exprParts.join(" + ") || "0";
+
+    // Pre-roll with RollGFL5R so RNK-compatible metadata is attached
+    const roll = new RollGFL5R(expr);
+    roll.gfl5r.actor = this.actor;
+    roll.gfl5r.difficulty = tnVal ?? 0;
+    roll.gfl5r.difficultyHidden = tnHidden;
+    roll.gfl5r.stance = ringId;
+    roll.gfl5r.skillId = skillId;
+    roll.gfl5r.keepLimit = ringVal;
+    await roll.evaluate();
+
+    // Launch existing roller app seeded with the pre-rolled dice
     const app = new GFLRollerApp({
       actor: this.actor,
       skillKey: skillId,
@@ -90,7 +108,8 @@ export class GFL5RPickerDialog extends FormApplicationV1 {
       approach: ringVal,
       approachName: ringLabel,
       tn: tnVal,
-      hiddenTN: tnHidden
+      hiddenTN: tnHidden,
+      initialRoll: roll
     });
     await app.start();
   }

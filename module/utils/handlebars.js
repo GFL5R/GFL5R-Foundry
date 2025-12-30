@@ -86,4 +86,9 @@ export function registerHandlebarsHelpers() {
     if (!key) return "";
     return GFL5R_CONFIG.getApproachLabel?.(key) ?? key;
   });
+
+  hbs.registerHelper("localizeSkillId", function (key) {
+    if (!key) return "";
+    return GFL5R_CONFIG.getSkillLabel?.(key) ?? key;
+  });
 }

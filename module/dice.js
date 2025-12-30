@@ -1,6 +1,9 @@
 // module/dice.js
 /* GFL5R Dice Roller - using native Ring/Ability terms with face metadata */
 
+import { GFL5R_CONFIG } from "./config.js";
+import { RollGFL5R } from "./roll-gfl5r.js";
+
 // Face metadata keyed by result number
 const RING_FACES = {
   1: { s: 0, o: 0, r: 0, x: false, key: "blank", text: "Blank" },
@@ -119,6 +122,9 @@ export class GFLRollerApp extends Application {
     this.toReroll = [];
     this.pendingExplosions = []; // {type:"B"|"W"} to roll next
     this.tally = { s:0, o:0, r:0 };
+
+    // Optional pre-evaluated roll to seed the workflow
+    this.initialRoll = opts.initialRoll || null;
     
     // Chat message tracking
     this.chatMessageId = null;
@@ -144,6 +150,9 @@ export class GFLRollerApp extends Application {
   activateListeners(html) {
     super.activateListeners(html);
 
+    const root = html instanceof HTMLElement ? html : html?.[0];
+    if (!root) return;
+
     // Enable dragging on any existing dice
     const enableDrag = (root) => {
       root.querySelectorAll("[data-die-id]").forEach(node => {
@@ -152,11 +161,11 @@ export class GFLRollerApp extends Application {
         });
       });
     };
-    enableDrag(html[0]);
+    enableDrag(root);
 
     // Handle drops
     const makeDrop = (selector, dest) => {
-      const el = html[0].querySelector(selector);
+      const el = root.querySelector(selector);
       if (!el) return;
       el.addEventListener("dragover", e => e.preventDefault());
       el.addEventListener("drop", e => {
@@ -171,9 +180,10 @@ export class GFLRollerApp extends Application {
     makeDrop("[data-zone='discard']", "discard");
 
     // Buttons
-    html.find("[data-action='continue-roll']").on("click", () => this._continue());
-    html.find("[data-action='finish-roll']").on("click", () => this._finish());
-    html.find("[data-action='cancel-roll']").on("click", () => this.close());
+    const $root = root instanceof HTMLElement ? $(root) : html;
+    $root.find("[data-action='continue-roll']").on("click", () => this._continue());
+    $root.find("[data-action='finish-roll']").on("click", () => this._finish());
+    $root.find("[data-action='cancel-roll']").on("click", () => this.close());
   }
 
   async start() {
@@ -190,6 +200,13 @@ export class GFLRollerApp extends Application {
 
   async _initialRoll() {
     this.stepNumber = 1;
+    if (this.initialRoll) {
+      // Use provided pre-rolled dice and honor its keep limit if present
+      this.keepLimit = this.initialRoll.gfl5r?.keepLimit ?? this.keepLimit;
+      this.pool = expandRoll(this.initialRoll);
+      return;
+    }
+
     const blacks = Math.max(0, Number(this.approach) || 0);
     const whiteCount = Math.max(0, Number(foundry.utils.getProperty(this.actor.system, `skills.${this.skillKey}`)) || 0);
 
@@ -278,54 +295,25 @@ export class GFLRollerApp extends Application {
   }
 
   _generateChatContent() {
-    this._recomputeTally();
-    
-    const tnText = this.hiddenTN ? "(Hidden TN)" : `TN ${this.tn ?? 0}`;
-    
-    // Helper to render dice icons
-    const renderDice = (dice, label) => {
-      if (dice.length === 0) return "";
-      const icons = dice.map(d => {
-        const bonus = d._fromExplosion ? "<span class=\"ms-1 text-warning\">✨</span>" : "";
-        return `<div class="d-inline-flex align-items-center border rounded p-1 me-1 mb-1" title="${d.label}${d._fromExplosion ? ' (Explosion Bonus)' : ''}" data-die-id="${d.id}"><img src="${d.icon}" alt="${d.label}" style="width:32px;height:32px;">${bonus}</div>`;
-      }).join("");
-      return `<div class="mb-2"><strong>${label}:</strong><div class="d-flex flex-wrap mt-1">${icons}</div></div>`;
-    };
-
-    return `
-      <div class="card mb-2">
-        <div class="card-body">
-          <div class="fw-semibold mb-1">${this.actor.name} rolls <em>${this.skillLabel}</em> with <em>${this.approachName}</em> — ${tnText}</div>
-          <div class="text-muted mb-2"><strong>Step ${this.stepNumber}</strong> · Keep Limit: ${this.keepLimit} (${this.kept.filter(d => d._counted).length} used)</div>
-          ${renderDice(this.pool, "Pool")}
-          ${renderDice(this.kept, "Kept")}
-          ${renderDice(this.toReroll, "To Reroll")}
-          ${renderDice(this.discarded, "Discarded")}
-          ${this.pendingExplosions.length > 0 ? `<div class="mb-2"><strong>Pending Explosions:</strong> ${this.pendingExplosions.length}</div>` : ""}
-          <div class="border-top pt-2 mt-2 d-flex flex-column gap-1">
-            <div><strong>Current Successes:</strong> ${this.tally.s}</div>
-            <div><strong>Current Opportunity:</strong> ${this.tally.o}</div>
-            <div><strong>Current Strife:</strong> ${this.tally.r}</div>
-          </div>
-        </div>
-      </div>`;
+    return "";
   }
 
   async _updateChatMessage() {
-    const content = this._generateChatContent();
-    
-    if (this.chatMessageId) {
-      const msg = game.messages.get(this.chatMessageId);
-      if (msg) await msg.update({ content });
-      return;
-    }
+    // Create once; avoid overwriting with legacy markup
+    if (this.chatMessageId) return;
 
-    const msg = await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      content,
-      flavor: `<strong>GFL5R Roll in Progress...</strong>`
-    });
-    this.chatMessageId = msg.id;
+    if (this.initialRoll) {
+      const msg = await this.initialRoll.toMessage({
+        flavor: `<strong>${this.actor.name}</strong> rolls <em>${this.skillLabel}</em> with <em>${this.approachName}</em>`
+      });
+      this.chatMessageId = msg.id;
+    } else {
+      const msg = await ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+        flavor: `<strong>GFL5R Roll in Progress...</strong>`
+      });
+      this.chatMessageId = msg.id;
+    }
   }
 
   async _continue() {
@@ -410,12 +398,11 @@ export class GFLRollerApp extends Application {
         </div>
       </div>`;
 
-    // Update the existing message with final results
+    // Update the existing message with a completion flavor, but keep the rendered roll content
     const msg = game.messages.get(this.chatMessageId);
     if (msg) {
       await msg.update({
-        content: html,
-        flavor: `${flavor} — <strong>COMPLETE</strong>`
+        flavor: `${flavor} - <strong>COMPLETE</strong>`
       });
     }
 
@@ -427,6 +414,7 @@ export class GFLRollerApp extends Application {
 export function registerDiceTerms() {
   CONFIG.Dice ??= {};
   CONFIG.Dice.terms ??= {};
+  CONFIG.Dice.rolls ??= [];
 
   // Prefer the v2 namespaced Die to avoid deprecation warnings; fall back to global Die if needed.
   const BaseDie = foundry?.dice?.terms?.Die ?? globalThis.Die;
@@ -444,4 +432,11 @@ export function registerDiceTerms() {
       this.faces = 12;
     }
   };
+
+  // Register custom roll class for deserialization
+  if (!CONFIG.Dice.rolls.includes(RollGFL5R)) {
+    CONFIG.Dice.rolls.push(RollGFL5R);
+  }
 }
+
+
