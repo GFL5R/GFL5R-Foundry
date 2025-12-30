@@ -403,6 +403,9 @@ export class GFLDiceResultWindow extends HandlebarsApplicationMixin(ApplicationV
    * @protected
    */
   async _onFinalize() {
+    // Move any remaining dice in the tray to discarded
+    this.discarded.push(...this.results);
+    this.results = [];
     await this._updateChatMessage();
     this.close();
   }
@@ -419,7 +422,7 @@ export class GFLDiceResultWindow extends HandlebarsApplicationMixin(ApplicationV
     };
 
     const canContinue = this.rerolled.length > 0 || this.discarded.length > 0 || this.kept.some(d => d.explosive && !d.hasExploded);
-    const isFinalize = this.discarded.length === 0 && this.rerolled.length === 0 && this.kept.filter(d => d.explosive && !d.hasExploded).length === 0 && this.results.length === 0;
+    const isFinalize = this.discarded.length === 0 && this.rerolled.length === 0 && this.kept.filter(d => d.explosive && !d.hasExploded).length === 0;
     const buttonDisabled = !canContinue && !isFinalize;
 
     return {
