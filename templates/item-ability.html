@@ -7,13 +7,13 @@
       <div class="col">
         <input class="form-control form-control-lg fw-bold" name="name" type="text" value="{{item.name}}" placeholder="Ability Name" />
         <div class="row g-3 mt-2">
-          <div class="col-md-3">
+          <div class="col-md-4">
             <label class="form-label">Activation</label>
             <select class="form-select" name="system.activation">
               {{selectOptions (object "passive" "Passive" "movement" "Movement" "action" "Action") selected=item.system.activation localize=false}}
             </select>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-4">
             <label class="form-label">Associated Skill</label>
             <select class="form-select" name="system.skill">
               <option value="">None</option>
@@ -26,11 +26,7 @@
               {{/each}}
             </select>
           </div>
-          <div class="col-md-3">
-            <label class="form-label">XP Cost</label>
-            <input class="form-control" type="number" name="system.xpCost" value="{{item.system.xpCost}}" min="0" />
-          </div>
-          <div class="col-md-3">
+          <div class="col-md-4">
             <label class="form-label">Required Rank</label>
             <input class="form-control" type="number" name="system.requiredRank" value="{{item.system.requiredRank}}" min="0" />
           </div>

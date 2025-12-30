@@ -163,20 +163,21 @@
                   <div class="mb-3">
                     <h3 class="h6 mb-2">{{slot.discipline.name}} (Slot {{slot.slotNumber}})</h3>
                     {{#if slot.abilities.length}}
-                      <div class="list-group list-group-flush">
+                      <div class="d-flex flex-wrap gap-3">
                         {{#each slot.abilities as |ability|}}
-                          <div class="list-group-item d-flex align-items-center gap-2" data-item-id="{{ability.id}}">
-                            <img src="{{ability.img}}" alt="" class="rounded icon-32" />
-                            <div class="flex-grow-1">
-                              <div class="fw-semibold">{{ability.name}}</div>
+                          <div class="card skill-card skill-roll flex-grow-1 min-w-240" data-skill-card data-skill-key="{{ability.system.skill}}" data-item-id="{{ability.id}}">
+                            <div class="card-body">
+                              <div class="d-flex flex-column">
+                                <div class="fw-semibold" data-action="roll-skill" data-skill="{{ability.system.skill}}">{{ability.name}}</div>
+                              </div>
                               <div class="small text-muted">
                                 {{#if ability.system.activation}}{{ability.system.activation}}{{/if}}
                                 {{#if ability.system.xpCost}} • XP: {{ability.system.xpCost}}{{/if}}
                               </div>
+                              <div class="d-flex align-items-center gap-2">
+                                <button type="button" class="btn btn-outline-secondary btn-sm" data-action="edit-item" data-item-id="{{ability.id}}" title="Edit ability"><i class="fas fa-edit"></i></button>
+                              </div>
                             </div>
-                            <button type="button" class="btn btn-outline-secondary btn-sm" data-action="edit-item" data-item-id="{{ability.id}}" title="Edit ability">
-                              <i class="fas fa-edit"></i>
-                            </button>
                           </div>
                         {{/each}}
                       </div>
@@ -248,25 +249,25 @@
 
                   <div class="mb-2">
                     <h4 class="h6">Abilities</h4>
-                    <div class="drop-zone p-3 mb-2" data-drop-target="discipline-ability" data-slot-key="{{slot.slotKey}}" title="Drag & drop ability items here">
-                      <div class="fw-semibold">Drop abilities for this discipline here (costs 3 XP)</div>
-                    </div>
                     {{#if slot.abilities.length}}
-                      <div class="list-group list-group-flush">
+                      <div class="d-flex flex-wrap gap-3">
                         {{#each slot.abilities as |ability|}}
-                          <div class="list-group-item d-flex align-items-center gap-2" data-item-id="{{ability.id}}">
-                            <img src="{{ability.img}}" alt="" class="rounded icon-32" />
-                            <div class="flex-grow-1">
-                              <div class="fw-semibold">{{ability.name}}</div>
+                          <div class="card skill-card skill-roll flex-grow-1 min-w-240" data-skill-card data-skill-key="{{ability.system.skill}}" data-item-id="{{ability.id}}">
+                            <div class="card-body">
+                              <div class="d-flex flex-column">
+                                <div class="fw-semibold" data-action="roll-skill" data-skill="{{ability.system.skill}}">{{ability.name}}</div>
+                              </div>
                               <div class="small text-muted">
                                 {{#if ability.system.activation}}{{ability.system.activation}}{{/if}}
                                 {{#if ability.system.xpCost}} • XP: {{ability.system.xpCost}}{{/if}}
                                 {{#if ability.system.requiredRank}} • Req. Rank: {{ability.system.requiredRank}}{{/if}}
                               </div>
-                            </div>
-                            <div class="btn-group btn-group-sm">
-                              <button type="button" class="btn btn-outline-secondary" data-action="edit-item" data-item-id="{{ability.id}}" title="Edit ability"><i class="fas fa-edit"></i></button>
-                              <button type="button" class="btn btn-outline-danger" data-action="remove-discipline-ability" data-slot-key="{{../slot.slotKey}}" data-ability-id="{{ability.id}}" title="Remove ability"><i class="fas fa-trash"></i></button>
+                              <div class="d-flex align-items-center gap-2">
+                                <div class="btn-group btn-group-sm">
+                                  <button type="button" class="btn btn-outline-secondary" data-action="edit-item" data-item-id="{{ability.id}}" title="Edit ability"><i class="fas fa-edit"></i></button>
+                                  <button type="button" class="btn btn-outline-danger" data-action="remove-discipline-ability" data-slot-key="{{../slot.slotKey}}" data-ability-id="{{ability.id}}" title="Remove ability"><i class="fas fa-trash"></i></button>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         {{/each}}
@@ -274,6 +275,9 @@
                     {{else}}
                       <div class="text-muted small">No abilities assigned yet.</div>
                     {{/if}}
+                    <div class="drop-zone p-3 mt-2" data-drop-target="discipline-ability" data-slot-key="{{slot.slotKey}}" title="Drag & drop ability items here">
+                      <div class="fw-semibold">Drop abilities for this discipline here (costs 3 XP)</div>
+                    </div>
                   </div>
                 </div>
               </div>

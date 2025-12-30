@@ -86,10 +86,57 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     }
   }
 
-  onRemoveDisciplineAbilityClick(ev) {
+  async onRemoveDisciplineAbilityClick(ev) {
     const abilityId = ev.currentTarget?.dataset?.abilityId;
     if (!abilityId) return;
-    this.onDeleteItemClick({ currentTarget: { dataset: { itemId: abilityId } } });
+    const item = this.actor.items.get(abilityId);
+    if (!item) return;
+
+    const confirmed = await Dialog.confirm({
+      title: "Remove Ability",
+      content: `Are you sure you want to remove ${item.name}? This will refund ${item.system.xpCost ?? 0} XP.`,
+      yes: () => true,
+      no: () => false,
+      defaultYes: false
+    });
+
+    if (confirmed) {
+      const disciplines = foundry.utils.duplicate(this.actor.system.disciplines ?? {});
+
+      // Find the discipline slot containing this ability
+      let slotKey = null;
+      for (const key in disciplines) {
+        if (disciplines[key].abilities?.includes(abilityId)) {
+          slotKey = key;
+          break;
+        }
+      }
+
+      if (slotKey) {
+        // Remove the ability from the discipline's abilities array
+        disciplines[slotKey].abilities = disciplines[slotKey].abilities.filter(id => id !== abilityId);
+
+        // Subtract 3 XP from the discipline
+        const currentDisciplineXP = Number(disciplines[slotKey].xp ?? 0);
+        const newDisciplineXP = Math.max(0, currentDisciplineXP - 3);
+        disciplines[slotKey].xp = newDisciplineXP;
+        disciplines[slotKey].rank = GFL5R_CONFIG.getRankFromXP(newDisciplineXP);
+      }
+
+      // Refund XP for abilities (always 3 XP)
+      const xpCost = 3;
+      const currentXP = Number(this.actor.system.xp ?? 0);
+      const newXP = currentXP + xpCost;
+
+      await this.actor.update({
+        "system.xp": newXP,
+        "system.disciplines": disciplines
+      });
+      console.log(`GFL5R | Refunded ${xpCost} XP for removing ability ${item.name} and updated discipline XP`);
+
+      // Delete the item
+      return this.actor.deleteEmbeddedDocuments("Item", [abilityId]);
+    }
   }
 
   static get eventListeners() {

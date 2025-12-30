@@ -74,6 +74,16 @@ export async function handleDisciplineAbilityDrop(actor, dropTarget, itemDoc, av
   const disciplines = foundry.utils.duplicate(actor.system.disciplines ?? {});
   if (!disciplines[slotKey]) return;
 
+  // Check if the ability's required rank is met by the discipline's current rank
+  const requiredRank = Number(itemDoc.system?.requiredRank ?? 0);
+  const disciplineRank = Number(disciplines[slotKey].rank ?? 1);
+  if (requiredRank > disciplineRank) {
+    dropTarget.classList.add("border", "border-danger", "bg-danger-subtle");
+    setTimeout(() => dropTarget.classList.remove("border-danger", "bg-danger-subtle"), 500);
+    ui.notifications?.warn(`This ability requires Discipline Rank ${requiredRank}, but the discipline is only Rank ${disciplineRank}.`);
+    return;
+  }
+
   const cost = 3;
   if (availableXP < cost) {
     dropTarget.classList.add("border", "border-danger", "bg-danger-subtle");
