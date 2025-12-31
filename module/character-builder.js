@@ -113,8 +113,14 @@ export class CharacterBuilderApp extends FormApplication {
       name: m.name,
       img: m.img ?? "icons/svg/upgrade.svg",
       description: m.system?.description ?? "",
-      cost: m.system?.urncCredits ?? 0
+      cost: m.system?.urncCredits ?? 0,
+      moduleType: m.system?.moduleType ?? "",
+      targetSkill: m.system?.targetSkill ?? "",
+      targetApproach: m.system?.targetApproach ?? ""
     }));
+
+    const skills = GFL5R_CONFIG.skillGroups.flatMap(group => group.items);
+    const approaches = Object.keys(GFL5R_CONFIG.approachLabels).map(key => ({ key, label: GFL5R_CONFIG.approachLabels[key] }));
 
     const steps = [
       { num: 1, label: this.builderState.buildType === "tdoll" ? "Frame" : "Nationality" },
@@ -157,6 +163,8 @@ export class CharacterBuilderApp extends FormApplication {
       selectedCards,
       remainingCredits,
       selectedModules,
+      skills,
+      approaches,
       formValues
     };
   }
