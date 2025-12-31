@@ -108,7 +108,7 @@ export class CharacterBuilderApp extends FormApplication {
     selectedCards.passion = mapNarrative("passion");
     selectedCards.anxiety = mapNarrative("anxiety");
 
-    const startingCredits = 60000;
+    const startingCredits = game.settings.get("gfl5r", "chargen-max-credits");
     const totalCost = (this.builderState.modules || []).reduce((sum, m) => sum + (m.system?.urncCredits || 0), 0);
     const remainingCredits = Math.max(0, startingCredits - totalCost);
     const selectedModules = (this.builderState.modules || []).map(m => ({
@@ -186,7 +186,9 @@ export class CharacterBuilderApp extends FormApplication {
       selectedCommanderItem,
       skills,
       approaches,
-      formValues
+      formValues,
+      maxWeirdModuleCredits: game.settings.get("gfl5r", "chargen-max-weird-module-credits"),
+      maxCommanderItemRarity: game.settings.get("gfl5r", "chargen-max-commander-item-rarity")
     };
   }
 
@@ -357,7 +359,7 @@ export class CharacterBuilderApp extends FormApplication {
       }
 
       // Check credit limit
-      const startingCredits = 60000;
+      const startingCredits = game.settings.get("gfl5r", "chargen-max-credits");
       const currentCost = this.builderState.modules.reduce((sum, m) => sum + (m.system?.urncCredits || 0), 0);
       const moduleCost = dropData.system?.urncCredits || 0;
       if (currentCost + moduleCost > startingCredits) {
@@ -382,8 +384,9 @@ export class CharacterBuilderApp extends FormApplication {
       }
 
       const moduleCost = dropData.system?.urncCredits || 0;
-      if (moduleCost > 6000) {
-        ui.notifications?.warn(`This module costs ${moduleCost}, but the weird name bonus only allows modules costing 6,000 or less.`);
+      const maxWeirdCredits = game.settings.get("gfl5r", "chargen-max-weird-module-credits");
+      if (moduleCost > maxWeirdCredits) {
+        ui.notifications?.warn(`This module costs ${moduleCost}, but the weird name bonus only allows modules costing ${maxWeirdCredits} or less.`);
         return;
       }
 
@@ -404,8 +407,9 @@ export class CharacterBuilderApp extends FormApplication {
       }
 
       const itemRarity = parseInt(dropData.system?.rarity) || 0;
-      if (itemRarity > 7) {
-        ui.notifications?.warn(`This item has rarity ${itemRarity}, but only items of rarity 7 or less are allowed.`);
+      const maxRarity = game.settings.get("gfl5r", "chargen-max-commander-item-rarity");
+      if (itemRarity > maxRarity) {
+        ui.notifications?.warn(`This item has rarity ${itemRarity}, but only items of rarity ${maxRarity} or less are allowed.`);
         return;
       }
 
@@ -569,7 +573,7 @@ export class CharacterBuilderApp extends FormApplication {
     const storyEnd = (getTdoll("storyEnd") || "").trim();
     const additionalNotes = (getTdoll("additionalNotes") || "").trim();
 
-    const startingCredits = 60000;
+    const startingCredits = game.settings.get("gfl5r", "chargen-max-credits");
     const totalCost = (this.builderState.modules || []).reduce((sum, m) => sum + (m.system?.urncCredits || 0), 0);
     const remainingCredits = Math.max(0, startingCredits - totalCost);
 

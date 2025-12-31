@@ -577,7 +577,7 @@
             <p class="text-muted">{{flavor.tdoll.metCommander}}</p>
           {{/if}}
           <textarea class="form-control" name="tdoll.metCommander" rows="3" placeholder="Describe your first meeting...">{{formValues.tdoll.metCommander}}</textarea>
-          <p class="text-muted small">Choose a regular item (rarity 7 or less) that represents or is relevant to your first meeting with your Commander.</p>
+          <p class="text-muted small">Choose a regular item (rarity {{maxCommanderItemRarity}} or less) that represents or is relevant to your first meeting with your Commander.</p>
           <div class="drop-zone p-3 text-center" data-drop-target="commander-item">
             <div class="fw-semibold">Drop Item here</div>
             {{#each selectedCommanderItem}}
@@ -641,7 +641,7 @@
         <div class="mb-3">
           <h4 class="h6">Weird Name Bonus: Free Module</h4>
           <div class="drop-zone p-3 text-center" data-drop-target="weird-module">
-            <div class="fw-semibold">Drop a Module item here (≤6,000 Credits)</div>
+            <div class="fw-semibold">Drop a Module item here (≤{{maxWeirdModuleCredits}} Credits)</div>
             {{#each selectedWeirdModule}}
               <div class="card bg-secondary bg-opacity-25 border mt-2 text-start">
                 <div class="card-body row">
