@@ -299,6 +299,7 @@ export class CharacterBuilderApp extends FormApplication {
       };
       this.render(false);
       this._persistBuilderState();
+      return;
     }
 
     if (kind === "module") {
@@ -307,12 +308,28 @@ export class CharacterBuilderApp extends FormApplication {
         return;
       }
       if (!this.builderState.modules) this.builderState.modules = [];
-      const existing = this.builderState.modules.find(m => m.id === dropData.id);
-      if (!existing) {
-        this.builderState.modules.push(dropData);
-        this._persistBuilderState();
-        this.render();
+
+      // Check for duplicates using _id or name as fallback
+      const moduleId = dropData._id ?? dropData.name;
+      const existing = this.builderState.modules.find(m => (m._id ?? m.name) === moduleId);
+      if (existing) {
+        ui.notifications?.info("This module is already added.");
+        return;
       }
+
+      // Check credit limit
+      const startingCredits = 60000;
+      const currentCost = this.builderState.modules.reduce((sum, m) => sum + (m.system?.urncCredits || 0), 0);
+      const moduleCost = dropData.system?.urncCredits || 0;
+      if (currentCost + moduleCost > startingCredits) {
+        ui.notifications?.warn(`Not enough credits! This module costs ${moduleCost} but you only have ${startingCredits - currentCost} remaining.`);
+        return;
+      }
+
+      this.builderState.modules.push(dropData);
+      this._persistBuilderState();
+      this.render();
+      return;
     }
   }
 
