@@ -27,25 +27,30 @@
 ## Dice System (L5R-inspired)
 - **Black dice (d6)**: Ring/approach dice—faces 1-6 map to blank/opp+strife/opp/success+strife/success/explosive+strife
 - **White dice (d12)**: Skill dice—faces 1-12 with more success/opportunity variants and less strife
-- **Roller flow**: [module/dice.js](module/dice.js) `GFLRollerApp` provides interactive keep/reroll/explode workflow
+- **Roller flow**: [module/roll-keep-window.js](module/roll-keep-window.js) `GFLDiceResultWindow` provides interactive keep/reroll/explode workflow via drag-and-drop in [templates/dice-roll-grid.html](templates/dice-roll-grid.html)
   - Keep-limit equals chosen approach value (explosion dice don't count toward limit)
   - Chat message updates after every action (keep, reroll, explode)
   - Handles hidden-TN fortune bonuses and initiative integration
 - Roll formula: approach dice (d6) + skill dice (d12), e.g., `3d6 + 2d12`
+- Dice picker: [module/dice-picker-dialog.js](module/dice-picker-dialog.js) `GFLDicePickerDialog` for selecting approach, TN, bonus dice
 
 ## Sheets & UI Components
-- **Actor sheets**: [module/actors.js](module/actors.js)
+- **Actor sheets**: [module/sheets/actor-sheets.js](module/sheets/actor-sheets.js) extends `HandlebarsApplicationMixin(ActorSheetV2)`
   - Character sheets compute derived stats via [module/utils/derived.js](module/utils/derived.js): `computeDerivedStats(approaches, resources)` returns endurance, composure, vigilance, focus, fortunePointsMax
   - Manage up to 5 discipline slots, orchestrate drag-and-drop for items (abilities, disciplines, modules, narrative, inventory)
   - NPC sheets simpler: treat all items as features
-  - Extend `ActorSheet` classes, don't modify Foundry core
+  - Extend `ActorSheetV2` classes, don't modify Foundry core
+  - Data building: [module/sheets/actor-sheet-data.js](module/sheets/actor-sheet-data.js) for collapse states, origin display, discipline slots
+  - Drop handling: [module/sheets/actor-sheet-drops.js](module/sheets/actor-sheet-drops.js) for discipline/ability/item drops
 - **Item sheets**: [module/items.js](module/items.js) registers separate sheets for each item type
   - Add new item types here + matching templates under [templates/](templates/)
 - **Handlebars helpers**: Centralized in [module/utils/handlebars.js](module/utils/handlebars.js) (object builder, eq/ifCond, discipline slot helpers)
+- **Character builder**: [module/character-builder.js](module/character-builder.js) `CharacterBuilderApp` for guided PC creation
+- **Drag-drop utilities**: [module/utils/drop.js](module/utils/drop.js) for resolving item drops from data
 
 ## Combat & Initiative
 - **Custom combat class**: [module/combat.js](module/combat.js) `GFL5RCombat` overrides `rollInitiative`
-  - Prompts per-combatant rolls via roller app with prepared vs. unprepared logic:
+  - Prompts per-combatant rolls via dice picker with prepared vs. unprepared logic:
     - **Prepared**: base initiative = power + precision
     - **Unprepared**: base initiative = ⌈(precision + swiftness)/2⌉
   - Encounter type (intrigue/duel/skirmish/mass_battle) determines skill used for roll
@@ -57,7 +62,7 @@
 ## Workflow & Development Practices
 - **No automated tests**: Manual testing by reloading Foundry world
 - **Debugging**: Console logging enabled throughout (`console.log("GFL5R | ...")`)
-- **UI patterns**: Use `html.on()` jQuery-style handlers, Foundry `Dialog` API, and `renderTemplate()` for dynamic content
+- **UI patterns**: Use `html.on()` jQuery-style handlers, Foundry `DialogV2` API, and `renderTemplate()` for dynamic content
 - **Adding features checklist**:
   1. Register settings/helpers up front in [module/settings.js](module/settings.js) or [module/utils/handlebars.js](module/utils/handlebars.js)
   2. Add UI elements in templates, wire with jQuery handlers
@@ -67,4 +72,9 @@
 ## Compatibility & Assets
 - **Foundry compatibility**: Minimum v12, verified v13—some code has v12 shims (Hooks, `Item.implementation`), don't remove unless dropping v12
 - **Templates**: Located in [templates/](templates/) for actor/item sheets, roller, roll prompt, GM UI
+  - Modular partials in [templates/actor-sheet/](templates/actor-sheet/) (e.g., combat, disciplines, inventory)
+  - GM-specific in [templates/gm/](templates/gm/)
 - **Assets**: Dice face icons in [assets/dice/black/](assets/dice/black/) and [assets/dice/white/](assets/dice/white/), paths built dynamically as `systems/gfl5r/assets/dice/{black|white}/{face-key}.svg`
+  - UI symbols in [assets/symbols/](assets/symbols/) (success, opportunity, strife, explosion)
+- **Data & Localization**: [template.json](template.json) defines actor/item schemas; [lang/en.json](lang/en.json) for i18n strings; [data/character-builder-flavor.json](data/character-builder-flavor.json) for creation flavor text
+- **Documentation**: [docs/ApplicationV2spec.md](docs/ApplicationV2spec.md) for sheet development guidelines
