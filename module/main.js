@@ -5,10 +5,10 @@ import { registerSettings } from "./settings.js";
 import { registerHandlebarsHelpers } from "./utils/handlebars.js";
 import "./hooks.js";
 
-Hooks.once("init", () => {
+Hooks.once("init", async () => {
   console.log("GFL5R | Initializing");
 
-  registerHandlebarsHelpers();
+  await registerHandlebarsHelpers();
 
   // Register settings
   registerSettings();

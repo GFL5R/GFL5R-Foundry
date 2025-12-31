@@ -1,7 +1,7 @@
 // Central registration for Handlebars helpers
 import { GFL5R_CONFIG } from "../config.js";
 
-export function registerHandlebarsHelpers() {
+export async function registerHandlebarsHelpers() {
   const hbs = Handlebars;
   if (!hbs) return;
 
@@ -73,6 +73,23 @@ export function registerHandlebarsHelpers() {
     if (!key) return "";
     return GFL5R_CONFIG.getSkillCategoryLabel?.(key) ?? key;
   });
+
+  // Register partials
+  const partials = [
+    'actor-sheet-skills',
+    'actor-sheet-disciplines',
+    'actor-sheet-modules',
+    'actor-sheet-status',
+    'actor-sheet-combat',
+    'actor-sheet-inventory',
+    'actor-sheet-narrative'
+  ];
+
+  for (const partial of partials) {
+    const response = await fetch(`/systems/gfl5r/templates/actor-sheet/${partial}.html`);
+    const template = await response.text();
+    hbs.registerPartial(partial, template);
+  }
 }
 
 function evaluateCondition(v1, operator, v2) {

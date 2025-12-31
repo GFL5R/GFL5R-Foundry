@@ -18,7 +18,7 @@ const sheetDebug = (...args) => {
   console.debug("GFL5R | Sheet", ...args);
 };
 
-const { HandlebarsApplicationMixin } = foundry.applications.api;
+const { HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 const { ActorSheetV2 } = foundry.applications.sheets;
 const ActorSheet = foundry.appv1.sheets.ActorSheet;
 
@@ -30,6 +30,11 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     id: "gfl5r-actor-sheet",
     classes: ["sheet", "actor"],
     position: { width: 1000, height: 720 },
+    tag: "form",
+    form: {
+      submitOnChange: true,
+      closeOnSubmit: false
+    },
     window: { title: "Character", resizable: true }
   };
 
@@ -57,12 +62,11 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     if (!id) return;
     const item = this.actor.items.get(id);
     if (!item) return;
-    const confirmed = await Dialog.confirm({
-      title: "Delete Item",
-      content: `Are you sure you want to delete ${item.name}?`,
-      yes: () => true,
-      no: () => false,
-      defaultYes: false
+    const confirmed = await DialogV2.confirm({
+      window: { title: "Delete Item" },
+      content: `<p>Are you sure you want to delete ${item.name}?</p>`,
+      rejectClose: false,
+      modal: true
     });
     if (confirmed) {
       return this.actor.deleteEmbeddedDocuments("Item", [id]);
@@ -92,12 +96,11 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     const item = this.actor.items.get(abilityId);
     if (!item) return;
 
-    const confirmed = await Dialog.confirm({
-      title: "Remove Ability",
-      content: `Are you sure you want to remove ${item.name}? This will refund ${item.system.xpCost ?? 0} XP.`,
-      yes: () => true,
-      no: () => false,
-      defaultYes: false
+    const confirmed = await DialogV2.confirm({
+      window: { title: "Remove Ability" },
+      content: `<p>Are you sure you want to remove ${item.name}? This will refund 3 XP.</p>`,
+      rejectClose: false,
+      modal: true
     });
 
     if (confirmed) {
@@ -157,8 +160,8 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     sheetDebug("ActorSheet#_prepareContext", { actor: this.actor?.id, name: this.actor?.name });
     const context = (await super._prepareContext(options)) ?? {};
     const actor = this.document ?? this.actor;
-    context.actor ??= actor?.toObject?.() ?? actor;
-    const data = context.actor?.system ?? actor?.system ?? {};
+    context.actor = actor;
+    const data = actor?.system ?? {};
 
     context.derived = computeDerivedStats(data.approaches, data.resources);
     context.availableXP = Number(data.xp ?? 0);
@@ -587,6 +590,11 @@ export class GFL5RNPCSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     id: "gfl5r-npc-sheet",
     classes: ["sheet", "actor", "npc"],
     position: { width: 700, height: 600 },
+    tag: "form",
+    form: {
+      submitOnChange: true,
+      closeOnSubmit: false
+    },
     window: { title: "NPC", resizable: true }
   };
 
@@ -611,8 +619,8 @@ export class GFL5RNPCSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
   async _prepareContext(options) {
     const context = (await super._prepareContext(options)) ?? {};
     const actor = this.document ?? this.actor;
-    context.actor ??= actor?.toObject?.() ?? actor;
-    const data = context.actor?.system ?? actor?.system ?? {};
+    context.actor = actor;
+    const data = actor?.system ?? {};
 
     context.derived = computeDerivedStats(data.approaches, data.resources);
     context.skills = data.skills ?? {};

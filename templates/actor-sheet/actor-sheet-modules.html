@@ -1,0 +1,42 @@
+{{#if showModules}}
+<section class="tab-pane tab p-3" data-group="primary" data-tab="modules">
+  <div class="card">
+    <div class="card-header fw-semibold">Body Modules</div>
+    <div class="card-body">
+      <p class="text-muted mb-3">
+        {{#if (eq characterType "doll")}}
+          As a Doll, you can install body modification modules to enhance your capabilities.
+        {{else}}
+          As a Transhumanist, you have embraced body modification technology.
+        {{/if}}
+      </p>
+      <div class="drop-zone p-3 text-center" data-drop-target="modules" title="Drag & drop module items here">
+        <div class="fw-semibold">Drop modules here</div>
+      </div>
+      <div class="mt-3">
+        {{#if modules.length}}
+          <div class="list-group list-group-flush">
+            {{#each modules as |module|}}
+              <div class="list-group-item d-flex align-items-center gap-2" data-item-id="{{module.id}}">
+                <img src="{{module.img}}" alt="" class="rounded icon-32" />
+                <div class="flex-grow-1">
+                  <div class="fw-semibold">{{module.name}}</div>
+                  <div class="small text-muted">
+                    {{#if module.system.urncCredits}}URNC Credits: {{module.system.urncCredits}}¤{{/if}}
+                  </div>
+                </div>
+                <div class="btn-group btn-group-sm">
+                  <button type="button" class="btn btn-outline-secondary" data-action="edit-item" data-item-id="{{module.id}}" title="Edit module"><i class="fas fa-edit"></i></button>
+                  <button type="button" class="btn btn-outline-danger" data-action="delete-item" data-item-id="{{module.id}}" title="Remove module"><i class="fas fa-trash"></i></button>
+                </div>
+              </div>
+            {{/each}}
+          </div>
+        {{else}}
+          <div class="text-muted">No modules installed.</div>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</section>
+{{/if}}

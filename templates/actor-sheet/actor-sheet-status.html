@@ -1,0 +1,59 @@
+<section class="tab-pane tab p-3" data-group="primary" data-tab="status">
+  <div class="row g-3">
+    <div class="col-lg-6">
+      <div class="card h-100">
+        <div class="card-header fw-semibold">Collapse</div>
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="pill-muted" id="collapse-exposure-label">Exposure</div>
+            <div class="fw-semibold">{{collapse.current}} / {{collapse.capacity}}</div>
+          </div>
+          <div class="collapse-progress mb-2">
+            <progress class="collapse-bar" aria-labelledby="collapse-exposure-label" value="{{collapse.current}}" max="{{collapse.capacity}}" aria-valuetext="{{collapse.current}} of {{collapse.capacity}}"></progress>
+          </div>
+          <div class="small text-muted mb-3">Maximum collapse equals the sum of all approaches times 5.</div>
+          <div class="d-flex align-items-center gap-2">
+            <label class="form-label mb-0" for="collapse-current">Current Collapse</label>
+            <input id="collapse-current" class="form-control form-control-sm text-end w-110" type="number" name="system.resources.collapse" value="{{actor.system.resources.collapse}}" min="0" aria-label="Current collapse" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card h-100">
+        <div class="card-header fw-semibold d-flex justify-content-between align-items-center">
+          <span>Conditions</span>
+          <span class="small text-muted">Drop condition items to track effects</span>
+        </div>
+        <div class="card-body">
+          <div class="drop-zone p-3 text-center mb-3" data-drop-target="condition" title="Drag & drop condition items here">
+            <div class="fw-semibold">Drop conditions here</div>
+          </div>
+          {{#if conditions.length}}
+            <div class="list-group list-group-flush">
+              {{#each conditions as |condition|}}
+                <div class="list-group-item d-flex align-items-center gap-2" data-item-id="{{condition.id}}">
+                  <img src="{{condition.img}}" alt="" class="rounded icon-32" />
+                  <div class="flex-grow-1">
+                    <div class="fw-semibold">{{condition.name}}</div>
+                    <div class="small text-muted">
+                      {{#if condition.system.duration}}<span class="status-chip">Duration: {{condition.system.duration}}</span>{{/if}}
+                      {{#if condition.system.tags}}<span class="status-chip ms-1">Tags: {{condition.system.tags}}</span>{{/if}}
+                    </div>
+                  </div>
+                  <div class="btn-group btn-group-sm">
+                    <button type="button" class="btn btn-outline-secondary" data-action="edit-item" data-item-id="{{condition.id}}" title="Edit condition"><i class="fas fa-edit"></i></button>
+                    <button type="button" class="btn btn-outline-danger" data-action="delete-item" data-item-id="{{condition.id}}" title="Remove condition"><i class="fas fa-trash"></i></button>
+                  </div>
+                </div>
+              {{/each}}
+            </div>
+          {{else}}
+            <div class="text-muted">No active conditions.</div>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

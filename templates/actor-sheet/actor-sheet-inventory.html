@@ -1,0 +1,54 @@
+<section class="tab-pane tab p-3" data-group="primary" data-tab="inventory">
+  <div class="card">
+    <div class="card-header fw-semibold">Inventory</div>
+    <div class="card-body">
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <label class="form-label" for="urnc-credits">URNC Credits</label>
+          <input id="urnc-credits" class="form-control" type="number" name="system.urncCredits" value="{{actor.system.urncCredits}}" min="0" aria-label="URNC Credits" />
+        </div>
+      </div>
+      <div class="drop-zone p-3 text-center mb-3" data-drop-target="inventory" title="Drag & drop items here">
+        <div class="fw-semibold">Drop items here</div>
+      </div>
+      {{#if inventory.length}}
+        <table class="table table-sm align-middle text-light">
+          <thead class="table-dark">
+            <tr>
+              <th>Item</th>
+              <th>Type</th>
+              <th class="text-center">Qty</th>
+              <th class="text-end">Price</th>
+              <th class="text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each inventory as |item|}}
+              <tr data-item-id="{{item.id}}">
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <img src="{{item.img}}" alt="" class="rounded icon-32"/>
+                    <strong>{{item.name}}</strong>
+                  </div>
+                </td>
+                <td class="text-capitalize">{{item.type}}</td>
+                <td class="text-center w-90">
+                  <input class="form-control form-control-sm text-center" type="number" name="items.{{item.id}}.system.quantity" value="{{item.system.quantity}}" min="0" aria-label="Quantity for {{item.name}}" />
+                </td>
+                <td class="text-end">{{#if item.system.price}}{{item.system.price}}¤{{else}}—{{/if}}</td>
+                <td class="text-center w-110">
+                  <div class="btn-group btn-group-sm">
+                    <button type="button" class="btn btn-outline-secondary" data-action="edit-item" data-item-id="{{item.id}}" title="Edit item"><i class="fas fa-edit"></i></button>
+                    <button type="button" class="btn btn-outline-danger" data-action="delete-item" data-item-id="{{item.id}}" title="Delete item"><i class="fas fa-trash"></i></button>
+                  </div>
+                </td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      {{else}}
+        <div class="text-muted">No items in inventory.</div>
+      {{/if}}
+    </div>
+  </div>
+</section>

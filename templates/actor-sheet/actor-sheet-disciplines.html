@@ -1,0 +1,99 @@
+<section class="tab-pane tab p-3" data-group="primary" data-tab="disciplines">
+  <div class="card">
+    <div class="card-header fw-semibold">Disciplines</div>
+    <div class="card-body">
+      {{#unless (some disciplineSlots "discipline")}}
+        <div class="drop-zone p-3 text-center" data-drop-target="discipline" data-slot-key="slot1" title="Drag & drop a discipline item here">
+          <div class="fw-semibold">Drop your first discipline here to get started</div>
+        </div>
+      {{/unless}}
+
+      {{#each disciplineSlots as |slot|}}
+        {{#if slot.discipline}}
+          <div class="card mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <div class="fw-semibold">{{slot.discipline.name}}</div>
+              <div class="btn-group btn-group-sm">
+                <button type="button" class="btn btn-outline-secondary" data-action="edit-item" data-item-id="{{slot.discipline.id}}" title="Edit discipline"><i class="fas fa-edit"></i></button>
+                <button type="button" class="btn btn-outline-danger" data-action="remove-discipline" data-slot-key="{{slot.slotKey}}" title="Remove discipline"><i class="fas fa-times"></i></button>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="row g-3 align-items-start mb-3">
+                <div class="col-auto">
+                  <img src="{{slot.discipline.img}}" alt="" class="img-thumbnail icon-64"/>
+                </div>
+                <div class="col">
+                  {{#if slot.discipline.system.category}}
+                    <div class="small text-muted mb-2">Category: {{slot.discipline.system.category}}</div>
+                  {{/if}}
+                  <div class="row g-3 max-w-360">
+                    <div class="col-sm-6">
+                      <label class="form-label" for="slot-{{slot.slotKey}}-xp">XP</label>
+                      <input id="slot-{{slot.slotKey}}-xp" class="form-control" type="number" value="{{slot.xp}}" disabled aria-label="Discipline XP"/>
+                    </div>
+                    <div class="col-sm-6">
+                      <label class="form-label" for="slot-{{slot.slotKey}}-rank">Rank</label>
+                      <input id="slot-{{slot.slotKey}}-rank" class="form-control" type="number" value="{{slot.rank}}" disabled aria-label="Discipline rank"/>
+                    </div>
+                  </div>
+                  {{#if slot.associatedSkillText}}
+                    <div class="small text-muted mt-2">Associated Skills: {{slot.associatedSkillText}}</div>
+                  {{/if}}
+                  {{#if slot.xpRemaining}}
+                    <div class="small text-muted mt-2">{{slot.xpRemaining}} XP until Rank {{add slot.rank 1}}</div>
+                  {{/if}}
+                </div>
+              </div>
+
+              {{#if slot.discipline.system.description}}
+                <div class="card mb-3">
+                  <div class="card-body">{{{slot.discipline.system.description}}}</div>
+                </div>
+              {{/if}}
+
+              <div class="mb-2">
+                <h4 class="h6">Abilities</h4>
+                {{#if slot.abilities.length}}
+                  <div class="d-flex flex-wrap gap-3">
+                    {{#each slot.abilities as |ability|}}
+                      <div class="card skill-card skill-roll flex-grow-1 min-w-240" data-skill-card data-skill-key="{{ability.system.skill}}" data-item-id="{{ability.id}}">
+                        <div class="card-body">
+                          <div class="d-flex flex-column">
+                            <div class="fw-semibold" data-action="roll-skill" data-skill="{{ability.system.skill}}">{{ability.name}}</div>
+                          </div>
+                          <div class="small text-muted">
+                            {{#if ability.system.activation}}{{ability.system.activation}}{{/if}}
+                            {{#if ability.system.xpCost}} • XP: {{ability.system.xpCost}}{{/if}}
+                            {{#if ability.system.requiredRank}} • Req. Rank: {{ability.system.requiredRank}}{{/if}}
+                          </div>
+                          <div class="d-flex align-items-center gap-2">
+                            <div class="btn-group btn-group-sm">
+                              <button type="button" class="btn btn-outline-secondary" data-action="edit-item" data-item-id="{{ability.id}}" title="Edit ability"><i class="fas fa-edit"></i></button>
+                              <button type="button" class="btn btn-outline-danger" data-action="remove-discipline-ability" data-slot-key="{{../slot.slotKey}}" data-ability-id="{{ability.id}}" title="Remove ability"><i class="fas fa-trash"></i></button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    {{/each}}
+                  </div>
+                {{else}}
+                  <div class="text-muted small">No abilities assigned yet.</div>
+                {{/if}}
+                <div class="drop-zone p-3 mt-2" data-drop-target="discipline-ability" data-slot-key="{{slot.slotKey}}" title="Drag & drop ability items here">
+                  <div class="fw-semibold">Drop abilities for this discipline here (costs 3 XP)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        {{/if}}
+      {{/each}}
+
+      {{#if (lt (count disciplineSlots "discipline") 5)}}
+        <div class="drop-zone p-3 text-center" data-drop-target="discipline" data-slot-key="{{getNextEmptySlot disciplineSlots}}" title="Drag & drop another discipline item here">
+          <div class="fw-semibold"><i class="fas fa-plus-circle"></i> Drop another discipline here ({{count disciplineSlots "discipline"}}/5)</div>
+        </div>
+      {{/if}}
+    </div>
+  </div>
+</section>

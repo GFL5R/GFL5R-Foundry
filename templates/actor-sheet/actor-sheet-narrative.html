@@ -1,0 +1,72 @@
+<section class="tab-pane tab p-3" data-group="primary" data-tab="narrative">
+  <div class="row g-3">
+    <div class="col-lg-6">
+      <div class="card mb-3">
+        <div class="card-header fw-semibold">Distinctions and Passions</div>
+        <div class="card-body">
+          <div class="drop-zone p-3 text-center mb-2" data-drop-target="narrative-positive" title="Drag & drop Distinction or Passion items here">
+            <div class="fw-semibold">Drop Distinction/Passion items here</div>
+          </div>
+          {{#if narrativePositive.length}}
+            <div class="list-group list-group-flush">
+              {{#each narrativePositive as |item|}}
+                <div class="list-group-item d-flex align-items-center gap-2" data-item-id="{{item.id}}">
+                    <img src="{{item.img}}" alt="" class="rounded icon-32" />
+                  <div class="flex-grow-1">
+                    <div class="fw-semibold">{{item.name}}</div>
+                    <div class="small text-muted">{{item.system.approach}} - {{item.system.narrativeType}}</div>
+                  </div>
+                  <button type="button" class="btn btn-outline-danger btn-sm" data-action="delete-item" data-item-id="{{item.id}}" title="Remove item"><i class="fas fa-trash"></i></button>
+                </div>
+              {{/each}}
+            </div>
+          {{else}}
+            <div class="text-muted">No distinctions or passions yet.</div>
+          {{/if}}
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header fw-semibold">Adversities and Anxieties</div>
+        <div class="card-body">
+          <div class="drop-zone p-3 text-center mb-2" data-drop-target="narrative-negative" title="Drag & drop Adversity or Anxiety items here">
+            <div class="fw-semibold">Drop Adversity/Anxiety items here</div>
+          </div>
+          {{#if narrativeNegative.length}}
+            <div class="list-group list-group-flush">
+              {{#each narrativeNegative as |item|}}
+                <div class="list-group-item d-flex align-items-center gap-2" data-item-id="{{item.id}}">
+                    <img src="{{item.img}}" alt="" class="rounded icon-32" />
+                  <div class="flex-grow-1">
+                    <div class="fw-semibold">{{item.name}}</div>
+                    <div class="small text-muted">{{item.system.approach}} - {{item.system.narrativeType}}</div>
+                  </div>
+                  <button type="button" class="btn btn-outline-danger btn-sm" data-action="delete-item" data-item-id="{{item.id}}" title="Remove item"><i class="fas fa-trash"></i></button>
+                </div>
+              {{/each}}
+            </div>
+          {{else}}
+            <div class="text-muted">No adversities or anxieties yet.</div>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card mb-3">
+        <div class="card-header fw-semibold">Backstory</div>
+        <div class="card-body">
+          <label class="visually-hidden" for="backstory">Backstory</label>
+          <textarea id="backstory" class="form-control" name="system.backstory" rows="10">{{actor.system.backstory}}</textarea>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header fw-semibold">Notes</div>
+        <div class="card-body">
+          <label class="visually-hidden" for="notes">Notes</label>
+          <textarea id="notes" class="form-control" name="system.notes" rows="10">{{actor.system.notes}}</textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

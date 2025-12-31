@@ -1,0 +1,96 @@
+<section class="tab-pane tab p-3" data-group="primary" data-tab="combat">
+  <div class="card mb-3">
+    <div class="card-header fw-semibold">Combat Posture</div>
+    <div class="card-body">
+      <div class="row g-3 align-items-center">
+        <div class="col-md-8">
+          <div class="form-label pill-muted" id="posture-label">Posture</div>
+          <div class="d-flex flex-wrap gap-3 align-items-center" role="radiogroup" aria-labelledby="posture-label">
+            {{#each (object
+              "power" "Power"
+              "swiftness" "Swiftness"
+              "resilience" "Resilience"
+              "precision" "Precision"
+              "fortune" "Fortune") as |label key|}}
+              <div class="form-check form-check-inline mb-0">
+                <input class="form-check-input" type="radio" name="system.posture" id="posture-{{key}}" value="{{key}}" {{#ifCond ../actor.system.posture "==" key}}checked{{/ifCond}}>
+                <label class="form-check-label" for="posture-{{key}}">{{label}}</label>
+              </div>
+            {{/each}}
+          </div>
+          {{#with (object
+            "power" "Additional success per strife kept on successful checks"
+            "swiftness" "Take an additional action that doesn't require a check"
+            "resilience" "Enemies cannot spend opportunity for critical strikes/conditions"
+            "precision" "Increase TN of attacks/schemes against you by 1 (2 if fortification 4+)"
+            "fortune" "No strife from strife symbols on kept dice") as |postureText|}}
+            <div class="mt-2 text-muted">{{lookup postureText ../actor.system.posture}}</div>
+          {{/with}}
+        </div>
+        <div class="col-md-4">
+          <div class="form-check form-switch d-flex align-items-center gap-2 justify-content-end m-0">
+            <input class="form-check-input" type="checkbox" name="system.prepared" id="prepared-toggle" {{checked preparedState}} />
+            <label class="form-check-label mb-0" for="prepared-toggle">Prepared for Combat</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-header fw-semibold">Weapons</div>
+        <div class="card-body">
+          {{#if weapons.length}}
+            <div class="d-flex flex-wrap gap-3">
+              {{#each weapons as |weapon|}}
+                <div class="card skill-card skill-roll flex-grow-1 min-w-240" data-skill-card data-skill-key="{{weapon.system.skill}}" data-item-id="{{weapon.id}}">
+                  <div class="card-body">
+                    <div class="d-flex flex-column">
+                      <button type="button" class="btn-skill-roll" data-action="roll-skill" data-skill="{{weapon.system.skill}}">
+                        {{weapon.name}}
+                      </button>
+                    </div>
+                    <div class="small text-muted">
+                      Range: {{weapon.system.idealRange}} | Damage: {{weapon.system.suppression}} | Deadliness: {{weapon.system.caliber}}<br>
+                      Threat: {{weapon.system.threat}} | Signature: {{weapon.system.signature}}
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                      <button type="button" class="btn btn-outline-secondary btn-sm" data-action="edit-item" data-item-id="{{weapon.id}}" title="Edit item"><i class="fas fa-edit"></i></button>
+                    </div>
+                  </div>
+                </div>
+              {{/each}}
+            </div>
+          {{else}}
+            <div class="text-muted">No weapons.</div>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-header fw-semibold">Armor</div>
+        <div class="card-body">
+          {{#if armor.length}}
+            <div class="list-group list-group-flush">
+              {{#each armor as |armorItem|}}
+                <div class="list-group-item d-flex align-items-center gap-2" data-item-id="{{armorItem.id}}">
+                  <img src="{{armorItem.img}}" alt="" class="rounded icon-32" />
+                  <div class="flex-grow-1">
+                    <div class="fw-semibold">{{armorItem.name}}</div>
+                    <div class="small text-muted">Protection: {{armorItem.system.protection}} | Weight: {{armorItem.system.weight}}</div>
+                  </div>
+                  <button type="button" class="btn btn-outline-secondary btn-sm" data-action="edit-item" data-item-id="{{armorItem.id}}" title="Edit item"><i class="fas fa-edit"></i></button>
+                </div>
+              {{/each}}
+            </div>
+          {{else}}
+            <div class="text-muted">No armor.</div>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,71 @@
+<section class="tab-pane active tab p-3" data-group="primary" data-tab="skills">
+  <div class="row g-4">
+    <div class="col-lg-8">
+      {{#each skillGroups as |group|}}
+        <div class="card mb-3">
+          <div class="card-header fw-semibold d-flex justify-content-between align-items-center">
+            <span>{{group.title}}</span>
+            <span class="small text-muted">Click skill name to roll</span>
+          </div>
+          <div class="card-body">
+            <div class="d-flex flex-wrap gap-3">
+              {{#each group.items as |skill|}}
+                <div class="card skill-card skill-roll flex-grow-1 min-w-240" data-skill-card data-skill-key="{{skill.key}}">
+                  <div class="card-body">
+                      <div class="d-flex flex-column">
+                        <button type="button" class="btn-skill-roll" data-action="roll-skill" data-skill="{{skill.key}}">
+                          {{skill.label}}
+                        </button>
+                        {{#if skill.itemId}}<input type="hidden" data-item-id="{{skill.itemId}}" />{{/if}}
+                      </div>
+                    <div class="d-flex align-items-center gap-2">
+                      <button type="button" class="btn btn-outline-light btn-sm" data-action="skill-decrease" data-skill="{{skill.key}}" title="Refund last rank">-</button>
+                      <span class="skill-rank-display">{{lookup ../../skills skill.key}}</span>
+                      <button type="button" class="btn btn-primary btn-sm" data-action="skill-increase" data-skill="{{skill.key}}" title="Buy next rank">+</button>
+                    </div>
+                  </div>
+                </div>
+              {{/each}}
+            </div>
+          </div>
+        </div>
+      {{/each}}
+    </div>
+    <aside class="col-lg-4">
+      <div class="card h-100">
+        <div class="card-header fw-semibold">Discipline Abilities</div>
+        <div class="card-body">
+          {{#each disciplineSlots as |slot|}}
+            {{#if slot.discipline}}
+              <div class="mb-3">
+                <h3 class="h6 mb-2">{{slot.discipline.name}} (Slot {{slot.slotNumber}})</h3>
+                {{#if slot.abilities.length}}
+                  <div class="d-flex flex-wrap gap-3">
+                    {{#each slot.abilities as |ability|}}
+                      <div class="card skill-card skill-roll flex-grow-1 min-w-240" data-skill-card data-skill-key="{{ability.system.skill}}" data-item-id="{{ability.id}}">
+                        <div class="card-body">
+                          <div class="d-flex flex-column">
+                            <div class="fw-semibold" data-action="roll-skill" data-skill="{{ability.system.skill}}">{{ability.name}}</div>
+                          </div>
+                          <div class="small text-muted">
+                            {{#if ability.system.activation}}{{ability.system.activation}}{{/if}}
+                            {{#if ability.system.xpCost}} • XP: {{ability.system.xpCost}}{{/if}}
+                          </div>
+                          <div class="d-flex align-items-center gap-2">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" data-action="edit-item" data-item-id="{{ability.id}}" title="Edit ability"><i class="fas fa-edit"></i></button>
+                          </div>
+                        </div>
+                      </div>
+                    {{/each}}
+                  </div>
+                {{else}}
+                  <div class="text-muted small">No abilities yet</div>
+                {{/if}}
+              </div>
+            {{/if}}
+          {{/each}}
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
