@@ -25,6 +25,7 @@ export class CharacterBuilderApp extends FormApplication {
       anxiety: null,
       modules: [],
       weirdModule: null,
+      commanderItem: null,
       formValues: { human: {}, tdoll: {} }
     };
   }
@@ -133,6 +134,13 @@ export class CharacterBuilderApp extends FormApplication {
       targetApproach: m.system?.targetApproach ?? ""
     })) : [];
 
+    const selectedCommanderItem = this.builderState.commanderItem ? [this.builderState.commanderItem].map(item => ({
+      name: item.name,
+      img: item.img ?? "icons/svg/item.svg",
+      description: item.system?.description ?? "",
+      rarity: parseInt(item.system?.rarity) || 0
+    })) : [];
+
     const steps = [
       { num: 1, label: this.builderState.buildType === "tdoll" ? "Frame" : "Nationality" },
       { num: 2, label: this.builderState.buildType === "tdoll" ? "Weapon" : "Background" },
@@ -175,6 +183,7 @@ export class CharacterBuilderApp extends FormApplication {
       remainingCredits,
       selectedModules,
       selectedWeirdModule,
+      selectedCommanderItem,
       skills,
       approaches,
       formValues
@@ -230,6 +239,15 @@ export class CharacterBuilderApp extends FormApplication {
       ev.preventDefault();
       if (this.builderState.weirdModule) {
         this.builderState.weirdModule = null;
+        this._persistBuilderState();
+        this.render();
+      }
+    });
+
+    html.on("click", "[data-action='remove-commander-item']", ev => {
+      ev.preventDefault();
+      if (this.builderState.commanderItem) {
+        this.builderState.commanderItem = null;
         this._persistBuilderState();
         this.render();
       }
@@ -370,6 +388,28 @@ export class CharacterBuilderApp extends FormApplication {
       }
 
       this.builderState.weirdModule = dropData;
+      this._persistBuilderState();
+      this.render();
+      return;
+    }
+
+    if (kind === "commander-item") {
+      if (itemDoc.type !== "item") {
+        ui.notifications?.warn("Drop a regular Item here.");
+        return;
+      }
+      if (this.builderState.commanderItem) {
+        ui.notifications?.info("Commander item already selected.");
+        return;
+      }
+
+      const itemRarity = parseInt(dropData.system?.rarity) || 0;
+      if (itemRarity > 7) {
+        ui.notifications?.warn(`This item has rarity ${itemRarity}, but only items of rarity 7 or less are allowed.`);
+        return;
+      }
+
+      this.builderState.commanderItem = dropData;
       this._persistBuilderState();
       this.render();
       return;
@@ -620,6 +660,16 @@ export class CharacterBuilderApp extends FormApplication {
         name: this.builderState.weirdModule.name,
         type: "module",
         system: this.builderState.weirdModule.system || {}
+      };
+      await this.actor.createEmbeddedDocuments("Item", [itemData]);
+    }
+
+    // Create commander item if selected
+    if (this.builderState.commanderItem) {
+      const itemData = {
+        name: this.builderState.commanderItem.name,
+        type: "item",
+        system: this.builderState.commanderItem.system || {}
       };
       await this.actor.createEmbeddedDocuments("Item", [itemData]);
     }

@@ -12,10 +12,8 @@
             <input class="form-control" type="number" name="system.price" value="{{item.system.price}}" min="0" />
           </div>
           <div class="col-sm-6">
-            <label class="form-label">Rarity</label>
-            <select class="form-select" name="system.rarity">
-              {{selectOptions (object "common" "Common" "uncommon" "Uncommon" "rare" "Rare" "very rare" "Very Rare" "legendary" "Legendary") selected=item.system.rarity localize=false}}
-            </select>
+            <label class="form-label">Rarity (0-10)</label>
+            <input class="form-control" type="number" name="system.rarity" value="{{item.system.rarity}}" min="0" max="10" />
           </div>
         </div>
       </div>

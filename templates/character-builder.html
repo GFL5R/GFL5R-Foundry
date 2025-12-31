@@ -577,6 +577,27 @@
             <p class="text-muted">{{flavor.tdoll.metCommander}}</p>
           {{/if}}
           <textarea class="form-control" name="tdoll.metCommander" rows="3" placeholder="Describe your first meeting...">{{formValues.tdoll.metCommander}}</textarea>
+          <p class="text-muted small">Choose a regular item (rarity 7 or less) that represents or is relevant to your first meeting with your Commander.</p>
+          <div class="drop-zone p-3 text-center" data-drop-target="commander-item">
+            <div class="fw-semibold">Drop Item here</div>
+            {{#each selectedCommanderItem}}
+              <div class="card bg-secondary bg-opacity-25 border mt-2 text-start">
+                <div class="card-body row">
+                  <div class="col-11 d-flex gap-2 align-items-start">
+                    <img src="{{img}}" alt="" class="rounded" style="width:40px; height:40px;" />
+                    <div class="flex-grow-1">
+                      <div class="fw-semibold">{{name}}</div>
+                      <div class="small text-muted">{{description}}</div>
+                      <div class="small text-muted">Rarity: {{rarity}}</div>
+                    </div>
+                  </div>
+                  <div class="col-1 d-flex align-items-start justify-content-end">
+                    <button type="button" class="btn btn-link btn-sm text-danger" data-action="remove-commander-item"><i class="fas fa-trash"></i></button>
+                  </div>
+                </div>
+              </div>
+            {{/each}}
+          </div>
         </div>
 
         <div class="mb-3">
