@@ -41,8 +41,11 @@ export class CharacterBuilderApp extends FormApplication {
       id: "gfl5r-character-builder",
       title: "Character Creation",
       template: `systems/${systemId()}/templates/character-builder.html`,
-      width: 900,
-      height: "auto",
+      width: 800,
+      height: 600,
+      resizable: true,
+      minWidth: 600,
+      minHeight: 400,
       classes: ["sheet", "gfl5r-builder", "actor"],
       submitOnChange: false
     });
@@ -104,13 +107,13 @@ export class CharacterBuilderApp extends FormApplication {
     selectedCards.anxiety = mapNarrative("anxiety");
 
     const startingCredits = 60000;
-    const totalCost = (this.builderState.modules || []).reduce((sum, m) => sum + (m.system?.cost || 0), 0);
+    const totalCost = (this.builderState.modules || []).reduce((sum, m) => sum + (m.system?.urncCredits || 0), 0);
     const remainingCredits = Math.max(0, startingCredits - totalCost);
     const selectedModules = (this.builderState.modules || []).map(m => ({
       name: m.name,
       img: m.img ?? "icons/svg/upgrade.svg",
       description: m.system?.description ?? "",
-      cost: m.system?.cost ?? 0
+      cost: m.system?.urncCredits ?? 0
     }));
 
     const steps = [
@@ -459,7 +462,7 @@ export class CharacterBuilderApp extends FormApplication {
     const additionalNotes = (getTdoll("additionalNotes") || "").trim();
 
     const startingCredits = 60000;
-    const totalCost = (this.builderState.modules || []).reduce((sum, m) => sum + (m.system?.cost || 0), 0);
+    const totalCost = (this.builderState.modules || []).reduce((sum, m) => sum + (m.system?.urncCredits || 0), 0);
     const remainingCredits = Math.max(0, startingCredits - totalCost);
 
     const frame = TDOLL_FRAMES.find(f => f.key === frameKey);
