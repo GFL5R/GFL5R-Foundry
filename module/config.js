@@ -91,11 +91,6 @@ export const GFL5R_CONFIG = {
     resilience: "Resilience",
     precision: "Precision",
     fortune: "Fortune",
-    air: "Air",
-    earth: "Earth",
-    fire: "Fire",
-    water: "Water",
-    void: "Void"
   },
 
   // Optional alt ring labels; falls back to approachLabels/capitalization

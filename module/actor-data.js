@@ -38,7 +38,7 @@ export const TDOLL_FRAMES = [
     key: "iop-ssd62",
     manufacturer: "IOP (Kyiv, Ukraine)",
     model: "SSD-62",
-    description: "Designed as general-purpose companions, equally comfortable in a civilian home or a security detail.",
+    description: "A true all-rounder frame with no major weaknesses, but no standout strengths either. Reliable in most situations, yet rarely the best choice when specialization matters.",
     approaches: { power: 2, swiftness: 2, resilience: 2, precision: 2, fortune: 2 },
     skills: ["firearms", "negotiation"]
   },
@@ -46,15 +46,23 @@ export const TDOLL_FRAMES = [
     key: "iop-sst05",
     manufacturer: "IOP (Kyiv, Ukraine)",
     model: "SST-05",
-    description: "Agile frontline combat Dolls, optimized for firearms and battlefield adaptability.",
-    approaches: { power: 3, swiftness: 3, resilience: 2, precision: 2, fortune: 1 },
+    description: "Built for aggressive frontline work, excelling at mobility and direct combat. Effective under fire, but has less capacity for neural data.",
+    approaches: { power: 3, swiftness: 3, resilience: 2, precision: 1, fortune: 1 },
     skills: ["firearms", "tactics"]
+  },
+  {
+    key: "iop-ppd02",
+    manufacturer: "16LAB (Kyiv, Ukraine)",
+    model: "PPD-02",
+    description: "A high-performance test platform tuned for perception and rapid response. Exceptional at analysis and precise action, but physically weaker than its counterparts.",
+    approaches: { power: 1, swiftness: 3, resilience: 2, precision: 3, fortune: 1 },
+    skills: ["firearms", "insight"]
   },
   {
     key: "svarog-crar",
     manufacturer: "Svarog Heavy Industries (Moscow, Russia)",
     model: "CRAR",
-    description: "A heavy industrial frame retrofitted for combat. Strong, armored, and reliable, but sluggish compared to other Dolls.",
+    description: "An industrial heavyweight that thrives on raw strength and armor. Extremely durable and powerful, yet slow to reposition and poorly suited to delicate or fast-paced tasks.",
     approaches: { power: 3, swiftness: 1, resilience: 3, precision: 2, fortune: 1 },
     skills: ["conditioning", "mechanics"]
   },
@@ -62,24 +70,24 @@ export const TDOLL_FRAMES = [
     key: "svarog-dmtx",
     manufacturer: "Svarog Heavy Industries (Moscow, Russia)",
     model: "DMT-X",
-    description: "Originally designed to repair other Dolls in hazardous environments, these frames excel in precision tasks and technical support.",
-    approaches: { power: 1, swiftness: 1, resilience: 3, precision: 4, fortune: 1 },
+    description: "A support-oriented frame optimized for careful, technical work in hazardous conditions. Highly precise and tough, but lacking speed and offensive capability.",
+    approaches: { power: 1, swiftness: 1, resilience: 3, precision: 3, fortune: 2 },
     skills: ["mechanics", "medicine"]
   },
   {
     key: "sangvis-dsi8",
     manufacturer: "Sangvis Ferri (Romania)",
     model: "DSI-8",
-    description: "Infiltration frames optimized for deception and tactical operations. They can blend into human spaces surprisingly well, too.",
-    approaches: { power: 2, swiftness: 2, resilience: 2, precision: 3, fortune: 1 },
+    description: "Designed for infiltration, balancing mobility and precision for covert operations. Though it falters in prolonged or brute-force engagements.",
+    approaches: { power: 1, swiftness: 1, resilience: 2, precision: 3, fortune: 3 },
     skills: ["stealth", "subterfuge"]
   },
   {
-    key: "sangvis-ppd02",
+    key: "sangvis-sp",
     manufacturer: "Sangvis Ferri (Romania)",
-    model: "PPD-02",
-    description: "Originally a law enforcement design, later adapted for private security and paramilitary use. Balanced and authoritative, but rarely trusted outside official capacities.",
-    approaches: { power: 1, swiftness: 2, resilience: 2, precision: 3, fortune: 2 },
+    model: "SP series",
+    description: "A command-oriented security frame suited to coordination and oversight roles. Competent and dependable, but lacks toughness.",
+    approaches: { power: 2, swiftness: 2, resilience: 1, precision: 3, fortune: 2 },
     skills: ["insight", "command"]
   }
 ];
