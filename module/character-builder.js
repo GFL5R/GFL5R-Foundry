@@ -24,6 +24,7 @@ export class CharacterBuilderApp extends FormApplication {
       passion: null,
       anxiety: null,
       modules: [],
+      weirdModule: null,
       formValues: { human: {}, tdoll: {} }
     };
   }
@@ -122,6 +123,16 @@ export class CharacterBuilderApp extends FormApplication {
     const skills = GFL5R_CONFIG.skillGroups.flatMap(group => group.items);
     const approaches = Object.keys(GFL5R_CONFIG.approachLabels).map(key => ({ key, label: GFL5R_CONFIG.approachLabels[key] }));
 
+    const selectedWeirdModule = this.builderState.weirdModule ? [this.builderState.weirdModule].map(m => ({
+      name: m.name,
+      img: m.img ?? "icons/svg/upgrade.svg",
+      description: m.system?.description ?? "",
+      cost: m.system?.urncCredits ?? 0,
+      moduleType: m.system?.moduleType ?? "",
+      targetSkill: m.system?.targetSkill ?? "",
+      targetApproach: m.system?.targetApproach ?? ""
+    })) : [];
+
     const steps = [
       { num: 1, label: this.builderState.buildType === "tdoll" ? "Frame" : "Nationality" },
       { num: 2, label: this.builderState.buildType === "tdoll" ? "Weapon" : "Background" },
@@ -163,6 +174,7 @@ export class CharacterBuilderApp extends FormApplication {
       selectedCards,
       remainingCredits,
       selectedModules,
+      selectedWeirdModule,
       skills,
       approaches,
       formValues
@@ -209,6 +221,15 @@ export class CharacterBuilderApp extends FormApplication {
       const index = parseInt(ev.currentTarget.dataset.index);
       if (this.builderState.modules && this.builderState.modules[index] !== undefined) {
         this.builderState.modules.splice(index, 1);
+        this._persistBuilderState();
+        this.render();
+      }
+    });
+
+    html.on("click", "[data-action='remove-weird-module']", ev => {
+      ev.preventDefault();
+      if (this.builderState.weirdModule) {
+        this.builderState.weirdModule = null;
         this._persistBuilderState();
         this.render();
       }
@@ -331,6 +352,28 @@ export class CharacterBuilderApp extends FormApplication {
       this.render();
       return;
     }
+
+    if (kind === "weird-module") {
+      if (itemDoc.type !== "module") {
+        ui.notifications?.warn("Drop a Module item here.");
+        return;
+      }
+      if (this.builderState.weirdModule) {
+        ui.notifications?.info("Weird module already selected.");
+        return;
+      }
+
+      const moduleCost = dropData.system?.urncCredits || 0;
+      if (moduleCost > 6000) {
+        ui.notifications?.warn(`This module costs ${moduleCost}, but the weird name bonus only allows modules costing 6,000 or less.`);
+        return;
+      }
+
+      this.builderState.weirdModule = dropData;
+      this._persistBuilderState();
+      this.render();
+      return;
+    }
   }
 
   _changeStep(delta) {
@@ -440,7 +483,7 @@ export class CharacterBuilderApp extends FormApplication {
     updates["system.background"] = backgroundKey;
 
     const { humanityDelta, viewDollsNote } = this.#applyViewDollsBonuses(viewDolls, viewDollsSkill, skills, ensureSkillAtLeast);
-    updates["system.humanity"] = humanityDelta;
+    updates["system.humanity"] = 50 + humanityDelta;
 
     if (newName) updates["name"] = newName;
 
@@ -532,10 +575,10 @@ export class CharacterBuilderApp extends FormApplication {
     updates["system.characterType"] = "doll";
     updates["system.frame"] = frameKey;
 
-    const { humanityDelta, fameDelta } = this.#applyNameOriginBonuses(nameOrigin, skills, ensureSkillAtLeast);
-    updates["system.humanity"] = humanityDelta;
-    updates["system.fame"] = fameDelta;
-    updates["system.urncCredits"] = remainingCredits;
+    const { humanityDelta, fameDelta, extraCredits } = this.#applyNameOriginBonuses(nameOrigin, skills, ensureSkillAtLeast);
+    updates["system.humanity"] = 40 + humanityDelta;
+    updates["system.fame"] = 40 + fameDelta;
+    updates["system.urncCredits"] = remainingCredits + extraCredits;
 
     if (newName) updates["name"] = newName;
 
@@ -567,6 +610,16 @@ export class CharacterBuilderApp extends FormApplication {
         name: moduleData.name,
         type: "module",
         system: moduleData.system || {}
+      };
+      await this.actor.createEmbeddedDocuments("Item", [itemData]);
+    }
+
+    // Create weird module item if selected
+    if (this.builderState.weirdModule) {
+      const itemData = {
+        name: this.builderState.weirdModule.name,
+        type: "module",
+        system: this.builderState.weirdModule.system || {}
       };
       await this.actor.createEmbeddedDocuments("Item", [itemData]);
     }
@@ -701,6 +754,7 @@ export class CharacterBuilderApp extends FormApplication {
   #applyNameOriginBonuses(nameOrigin, skills, ensureSkillAtLeast) {
     let humanityDelta = 0;
     let fameDelta = 0;
+    let extraCredits = 0;
 
     switch (nameOrigin) {
       case "human":
@@ -715,13 +769,13 @@ export class CharacterBuilderApp extends FormApplication {
         break;
       case "weird":
         fameDelta -= 5;
-        // +1 Upgrade Module point (not yet implemented in system)
+        // Free module costing 6000 or less
         break;
       default:
         break;
     }
 
-    return { humanityDelta, fameDelta };
+    return { humanityDelta, fameDelta, extraCredits };
   }
 
   #buildHumanNotes({
@@ -778,7 +832,7 @@ export class CharacterBuilderApp extends FormApplication {
       human: "Human Name (+5 Humanity)",
       callsign: "Callsign (+5 Fame)",
       weapon: "Weapon Imprint (+1 Firearms, -5 Humanity)",
-      weird: "Weird Name (-5 Fame, +1 Module point)"
+      weird: "Weird Name (-5 Fame, Free Module ≤6k)"
     };
     notesPieces.push(`Name Origin: ${nameOriginLabels[nameOrigin] ?? nameOrigin}`);
 

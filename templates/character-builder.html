@@ -616,6 +616,38 @@
           </div>
         </div>
 
+        {{#if (eq formValues.tdoll.nameOrigin "weird")}}
+        <div class="mb-3">
+          <h4 class="h6">Weird Name Bonus: Free Module</h4>
+          <div class="drop-zone p-3 text-center" data-drop-target="weird-module">
+            <div class="fw-semibold">Drop a Module item here (≤6,000 Credits)</div>
+            {{#each selectedWeirdModule}}
+              <div class="card bg-secondary bg-opacity-25 border mt-2 text-start">
+                <div class="card-body row">
+                  <div class="col-11 d-flex gap-2 align-items-start">
+                    <img src="{{img}}" alt="" class="rounded" style="width:40px; height:40px;" />
+                    <div class="flex-grow-1">
+                      <div class="fw-semibold">{{name}}</div>
+                      {{#if (eq moduleType "passive")}}
+                        <div class="small text-muted">{{description}}</div>
+                      {{else if (eq moduleType "skillIncrease")}}
+                        <div class="small text-muted">Increases {{#each ../skills}}{{#if (eq key ../targetSkill)}}{{label}}{{/if}}{{/each}} by 1</div>
+                      {{else if (eq moduleType "approachIncrease")}}
+                        <div class="small text-muted">Increases {{#each ../approaches}}{{#if (eq key ../targetApproach)}}{{label}}{{/if}}{{/each}} by 1</div>
+                      {{/if}}
+                      <div class="small text-muted">Cost: {{cost}} Credits (Free via Weird Name)</div>
+                    </div>
+                  </div>
+                  <div class="col-1 d-flex align-items-start justify-content-end">
+                    <button type="button" class="btn btn-link btn-sm text-danger" data-action="remove-weird-module"><i class="fas fa-trash"></i></button>
+                  </div>
+                </div>
+              </div>
+            {{/each}}
+          </div>
+        </div>
+        {{/if}}
+
         <div class="mb-3">
           <h3 class="h6">Question 11. What is your name?</h3>
           <input class="form-control" type="text" name="tdoll.name" value="{{#if formValues.tdoll.name}}{{formValues.tdoll.name}}{{else}}{{actorName}}{{/if}}" placeholder="T-Doll designation" required />
