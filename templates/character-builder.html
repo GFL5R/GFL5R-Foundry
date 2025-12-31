@@ -47,6 +47,13 @@
               </label>
             </div>
           </div>
+          {{#if (eq buildType "human")}}
+            {{#if (isArray flavor.human.intro)}}
+              {{#each flavor.human.intro}}<p class="text-muted mt-3">{{this}}</p>{{/each}}
+            {{else}}
+              <p class="text-muted mt-3">{{flavor.human.intro}}</p>
+            {{/if}}
+          {{/if}}
           {{#if (eq buildType "tdoll")}}
             <div class="alert alert-info mt-3">
               <strong>Note:</strong> Typically, T-Dolls are most often female presenting. However, since you're creating your own here, there's no reason yours has to be!
@@ -317,9 +324,31 @@
             <p class="text-muted mb-3">{{flavor.tdoll.step3.lead2}}</p>
           {{/if}}
           <div class="alert alert-warning">
-            <strong>Upgrade Point Allocation:</strong> You have 10 points to spend. Track your choices here (not yet implemented in this prototype).
+            <strong>Remaining Credits:</strong> {{remainingCredits}} URNC Credits to purchase Modules.<br>
+            <small>Use them or lose them, you don't get to bring the credits with you past character creation.</small>
           </div>
-        </div>
+
+          <div class="mb-3">
+            <h4 class="h6">Modules</h4>
+            <div class="drop-zone p-3 text-center" data-drop-target="module">
+              <div class="fw-semibold">Drop Module items here</div>
+              {{#each selectedModules}}
+                <div class="card bg-secondary bg-opacity-25 border mt-2 text-start">
+                  <div class="card-body d-flex gap-2 align-items-start">
+                    <img src="{{img}}" alt="" class="rounded" style="width:40px; height:40px;" />
+                    <div class="flex-grow-1">
+                      <div class="fw-semibold">{{name}}</div>
+                      <div class="small text-muted">{{description}}</div>
+                      <div class="small text-muted">Cost: {{cost}} Credits</div>
+                    </div>
+                    <button type="button" class="btn btn-link btn-sm text-danger" data-action="remove-module" data-index="{{@index}}">Remove</button>
+                  </div>
+                </div>
+              {{else}}
+                <div class="text-muted small">Drag from sidebar or compendium.</div>
+              {{/if}}
+            </div>
+          </div>
 
         <div class="mb-3">
           <h3 class="h6">Question 4. What is your greatest achievement?</h3>

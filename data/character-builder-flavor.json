@@ -1,5 +1,10 @@
 {
   "human": {
+    "intro": [
+      "Every Commander in this game begins in the same place: working as a licensed bounty hunter under B.R.I.E.F. The work is dangerous, often thankless, but it pays in credits, gear, and reputation. Some of you took the contract because you had no choice. Others joined for ambition, revenge, or the hope of shaping what comes next.",
+      "This chapter guides you step by step through creating your Commander, showing how you ended up here and what sets you apart from the rest. You'll decide where you were born, what shaped your early life, the path you chose when you came of age, and the strengths, flaws, habits, and fears you carry with you into every mission.",
+      "By the end of this process, you'll have more than a sheet of stats. You'll have a fully realized Commander: a bounty hunter with a past, a purpose, and a reason to take the next contract."
+    ],
     "step1":{
       "lead1": "In the year 2070, most surviving Green Zones are nominally under the umbrella of the URNC, a multinational council born to stabilize what remained of human civilization. But most people still hold onto the idea of nationality. Where you were born and raised shapes how others see you, and how you see the world.",
       "lead2": "Every Commander begins with all Approaches at 1. Your nationality grants +1 to two Approaches."
@@ -70,7 +75,7 @@
     },
     "step3": {
       "lead1": "Every SSD-62, every CRAR, every DSI-8 rolled off the line with the same baseline specifications. But you aren't just another number in a production log. Somewhere along the way, someone invested in you, fitting you with custom modules, running extra training cycles, or upgrading your systems.",
-      "lead2": "Every Doll begins with 10 Upgrade Points. You may spend them to: Increase an Approach (+1 for 2 points, max 4 at creation), Train a Skill (1 point each), or Install an Upgrade Module (cost varies)."
+      "lead2": "Every Doll begins with 60,000 URNC Credits. You may spend it to purchase Upgrade Modules and other equipment."
     },
     "advantage": [
       "Every Doll is designed to perform tasks. But at some point, you went beyond simply performing: you excelled. Perhaps you carried a mission to completion under impossible odds, protected someone who mattered to you, or solved a problem in a way nobody expected.",

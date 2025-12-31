@@ -23,6 +23,7 @@ export class CharacterBuilderApp extends FormApplication {
       disadvantage: null,
       passion: null,
       anxiety: null,
+      modules: [],
       formValues: { human: {}, tdoll: {} }
     };
   }
@@ -102,6 +103,16 @@ export class CharacterBuilderApp extends FormApplication {
     selectedCards.passion = mapNarrative("passion");
     selectedCards.anxiety = mapNarrative("anxiety");
 
+    const startingCredits = 60000;
+    const totalCost = (this.builderState.modules || []).reduce((sum, m) => sum + (m.system?.cost || 0), 0);
+    const remainingCredits = Math.max(0, startingCredits - totalCost);
+    const selectedModules = (this.builderState.modules || []).map(m => ({
+      name: m.name,
+      img: m.img ?? "icons/svg/upgrade.svg",
+      description: m.system?.description ?? "",
+      cost: m.system?.cost ?? 0
+    }));
+
     const steps = [
       { num: 1, label: this.builderState.buildType === "tdoll" ? "Frame" : "Nationality" },
       { num: 2, label: this.builderState.buildType === "tdoll" ? "Weapon" : "Background" },
@@ -141,6 +152,8 @@ export class CharacterBuilderApp extends FormApplication {
       steps,
       selections: this.builderState,
       selectedCards,
+      remainingCredits,
+      selectedModules,
       formValues
     };
   }
@@ -177,6 +190,16 @@ export class CharacterBuilderApp extends FormApplication {
       if (this.builderState[key]) {
         this.builderState[key] = null;
         this.render(false);
+      }
+    });
+
+    html.on("click", "[data-action='remove-module']", ev => {
+      ev.preventDefault();
+      const index = parseInt(ev.currentTarget.dataset.index);
+      if (this.builderState.modules && this.builderState.modules[index] !== undefined) {
+        this.builderState.modules.splice(index, 1);
+        this._persistBuilderState();
+        this.render();
       }
     });
 
@@ -265,6 +288,20 @@ export class CharacterBuilderApp extends FormApplication {
       };
       this.render(false);
       this._persistBuilderState();
+    }
+
+    if (kind === "module") {
+      if (itemDoc.type !== "module") {
+        ui.notifications?.warn("Drop a Module item here.");
+        return;
+      }
+      if (!this.builderState.modules) this.builderState.modules = [];
+      const existing = this.builderState.modules.find(m => m.id === dropData.id);
+      if (!existing) {
+        this.builderState.modules.push(dropData);
+        this._persistBuilderState();
+        this.render();
+      }
     }
   }
 
@@ -421,6 +458,10 @@ export class CharacterBuilderApp extends FormApplication {
     const storyEnd = (getTdoll("storyEnd") || "").trim();
     const additionalNotes = (getTdoll("additionalNotes") || "").trim();
 
+    const startingCredits = 60000;
+    const totalCost = (this.builderState.modules || []).reduce((sum, m) => sum + (m.system?.cost || 0), 0);
+    const remainingCredits = Math.max(0, startingCredits - totalCost);
+
     const frame = TDOLL_FRAMES.find(f => f.key === frameKey);
 
     if (!frame) {
@@ -466,6 +507,7 @@ export class CharacterBuilderApp extends FormApplication {
     const { humanityDelta, fameDelta } = this.#applyNameOriginBonuses(nameOrigin, skills, ensureSkillAtLeast);
     updates["system.humanity"] = humanityDelta;
     updates["system.fame"] = fameDelta;
+    updates["system.urncCredits"] = remainingCredits;
 
     if (newName) updates["name"] = newName;
 
@@ -490,6 +532,16 @@ export class CharacterBuilderApp extends FormApplication {
     updates["system.notes"] = notesBlock;
 
     await this.actor.update(updates);
+
+    // Create module items
+    for (const moduleData of this.builderState.modules || []) {
+      const itemData = {
+        name: moduleData.name,
+        type: "module",
+        system: moduleData.system || {}
+      };
+      await this.actor.createEmbeddedDocuments("Item", [itemData]);
+    }
 
     await this._persistBuilderState();
 

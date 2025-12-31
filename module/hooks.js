@@ -80,3 +80,37 @@ export class GFL5RHooks {
 // Register hooks
 Hooks.on("renderCombatTracker", GFL5RHooks.renderCombatTracker);
 Hooks.on("renderChatMessageHTML", GFL5RHooks.renderChatMessageHTML);
+
+Hooks.on("createItem", async (item, options, userId) => {
+  if (item.parent instanceof Actor && item.type === "module") {
+    await applyModuleEffect(item.parent, item);
+  }
+});
+
+Hooks.on("deleteItem", async (item, options, userId) => {
+  if (item.parent instanceof Actor && item.type === "module") {
+    await removeModuleEffect(item.parent, item);
+  }
+});
+
+async function applyModuleEffect(actor, item) {
+  const moduleType = item.system.moduleType;
+  if (moduleType === "skillIncrease" && item.system.targetSkill) {
+    const current = actor.system.skills[item.system.targetSkill] || 0;
+    await actor.update({ [`system.skills.${item.system.targetSkill}`]: current + 1 });
+  } else if (moduleType === "approachIncrease" && item.system.targetApproach) {
+    const current = actor.system.approaches[item.system.targetApproach] || 0;
+    await actor.update({ [`system.approaches.${item.system.targetApproach}`]: current + 1 });
+  }
+}
+
+async function removeModuleEffect(actor, item) {
+  const moduleType = item.system.moduleType;
+  if (moduleType === "skillIncrease" && item.system.targetSkill) {
+    const current = actor.system.skills[item.system.targetSkill] || 0;
+    await actor.update({ [`system.skills.${item.system.targetSkill}`]: Math.max(0, current - 1) });
+  } else if (moduleType === "approachIncrease" && item.system.targetApproach) {
+    const current = actor.system.approaches[item.system.targetApproach] || 0;
+    await actor.update({ [`system.approaches.${item.system.targetApproach}`]: Math.max(0, current - 1) });
+  }
+}

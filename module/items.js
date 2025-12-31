@@ -170,6 +170,13 @@ export class GFL5RModuleSheet extends BaseGFLItemSheet {
       sheet: { template: templatePath("templates/item-module.html"), scrollable: [""] }
     };
   }
+
+  async _prepareContext(options) {
+    const context = await super._prepareContext(options);
+    context.skills = GFL5R_CONFIG.skillGroups.flatMap(group => group.items);
+    context.approaches = Object.keys(GFL5R_CONFIG.approachLabels).map(key => ({ key, label: GFL5R_CONFIG.approachLabels[key] }));
+    return context;
+  }
 }
 
 export class GFL5RConditionSheet extends BaseGFLItemSheet {

@@ -8,14 +8,42 @@
         <input class="form-control form-control-lg fw-bold" name="name" type="text" value="{{item.name}}" placeholder="Module Name"/>
         <div class="row g-3 mt-2">
           <div class="col-md-6">
-            <label class="form-label">Points (Character Gen Cost)</label>
-            <input class="form-control" type="number" name="system.points" value="{{item.system.points}}" min="0"/>
+            <label class="form-label">URNC Credits (Price)</label>
+            <input class="form-control" type="number" name="system.urncCredits" value="{{item.system.urncCredits}}" min="0"/>
           </div>
           <div class="col-md-6">
-            <label class="form-label">Sardis Gold (In-Play Price)</label>
-            <input class="form-control" type="number" name="system.sardisGold" value="{{item.system.sardisGold}}" min="0"/>
+            <label class="form-label">Module Type</label>
+            <select class="form-select" name="system.moduleType">
+              <option value="passive" {{#if (eq item.system.moduleType "passive")}}selected{{/if}}>Passive Ability</option>
+              <option value="skillIncrease" {{#if (eq item.system.moduleType "skillIncrease")}}selected{{/if}}>Increase Skill by 1</option>
+              <option value="approachIncrease" {{#if (eq item.system.moduleType "approachIncrease")}}selected{{/if}}>Increase Approach by 1</option>
+            </select>
           </div>
         </div>
+        {{#if (eq item.system.moduleType "skillIncrease")}}
+        <div class="row g-3 mt-2">
+          <div class="col-md-6">
+            <label class="form-label">Target Skill</label>
+            <select class="form-select" name="system.targetSkill">
+              {{#each skills}}
+              <option value="{{key}}" {{#if (eq ../item.system.targetSkill key)}}selected{{/if}}>{{label}}</option>
+              {{/each}}
+            </select>
+          </div>
+        </div>
+        {{/if}}
+        {{#if (eq item.system.moduleType "approachIncrease")}}
+        <div class="row g-3 mt-2">
+          <div class="col-md-6">
+            <label class="form-label">Target Approach</label>
+            <select class="form-select" name="system.targetApproach">
+              {{#each approaches}}
+              <option value="{{key}}" {{#if (eq ../item.system.targetApproach key)}}selected{{/if}}>{{label}}</option>
+              {{/each}}
+            </select>
+          </div>
+        </div>
+        {{/if}}
       </div>
     </div>
   </header>

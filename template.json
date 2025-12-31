@@ -135,9 +135,11 @@
       "associatedSkills": []
     },
     "module": {
-      "points": 0,
-      "sardisGold": 0,
-      "description": ""
+      "urncCredits": 0,
+      "description": "",
+      "moduleType": "passive",
+      "targetSkill": "",
+      "targetApproach": ""
     },
     "condition": {
       "duration": "",
