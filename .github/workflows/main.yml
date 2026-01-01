@@ -1,0 +1,98 @@
+name: Pack compendia and release
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - system.json
+      - compendia/**/*.json
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  build_and_release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install system dependencies for plyvel
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libleveldb-dev
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install plyvel
+
+      - name: Pack all compendia JSON files
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+
+          files=(compendia/**/*.json)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "No compendia JSON files found, nothing to do."
+            exit 0
+          fi
+
+          for f in "${files[@]}"; do
+            pack="$(basename "$f" .json)"
+            echo "Packing: $pack from $f"
+            python pack_tool.py --export --pack "$pack" --json "$f"
+          done
+
+      - name: Remove compendia folder
+        run: |
+          rm -rf compendia
+
+      - name: Read version from system.json
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(python -c "import json; print(json.load(open('system.json', encoding='utf-8'))['version'])")"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Create manifest.json (copy of system.json)
+        run: |
+          cp system.json manifest.json
+
+      - name: Create release zip (gfl5r.zip)
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          zip_name="gfl5r.zip"
+
+          # Zip repo contents while excluding git metadata, workflow files, and manifest.json
+          zip -r "$zip_name" . \
+            -x ".git/*" \
+            -x ".github/*" \
+            -x "manifest.json" \
+            -x "**/__pycache__/*" \
+            -x "**/*.pyc"
+
+          echo "ZIP_NAME=$zip_name" >> "$GITHUB_ENV"
+
+      - name: Create GitHub release and upload assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: "${{ steps.version.outputs.version }}"
+          name: "${{ steps.version.outputs.version }}"
+          generate_release_notes: true
+          files: |
+            ${{ env.ZIP_NAME }}
+            manifest.json
