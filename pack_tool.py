@@ -4,6 +4,7 @@ import json
 import os
 import random
 import string
+import time
 import plyvel
 
 
@@ -18,7 +19,11 @@ def export_pack(pack_path: str, json_path: str):
     for key, value in db:
         item = json.loads(value.decode('utf-8'))
         name = item.get('name', key.decode('utf-8'))
-        data[name] = item
+        clean = {
+            'type': item.get('type'),
+            'system': item.get('system'),
+        }
+        data[name] = clean
     db.close()
     with open(json_path, 'w', encoding='utf-8') as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
@@ -27,13 +32,39 @@ def export_pack(pack_path: str, json_path: str):
 def import_pack(pack_path: str, json_path: str):
     with open(json_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
+    if os.path.exists(pack_path):
+        import shutil
+        shutil.rmtree(pack_path)
     db = plyvel.DB(pack_path, create_if_missing=True)
+    now = int(time.time() * 1000)
     with db.write_batch() as wb:
         for name, item in data.items():
             uid = generate_uid()
-            item['_id'] = uid
+            full_item = {
+                'name': name,
+                'type': item.get('type'),
+                '_id': uid,
+                'img': 'icons/svg/item-bag.svg',
+                'system': item.get('system'),
+                'effects': [],
+                'folder': None,
+                'sort': 0,
+                'ownership': {'default': 0},
+                'flags': {},
+                '_stats': {
+                    'compendiumSource': None,
+                    'duplicateSource': None,
+                    'exportSource': None,
+                    'coreVersion': '13.351',
+                    'systemId': 'gfl5r',
+                    'systemVersion': '0.6.3',
+                    'createdTime': now,
+                    'modifiedTime': now,
+                    'lastModifiedBy': None,
+                },
+            }
             key = f'!items!{uid}'
-            wb.put(key.encode('utf-8'), json.dumps(item, ensure_ascii=False).encode('utf-8'))
+            wb.put(key.encode('utf-8'), json.dumps(full_item, ensure_ascii=False).encode('utf-8'))
     db.close()
 
 
