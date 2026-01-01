@@ -29,5 +29,19 @@
   },
   "languages": [
     { "lang": "en", "name": "English", "path": "lang/en.json" }
+  ],
+  "packs": [
+    {
+      "label": "T-Doll Modules",
+      "type": "Item",
+      "name": "t-doll-modules",
+      "path": "packs/t-doll-modules",
+      "system": "gfl5r",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "flags": {}
+    }
   ]
 }

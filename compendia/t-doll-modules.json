@@ -1,0 +1,870 @@
+{
+  "Precision Augmentation": {
+    "name": "Precision Augmentation",
+    "type": "module",
+    "_id": "7dM3QpK1fVn8Lr2X",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "urncCredits": 12000,
+      "description": "Micro-adjustments to balance points, joint tolerances, and targeting hardware reduce mechanical drift, ensuring consistent alignment during fine motor tasks and weapon operation.",
+      "moduleType": "approachIncrease",
+      "targetSkill": "",
+      "targetApproach": "precision"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0,
+      "SkfMTYQwo3El2y9R": 3
+    },
+    "flags": {},
+    "_stats": {
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null,
+      "coreVersion": "13.351",
+      "systemId": "gfl5r",
+      "systemVersion": "0.6.3",
+      "createdTime": 1767226301000,
+      "modifiedTime": 1767226301000,
+      "lastModifiedBy": "SkfMTYQwo3El2y9R"
+    }
+  },
+  "Swiftness Augmentation": {
+    "name": "Swiftness Augmentation",
+    "type": "module",
+    "_id": "pQ8x2JmV1cLr7N0a",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "urncCredits": 12000,
+      "description": "Nonessential mass is removed and motion systems are refined, enabling faster transitions between movement states without compromising structural integrity.",
+      "moduleType": "approachIncrease",
+      "targetSkill": "",
+      "targetApproach": "swiftness"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0,
+      "SkfMTYQwo3El2y9R": 3
+    },
+    "flags": {},
+    "_stats": {
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null,
+      "coreVersion": "13.351",
+      "systemId": "gfl5r",
+      "systemVersion": "0.6.3",
+      "createdTime": 1767226302000,
+      "modifiedTime": 1767226302000,
+      "lastModifiedBy": "SkfMTYQwo3El2y9R"
+    }
+  },
+  "Resilience Augmentation": {
+    "name": "Resilience Augmentation",
+    "type": "module",
+    "_id": "bK6n0TzP3wH9sE4u",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "urncCredits": 12000,
+      "description": "Critical components are shielded with upgraded materials and mounted with impact-absorbing systems, increasing the frame’s tolerance to sustained damage and mechanical stress.",
+      "moduleType": "approachIncrease",
+      "targetSkill": "",
+      "targetApproach": "resilience"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0,
+      "SkfMTYQwo3El2y9R": 3
+    },
+    "flags": {},
+    "_stats": {
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null,
+      "coreVersion": "13.351",
+      "systemId": "gfl5r",
+      "systemVersion": "0.6.3",
+      "createdTime": 1767226303000,
+      "modifiedTime": 1767226303000,
+      "lastModifiedBy": "SkfMTYQwo3El2y9R"
+    }
+  },
+  "Fortune Augmentation": {
+    "name": "Fortune Augmentation",
+    "type": "module",
+    "_id": "R5uY2cN8mL0vQ1sD",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "urncCredits": 12000,
+      "description": "The frame is retrofitted with predictive microcontrollers and contingency-routing hardware. These systems subtly adjust timing, load distribution, and execution order during high-variance situations, increasing the likelihood that actions resolve favorably when outcomes are uncertain.",
+      "moduleType": "approachIncrease",
+      "targetSkill": "",
+      "targetApproach": "fortune"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0,
+      "SkfMTYQwo3El2y9R": 3
+    },
+    "flags": {},
+    "_stats": {
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null,
+      "coreVersion": "13.351",
+      "systemId": "gfl5r",
+      "systemVersion": "0.6.3",
+      "createdTime": 1767226304000,
+      "modifiedTime": 1767226304000,
+      "lastModifiedBy": "SkfMTYQwo3El2y9R"
+    }
+  },
+
+  "Exotic Weapons Flash Training": {
+    "name": "Exotic Weapons Flash Training",
+    "type": "module",
+    "_id": "n1Cq8Vt6aQ4sM9pL",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "urncCredits": 6000,
+      "description": "Specialized handling schemas for unconventional weapon systems are integrated into the Neural Cloud. This training focuses on safe operation, activation timing, and compensating for nonstandard balance or recoil profiles.",
+      "moduleType": "skillIncrease",
+      "targetSkill": "exoticWeapons",
+      "targetApproach": ""
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0,
+      "SkfMTYQwo3El2y9R": 3
+    },
+    "flags": {},
+    "_stats": {
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null,
+      "coreVersion": "13.351",
+      "systemId": "gfl5r",
+      "systemVersion": "0.6.3",
+      "createdTime": 1767226310000,
+      "modifiedTime": 1767226310000,
+      "lastModifiedBy": "SkfMTYQwo3El2y9R"
+    }
+  },
+  "Explosives Flash Training": {
+    "name": "Explosives Flash Training",
+    "type": "module",
+    "_id": "W2kL7mQ9xP1rD6hS",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "urncCredits": 6000,
+      "description": "The Neural Cloud receives calibrated models for blast radius prediction, fuse timing, and placement logic. This enables precise use of explosive devices with reduced setup errors and improved battlefield shaping.",
+      "moduleType": "skillIncrease",
+      "targetSkill": "explosives",
+      "targetApproach": ""
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0,
+      "SkfMTYQwo3El2y9R": 3
+    },
+    "flags": {},
+    "_stats": {
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null,
+      "coreVersion": "13.351",
+      "systemId": "gfl5r",
+      "systemVersion": "0.6.3",
+      "createdTime": 1767226311000,
+      "modifiedTime": 1767226311000,
+      "lastModifiedBy": "SkfMTYQwo3El2y9R"
+    }
+  },
+  "Firearms Flash Training": {
+    "name": "Firearms Flash Training",
+    "type": "module",
+    "_id": "g8N3vQ1sD6tR2mK9",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "urncCredits": 6000,
+      "description": "Marksmanship routines are reinforced through recoil compensation patterns, reload sequencing, and threat-priority targeting logic. Performance remains consistent even under stress or degraded conditions.",
+      "moduleType": "skillIncrease",
+      "targetSkill": "firearms",
+      "targetApproach": ""
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0,
+      "SkfMTYQwo3El2y9R": 3
+    },
+    "flags": {},
+    "_stats": {
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null,
+      "coreVersion": "13.351",
+      "systemId": "gfl5r",
+      "systemVersion": "0.6.3",
+      "createdTime": 1767226312000,
+      "modifiedTime": 1767226312000,
+      "lastModifiedBy": "SkfMTYQwo3El2y9R"
+    }
+  },
+  "Hand-To-Hand Flash Training": {
+    "name": "Hand-To-Hand Flash Training",
+    "type": "module",
+    "_id": "Q4sM9pL1nCq8Vt6a",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "urncCredits": 6000,
+      "description": "Close-combat movement libraries and grappling response trees are implanted. The Doll gains refined control over balance, leverage, and counters in unarmed engagements.",
+      "moduleType": "skillIncrease",
+      "targetSkill": "handToHand",
+      "targetApproach": ""
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0,
+      "SkfMTYQwo3El2y9R": 3
+    },
+    "flags": {},
+    "_stats": {
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null,
+      "coreVersion": "13.351",
+      "systemId": "gfl5r",
+      "systemVersion": "0.6.3",
+      "createdTime": 1767226313000,
+      "modifiedTime": 1767226313000,
+      "lastModifiedBy": "SkfMTYQwo3El2y9R"
+    }
+  },
+  "Tactics Flash Training": {
+    "name": "Tactics Flash Training",
+    "type": "module",
+    "_id": "xP1rD6hS2kL7mQ9W",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "urncCredits": 6000,
+      "description": "Real-time battlefield reasoning models are reinforced. This training improves threat evaluation, squad positioning logic, and adaptive planning when conditions shift unexpectedly.",
+      "moduleType": "skillIncrease",
+      "targetSkill": "tactics",
+      "targetApproach": ""
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0,
+      "SkfMTYQwo3El2y9R": 3
+    },
+    "flags": {},
+    "_stats": {
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null,
+      "coreVersion": "13.351",
+      "systemId": "gfl5r",
+      "systemVersion": "0.6.3",
+      "createdTime": 1767226314000,
+      "modifiedTime": 1767226314000,
+      "lastModifiedBy": "SkfMTYQwo3El2y9R"
+    }
+  },
+
+  "Conditioning Flash Training": {
+    "name": "Conditioning Flash Training",
+    "type": "module",
+    "_id": "D6tR2mK9g8N3vQ1s",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "urncCredits": 6000,
+      "description": "Physical performance limiters are recalibrated in the Neural Cloud. This training optimizes stamina management, movement efficiency, and exertion pacing in demanding environments.",
+      "moduleType": "skillIncrease",
+      "targetSkill": "conditioning",
+      "targetApproach": ""
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0,
+      "SkfMTYQwo3El2y9R": 3
+    },
+    "flags": {},
+    "_stats": {
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null,
+      "coreVersion": "13.351",
+      "systemId": "gfl5r",
+      "systemVersion": "0.6.3",
+      "createdTime": 1767226320000,
+      "modifiedTime": 1767226320000,
+      "lastModifiedBy": "SkfMTYQwo3El2y9R"
+    }
+  },
+  "Resolve Flash Training": {
+    "name": "Resolve Flash Training",
+    "type": "module",
+    "_id": "Vt6aQ4sM9pL1nCq8",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "urncCredits": 6000,
+      "description": "Mental stability frameworks are strengthened through stress-response conditioning. This improves resistance to panic states, coercive influence, and hostile signal intrusion.",
+      "moduleType": "skillIncrease",
+      "targetSkill": "resolve",
+      "targetApproach": ""
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0,
+      "SkfMTYQwo3El2y9R": 3
+    },
+    "flags": {},
+    "_stats": {
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null,
+      "coreVersion": "13.351",
+      "systemId": "gfl5r",
+      "systemVersion": "0.6.3",
+      "createdTime": 1767226321000,
+      "modifiedTime": 1767226321000,
+      "lastModifiedBy": "SkfMTYQwo3El2y9R"
+    }
+  },
+  "Crafting Flash Training": {
+    "name": "Crafting Flash Training",
+    "type": "module",
+    "_id": "mQ9W2kL7xP1rD6hS",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "urncCredits": 6000,
+      "description": "Procedural knowledge for repair, modification, and improvisation is directly implanted. The Doll gains immediate familiarity with tool use, material substitution, and field-expedient construction.",
+      "moduleType": "skillIncrease",
+      "targetSkill": "crafting",
+      "targetApproach": ""
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0,
+      "SkfMTYQwo3El2y9R": 3
+    },
+    "flags": {},
+    "_stats": {
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null,
+      "coreVersion": "13.351",
+      "systemId": "gfl5r",
+      "systemVersion": "0.6.3",
+      "createdTime": 1767226322000,
+      "modifiedTime": 1767226322000,
+      "lastModifiedBy": "SkfMTYQwo3El2y9R"
+    }
+  },
+  "Insight Flash Training": {
+    "name": "Insight Flash Training",
+    "type": "module",
+    "_id": "2mK9g8N3D6tR2mK9",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "urncCredits": 6000,
+      "description": "Behavioral analysis patterns are reinforced, improving recognition of subtle changes in tone, posture, and intent. This training enhances interpersonal awareness without requiring extended observation.",
+      "moduleType": "skillIncrease",
+      "targetSkill": "insight",
+      "targetApproach": ""
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0,
+      "SkfMTYQwo3El2y9R": 3
+    },
+    "flags": {},
+    "_stats": {
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null,
+      "coreVersion": "13.351",
+      "systemId": "gfl5r",
+      "systemVersion": "0.6.3",
+      "createdTime": 1767226323000,
+      "modifiedTime": 1767226323000,
+      "lastModifiedBy": "SkfMTYQwo3El2y9R"
+    }
+  },
+  "Stealth Flash Training": {
+    "name": "Stealth Flash Training",
+    "type": "module",
+    "_id": "pL1nCq8Vt6aQ4sM9",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "urncCredits": 6000,
+      "description": "Movement optimization and concealment heuristics are refined. The Neural Cloud emphasizes noise reduction, exposure timing, and exploitation of environmental blind spots.",
+      "moduleType": "skillIncrease",
+      "targetSkill": "stealth",
+      "targetApproach": ""
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0,
+      "SkfMTYQwo3El2y9R": 3
+    },
+    "flags": {},
+    "_stats": {
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null,
+      "coreVersion": "13.351",
+      "systemId": "gfl5r",
+      "systemVersion": "0.6.3",
+      "createdTime": 1767226324000,
+      "modifiedTime": 1767226324000,
+      "lastModifiedBy": "SkfMTYQwo3El2y9R"
+    }
+  },
+  "Survival Flash Training": {
+    "name": "Survival Flash Training",
+    "type": "module",
+    "_id": "kL7mQ9W2xP1rD6hS",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "urncCredits": 6000,
+      "description": "Environmental adaptation models are loaded, covering hazard recognition, scavenging priorities, and shelter logic. This training improves decision-making in unstable or resource-poor regions.",
+      "moduleType": "skillIncrease",
+      "targetSkill": "survival",
+      "targetApproach": ""
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0,
+      "SkfMTYQwo3El2y9R": 3
+    },
+    "flags": {},
+    "_stats": {
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null,
+      "coreVersion": "13.351",
+      "systemId": "gfl5r",
+      "systemVersion": "0.6.3",
+      "createdTime": 1767226325000,
+      "modifiedTime": 1767226325000,
+      "lastModifiedBy": "SkfMTYQwo3El2y9R"
+    }
+  },
+
+  "Computers Flash Training": {
+    "name": "Computers Flash Training",
+    "type": "module",
+    "_id": "sD6tR2mK9g8N3vQ1",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "urncCredits": 6000,
+      "description": "Digital intrusion and system navigation routines are implanted. This includes encryption handling, access escalation logic, and rapid interface comprehension across unfamiliar platforms.",
+      "moduleType": "skillIncrease",
+      "targetSkill": "computers",
+      "targetApproach": ""
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0,
+      "SkfMTYQwo3El2y9R": 3
+    },
+    "flags": {},
+    "_stats": {
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null,
+      "coreVersion": "13.351",
+      "systemId": "gfl5r",
+      "systemVersion": "0.6.3",
+      "createdTime": 1767226330000,
+      "modifiedTime": 1767226330000,
+      "lastModifiedBy": "SkfMTYQwo3El2y9R"
+    }
+  },
+  "Mechanics Flash Training": {
+    "name": "Mechanics Flash Training",
+    "type": "module",
+    "_id": "Q1sD6tR2mK9g8N3v",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "urncCredits": 6000,
+      "description": "Mechanical system schematics and repair workflows are integrated. The Doll gains immediate competence in disassembly, calibration, and restoration of physical hardware.",
+      "moduleType": "skillIncrease",
+      "targetSkill": "mechanics",
+      "targetApproach": ""
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0,
+      "SkfMTYQwo3El2y9R": 3
+    },
+    "flags": {},
+    "_stats": {
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null,
+      "coreVersion": "13.351",
+      "systemId": "gfl5r",
+      "systemVersion": "0.6.3",
+      "createdTime": 1767226331000,
+      "modifiedTime": 1767226331000,
+      "lastModifiedBy": "SkfMTYQwo3El2y9R"
+    }
+  },
+  "Medicine Flash Training": {
+    "name": "Medicine Flash Training",
+    "type": "module",
+    "_id": "rD6hS2kL7mQ9W2xP",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "urncCredits": 6000,
+      "description": "Medical assessment and treatment protocols are reinforced. This training focuses on injury prioritization, stabilization techniques, and efficient use of limited medical supplies.",
+      "moduleType": "skillIncrease",
+      "targetSkill": "medicine",
+      "targetApproach": ""
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0,
+      "SkfMTYQwo3El2y9R": 3
+    },
+    "flags": {},
+    "_stats": {
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null,
+      "coreVersion": "13.351",
+      "systemId": "gfl5r",
+      "systemVersion": "0.6.3",
+      "createdTime": 1767226332000,
+      "modifiedTime": 1767226332000,
+      "lastModifiedBy": "SkfMTYQwo3El2y9R"
+    }
+  },
+  "Piloting Flash Training": {
+    "name": "Piloting Flash Training",
+    "type": "module",
+    "_id": "mK9g8N3vQ1sD6tR2",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "urncCredits": 6000,
+      "description": "Vehicle control models and emergency response routines are loaded into the Neural Cloud. This improves handling precision, reaction timing, and situational awareness during operation.",
+      "moduleType": "skillIncrease",
+      "targetSkill": "piloting",
+      "targetApproach": ""
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0,
+      "SkfMTYQwo3El2y9R": 3
+    },
+    "flags": {},
+    "_stats": {
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null,
+      "coreVersion": "13.351",
+      "systemId": "gfl5r",
+      "systemVersion": "0.6.3",
+      "createdTime": 1767226333000,
+      "modifiedTime": 1767226333000,
+      "lastModifiedBy": "SkfMTYQwo3El2y9R"
+    }
+  },
+  "Science Flash Training": {
+    "name": "Science Flash Training",
+    "type": "module",
+    "_id": "aQ4sM9pL1nCq8Vt6",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "urncCredits": 6000,
+      "description": "Analytical frameworks for experimentation and data interpretation are implanted. This training improves hazard analysis, material identification, and sensor data evaluation.",
+      "moduleType": "skillIncrease",
+      "targetSkill": "science",
+      "targetApproach": ""
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0,
+      "SkfMTYQwo3El2y9R": 3
+    },
+    "flags": {},
+    "_stats": {
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null,
+      "coreVersion": "13.351",
+      "systemId": "gfl5r",
+      "systemVersion": "0.6.3",
+      "createdTime": 1767226334000,
+      "modifiedTime": 1767226334000,
+      "lastModifiedBy": "SkfMTYQwo3El2y9R"
+    }
+  },
+  "Subterfuge Flash Training": {
+    "name": "Subterfuge Flash Training",
+    "type": "module",
+    "_id": "t6aQ4sM9pL1nCq8V",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "urncCredits": 6000,
+      "description": "Covert mechanical manipulation routines are reinforced. The Doll gains refined capability in lock interaction, trap handling, and discreet system interference.",
+      "moduleType": "skillIncrease",
+      "targetSkill": "subterfuge",
+      "targetApproach": ""
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0,
+      "SkfMTYQwo3El2y9R": 3
+    },
+    "flags": {},
+    "_stats": {
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null,
+      "coreVersion": "13.351",
+      "systemId": "gfl5r",
+      "systemVersion": "0.6.3",
+      "createdTime": 1767226335000,
+      "modifiedTime": 1767226335000,
+      "lastModifiedBy": "SkfMTYQwo3El2y9R"
+    }
+  },
+
+  "Arts Flash Training": {
+    "name": "Arts Flash Training",
+    "type": "module",
+    "_id": "L7mQ9W2xP1rD6hS2",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "urncCredits": 6000,
+      "description": "Creative process frameworks and stylistic references are implanted. This training improves the Doll’s ability to produce, analyze, and interpret artistic works.",
+      "moduleType": "skillIncrease",
+      "targetSkill": "arts",
+      "targetApproach": ""
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0,
+      "SkfMTYQwo3El2y9R": 3
+    },
+    "flags": {},
+    "_stats": {
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null,
+      "coreVersion": "13.351",
+      "systemId": "gfl5r",
+      "systemVersion": "0.6.3",
+      "createdTime": 1767226340000,
+      "modifiedTime": 1767226340000,
+      "lastModifiedBy": "SkfMTYQwo3El2y9R"
+    }
+  },
+  "Command Flash Training": {
+    "name": "Command Flash Training",
+    "type": "module",
+    "_id": "N3vQ1sD6tR2mK9g8",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "urncCredits": 6000,
+      "description": "Authority projection and directive framing routines are reinforced. This training enhances compliance generation and unit cohesion under pressure.",
+      "moduleType": "skillIncrease",
+      "targetSkill": "command",
+      "targetApproach": ""
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0,
+      "SkfMTYQwo3El2y9R": 3
+    },
+    "flags": {},
+    "_stats": {
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null,
+      "coreVersion": "13.351",
+      "systemId": "gfl5r",
+      "systemVersion": "0.6.3",
+      "createdTime": 1767226341000,
+      "modifiedTime": 1767226341000,
+      "lastModifiedBy": "SkfMTYQwo3El2y9R"
+    }
+  },
+  "Culture Flash Training": {
+    "name": "Culture Flash Training",
+    "type": "module",
+    "_id": "S2kL7mQ9W2xP1rD6",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "urncCredits": 6000,
+      "description": "Linguistic, historical, and social-context datasets are integrated. This allows rapid adaptation to unfamiliar communities and interpretation of symbolic behavior.",
+      "moduleType": "skillIncrease",
+      "targetSkill": "culture",
+      "targetApproach": ""
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0,
+      "SkfMTYQwo3El2y9R": 3
+    },
+    "flags": {},
+    "_stats": {
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null,
+      "coreVersion": "13.351",
+      "systemId": "gfl5r",
+      "systemVersion": "0.6.3",
+      "createdTime": 1767226342000,
+      "modifiedTime": 1767226342000,
+      "lastModifiedBy": "SkfMTYQwo3El2y9R"
+    }
+  },
+  "Deception Flash Training": {
+    "name": "Deception Flash Training",
+    "type": "module",
+    "_id": "8Vt6aQ4sM9pL1nCq",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "urncCredits": 6000,
+      "description": "Misleading communication models are implanted. This training improves consistency in false narratives, controlled information release, and signal manipulation.",
+      "moduleType": "skillIncrease",
+      "targetSkill": "deception",
+      "targetApproach": ""
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0,
+      "SkfMTYQwo3El2y9R": 3
+    },
+    "flags": {},
+    "_stats": {
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null,
+      "coreVersion": "13.351",
+      "systemId": "gfl5r",
+      "systemVersion": "0.6.3",
+      "createdTime": 1767226343000,
+      "modifiedTime": 1767226343000,
+      "lastModifiedBy": "SkfMTYQwo3El2y9R"
+    }
+  },
+  "Negotiation Flash Training": {
+    "name": "Negotiation Flash Training",
+    "type": "module",
+    "_id": "6hS2kL7mQ9W2xP1r",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "urncCredits": 6000,
+      "description": "Dialogue optimization frameworks are reinforced. This training improves bargaining position assessment, concession timing, and conflict de-escalation strategies.",
+      "moduleType": "skillIncrease",
+      "targetSkill": "negotiation",
+      "targetApproach": ""
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0,
+      "SkfMTYQwo3El2y9R": 3
+    },
+    "flags": {},
+    "_stats": {
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null,
+      "coreVersion": "13.351",
+      "systemId": "gfl5r",
+      "systemVersion": "0.6.3",
+      "createdTime": 1767226344000,
+      "modifiedTime": 1767226344000,
+      "lastModifiedBy": "SkfMTYQwo3El2y9R"
+    }
+  },
+  "Performance Flash Training": {
+    "name": "Performance Flash Training",
+    "type": "module",
+    "_id": "9pL1nCq8Vt6aQ4sM",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "urncCredits": 6000,
+      "description": "Persona maintenance and behavioral consistency routines are implanted. This allows the Doll to sustain convincing roles, disguises, or public-facing presentations without error.",
+      "moduleType": "skillIncrease",
+      "targetSkill": "performance",
+      "targetApproach": ""
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+      "default": 0,
+      "SkfMTYQwo3El2y9R": 3
+    },
+    "flags": {},
+    "_stats": {
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null,
+      "coreVersion": "13.351",
+      "systemId": "gfl5r",
+      "systemVersion": "0.6.3",
+      "createdTime": 1767226345000,
+      "modifiedTime": 1767226345000,
+      "lastModifiedBy": "SkfMTYQwo3El2y9R"
+    }
+  }
+}
