@@ -47,6 +47,8 @@ jobs:
             echo "No compendia JSON files found, nothing to do."
             exit 0
           fi
+          
+          mkdir -p packs
 
           for f in "${files[@]}"; do
             pack="$(basename "$f" .json)"
