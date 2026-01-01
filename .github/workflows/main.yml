@@ -53,7 +53,7 @@ jobs:
           for f in "${files[@]}"; do
             pack="$(basename "$f" .json)"
             echo "Packing: $pack from $f"
-            python pack_tool.py --export --pack "$pack" --json "$f"
+            python pack_tool.py --import --pack "$pack" --json "$f"
           done
 
       - name: Remove compendia folder
