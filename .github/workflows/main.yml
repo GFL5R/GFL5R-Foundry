@@ -42,7 +42,7 @@ jobs:
           set -euo pipefail
           shopt -s nullglob
 
-          files=(compendia/**/*.json)
+          files=(compendia/**.json)
           if [ ${#files[@]} -eq 0 ]; then
             echo "No compendia JSON files found, nothing to do."
             exit 0
