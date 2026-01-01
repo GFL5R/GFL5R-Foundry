@@ -22,6 +22,7 @@ def export_pack(pack_path: str, json_path: str):
         clean = {
             'type': item.get('type'),
             'system': item.get('system'),
+            'folder': item.get('folder'),
         }
         data[name] = clean
     db.close()
@@ -47,7 +48,7 @@ def import_pack(pack_path: str, json_path: str):
                 'img': 'icons/svg/item-bag.svg',
                 'system': item.get('system'),
                 'effects': [],
-                'folder': None,
+                'folder': item.get('folder', None),
                 'sort': 0,
                 'ownership': {'default': 0},
                 'flags': {},
