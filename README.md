@@ -47,7 +47,7 @@ This Foundry VTT system brings L5R's tactical depth and narrative focus to GFL's
 1. **Install Foundry VTT**: Download and set up Foundry Virtual Tabletop (minimum v12 recommended).
 2. **Install the System**:
    - In Foundry, go to the **Game Systems** tab.
-   - Click **Install System** and enter the manifest URL: `https://raw.githubusercontent.com/GFL5R/GFL5R-Foundry/refs/heads/main/system.json`.
+   - Click **Install System** and enter the manifest URL: `https://github.com/GFL5R/GFL5R-Foundry/releases/latest/download/system.json`.
    - Select GFL5R from the list and install.
 3. **Create a World**: Start a new world using the GFL5R system.
 4. **Dive In**: Create characters, roll dice, and begin your campaign!
