@@ -14,6 +14,12 @@ def generate_uid(length=16):
 
 
 def export_pack(pack_path: str, json_path: str):
+    # Load system.json for version and id
+    with open('system.json', 'r', encoding='utf-8') as f:
+        system_data = json.load(f)
+    system_id = system_data.get('id', os.path.basename(os.getcwd()))
+    system_version = system_data.get('version', '0.0.1')
+    
     db = plyvel.DB(pack_path)
     
     # First pass: build folder ID -> name mapping and collect folder data
@@ -59,6 +65,12 @@ def export_pack(pack_path: str, json_path: str):
 
 
 def import_pack(pack_path: str, json_path: str):
+    # Load system.json for version and id
+    with open('system.json', 'r', encoding='utf-8') as f:
+        system_data = json.load(f)
+    system_id = system_data.get('id', os.path.basename(os.getcwd()))
+    system_version = system_data.get('version', '0.6.3')
+    
     with open(json_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
     if os.path.exists(pack_path):
@@ -93,8 +105,8 @@ def import_pack(pack_path: str, json_path: str):
                     'duplicateSource': None,
                     'exportSource': None,
                     'coreVersion': '13.351',
-                    'systemId': 'gfl5r',
-                    'systemVersion': '0.6.3',
+                    'systemId': system_id,
+                    'systemVersion': system_version,
                     'createdTime': now,
                     'modifiedTime': now,
                     'lastModifiedBy': None,
@@ -124,8 +136,8 @@ def import_pack(pack_path: str, json_path: str):
                     'duplicateSource': None,
                     'exportSource': None,
                     'coreVersion': '13.351',
-                    'systemId': 'gfl5r',
-                    'systemVersion': '0.6.3',
+                    'systemId': system_id,
+                    'systemVersion': system_version,
                     'createdTime': now,
                     'modifiedTime': now,
                     'lastModifiedBy': None,
