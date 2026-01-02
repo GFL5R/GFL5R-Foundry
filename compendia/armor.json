@@ -1,0 +1,17 @@
+{
+  "folders": {},
+  "items": {
+    "Generic Body Armor": {
+      "type": "armor",
+      "system": {
+        "weight": 0,
+        "protection": 0,
+        "concealmentTN": 0,
+        "price": 0,
+        "class": "",
+        "description": ""
+      },
+      "folder": null
+    }
+  }
+}

@@ -1,0 +1,1272 @@
+{
+  "folders": {
+    "Handguns": {
+      "color": "#93c47d",
+      "sorting": "a"
+    },
+    "Submachine Guns": {
+      "color": "#6fa8dc",
+      "sorting": "a"
+    },
+    "Assault Rifles": {
+      "color": "#e06666",
+      "sorting": "a"
+    },
+    "Rifles": {
+      "color": "#f6b26b",
+      "sorting": "a"
+    },
+    "Machine Guns": {
+      "color": "#8e7cc3",
+      "sorting": "a"
+    },
+    "Shotguns": {
+      "color": "#c27ba0",
+      "sorting": "a"
+    }
+  },
+  "items": {
+    "Makarov PM": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 1,
+        "suppression": 3,
+        "caliber": 3,
+        "threat": 2,
+        "signature": 0,
+        "rarity": 3,
+        "price": 400,
+        "class": "Handgun",
+        "description": "Soviet-era service pistol chambered in 9x18mm. Simple blowback design makes it reliable but dated. Ubiquitous in former Eastern Bloc territories and cheap on the secondary market.",
+        "traits": "Concealable"
+      },
+      "folder": "Handguns"
+    },
+    "Tokarev TT-33": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 1,
+        "suppression": 4,
+        "caliber": 4,
+        "threat": 2,
+        "signature": 0,
+        "rarity": 3,
+        "price": 500,
+        "class": "Handgun",
+        "description": "Soviet military pistol with a hot 7.62x25mm cartridge that punches above its weight. No manual safety. Found everywhere the Red Army ever marched.",
+        "traits": "Concealable"
+      },
+      "folder": "Handguns"
+    },
+    "M1911A1": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 1,
+        "suppression": 4,
+        "caliber": 5,
+        "threat": 2,
+        "signature": 0,
+        "rarity": 4,
+        "price": 1200,
+        "class": "Handgun",
+        "description": "John Browning's century-old masterpiece in .45 ACP. Heavy, reliable, and hits hard. Still manufactured and still trusted by those who prefer stopping power over capacity.",
+        "traits": "Concealable"
+      },
+      "folder": "Handguns"
+    },
+    "Glock 17": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 1,
+        "suppression": 4,
+        "caliber": 4,
+        "threat": 2,
+        "signature": 0,
+        "rarity": 4,
+        "price": 1500,
+        "class": "Handgun",
+        "description": "The polymer pistol that changed everything. 17 rounds of 9mm, legendary reliability, and available literally everywhere. The default sidearm of the post-war world.",
+        "traits": "Concealable"
+      },
+      "folder": "Handguns"
+    },
+    "SIG P226": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 1,
+        "suppression": 4,
+        "caliber": 4,
+        "threat": 2,
+        "signature": 0,
+        "rarity": 4,
+        "price": 2000,
+        "class": "Handgun",
+        "description": "Swiss-German precision in a full-size combat pistol. DA/SA trigger with decocker. Preferred by special operations units and those who appreciate quality engineering.",
+        "traits": "Concealable"
+      },
+      "folder": "Handguns"
+    },
+    "Beretta M9": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 1,
+        "suppression": 4,
+        "caliber": 4,
+        "threat": 2,
+        "signature": 0,
+        "rarity": 4,
+        "price": 1600,
+        "class": "Handgun",
+        "description": "Italian elegance meets American military requirements. Open-slide design resists fouling. Decades of US military service mean parts and magazines are everywhere.",
+        "traits": "Concealable"
+      },
+      "folder": "Handguns"
+    },
+    "CZ-75": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 1,
+        "suppression": 4,
+        "caliber": 4,
+        "threat": 2,
+        "signature": 0,
+        "rarity": 4,
+        "price": 1400,
+        "class": "Handgun",
+        "description": "Czech wonder-nine with a cult following. Excellent ergonomics and accuracy. The slide-in-frame design provides a low bore axis that makes it a natural pointer.",
+        "traits": "Concealable"
+      },
+      "folder": "Handguns"
+    },
+    "USP45": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 1,
+        "suppression": 4,
+        "caliber": 5,
+        "threat": 2,
+        "signature": 0,
+        "rarity": 5,
+        "price": 2800,
+        "class": "Handgun",
+        "description": "Heckler & Koch's modular combat pistol in .45 ACP. Recoil reduction system, ambidextrous controls, and German over-engineering. The professional's choice.",
+        "traits": "Concealable"
+      },
+      "folder": "Handguns"
+    },
+    "FN Five-seveN": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 1,
+        "suppression": 3,
+        "caliber": 5,
+        "threat": 1,
+        "signature": 0,
+        "rarity": 5,
+        "price": 3500,
+        "class": "Handgun",
+        "description": "High-velocity 5.7x28mm cartridge designed to defeat body armor. 20-round capacity in a full-size frame. The ammunition is expensive and restricted, but it goes through things it shouldn't.",
+        "traits": "Concealable"
+      },
+      "folder": "Handguns"
+    },
+    "Desert Eagle": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 1,
+        "suppression": 6,
+        "caliber": 6,
+        "threat": 2,
+        "signature": 0,
+        "rarity": 5,
+        "price": 4000,
+        "class": "Handgun",
+        "description": "Gas-operated hand cannon in .50 Action Express. Impractical, expensive to feed, and impossible to conceal. Also impossible to argue with at close range.",
+        "traits": "Concealable"
+      },
+      "folder": "Handguns"
+    },
+    "Contender": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 2,
+        "suppression": 5,
+        "caliber": 7,
+        "threat": 3,
+        "signature": 0,
+        "rarity": 5,
+        "price": 3200,
+        "class": "Handgun",
+        "description": "Single-shot break-action pistol with interchangeable barrels. Can chamber rifle cartridges up to .45-70. Not a combat weapon\u2014a statement.",
+        "traits": "Concealable"
+      },
+      "folder": "Handguns"
+    },
+    "Welrod": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 1,
+        "suppression": 3,
+        "caliber": 3,
+        "threat": 0,
+        "signature": 0,
+        "rarity": 6,
+        "price": 8000,
+        "class": "Handgun",
+        "description": "WWII-era assassination pistol with integral suppressor. Bolt-action, subsonic .32 ACP. One of the quietest firearms ever made. Reproductions exist for those who need silence above all else.",
+        "traits": "Concealable, Integrally Suppressed"
+      },
+      "folder": "Handguns"
+    },
+    "Skorpion vz.61": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 1,
+        "suppression": 3,
+        "caliber": 3,
+        "threat": 2,
+        "signature": 1,
+        "rarity": 3,
+        "price": 800,
+        "class": "Submachine Gun",
+        "description": "Czech machine pistol in .32 ACP. Tiny, concealable, and surprisingly controllable thanks to its rate reducer. Popular with vehicle crews and those who need firepower in a small package.",
+        "traits": "Mobile"
+      },
+      "folder": "Submachine Guns"
+    },
+    "PP-2000": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 1,
+        "suppression": 4,
+        "caliber": 4,
+        "threat": 2,
+        "signature": 1,
+        "rarity": 4,
+        "price": 2200,
+        "class": "Submachine Gun",
+        "description": "Russian personal defense weapon with a spare magazine that doubles as a stock. Compact, modern, and chambered in 9x19mm. Standard issue for vehicle crews and support personnel.",
+        "traits": "Mobile"
+      },
+      "folder": "Submachine Guns"
+    },
+    "MP5A3": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 1,
+        "suppression": 4,
+        "caliber": 4,
+        "threat": 2,
+        "signature": 2,
+        "rarity": 4,
+        "price": 3500,
+        "class": "Submachine Gun",
+        "description": "The gold standard of submachine guns. Roller-delayed blowback provides exceptional accuracy. Decades of counter-terror service have proven its worth.",
+        "traits": "Mobile"
+      },
+      "folder": "Submachine Guns"
+    },
+    "UMP45": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 1,
+        "suppression": 5,
+        "caliber": 5,
+        "threat": 2,
+        "signature": 2,
+        "rarity": 4,
+        "price": 3200,
+        "class": "Submachine Gun",
+        "description": "H&K's polymer-framed successor to the MP5 in .45 ACP. Lighter, cheaper, and hits harder. The slower rate of fire makes it more controllable and economical.",
+        "traits": "Mobile"
+      },
+      "folder": "Submachine Guns"
+    },
+    "PP-19 Bizon": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 1,
+        "suppression": 4,
+        "caliber": 4,
+        "threat": 2,
+        "signature": 2,
+        "rarity": 4,
+        "price": 2800,
+        "class": "Submachine Gun",
+        "description": "Russian SMG with a 64-round helical magazine that wraps under the barrel. Based on AK ergonomics. Massive capacity compensates for the awkward reload.",
+        "traits": "Mobile"
+      },
+      "folder": "Submachine Guns"
+    },
+    "MAC-10": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 1,
+        "suppression": 4,
+        "caliber": 4,
+        "threat": 2,
+        "signature": 1,
+        "rarity": 3,
+        "price": 1200,
+        "class": "Submachine Gun",
+        "description": "Stamped steel bullet hose in .45 ACP. Crude, cheap, and sprays rounds at 1000+ RPM. Accuracy is a suggestion. Intimidation is guaranteed.",
+        "traits": "Mobile"
+      },
+      "folder": "Submachine Guns"
+    },
+    "MP7A1": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 1,
+        "suppression": 4,
+        "caliber": 5,
+        "threat": 2,
+        "signature": 1,
+        "rarity": 5,
+        "price": 5000,
+        "class": "Submachine Gun",
+        "description": "H&K's PDW answer to the P90. The 4.6x30mm round defeats soft armor while keeping the weapon tiny. Folds down small enough to holster.",
+        "traits": "Mobile"
+      },
+      "folder": "Submachine Guns"
+    },
+    "P90": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 1,
+        "suppression": 4,
+        "caliber": 5,
+        "threat": 2,
+        "signature": 2,
+        "rarity": 5,
+        "price": 5500,
+        "class": "Submachine Gun",
+        "description": "FN's revolutionary PDW with a 50-round horizontal magazine. Ambidextrous, compact, and the 5.7x28mm round laughs at soft armor. Space-age looks haven't aged a day.",
+        "traits": "Mobile"
+      },
+      "folder": "Submachine Guns"
+    },
+    "Vector": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 1,
+        "suppression": 5,
+        "caliber": 5,
+        "threat": 2,
+        "signature": 2,
+        "rarity": 5,
+        "price": 6000,
+        "class": "Submachine Gun",
+        "description": "KRISS's recoil-mitigation system redirects energy downward, making .45 ACP feel like 9mm. Extremely controllable at 1200 RPM. The future of submachine guns.",
+        "traits": "Mobile"
+      },
+      "folder": "Submachine Guns"
+    },
+    "Thompson M1A1": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 1,
+        "suppression": 5,
+        "caliber": 5,
+        "threat": 2,
+        "signature": 3,
+        "rarity": 5,
+        "price": 4500,
+        "class": "Submachine Gun",
+        "description": "The Chicago Typewriter. Heavy, expensive, and gorgeous. .45 ACP from a drum magazine made it infamous. Collectors pay premium; so do those who appreciate history.",
+        "traits": "Mobile"
+      },
+      "folder": "Submachine Guns"
+    },
+    "SR-3MP Vikhr": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 1,
+        "suppression": 5,
+        "caliber": 5,
+        "threat": 2,
+        "signature": 2,
+        "rarity": 6,
+        "price": 9000,
+        "class": "Submachine Gun",
+        "description": "Russian compact assault rifle firing armor-piercing 9x39mm subsonic rounds. Designed for FSB operations. Rare outside of Russian special forces\u2014and worth the search.",
+        "traits": "Mobile"
+      },
+      "folder": "Submachine Guns"
+    },
+    "SKS": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 2,
+        "suppression": 5,
+        "caliber": 5,
+        "threat": 3,
+        "signature": 4,
+        "rarity": 3,
+        "price": 600,
+        "class": "Assault Rifle",
+        "description": "Soviet semi-automatic carbine predating the AK. Ten-round internal magazine fed by stripper clips. Rugged, accurate, and found in every conflict since 1945.",
+        "traits": "Versatile"
+      },
+      "folder": "Assault Rifles"
+    },
+    "AKM": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 2,
+        "suppression": 5,
+        "caliber": 5,
+        "threat": 3,
+        "signature": 4,
+        "rarity": 3,
+        "price": 1200,
+        "class": "Assault Rifle",
+        "description": "Modernized Kalashnikov in 7.62x39mm. Stamped receiver is lighter and cheaper than the original milled AK-47. More of these exist than any other rifle on Earth.",
+        "traits": "Versatile"
+      },
+      "folder": "Assault Rifles"
+    },
+    "AK-74M": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 2,
+        "suppression": 5,
+        "caliber": 5,
+        "threat": 3,
+        "signature": 4,
+        "rarity": 4,
+        "price": 2000,
+        "class": "Assault Rifle",
+        "description": "Current Russian service rifle in 5.45x39mm. Polymer furniture, side-folding stock, and improved muzzle brake. The Kalashnikov refined to its modern form.",
+        "traits": "Versatile"
+      },
+      "folder": "Assault Rifles"
+    },
+    "M4A1": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 2,
+        "suppression": 5,
+        "caliber": 5,
+        "threat": 3,
+        "signature": 3,
+        "rarity": 4,
+        "price": 2500,
+        "class": "Assault Rifle",
+        "description": "US military's carbine-length AR-15 variant. Modular rail system accepts any accessory imaginable. Lighter than the M16 with comparable performance at typical engagement ranges.",
+        "traits": "Versatile"
+      },
+      "folder": "Assault Rifles"
+    },
+    "Type 95": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 2,
+        "suppression": 5,
+        "caliber": 5,
+        "threat": 3,
+        "signature": 3,
+        "rarity": 4,
+        "price": 2200,
+        "class": "Assault Rifle",
+        "description": "Chinese bullpup service rifle in 5.8x42mm. Compact overall length with full barrel. Ergonomics are polarizing, but it gets the job done.",
+        "traits": "Versatile"
+      },
+      "folder": "Assault Rifles"
+    },
+    "G36": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 2,
+        "suppression": 5,
+        "caliber": 5,
+        "threat": 3,
+        "signature": 3,
+        "rarity": 4,
+        "price": 3000,
+        "class": "Assault Rifle",
+        "description": "H&K's polymer assault rifle with integrated optic housing. German engineering, NATO standard 5.56mm. Clean lines and reliable operation made it a European favorite.",
+        "traits": "Versatile"
+      },
+      "folder": "Assault Rifles"
+    },
+    "FAMAS": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 2,
+        "suppression": 5,
+        "caliber": 5,
+        "threat": 3,
+        "signature": 3,
+        "rarity": 4,
+        "price": 2800,
+        "class": "Assault Rifle",
+        "description": "French bullpup with a distinctive carrying handle. Lever-delayed blowback provides accuracy. High rate of fire makes it hungry for ammunition.",
+        "traits": "Versatile"
+      },
+      "folder": "Assault Rifles"
+    },
+    "Steyr AUG": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 2,
+        "suppression": 5,
+        "caliber": 5,
+        "threat": 3,
+        "signature": 3,
+        "rarity": 4,
+        "price": 3200,
+        "class": "Assault Rifle",
+        "description": "Austrian bullpup that pioneered the modern polymer rifle. Integrated 1.5x optic, quick-change barrel system, and progressive trigger. Space-age design that aged beautifully.",
+        "traits": "Versatile"
+      },
+      "folder": "Assault Rifles"
+    },
+    "FN FAL": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 2,
+        "suppression": 6,
+        "caliber": 6,
+        "threat": 3,
+        "signature": 4,
+        "rarity": 4,
+        "price": 3000,
+        "class": "Assault Rifle",
+        "description": "The Right Arm of the Free World. 7.62 NATO hits hard at range. Heavier than modern rifles but still trusted by those who value stopping power.",
+        "traits": "Versatile"
+      },
+      "folder": "Assault Rifles"
+    },
+    "SCAR-L": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 2,
+        "suppression": 5,
+        "caliber": 5,
+        "threat": 3,
+        "signature": 3,
+        "rarity": 5,
+        "price": 5500,
+        "class": "Assault Rifle",
+        "description": "FN's modular combat rifle in 5.56mm. Folding stock, monolithic upper rail, and ambidextrous controls. Built for special operations requirements.",
+        "traits": "Versatile"
+      },
+      "folder": "Assault Rifles"
+    },
+    "SCAR-H": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 2,
+        "suppression": 6,
+        "caliber": 6,
+        "threat": 3,
+        "signature": 4,
+        "rarity": 5,
+        "price": 6500,
+        "class": "Assault Rifle",
+        "description": "Heavy variant of the SCAR platform in 7.62 NATO. Same modularity with more stopping power. Favored for designated marksman roles and barrier penetration.",
+        "traits": "Versatile"
+      },
+      "folder": "Assault Rifles"
+    },
+    "HK416": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 2,
+        "suppression": 5,
+        "caliber": 5,
+        "threat": 3,
+        "signature": 3,
+        "rarity": 5,
+        "price": 6000,
+        "class": "Assault Rifle",
+        "description": "H&K's improved AR-15 with a short-stroke gas piston. Cleaner, cooler, and more reliable than direct impingement. The rifle that got Bin Laden.",
+        "traits": "Versatile"
+      },
+      "folder": "Assault Rifles"
+    },
+    "G11": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 2,
+        "suppression": 5,
+        "caliber": 5,
+        "threat": 3,
+        "signature": 3,
+        "rarity": 6,
+        "price": 15000,
+        "class": "Assault Rifle",
+        "description": "H&K's caseless ammunition rifle\u2014a Cold War prototype that never saw production. Three-round burst fires before recoil reaches the shooter. Ammunition is nearly impossible to source.",
+        "traits": "Versatile"
+      },
+      "folder": "Assault Rifles"
+    },
+    "AN-94": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 2,
+        "suppression": 5,
+        "caliber": 6,
+        "threat": 3,
+        "signature": 4,
+        "rarity": 6,
+        "price": 12000,
+        "class": "Assault Rifle",
+        "description": "Russian hyperburst rifle with a two-round burst at 1800 RPM\u2014so fast both rounds hit before recoil. Fiendishly complex mechanism. Worth it for the doubled impact.",
+        "traits": "Versatile"
+      },
+      "folder": "Assault Rifles"
+    },
+    "AK-12": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 2,
+        "suppression": 5,
+        "caliber": 5,
+        "threat": 3,
+        "signature": 4,
+        "rarity": 5,
+        "price": 5000,
+        "class": "Assault Rifle",
+        "description": "Latest generation Kalashnikov with modern ergonomics. Picatinny rails, adjustable stock, and improved accuracy. The old reliability with new century features.",
+        "traits": "Versatile"
+      },
+      "folder": "Assault Rifles"
+    },
+    "Honey Badger": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 3,
+        "suppression": 4,
+        "caliber": 5,
+        "threat": 2,
+        "signature": 3,
+        "rarity": 6,
+        "price": 12000,
+        "class": "Assault Rifle",
+        "description": "AAC's integrally suppressed PDW in .300 AAC Blackout. The ultimate in covert firepower. Expensive, rare, and worth every penny for those who need discretion.",
+        "traits": "Integrally Suppressed, Versatile"
+      },
+      "folder": "Assault Rifles"
+    },
+    "Mosin-Nagant M91/30": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 3,
+        "suppression": 6,
+        "caliber": 6,
+        "threat": 4,
+        "signature": 5,
+        "rarity": 3,
+        "price": 400,
+        "class": "Rifle",
+        "description": "Imperial Russian bolt-action in 7.62x54R. Over 37 million produced. Heavy, long, and kicks like a mule\u2014but it reaches out and touches targets reliably at 800 meters.",
+        "traits": ""
+      },
+      "folder": "Rifles"
+    },
+    "Lee-Enfield No.4": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 3,
+        "suppression": 6,
+        "caliber": 6,
+        "threat": 4,
+        "signature": 5,
+        "rarity": 3,
+        "price": 600,
+        "class": "Rifle",
+        "description": "British service rifle in .303. Ten-round magazine and the smoothest bolt action ever made. Trained soldiers can fire 30 aimed rounds per minute.",
+        "traits": ""
+      },
+      "folder": "Rifles"
+    },
+    "Kar98k": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 3,
+        "suppression": 6,
+        "caliber": 6,
+        "threat": 4,
+        "signature": 5,
+        "rarity": 4,
+        "price": 1500,
+        "class": "Rifle",
+        "description": "Wehrmacht standard rifle in 8mm Mauser. Mauser action sets the standard all others follow. Pre-war examples with matching serials command collector premiums.",
+        "traits": ""
+      },
+      "folder": "Rifles"
+    },
+    "M14": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 3,
+        "suppression": 6,
+        "caliber": 6,
+        "threat": 4,
+        "signature": 4,
+        "rarity": 4,
+        "price": 2500,
+        "class": "Rifle",
+        "description": "American battle rifle in 7.62 NATO. Select-fire capability rarely used due to recoil. Accurized versions serve as designated marksman rifles to this day.",
+        "traits": ""
+      },
+      "folder": "Rifles"
+    },
+    "SVD Dragunov": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 3,
+        "suppression": 6,
+        "caliber": 6,
+        "threat": 4,
+        "signature": 5,
+        "rarity": 4,
+        "price": 3500,
+        "class": "Rifle",
+        "description": "Soviet designated marksman rifle in 7.62x54R. Not a true sniper rifle\u2014it's meant to extend squad engagement range. Semi-automatic and reliable in harsh conditions.",
+        "traits": ""
+      },
+      "folder": "Rifles"
+    },
+    "M1 Garand": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 3,
+        "suppression": 6,
+        "caliber": 6,
+        "threat": 4,
+        "signature": 4,
+        "rarity": 4,
+        "price": 2000,
+        "class": "Rifle",
+        "description": "The rifle that won WWII. Semi-automatic .30-06 with an eight-round en-bloc clip. That distinctive ping when empty is either nostalgic or tactically inconvenient.",
+        "traits": ""
+      },
+      "folder": "Rifles"
+    },
+    "G3SG/1": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 3,
+        "suppression": 6,
+        "caliber": 6,
+        "threat": 4,
+        "signature": 5,
+        "rarity": 5,
+        "price": 5000,
+        "class": "Rifle",
+        "description": "Accurized G3 battle rifle with precision barrel and adjustable trigger. Semi-automatic 7.62 NATO in a designated marksman package.",
+        "traits": ""
+      },
+      "folder": "Rifles"
+    },
+    "PSG-1": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 4,
+        "suppression": 6,
+        "caliber": 6,
+        "threat": 5,
+        "signature": 6,
+        "rarity": 5,
+        "price": 12000,
+        "class": "Rifle",
+        "description": "H&K's semi-automatic precision rifle. Built without compromise for accuracy. Heavy, expensive, and demands careful maintenance\u2014but groups under 1 MOA.",
+        "traits": ""
+      },
+      "folder": "Rifles"
+    },
+    "M40A5": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 4,
+        "suppression": 6,
+        "caliber": 6,
+        "threat": 5,
+        "signature": 6,
+        "rarity": 5,
+        "price": 8000,
+        "class": "Rifle",
+        "description": "USMC sniper rifle based on the Remington 700 action. Bolt-action 7.62 NATO with a heavy barrel. Generations of Marine snipers have trusted their lives to this platform.",
+        "traits": ""
+      },
+      "folder": "Rifles"
+    },
+    "SV-98": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 4,
+        "suppression": 6,
+        "caliber": 6,
+        "threat": 5,
+        "signature": 6,
+        "rarity": 5,
+        "price": 7000,
+        "class": "Rifle",
+        "description": "Russian bolt-action precision rifle in 7.62x54R. Adjustable stock, free-floating barrel, and designed for extreme cold. Purpose-built for sniping, unlike the SVD.",
+        "traits": ""
+      },
+      "folder": "Rifles"
+    },
+    "WA2000": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 4,
+        "suppression": 6,
+        "caliber": 7,
+        "threat": 5,
+        "signature": 5,
+        "rarity": 6,
+        "price": 40000,
+        "class": "Rifle",
+        "description": "Walther's semi-automatic bullpup sniper rifle. Only 176 ever made. Exceptional accuracy from a gas-operated action. Finding one for sale is a once-in-a-lifetime event.",
+        "traits": ""
+      },
+      "folder": "Rifles"
+    },
+    "DSR-50": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 4,
+        "suppression": 8,
+        "caliber": 8,
+        "threat": 5,
+        "signature": 6,
+        "rarity": 6,
+        "price": 25000,
+        "class": "Rifle",
+        "description": "German precision rifle in .50 BMG. Bullpup configuration keeps length manageable. Anti-materiel capability in a package a single operator can carry.",
+        "traits": ""
+      },
+      "folder": "Rifles"
+    },
+    "NTW-20": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 5,
+        "suppression": 9,
+        "caliber": 9,
+        "threat": 6,
+        "signature": 6,
+        "rarity": 6,
+        "price": 35000,
+        "class": "Rifle",
+        "description": "South African anti-materiel rifle in 20mm. Disassembles for two-person carry. Defeats light armored vehicles and fortifications. Not for soft targets\u2014there won't be anything left.",
+        "traits": ""
+      },
+      "folder": "Rifles"
+    },
+    "RPD": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 2,
+        "suppression": 5,
+        "caliber": 5,
+        "threat": 3,
+        "signature": 5,
+        "rarity": 3,
+        "price": 1500,
+        "class": "Machine Gun",
+        "description": "Soviet belt-fed light machine gun in 7.62x39mm. Predecessor to the RPK. Heavy by modern standards but shares ammunition with the AK family.",
+        "traits": "Stationary"
+      },
+      "folder": "Machine Guns"
+    },
+    "RPK-74": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 2,
+        "suppression": 5,
+        "caliber": 5,
+        "threat": 3,
+        "signature": 5,
+        "rarity": 4,
+        "price": 2500,
+        "class": "Machine Gun",
+        "description": "Squad automatic weapon based on the AK-74. Heavier barrel and bipod for sustained fire. Magazine-fed limits suppression but maximizes parts commonality.",
+        "traits": "Stationary"
+      },
+      "folder": "Machine Guns"
+    },
+    "M249 SAW": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 2,
+        "suppression": 6,
+        "caliber": 5,
+        "threat": 3,
+        "signature": 5,
+        "rarity": 4,
+        "price": 4500,
+        "class": "Machine Gun",
+        "description": "US squad automatic weapon in 5.56mm. Belt or magazine fed. Standard infantry support weapon across NATO forces. Reliable when maintained, temperamental when not.",
+        "traits": "Stationary"
+      },
+      "folder": "Machine Guns"
+    },
+    "MG3": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 3,
+        "suppression": 7,
+        "caliber": 6,
+        "threat": 4,
+        "signature": 6,
+        "rarity": 4,
+        "price": 5000,
+        "class": "Machine Gun",
+        "description": "Post-war evolution of the MG42. Same terrifying rate of fire, now in 7.62 NATO. Still serves with dozens of militaries. Still called Hitler's Buzzsaw.",
+        "traits": "Stationary"
+      },
+      "folder": "Machine Guns"
+    },
+    "PKP Pecheneg": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 3,
+        "suppression": 7,
+        "caliber": 6,
+        "threat": 4,
+        "signature": 6,
+        "rarity": 5,
+        "price": 7000,
+        "class": "Machine Gun",
+        "description": "Modernized PKM with forced-air cooling and a heavier barrel. Russian general-purpose machine gun in 7.62x54R. Sustained fire capability without barrel changes.",
+        "traits": "Stationary"
+      },
+      "folder": "Machine Guns"
+    },
+    "M60": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 3,
+        "suppression": 7,
+        "caliber": 6,
+        "threat": 4,
+        "signature": 6,
+        "rarity": 4,
+        "price": 5500,
+        "class": "Machine Gun",
+        "description": "American general-purpose machine gun from Vietnam. Nicknamed 'The Pig' for its weight and handling. 7.62 NATO belt-fed. Character in spades, if not refinement.",
+        "traits": "Stationary"
+      },
+      "folder": "Machine Guns"
+    },
+    "Negev NG7": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 3,
+        "suppression": 7,
+        "caliber": 6,
+        "threat": 4,
+        "signature": 5,
+        "rarity": 5,
+        "price": 8000,
+        "class": "Machine Gun",
+        "description": "Israeli light machine gun in 7.62 NATO. Lighter than competitors while maintaining sustained fire capability. Convertible between belt and magazine feed.",
+        "traits": "Stationary"
+      },
+      "folder": "Machine Guns"
+    },
+    "M2HB Browning": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 4,
+        "suppression": 9,
+        "caliber": 9,
+        "threat": 5,
+        "signature": 6,
+        "rarity": 5,
+        "price": 15000,
+        "class": "Machine Gun",
+        "description": "Ma Deuce. Browning's .50 caliber masterpiece has served since 1933. Vehicle-mounted or tripod-deployed. Defeats light armor, buildings, and anything else in the way.",
+        "traits": "Stationary"
+      },
+      "folder": "Machine Guns"
+    },
+    "Kord": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 4,
+        "suppression": 9,
+        "caliber": 9,
+        "threat": 5,
+        "signature": 6,
+        "rarity": 5,
+        "price": 14000,
+        "class": "Machine Gun",
+        "description": "Russian heavy machine gun in 12.7x108mm. Lighter than the DShK it replaced. Can be fired from bipod by a very motivated individual. Usually mounted on vehicles.",
+        "traits": "Stationary"
+      },
+      "folder": "Machine Guns"
+    },
+    "M1014": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 1,
+        "suppression": 6,
+        "caliber": 5,
+        "threat": 2,
+        "signature": 3,
+        "rarity": 4,
+        "price": 2500,
+        "class": "Shotgun",
+        "description": "Benelli's semi-automatic combat shotgun. Inertia-driven action is clean and reliable. US military designation for a proven design. Seven rounds of 12 gauge persuasion.",
+        "traits": "Unsuppressable, Area of Effect"
+      },
+      "folder": "Shotguns"
+    },
+    "M870": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 1,
+        "suppression": 6,
+        "caliber": 5,
+        "threat": 2,
+        "signature": 3,
+        "rarity": 3,
+        "price": 800,
+        "class": "Shotgun",
+        "description": "Remington's pump-action workhorse. Over eleven million sold. Police, military, and civilian use worldwide. Reliable enough to stake your life on.",
+        "traits": "Unsuppressable, Area of Effect"
+      },
+      "folder": "Shotguns"
+    },
+    "SPAS-12": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 1,
+        "suppression": 6,
+        "caliber": 5,
+        "threat": 2,
+        "signature": 4,
+        "rarity": 4,
+        "price": 2000,
+        "class": "Shotgun",
+        "description": "Italian combat shotgun with pump/semi-auto dual mode. The folding stock is iconic. Heavy and complex, but versatile enough to handle any ammunition type.",
+        "traits": "Unsuppressable, Area of Effect"
+      },
+      "folder": "Shotguns"
+    },
+    "Saiga-12": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 1,
+        "suppression": 6,
+        "caliber": 5,
+        "threat": 2,
+        "signature": 4,
+        "rarity": 4,
+        "price": 1800,
+        "class": "Shotgun",
+        "description": "AK-pattern shotgun in 12 gauge. Detachable box magazines up to 20 rounds. Russian engineering meets room-clearing capability. Banned in several jurisdictions for obvious reasons.",
+        "traits": "Unsuppressable, Area of Effect"
+      },
+      "folder": "Shotguns"
+    },
+    "KSG": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 1,
+        "suppression": 6,
+        "caliber": 5,
+        "threat": 2,
+        "signature": 3,
+        "rarity": 5,
+        "price": 3500,
+        "class": "Shotgun",
+        "description": "Kel-Tec's bullpup pump shotgun with dual tube magazines. Fourteen rounds of 12 gauge in a compact package. Select which tube feeds for tactical flexibility.",
+        "traits": "Unsuppressable, Area of Effect"
+      },
+      "folder": "Shotguns"
+    },
+    "AA-12": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 1,
+        "suppression": 7,
+        "caliber": 5,
+        "threat": 3,
+        "signature": 5,
+        "rarity": 6,
+        "price": 12000,
+        "class": "Shotgun",
+        "description": "Full-auto shotgun with a 20-round drum. Constant-recoil system makes it controllable at 300 RPM. Rarely available to civilians. Devastating in confined spaces.",
+        "traits": "Unsuppressable, Area of Effect"
+      },
+      "folder": "Shotguns"
+    },
+    "Super-Shorty": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 1,
+        "suppression": 5,
+        "caliber": 5,
+        "threat": 2,
+        "signature": 1,
+        "rarity": 4,
+        "price": 1500,
+        "class": "Shotgun",
+        "description": "Cut-down Mossberg 500 with pistol grip. Three rounds of 12 gauge in an AOW package. Concealable breaching tool and last-ditch room clearer.",
+        "traits": "Unsuppressable, Area of Effect"
+      },
+      "folder": "Shotguns"
+    },
+    "M590A1": {
+      "type": "weaponry",
+      "system": {
+        "weaponType": "ranged",
+        "skill": "firearms",
+        "idealRange": 1,
+        "suppression": 6,
+        "caliber": 5,
+        "threat": 2,
+        "signature": 3,
+        "rarity": 4,
+        "price": 1200,
+        "class": "Shotgun",
+        "description": "Military-spec Mossberg pump with heavy barrel and metal trigger guard. Nine-round capacity. Mil-spec 3443 tested. The 870's main competitor for a reason.",
+        "traits": "Unsuppressable, Area of Effect"
+      },
+      "folder": "Shotguns"
+    }
+  }
+}

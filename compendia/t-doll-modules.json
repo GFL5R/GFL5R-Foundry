@@ -233,7 +233,7 @@
     "Emergency Override": {
       "type": "module",
       "system": {
-        "urncCredits": 12000,
+        "urncCredits": 18000,
         "description": "A controlled fail-operational mode is added to the Doll\u2019s safety architecture. When the frame hits shutdown thresholds, noncritical subsystems are cut and power is redirected to minimal locomotion and combat output, delaying collapse long enough to complete a final action cycle.\n\nEffect: When reduced to 0 Endurance, remain active for one more round before shutting down.",
         "moduleType": "passive",
         "targetSkill": "",

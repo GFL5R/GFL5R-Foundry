@@ -2,7 +2,7 @@
   "id": "gfl5r",
   "title": "GFL5R",
   "description": "A shoddy attempt to port L5R's dice system and techniques to a near-future setting.",
-  "version": "0.6.8",
+  "version": "0.6.9",
   "compatibility": {
     "minimum": "12",
     "verified": "13"
@@ -32,16 +32,53 @@
   ],
   "packs": [
     {
-      "label": "T-Doll Modules",
+      "label": "Weapons",
       "type": "Item",
-      "name": "t-doll-modules",
-      "path": "packs/t-doll-modules",
+      "name": "weapons",
+      "path": "packs/weapons",
       "system": "gfl5r",
       "ownership": {
         "PLAYER": "OBSERVER",
         "ASSISTANT": "OWNER"
       },
-      "flags": {}
+      "flags": {},
+      "package": "world",
+      "id": "world.weapons",
+      "packageType": "world",
+      "packageName": "development",
+      "index": [],
+      "folders": []
+    },
+    {
+      "label": "Armor",
+      "type": "Item",
+      "name": "armor",
+      "path": "packs/armor",
+      "system": "gfl5r",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "flags": {},
+      "package": "world",
+      "id": "world.armor",
+      "packageType": "world",
+      "packageName": "development",
+      "index": [],
+      "folders": []
+    },
+    {
+      "label": "Items",
+      "type": "Item",
+      "name": "items",
+      "path": "packs/items",
+      "system": "gfl5r",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "flags": {},
+      "package": "world"
     }
   ]
 }

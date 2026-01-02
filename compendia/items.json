@@ -1,0 +1,1142 @@
+{
+  "folders": {
+    "Rarity 0": { "color": "#bfbfbf", "sorting": "a" },
+    "Rarity 1": { "color": "#a6a6a6", "sorting": "a" },
+    "Rarity 2": { "color": "#8c8c8c", "sorting": "a" },
+    "Rarity 3": { "color": "#6fa8dc", "sorting": "a" },
+    "Rarity 4": { "color": "#6aa84f", "sorting": "a" },
+    "Rarity 5": { "color": "#f1c232", "sorting": "a" },
+    "Rarity 6": { "color": "#e69138", "sorting": "a" },
+    "Rarity 7": { "color": "#cc4125", "sorting": "a" },
+    "Rarity 8": { "color": "#a64d79", "sorting": "a" },
+    "Rarity 9": { "color": "#674ea7", "sorting": "a" },
+    "Rarity 10": { "color": "#9900ff", "sorting": "a" }
+  },
+  "items": {
+    "Pack of Gum": {
+      "type": "item",
+      "system": {
+        "price": 2,
+        "rarity": 0,
+        "description": "A cheap pack of sugarless gum. Flavor fades quickly."
+      },
+      "folder": "Rarity 0"
+    },
+    "Disposable Lighter": {
+      "type": "item",
+      "system": {
+        "price": 3,
+        "rarity": 0,
+        "description": "A plastic lighter with a small amount of fuel remaining."
+      },
+      "folder": "Rarity 0"
+    },
+    "Plastic Water Bottle": {
+      "type": "item",
+      "system": {
+        "price": 2,
+        "rarity": 0,
+        "description": "Disposable bottle of filtered water."
+      },
+      "folder": "Rarity 0"
+    },
+    "Ration Bar": {
+      "type": "item",
+      "system": {
+        "price": 3,
+        "rarity": 0,
+        "description": "Dense, tasteless nutrition brick. URNC relief stamp on the wrapper."
+      },
+      "folder": "Rarity 0"
+    },
+    "Crumpled Cigarettes": {
+      "type": "item",
+      "system": {
+        "price": 8,
+        "rarity": 0,
+        "description": "Half-empty pack of cheap synthetic tobacco. Popular trade currency in Yellow Zones."
+      },
+      "folder": "Rarity 0"
+    },
+    "Plastic Tarp": {
+      "type": "item",
+      "system": {
+        "price": 5,
+        "rarity": 0,
+        "description": "Thin plastic sheeting. Useful for improvised shelter or rain collection."
+      },
+      "folder": "Rarity 0"
+    },
+    "Work Gloves": {
+      "type": "item",
+      "system": {
+        "price": 8,
+        "rarity": 0,
+        "description": "Worn canvas gloves with reinforced palms. Minimal protection from rough surfaces."
+      },
+      "folder": "Rarity 0"
+    },
+    "Cheap Flashlight": {
+      "type": "item",
+      "system": {
+        "price": 6,
+        "rarity": 0,
+        "description": "Plastic flashlight with dying batteries. Flickers occasionally."
+      },
+      "folder": "Rarity 0"
+    },
+    "Plastic Comb": {
+      "type": "item",
+      "system": {
+        "price": 1,
+        "rarity": 0,
+        "description": "Basic grooming item. Several teeth are missing."
+      },
+      "folder": "Rarity 0"
+    },
+    "Matchbook": {
+      "type": "item",
+      "system": {
+        "price": 1,
+        "rarity": 0,
+        "description": "Cardboard book with a handful of matches remaining. Advertising for a Green Zone bar."
+      },
+      "folder": "Rarity 0"
+    },
+    "Duct Tape Roll": {
+      "type": "item",
+      "system": {
+        "price": 8,
+        "rarity": 0,
+        "description": "Universal repair solution. About half remaining."
+      },
+      "folder": "Rarity 0"
+    },
+    "Transit Token": {
+      "type": "item",
+      "system": {
+        "price": 5,
+        "rarity": 0,
+        "description": "Single-use fare token for Green Zone public transit."
+      },
+      "folder": "Rarity 0"
+    },
+    "Instant Noodle Cup": {
+      "type": "item",
+      "system": {
+        "price": 3,
+        "rarity": 0,
+        "description": "Just add hot water. Sodium content would concern a pre-war doctor."
+      },
+      "folder": "Rarity 0"
+    },
+    "Paracord Bracelet": {
+      "type": "item",
+      "system": {
+        "price": 6,
+        "rarity": 0,
+        "description": "Woven bracelet that unravels into several meters of utility cord."
+      },
+      "folder": "Rarity 0"
+    },
+    "Expired ID Card": {
+      "type": "item",
+      "system": {
+        "price": 1,
+        "rarity": 0,
+        "description": "Someone else's cancelled identification. Photo is water-damaged."
+      },
+      "folder": "Rarity 0"
+    },
+    "Cable Ties": {
+      "type": "item",
+      "system": {
+        "price": 4,
+        "rarity": 0,
+        "description": "Bundle of plastic zip ties. Multiple uses, none of them gentle."
+      },
+      "folder": "Rarity 0"
+    },
+    "Bandana": {
+      "type": "item",
+      "system": {
+        "price": 3,
+        "rarity": 0,
+        "description": "Faded cloth square. Dust mask, sweat rag, or tourniquet in a pinch."
+      },
+      "folder": "Rarity 0"
+    },
+    "Pen and Notepad": {
+      "type": "item",
+      "system": {
+        "price": 4,
+        "rarity": 0,
+        "description": "Ballpoint pen and small spiral-bound notepad. Most of the pages are still blank."
+      },
+      "folder": "Rarity 0"
+    },
+    "Road Flare": {
+      "type": "item",
+      "system": {
+        "price": 8,
+        "rarity": 1,
+        "description": "Chemical light stick that burns bright red. Fifteen-minute duration."
+      },
+      "folder": "Rarity 1"
+    },
+    "Multitool": {
+      "type": "item",
+      "system": {
+        "price": 35,
+        "rarity": 1,
+        "description": "Folding tool with pliers, knife, screwdriver heads, and a bottle opener. Well-worn but functional."
+      },
+      "folder": "Rarity 1"
+    },
+    "Canteen": {
+      "type": "item",
+      "system": {
+        "price": 15,
+        "rarity": 1,
+        "description": "Dented metal water container. Holds about a liter."
+      },
+      "folder": "Rarity 1"
+    },
+    "First Aid Pouch": {
+      "type": "item",
+      "system": {
+        "price": 25,
+        "rarity": 1,
+        "description": "Basic medical supplies: bandages, antiseptic wipes, painkillers. Nothing fancy."
+      },
+      "folder": "Rarity 1"
+    },
+    "Compass": {
+      "type": "item",
+      "system": {
+        "price": 20,
+        "rarity": 1,
+        "description": "Simple magnetic compass. Unreliable near Collapse hotspots."
+      },
+      "folder": "Rarity 1"
+    },
+    "Solar Charger": {
+      "type": "item",
+      "system": {
+        "price": 45,
+        "rarity": 1,
+        "description": "Folding panel that trickle-charges devices. Takes all day in good sunlight."
+      },
+      "folder": "Rarity 1"
+    },
+    "Headlamp": {
+      "type": "item",
+      "system": {
+        "price": 30,
+        "rarity": 1,
+        "description": "Hands-free light with elastic strap. Red filter mode for night work."
+      },
+      "folder": "Rarity 1"
+    },
+    "Binoculars": {
+      "type": "item",
+      "system": {
+        "price": 50,
+        "rarity": 1,
+        "description": "Scratched optics but still serviceable. 8x magnification."
+      },
+      "folder": "Rarity 1"
+    },
+    "Mess Kit": {
+      "type": "item",
+      "system": {
+        "price": 25,
+        "rarity": 1,
+        "description": "Nested cookware set with pot, pan, plate, and utensils."
+      },
+      "folder": "Rarity 1"
+    },
+    "Sleeping Bag": {
+      "type": "item",
+      "system": {
+        "price": 60,
+        "rarity": 1,
+        "description": "Synthetic insulation rated to -5°C. Compresses into a stuff sack."
+      },
+      "folder": "Rarity 1"
+    },
+    "Water Purification Tablets": {
+      "type": "item",
+      "system": {
+        "price": 15,
+        "rarity": 1,
+        "description": "Chemical tablets that make questionable water drinkable. Bottle of 50."
+      },
+      "folder": "Rarity 1"
+    },
+    "Local Map": {
+      "type": "item",
+      "system": {
+        "price": 10,
+        "rarity": 1,
+        "description": "Printed regional map with hand-annotated safe routes and danger zones."
+      },
+      "folder": "Rarity 1"
+    },
+    "Sewing Kit": {
+      "type": "item",
+      "system": {
+        "price": 12,
+        "rarity": 1,
+        "description": "Needles, thread, buttons, and patches. Essential for gear maintenance."
+      },
+      "folder": "Rarity 1"
+    },
+    "Carabiner Set": {
+      "type": "item",
+      "system": {
+        "price": 18,
+        "rarity": 1,
+        "description": "Three aluminum clips rated for moderate loads."
+      },
+      "folder": "Rarity 1"
+    },
+    "Emergency Blanket": {
+      "type": "item",
+      "system": {
+        "price": 8,
+        "rarity": 1,
+        "description": "Mylar sheet that reflects body heat. Crinkles loudly."
+      },
+      "folder": "Rarity 1"
+    },
+    "Rope (30m)": {
+      "type": "item",
+      "system": {
+        "price": 40,
+        "rarity": 1,
+        "description": "Nylon climbing rope. Shows some wear but holds weight."
+      },
+      "folder": "Rarity 1"
+    },
+    "Fire Starter Kit": {
+      "type": "item",
+      "system": {
+        "price": 15,
+        "rarity": 1,
+        "description": "Ferro rod, striker, and tinder. Works when wet."
+      },
+      "folder": "Rarity 1"
+    },
+    "Hand Crank Radio": {
+      "type": "item",
+      "system": {
+        "price": 55,
+        "rarity": 1,
+        "description": "AM/FM receiver powered by manual dynamo. Picks up URNC emergency broadcasts."
+      },
+      "folder": "Rarity 1"
+    },
+    "Portable Stove": {
+      "type": "item",
+      "system": {
+        "price": 45,
+        "rarity": 1,
+        "description": "Compact propane burner with wind screen. Hot food is good for morale."
+      },
+      "folder": "Rarity 1"
+    },
+    "Backpack": {
+      "type": "item",
+      "system": {
+        "price": 40,
+        "rarity": 1,
+        "description": "Sturdy rucksack with multiple compartments. Faded PMC logo on the flap."
+      },
+      "folder": "Rarity 1"
+    },
+    "Burner Phone": {
+      "type": "item",
+      "system": {
+        "price": 80,
+        "rarity": 2,
+        "description": "Disposable prepaid mobile. Limited minutes, no GPS tracking. Popular for obvious reasons."
+      },
+      "folder": "Rarity 2"
+    },
+    "Entrenching Tool": {
+      "type": "item",
+      "system": {
+        "price": 45,
+        "rarity": 2,
+        "description": "Folding shovel with pick edge. Digging, cutting, prying—and other uses."
+      },
+      "folder": "Rarity 2"
+    },
+    "Night Vision Monocular": {
+      "type": "item",
+      "system": {
+        "price": 350,
+        "rarity": 2,
+        "description": "Gen 2 image intensifier. Green-tinted view of darkness. Battery life: 40 hours."
+      },
+      "folder": "Rarity 2"
+    },
+    "Bolt Cutters": {
+      "type": "item",
+      "system": {
+        "price": 55,
+        "rarity": 2,
+        "description": "Heavy-duty cutters for chain, padlocks, and fencing. Not subtle."
+      },
+      "folder": "Rarity 2"
+    },
+    "Climbing Harness": {
+      "type": "item",
+      "system": {
+        "price": 90,
+        "rarity": 2,
+        "description": "Adjustable harness with gear loops. Rated for dynamic falls."
+      },
+      "folder": "Rarity 2"
+    },
+    "Mechanic's Tool Kit": {
+      "type": "item",
+      "system": {
+        "price": 150,
+        "rarity": 2,
+        "description": "Socket set, wrenches, screwdrivers—everything needed for mechanical work."
+      },
+      "folder": "Rarity 2"
+    },
+    "Satellite Phone": {
+      "type": "item",
+      "system": {
+        "price": 600,
+        "rarity": 2,
+        "description": "Communication device that bypasses ground infrastructure. Expensive per-minute rates."
+      },
+      "folder": "Rarity 2"
+    },
+    "Portable Generator": {
+      "type": "item",
+      "system": {
+        "price": 400,
+        "rarity": 2,
+        "description": "Small fuel-powered generator. Noisy but reliable. 2kW output."
+      },
+      "folder": "Rarity 2"
+    },
+    "Trauma Kit": {
+      "type": "item",
+      "system": {
+        "price": 180,
+        "rarity": 2,
+        "description": "Combat medical supplies: tourniquets, hemostatic agents, chest seals, decompression needles."
+      },
+      "folder": "Rarity 2"
+    },
+    "Geiger Counter": {
+      "type": "item",
+      "system": {
+        "price": 120,
+        "rarity": 2,
+        "description": "Detects conventional radiation only. Useless for Collapse, but still has applications."
+      },
+      "folder": "Rarity 2"
+    },
+    "Crowbar": {
+      "type": "item",
+      "system": {
+        "price": 25,
+        "rarity": 2,
+        "description": "Solid steel pry bar. Opens doors, crates, and arguments."
+      },
+      "folder": "Rarity 2"
+    },
+    "Water Filter System": {
+      "type": "item",
+      "system": {
+        "price": 150,
+        "rarity": 2,
+        "description": "Pump-action filter that removes bacteria and particulates. 1000-liter capacity before replacement."
+      },
+      "folder": "Rarity 2"
+    },
+    "Lockpick Set": {
+      "type": "item",
+      "system": {
+        "price": 120,
+        "rarity": 2,
+        "description": "Professional picks, tension wrenches, and rakes in a leather case. Possession is legally questionable."
+      },
+      "folder": "Rarity 2"
+    },
+    "GPS Receiver": {
+      "type": "item",
+      "system": {
+        "price": 200,
+        "rarity": 2,
+        "description": "Handheld navigation unit with preloaded maps. Satellite coverage is patchy in some regions."
+      },
+      "folder": "Rarity 2"
+    },
+    "Drone (Civilian)": {
+      "type": "item",
+      "system": {
+        "price": 300,
+        "rarity": 2,
+        "description": "Small quadcopter with camera. 20-minute flight time, 500m range. Consumer model."
+      },
+      "folder": "Rarity 2"
+    },
+    "Portable Shelter": {
+      "type": "item",
+      "system": {
+        "price": 180,
+        "rarity": 2,
+        "description": "Two-person tent with basic weather resistance. Compact and quick to deploy."
+      },
+      "folder": "Rarity 2"
+    },
+    "Cutting Torch": {
+      "type": "item",
+      "system": {
+        "price": 250,
+        "rarity": 2,
+        "description": "Oxy-fuel torch for cutting through metal. Includes tanks with three hours of use."
+      },
+      "folder": "Rarity 2"
+    },
+    "Two-Way Radio Set": {
+      "type": "item",
+      "system": {
+        "price": 100,
+        "rarity": 2,
+        "description": "Pair of handheld radios with 10km range. Unencrypted channels."
+      },
+      "folder": "Rarity 2"
+    },
+    "T-Doll Maintenance Tools": {
+      "type": "item",
+      "system": {
+        "price": 400,
+        "rarity": 3,
+        "description": "Specialized toolkit for field repairs on IOP-standard T-Dolls. Diagnostic cables, precision drivers, lubricant."
+      },
+      "folder": "Rarity 3"
+    },
+    "Collapse Detector": {
+      "type": "item",
+      "system": {
+        "price": 800,
+        "rarity": 3,
+        "description": "Handheld sensor that measures local Collapse radiation density. Essential for zone work."
+      },
+      "folder": "Rarity 3"
+    },
+    "Neural Cloud Backup Drive": {
+      "type": "item",
+      "system": {
+        "price": 1200,
+        "rarity": 3,
+        "description": "Portable storage device compatible with IOP neural cloud extraction protocols. Holds one complete backup."
+      },
+      "folder": "Rarity 3"
+    },
+    "ELID Vaccine Dose": {
+      "type": "item",
+      "system": {
+        "price": 500,
+        "rarity": 3,
+        "description": "Single dose that resets ELID progression timer. Industrial production, URNC-certified."
+      },
+      "folder": "Rarity 3"
+    },
+    "Drone (Recon)": {
+      "type": "item",
+      "system": {
+        "price": 1500,
+        "rarity": 3,
+        "description": "Military-spec quadcopter with enhanced camera and signal range. 30-minute flight time, 2km range."
+      },
+      "folder": "Rarity 3"
+    },
+    "Medical Autoinjector Set": {
+      "type": "item",
+      "system": {
+        "price": 600,
+        "rarity": 3,
+        "description": "Pre-loaded injectors: stimulant, coagulant, broad-spectrum antibiotic, and analgesic."
+      },
+      "folder": "Rarity 3"
+    },
+    "Signal Jammer (Portable)": {
+      "type": "item",
+      "system": {
+        "price": 1800,
+        "rarity": 3,
+        "description": "Disrupts radio and cellular signals in a 50-meter radius. Highly illegal in Green Zones."
+      },
+      "folder": "Rarity 3"
+    },
+    "Encrypted Radio Set": {
+      "type": "item",
+      "system": {
+        "price": 900,
+        "rarity": 3,
+        "description": "Military-grade handheld radios with frequency-hopping encryption. Set of two."
+      },
+      "folder": "Rarity 3"
+    },
+    "Synthetic Blood (2L)": {
+      "type": "item",
+      "system": {
+        "price": 400,
+        "rarity": 3,
+        "description": "Universal blood substitute in a sealed bag. Field-stable for six months."
+      },
+      "folder": "Rarity 3"
+    },
+    "Thermal Imaging Scope": {
+      "type": "item",
+      "system": {
+        "price": 2000,
+        "rarity": 3,
+        "description": "Detects heat signatures through darkness and light cover. Weapon-mountable."
+      },
+      "folder": "Rarity 3"
+    },
+    "Forged Transit Papers": {
+      "type": "item",
+      "system": {
+        "price": 800,
+        "rarity": 3,
+        "description": "Convincing documentation for zone transit. Quality varies. Single use before scrutiny."
+      },
+      "folder": "Rarity 3"
+    },
+    "Spare Doll Components": {
+      "type": "item",
+      "system": {
+        "price": 1500,
+        "rarity": 3,
+        "description": "Assorted IOP-standard parts: servos, actuators, synthetic skin patches, optical sensors."
+      },
+      "folder": "Rarity 3"
+    },
+    "Optical Camo Tarp": {
+      "type": "item",
+      "system": {
+        "price": 1200,
+        "rarity": 3,
+        "description": "Adaptive camouflage sheeting that shifts color to match surroundings. Defeats visual detection, not thermal."
+      },
+      "folder": "Rarity 3"
+    },
+    "Forensic Analysis Kit": {
+      "type": "item",
+      "system": {
+        "price": 700,
+        "rarity": 3,
+        "description": "Evidence collection and analysis tools. Fingerprint powder, luminol, sample containers, portable microscope."
+      },
+      "folder": "Rarity 3"
+    },
+    "Collapse-Hardened Drive": {
+      "type": "item",
+      "system": {
+        "price": 2500,
+        "rarity": 4,
+        "description": "Data storage device shielded against Collapse radiation interference. Rated for Red Zone operation."
+      },
+      "folder": "Rarity 4"
+    },
+    "Medical Scanner": {
+      "type": "item",
+      "system": {
+        "price": 3500,
+        "rarity": 4,
+        "description": "Handheld diagnostic device for vitals, Collapse exposure levels, and ELID staging. Corporate medical standard."
+      },
+      "folder": "Rarity 4"
+    },
+    "Field Surgery Kit": {
+      "type": "item",
+      "system": {
+        "price": 2000,
+        "rarity": 4,
+        "description": "Surgical instruments, sutures, local anesthetics, and sterile drapes for emergency operations."
+      },
+      "folder": "Rarity 4"
+    },
+    "Green Zone Residency Permit": {
+      "type": "item",
+      "system": {
+        "price": 5000,
+        "rarity": 4,
+        "description": "Legal documentation granting residence in a specific Green Zone. Genuine, but obtained through gray channels."
+      },
+      "folder": "Rarity 4"
+    },
+    "IOP Repair Cradle": {
+      "type": "item",
+      "system": {
+        "price": 8000,
+        "rarity": 4,
+        "description": "Portable T-Doll repair station with diagnostic suite and component printer for minor parts."
+      },
+      "folder": "Rarity 4"
+    },
+    "ELID Vaccine Case (10 doses)": {
+      "type": "item",
+      "system": {
+        "price": 4000,
+        "rarity": 4,
+        "description": "Medical transport case with cold storage for vaccine preservation. A small fortune in the Yellow Zones."
+      },
+      "folder": "Rarity 4"
+    },
+    "Military Rations (Case)": {
+      "type": "item",
+      "system": {
+        "price": 150,
+        "rarity": 4,
+        "description": "24 complete meal packages from URNC military stocks. Calorie-dense, shelf-stable, joyless."
+      },
+      "folder": "Rarity 4"
+    },
+    "Signal Intercept Device": {
+      "type": "item",
+      "system": {
+        "price": 6000,
+        "rarity": 4,
+        "description": "Monitors and records radio traffic in a wide frequency range. Decryption not included."
+      },
+      "folder": "Rarity 4"
+    },
+    "URNC Contractor Badge": {
+      "type": "item",
+      "system": {
+        "price": 3000,
+        "rarity": 4,
+        "description": "Legitimate (or legitimate-looking) URNC contractor identification. Opens doors, invites questions."
+      },
+      "folder": "Rarity 4"
+    },
+    "Prosthetic Limb (Standard)": {
+      "type": "item",
+      "system": {
+        "price": 4000,
+        "rarity": 4,
+        "description": "Functional cybernetic replacement with basic motor control. Industrial quality, not pretty."
+      },
+      "folder": "Rarity 4"
+    },
+    "Purification Beacon": {
+      "type": "item",
+      "system": {
+        "price": 5000,
+        "rarity": 4,
+        "description": "Portable Collapse remediation node. Creates a 5-meter safe zone in Yellow-rated areas for 24 hours. Single use."
+      },
+      "folder": "Rarity 4"
+    },
+    "Cyberdeck": {
+      "type": "item",
+      "system": {
+        "price": 4500,
+        "rarity": 4,
+        "description": "Portable hacking terminal with intrusion software suite. Standard issue for corporate security teams."
+      },
+      "folder": "Rarity 4"
+    },
+    "T-Doll Core (Spare)": {
+      "type": "item",
+      "system": {
+        "price": 15000,
+        "rarity": 5,
+        "description": "Replacement core processor for IOP T-Dolls. Blank—neural cloud transfer required."
+      },
+      "folder": "Rarity 5"
+    },
+    "Heli/Iphi Terminal Access": {
+      "type": "item",
+      "system": {
+        "price": 20000,
+        "rarity": 5,
+        "description": "Credentials providing limited query access to the URNC's twin administrative AIs. Monitored, of course."
+      },
+      "folder": "Rarity 5"
+    },
+    "ELID Surgical Suite (Portable)": {
+      "type": "item",
+      "system": {
+        "price": 50000,
+        "rarity": 5,
+        "description": "Equipment for ELID stage reduction surgery. Requires trained operator. Single-use consumables included."
+      },
+      "folder": "Rarity 5"
+    },
+    "Forged URNC Military ID": {
+      "type": "item",
+      "system": {
+        "price": 12000,
+        "rarity": 5,
+        "description": "High-quality false identification as URNC military personnel. Will not survive deep verification."
+      },
+      "folder": "Rarity 5"
+    },
+    "Pre-War Luxury Goods": {
+      "type": "item",
+      "system": {
+        "price": 8000,
+        "rarity": 5,
+        "description": "Intact bottles of wine, sealed tobacco, vintage spirits, or similar luxuries from before the war."
+      },
+      "folder": "Rarity 5"
+    },
+    "Medical Autodoc": {
+      "type": "item",
+      "system": {
+        "price": 60000,
+        "rarity": 5,
+        "description": "Automated surgical pod for emergency operations. Handles trauma, not ELID. Requires power and consumables."
+      },
+      "folder": "Rarity 5"
+    },
+    "Cloned Organ Set": {
+      "type": "item",
+      "system": {
+        "price": 25000,
+        "rarity": 5,
+        "description": "Lab-grown replacement organs preserved in stasis. Heart, liver, kidneys—not personalized but compatible."
+      },
+      "folder": "Rarity 5"
+    },
+    "Corporate Access Card (Girard)": {
+      "type": "item",
+      "system": {
+        "price": 15000,
+        "rarity": 5,
+        "description": "Employee credentials for Girard Group facilities. Limited access tier but genuine."
+      },
+      "folder": "Rarity 5"
+    },
+    "White Zone Day Pass": {
+      "type": "item",
+      "system": {
+        "price": 5000,
+        "rarity": 5,
+        "description": "Temporary authorization for 24-hour White Zone access. Does not include accommodation or return transit."
+      },
+      "folder": "Rarity 5"
+    },
+    "Prosthetic Limb (Advanced)": {
+      "type": "item",
+      "system": {
+        "price": 12000,
+        "rarity": 5,
+        "description": "High-end cybernetic replacement with full sensory feedback and enhanced performance. Corporate executive grade."
+      },
+      "folder": "Rarity 5"
+    },
+    "Neural Cloud Archive Device": {
+      "type": "item",
+      "system": {
+        "price": 80000,
+        "rarity": 6,
+        "description": "High-capacity storage holding multiple T-Doll neural cloud backups. Often found in abandoned PMC facilities."
+      },
+      "folder": "Rarity 6"
+    },
+    "Purification Array (Personal)": {
+      "type": "item",
+      "system": {
+        "price": 100000,
+        "rarity": 6,
+        "description": "Miniaturized Collapse remediation equipment. Creates a 10-meter safe zone in Yellow-rated areas. Continuous operation."
+      },
+      "folder": "Rarity 6"
+    },
+    "White Zone Residency Permit": {
+      "type": "item",
+      "system": {
+        "price": 200000,
+        "rarity": 6,
+        "description": "Legal permanent residence in a White Zone enclave. Genuine documentation. How you afforded it is your business."
+      },
+      "folder": "Rarity 6"
+    },
+    "IOP Manufacturing License": {
+      "type": "item",
+      "system": {
+        "price": 150000,
+        "rarity": 6,
+        "description": "Authorization to produce T-Doll components and perform major repairs. Heavily regulated and taxed."
+      },
+      "folder": "Rarity 6"
+    },
+    "Experimental ELID Treatment": {
+      "type": "item",
+      "system": {
+        "price": 120000,
+        "rarity": 6,
+        "description": "Cutting-edge pharmaceutical cocktail that may slow Late-Stage ELID progression. Unproven. Side effects unknown."
+      },
+      "folder": "Rarity 6"
+    },
+    "Pre-War Server Archive": {
+      "type": "item",
+      "system": {
+        "price": 75000,
+        "rarity": 6,
+        "description": "Recovered data storage containing pre-war records, research, or cultural archives. Contents vary wildly."
+      },
+      "folder": "Rarity 6"
+    },
+    "Full Prosthetic Conversion": {
+      "type": "item",
+      "system": {
+        "price": 500000,
+        "rarity": 6,
+        "description": "Complete cybernetic body replacement preserving the organic brain. Escape from ELID, embrace something else."
+      },
+      "folder": "Rarity 6"
+    },
+    "URNC Operational Clearance": {
+      "type": "item",
+      "system": {
+        "price": 180000,
+        "rarity": 6,
+        "description": "Authorization for independent operations in Purification or Yellow Zones without NOMFA oversight. Revocable."
+      },
+      "folder": "Rarity 6"
+    },
+    "Zener Network Node": {
+      "type": "item",
+      "system": {
+        "price": 90000,
+        "rarity": 6,
+        "description": "Communication relay that taps into secure URNC networks. Passive monitoring only—active intrusion triggers alerts."
+      },
+      "folder": "Rarity 6"
+    },
+    "Collapse Fluid Sample (Stabilized)": {
+      "type": "item",
+      "system": {
+        "price": 300000,
+        "rarity": 7,
+        "description": "Contained sample of Collapse Fluid from a wartime detonation site. Research value is immense. So is the danger."
+      },
+      "folder": "Rarity 7"
+    },
+    "Relic T-Doll (Deactivated)": {
+      "type": "item",
+      "system": {
+        "price": 400000,
+        "rarity": 7,
+        "description": "Complete chassis of a rare or discontinued T-Doll model. Neural cloud status unknown. Collectors pay fortunes."
+      },
+      "folder": "Rarity 7"
+    },
+    "URNC Intelligence Dossier": {
+      "type": "item",
+      "system": {
+        "price": 350000,
+        "rarity": 7,
+        "description": "Classified files on a specific target: person, organization, or location. How current the intel is matters."
+      },
+      "folder": "Rarity 7"
+    },
+    "Black Zone Survey Data": {
+      "type": "item",
+      "system": {
+        "price": 200000,
+        "rarity": 7,
+        "description": "Detailed mapping of a specific Black Zone including radiation patterns, terrain, and potential salvage sites."
+      },
+      "folder": "Rarity 7"
+    },
+    "Prototype Neural Interface": {
+      "type": "item",
+      "system": {
+        "price": 600000,
+        "rarity": 7,
+        "description": "Experimental technology allowing direct mental connection between human operators and T-Dolls. Untested long-term."
+      },
+      "folder": "Rarity 7"
+    },
+    "NOMFA Regional Director Credentials": {
+      "type": "item",
+      "system": {
+        "price": 500000,
+        "rarity": 7,
+        "description": "Identity package for a high-ranking oversight official. Commands resources and opens doors—briefly."
+      },
+      "folder": "Rarity 7"
+    },
+    "Pre-War Military Bunker Deed": {
+      "type": "item",
+      "system": {
+        "price": 800000,
+        "rarity": 7,
+        "description": "Legal claim and access codes to a surviving hardened facility. Condition and contents are part of the gamble."
+      },
+      "folder": "Rarity 7"
+    },
+    "Persica Research Notes": {
+      "type": "item",
+      "system": {
+        "price": 1500000,
+        "rarity": 8,
+        "description": "Fragmentary documentation from the legendary AI researcher. Even partial data advances neural cloud theory by decades."
+      },
+      "folder": "Rarity 8"
+    },
+    "Collapse Fluid Sample (Pure)": {
+      "type": "item",
+      "system": {
+        "price": 3000000,
+        "rarity": 8,
+        "description": "Laboratory-grade Collapse Fluid in containment. The foundation of weapons research and remediation science alike."
+      },
+      "folder": "Rarity 8"
+    },
+    "URNC Cabinet Access Codes": {
+      "type": "item",
+      "system": {
+        "price": 2500000,
+        "rarity": 8,
+        "description": "Authentication for inner government communications and systems. Expires quickly. Using them is treason."
+      },
+      "folder": "Rarity 8"
+    },
+    "Pre-War National Archive": {
+      "type": "item",
+      "system": {
+        "price": 1800000,
+        "rarity": 8,
+        "description": "Recovered cultural repository from a destroyed nation. Art, literature, history—proof that something existed."
+      },
+      "folder": "Rarity 8"
+    },
+    "Ogas Fragment": {
+      "type": "item",
+      "system": {
+        "price": 5000000,
+        "rarity": 8,
+        "description": "Component or backup of the Soviet supercomputer AI. Even corrupted data is priceless to the right researchers."
+      },
+      "folder": "Rarity 8"
+    },
+    "Complete Neural Cloud (Historic Figure)": {
+      "type": "item",
+      "system": {
+        "price": 3500000,
+        "rarity": 8,
+        "description": "Preserved consciousness of someone important—scientist, commander, or diplomat. Requires compatible hardware to access."
+      },
+      "folder": "Rarity 8"
+    },
+    "Heli/Iphi Administrator Access": {
+      "type": "item",
+      "system": {
+        "price": 15000000,
+        "rarity": 9,
+        "description": "Full administrative access to one of the URNC's twin governing AIs. Functionally, keys to the kingdom."
+      },
+      "folder": "Rarity 9"
+    },
+    "Elisa Core Fragment": {
+      "type": "item",
+      "system": {
+        "price": 25000000,
+        "rarity": 9,
+        "description": "Recovered processing element from Sangvis Ferri's master AI. Still active. Still thinking. Handle with caution."
+      },
+      "folder": "Rarity 9"
+    },
+    "Copy of Persicaria Neural Cloud": {
+      "type": "item",
+      "system": {
+        "price": 40000000,
+        "rarity": 9,
+        "description": "A complete backup of Persicaria's Neural Cloud, Persica's personal AI assistant. A conversational companion and scientific genius."
+      },
+      "folder": "Rarity 9"
+    },
+    "Pre-War Satellite Control": {
+      "type": "item",
+      "system": {
+        "price": 50000000,
+        "rarity": 9,
+        "description": "Command authority over an operational orbital asset. Communication, surveillance, or something more dangerous."
+      },
+      "folder": "Rarity 9"
+    },
+    "White Zone Arcology Deed": {
+      "type": "item",
+      "system": {
+        "price": 100000000,
+        "rarity": 9,
+        "description": "Ownership of a self-contained White Zone habitat. Population included. Private nation in all but name."
+      },
+      "folder": "Rarity 9"
+    },
+    "Parapluie Source Code": {
+      "type": "item",
+      "system": {
+        "price": 30000000,
+        "rarity": 9,
+        "description": "The viral program that turns T-Dolls against their operators. Weapon of mass subversion. Possession is a death sentence."
+      },
+      "folder": "Rarity 9"
+    },
+    "URNC Founding Charter": {
+      "type": "item",
+      "system": {
+        "price": 200000000,
+        "rarity": 10,
+        "description": "The original signed document establishing the United Reactive Nationalist Coalition. Historical power, symbolic weight, and political ammunition."
+      },
+      "folder": "Rarity 10"
+    },
+    "First T-Doll Prototype": {
+      "type": "item",
+      "system": {
+        "price": 350000000,
+        "rarity": 10,
+        "description": "The original IOP tactical doll demonstration unit. Neural cloud corrupted beyond recovery, but the chassis remains. Genesis of a species."
+      },
+      "folder": "Rarity 10"
+    },
+    "Lycoris Complete Research": {
+      "type": "item",
+      "system": {
+        "price": 500000000,
+        "rarity": 10,
+        "description": "Full documentation of the Lycoris project—the origin of Collapse Fluid weaponization. The why and how of the apocalypse."
+      },
+      "folder": "Rarity 10"
+    },
+    "Remaining Starfish Sample": {
+      "type": "item",
+      "system": {
+        "price": 1000000000,
+        "rarity": 10,
+        "description": "Fragment of the Pike Node's extraterrestrial artifact. The source of everything. Still active. Still dangerous. Still not understood."
+      },
+      "folder": "Rarity 10"
+    },
+    "Lunasia Treaty Original": {
+      "type": "item",
+      "system": {
+        "price": 300000000,
+        "rarity": 10,
+        "description": "The signed accord ending World War Three. Borders, reparations, reconstruction mandates—all written here. History's turning point in ink."
+      },
+      "folder": "Rarity 10"
+    }
+  }
+}
