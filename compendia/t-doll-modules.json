@@ -1,450 +1,498 @@
 {
-  "Augmentation": {
-    "type": "Item",
-    "system": null
-  },
-  "Flash Training": {
-    "type": "Item",
-    "system": null
-  },
-  "Deception Flash Training": {
-    "type": "module",
-    "system": {
-      "urncCredits": 6000,
-      "description": "Misleading communication models are implanted. This training improves consistency in false narratives, controlled omissions, and signal misdirection while maintaining plausible emotional and situational congruence.",
-      "moduleType": "skillIncrease",
-      "targetSkill": "deception",
-      "targetApproach": ""
+  "folders": {
+    "Flash Training": {
+      "color": "#64c832",
+      "sorting": "a"
+    },
+    "Augmentations": {
+      "color": "#c86432",
+      "sorting": "a"
     }
   },
-  "Firearms Flash Training": {
-    "type": "module",
-    "system": {
-      "urncCredits": 6000,
-      "description": "Marksmanship routines are reinforced through recoil compensation patterns, reload sequencing, and threat-priority targeting logic. Performance remains stable under stress, poor visibility, and degraded comms.",
-      "moduleType": "skillIncrease",
-      "targetSkill": "firearms",
-      "targetApproach": ""
-    }
-  },
-  "Improved Reaction Suite": {
-    "type": "module",
-    "system": {
-      "urncCredits": 12000,
-      "description": "A low-latency reaction package upgrades the Doll’s perception-to-action pipeline. It prioritizes threat cues, accelerates decision gating, and reduces mechanical delay between intent and motion, improving readiness at the start of engagement.\n\nEffect: When rolling Initiative, add a number of kept dice equal to your Fortification rank.",
-      "moduleType": "passive",
-      "targetSkill": "",
-      "targetApproach": ""
-    }
-  },
-  "Enhanced Hearing Package": {
-    "type": "module",
-    "system": {
-      "urncCredits": 12000,
-      "description": "Directional microphones and vibration pickup nodes are installed with improved filtering for echoes, wind shear, and machine noise. The Doll can isolate relevant audio signatures faster and with higher confidence.\n\nEffect: When attempting a perception check where hearing is useful, add one kept die.",
-      "moduleType": "passive",
-      "targetSkill": "",
-      "targetApproach": ""
-    }
-  },
-  "Piloting Flash Training": {
-    "type": "module",
-    "system": {
-      "urncCredits": 6000,
-      "description": "Vehicle control models and emergency response routines are loaded. This training improves handling precision, recovery from loss-of-traction events, and awareness during transport under fire.",
-      "moduleType": "skillIncrease",
-      "targetSkill": "piloting",
-      "targetApproach": ""
-    }
-  },
-  "Bond Anchor": {
-    "type": "module",
-    "system": {
-      "urncCredits": 12000,
-      "description": "This module establishes a persistent anchor within the Neural Cloud, keyed to the Commander’s tactical authority signature. The moment the Commander accepts uncertainty or risk, the Doll’s systems align instinctively, capitalizing on the same opening.\n\nEffect: Whenever your Commander spends a Fortune Point, you immediately gain one yourself.",
-      "moduleType": "passive",
-      "targetSkill": "",
-      "targetApproach": ""
-    }
-  },
-  "Telescopic Sight Module": {
-    "type": "module",
-    "system": {
-      "urncCredits": 12000,
-      "description": "A magnification and stabilization package is integrated into the Doll’s targeting optics. It improves distant sightlines, reduces jitter, and extends practical engagement clarity beyond standard limits.\n\nEffect: Treat Ideal range of all weapons as 1 range band further, when active.",
-      "moduleType": "passive",
-      "targetSkill": "",
-      "targetApproach": ""
-    }
-  },
-  "Reinforced Frame": {
-    "type": "module",
-    "system": {
-      "urncCredits": 12000,
-      "description": "Additional armor bracing and hardened component housings are integrated into vulnerable load paths. The frame is designed to keep operating under sustained fire by preventing cascading damage from reaching critical assemblies.\n\nEffect: When taking fire, increase your Resistance by an amount equal to your Fortification rank.",
-      "moduleType": "passive",
-      "targetSkill": "",
-      "targetApproach": ""
-    }
-  },
-  "Crafting Flash Training": {
-    "type": "module",
-    "system": {
-      "urncCredits": 6000,
-      "description": "Procedural knowledge for repair, modification, and improvisation is implanted. The Doll gains immediate familiarity with tool discipline, material substitution, and field-expedient construction under limited resupply conditions.",
-      "moduleType": "skillIncrease",
-      "targetSkill": "crafting",
-      "targetApproach": ""
-    }
-  },
-  "Kinetic Dampeners": {
-    "type": "module",
-    "system": {
-      "urncCredits": 12000,
-      "description": "Anchored damping assemblies are installed across the Doll’s core frame, stabilizing against external force. When an impact tries to shove the Doll off position, the system bleeds momentum into controlled flex and friction, preserving footing and orientation.\n\nEffect: When forced to move against your will, reduce the distance moved by half.",
-      "moduleType": "passive",
-      "targetSkill": "",
-      "targetApproach": ""
-    }
-  },
-  "Power Augmentation": {
-    "type": "module",
-    "system": {
-      "urncCredits": 12000,
-      "description": "Structural supports and actuators are strengthened, allowing the frame to safely handle greater force output during attacks.",
-      "moduleType": "approachIncrease",
-      "targetSkill": "",
-      "targetApproach": "power"
-    }
-  },
-  "Explosives Flash Training": {
-    "type": "module",
-    "system": {
-      "urncCredits": 6000,
-      "description": "The Neural Cloud receives calibrated models for blast radius prediction, fuse timing, and placement logic. This enables precise use of explosive devices with reduced setup errors and improved control over enemy movement.",
-      "moduleType": "skillIncrease",
-      "targetSkill": "explosives",
-      "targetApproach": ""
-    }
-  },
-  "Combat Subroutines": {
-    "type": "module",
-    "system": {
-      "urncCredits": 12000,
-      "description": "A hardened package of combat routines is written into fast-access Neural Cloud partitions. When a firing solution or strike sequence fails, the subroutines trigger an immediate corrective pass, rebuilding the action with updated micro-telemetry.\n\nEffect: Once per scene, reroll a failed Firearms or Blades attack roll.",
-      "moduleType": "passive",
-      "targetSkill": "",
-      "targetApproach": ""
-    }
-  },
-  "Exotic Weapons Flash Training": {
-    "type": "module",
-    "system": {
-      "urncCredits": 6000,
-      "description": "Specialized handling schemas for unconventional weapon systems are integrated into the Neural Cloud. This training focuses on safe operation, activation timing, and compensating for nonstandard balance or recoil profiles.",
-      "moduleType": "skillIncrease",
-      "targetSkill": "exoticWeapons",
-      "targetApproach": ""
-    }
-  },
-  "Insight Flash Training": {
-    "type": "module",
-    "system": {
-      "urncCredits": 6000,
-      "description": "Behavioral analysis patterns are reinforced, improving recognition of subtle shifts in tone, posture, and intent. The Doll processes social micro-signals faster and flags inconsistencies with greater confidence.",
-      "moduleType": "skillIncrease",
-      "targetSkill": "insight",
-      "targetApproach": ""
-    }
-  },
-  "Science Flash Training": {
-    "type": "module",
-    "system": {
-      "urncCredits": 6000,
-      "description": "Analytical frameworks for experimentation and data interpretation are implanted. This training improves hazard analysis, material identification, and the ability to draw useful conclusions from incomplete sensor data.",
-      "moduleType": "skillIncrease",
-      "targetSkill": "science",
-      "targetApproach": ""
-    }
-  },
-  "Precision Augmentation": {
-    "type": "module",
-    "system": {
-      "urncCredits": 12000,
-      "description": "Micro-adjustments to balance points, joint tolerances, and targeting hardware reduce mechanical drift, ensuring consistent alignment during fine motor tasks and weapon operation.",
-      "moduleType": "approachIncrease",
-      "targetSkill": "",
-      "targetApproach": "precision"
-    }
-  },
-  "Resilience Augmentation": {
-    "type": "module",
-    "system": {
-      "urncCredits": 12000,
-      "description": "Critical components are shielded with upgraded materials and mounted with impact-absorbing systems, increasing the frame’s tolerance to sustained damage and mechanical stress.",
-      "moduleType": "approachIncrease",
-      "targetSkill": "",
-      "targetApproach": "resilience"
-    }
-  },
-  "Swiftness Augmentation": {
-    "type": "module",
-    "system": {
-      "urncCredits": 12000,
-      "description": "Nonessential mass is removed and motion systems are refined, enabling faster transitions between movement states without compromising structural integrity.",
-      "moduleType": "approachIncrease",
-      "targetSkill": "",
-      "targetApproach": "swiftness"
-    }
-  },
-  "Arts Flash Training": {
-    "type": "module",
-    "system": {
-      "urncCredits": 6000,
-      "description": "Creative process frameworks and stylistic references are integrated. This training improves the Doll’s ability to produce, interpret, and adapt artistic works that influence morale and identity.",
-      "moduleType": "skillIncrease",
-      "targetSkill": "arts",
-      "targetApproach": ""
-    }
-  },
-  "Mechanics Flash Training": {
-    "type": "module",
-    "system": {
-      "urncCredits": 6000,
-      "description": "Mechanical schematics and repair workflows are integrated. The Doll gains improved diagnostic speed, calibration intuition, and reliable restoration procedures for field-worn hardware.",
-      "moduleType": "skillIncrease",
-      "targetSkill": "mechanics",
-      "targetApproach": ""
-    }
-  },
-  "Emergency Override": {
-    "type": "module",
-    "system": {
-      "urncCredits": 12000,
-      "description": "A controlled fail-operational mode is added to the Doll’s safety architecture. When the frame hits shutdown thresholds, noncritical subsystems are cut and power is redirected to minimal locomotion and combat output, delaying collapse long enough to complete a final action cycle.\n\nEffect: When reduced to 0 Endurance, remain active for one more round before shutting down.",
-      "moduleType": "passive",
-      "targetSkill": "",
-      "targetApproach": ""
-    }
-  },
-  "Negotiation Flash Training": {
-    "type": "module",
-    "system": {
-      "urncCredits": 6000,
-      "description": "Dialogue optimization frameworks are reinforced. This training improves bargaining assessment, concession timing, and de-escalation strategies for securing cooperation without resorting to force.",
-      "moduleType": "skillIncrease",
-      "targetSkill": "negotiation",
-      "targetApproach": ""
-    }
-  },
-  "Performance Flash Training": {
-    "type": "module",
-    "system": {
-      "urncCredits": 6000,
-      "description": "Persona maintenance and behavioral consistency routines are implanted. This training improves disguise discipline, controlled affect, and the ability to hold a role under scrutiny without slipping.",
-      "moduleType": "skillIncrease",
-      "targetSkill": "performance",
-      "targetApproach": ""
-    }
-  },
-  "Redundant Systems": {
-    "type": "module",
-    "system": {
-      "urncCredits": 12000,
-      "description": "Critical subsystems receive parallel backups and automatic failover routing. The first time the Doll takes catastrophic damage, the redundant architecture absorbs the disruption, keeping function stable while the primary system isolates and locks down.\n\nEffect: Ignore the effects of the first Critical Hit you take in an engagement.\nEffect: This system must be repaired during downtime before it can be used again.",
-      "moduleType": "passive",
-      "targetSkill": "",
-      "targetApproach": ""
-    }
-  },
-  "Medicine Flash Training": {
-    "type": "module",
-    "system": {
-      "urncCredits": 6000,
-      "description": "Medical assessment and treatment protocols are reinforced. This training improves triage speed, stabilization technique, and efficient use of limited supplies during extended operations.",
-      "moduleType": "skillIncrease",
-      "targetSkill": "medicine",
-      "targetApproach": ""
-    }
-  },
-  "Impact Compensation System": {
-    "type": "module",
-    "system": {
-      "urncCredits": 12000,
-      "description": "Shock-management hardware is layered throughout the frame: damped mounts, adaptive load routing, and rapid posture correction when the Doll experiences sudden deceleration. The system is tuned for survivability in chaotic environments where impact is unavoidable.\n\nEffect: Reduce all falling damage you take by half.\nEffect: Once per scene, when you would take damage from a collision, explosion, or crash, reduce it by an amount equal to your Fortification rank.",
-      "moduleType": "passive",
-      "targetSkill": "",
-      "targetApproach": ""
-    }
-  },
-  "Hand-To-Hand Flash Training": {
-    "type": "module",
-    "system": {
-      "urncCredits": 6000,
-      "description": "Close-combat movement libraries and response trees are implanted. The Doll gains refined balance control, leverage timing, and counter sequences suited for confined spaces and emergency engagements.",
-      "moduleType": "skillIncrease",
-      "targetSkill": "handToHand",
-      "targetApproach": ""
-    }
-  },
-  "Command Flash Training": {
-    "type": "module",
-    "system": {
-      "urncCredits": 6000,
-      "description": "Authority projection and directive framing routines are reinforced. This training improves compliance generation, clarity under pressure, and unit cohesion when a firm voice is required.",
-      "moduleType": "skillIncrease",
-      "targetSkill": "command",
-      "targetApproach": ""
-    }
-  },
-  "Auxiliary Actuators": {
-    "type": "module",
-    "system": {
-      "urncCredits": 12000,
-      "description": "Secondary actuator bundles are installed along major joints and load paths, providing short-burst torque support when the primary drives approach tolerance limits. The system stays idle most of the time to reduce wear, then engages in a controlled surge during demanding maneuvers.\n\nEffect: Once per scene, add one kept die to a Conditioning or Hand-to-Hand test.",
-      "moduleType": "passive",
-      "targetSkill": "",
-      "targetApproach": ""
-    }
-  },
-  "Emotive Coprocessor": {
-    "type": "module",
-    "system": {
-      "urncCredits": 12000,
-      "description": "A dedicated social-processing coprocessor is installed to handle facial micro-expressions, cadence control, and context-sensitive affect generation. It reduces latency between perception and response, improving the Doll’s ability to simulate human nuance under scrutiny.\n\nEffect: When attempting to pass as human or emulate nuanced social behavior, add a number of kept dice equal to your Fortification rank.\nEffect: Once per scene, you may reroll a failed Insight test made to read another person’s emotions.",
-      "moduleType": "passive",
-      "targetSkill": "",
-      "targetApproach": ""
-    }
-  },
-  "Motion Predictor Suite": {
-    "type": "module",
-    "system": {
-      "urncCredits": 12000,
-      "description": "A predictive tracking layer is added to the Doll’s sensor fusion stack, using micro-movement cues and pattern inference to flag incoming approach vectors before they become obvious.\n\nEffect: Treat your Vigilance as 1 higher for the purpose of spotting anything trying to sneak up on you.",
-      "moduleType": "passive",
-      "targetSkill": "",
-      "targetApproach": ""
-    }
-  },
-  "Blades Flash Training": {
-    "type": "module",
-    "system": {
-      "urncCredits": 6000,
-      "description": "Rapid implantation of close-quarters engagement heuristics for edged weapons. The Neural Cloud is loaded with optimized distance control, strike sequencing, and pressure-maintenance routines derived from recorded combat data.",
-      "moduleType": "skillIncrease",
-      "targetSkill": "blades",
-      "targetApproach": ""
-    }
-  },
-  "Fortune Augmentation": {
-    "type": "module",
-    "system": {
-      "urncCredits": 12000,
-      "description": "The frame is retrofitted with predictive microcontrollers and contingency-routing hardware. These systems subtly adjust timing, load distribution, and execution order during high-variance situations, increasing the likelihood that actions resolve favorably when outcomes are uncertain.",
-      "moduleType": "approachIncrease",
-      "targetSkill": "",
-      "targetApproach": "fortune"
-    }
-  },
-  "Resolve Flash Training": {
-    "type": "module",
-    "system": {
-      "urncCredits": 6000,
-      "description": "Stability frameworks are reinforced through stress-response conditioning. The Doll gains improved resistance to panic spirals, coercive interrogation patterns, and hostile signal traffic intended to destabilize the Neural Cloud.",
-      "moduleType": "skillIncrease",
-      "targetSkill": "resolve",
-      "targetApproach": ""
-    }
-  },
-  "Computers Flash Training": {
-    "type": "module",
-    "system": {
-      "urncCredits": 6000,
-      "description": "Digital access and intrusion routines are implanted. This training covers encryption handling, credential exploitation, safe traversal of hostile networks, and rapid comprehension of unfamiliar interfaces.",
-      "moduleType": "skillIncrease",
-      "targetSkill": "computers",
-      "targetApproach": ""
-    }
-  },
-  "Subterfuge Flash Training": {
-    "type": "module",
-    "system": {
-      "urncCredits": 6000,
-      "description": "Covert mechanical manipulation routines are reinforced. The Doll gains improved control over locks, traps, and sabotage tasks while minimizing telltale noise, delay, and visible disturbance.",
-      "moduleType": "skillIncrease",
-      "targetSkill": "subterfuge",
-      "targetApproach": ""
-    }
-  },
-  "Survival Flash Training": {
-    "type": "module",
-    "system": {
-      "urncCredits": 6000,
-      "description": "Environmental adaptation models are loaded, covering hazard recognition, scavenging priorities, and shelter logic. The Doll improves route choices and resource discipline in unstable terrain and compromised urban zones.",
-      "moduleType": "skillIncrease",
-      "targetSkill": "survival",
-      "targetApproach": ""
-    }
-  },
-  "Stealth Flash Training": {
-    "type": "module",
-    "system": {
-      "urncCredits": 6000,
-      "description": "Movement optimization and concealment heuristics are refined. The Neural Cloud emphasizes noise discipline, exposure timing, and pathing that minimizes silhouettes and sensor signatures.",
-      "moduleType": "skillIncrease",
-      "targetSkill": "stealth",
-      "targetApproach": ""
-    }
-  },
-  "Night Vision Array": {
-    "type": "module",
-    "system": {
-      "urncCredits": 12000,
-      "description": "A low-light optical stack is installed with IR sensitivity and adaptive exposure control, allowing the Doll’s vision system to maintain useful detail in darkness without relying on external illumination.\n\nEffect: Vigilance in dark areas does not decrease.",
-      "moduleType": "passive",
-      "targetSkill": "",
-      "targetApproach": ""
-    }
-  },
-  "Conditioning Flash Training": {
-    "type": "module",
-    "system": {
-      "urncCredits": 6000,
-      "description": "Physical performance profiles are recalibrated in the Neural Cloud. This training optimizes stamina budgeting, movement efficiency, and exertion pacing across climbs, sprints, and sustained load-bearing work.",
-      "moduleType": "skillIncrease",
-      "targetSkill": "conditioning",
-      "targetApproach": ""
-    }
-  },
-  "Electronic Warfare Suite": {
-    "type": "module",
-    "system": {
-      "urncCredits": 12000,
-      "description": "A modular EW stack is integrated into the Doll’s comms spine and signal processing hardware. It provides intrusion support, traffic shaping, and countermeasure timing, allowing allied operators to push through hostile security layers with stronger execution windows.\n\nEffect: When you or an ally is attempting a Computers check against a hostile force, add a number of kept dice equal to your Fortification rank.",
-      "moduleType": "passive",
-      "targetSkill": "",
-      "targetApproach": ""
-    }
-  },
-  "Culture Flash Training": {
-    "type": "module",
-    "system": {
-      "urncCredits": 6000,
-      "description": "Linguistic, historical, and social-context datasets are integrated. This training improves navigation of unfamiliar communities and interpretation of symbolic behavior, etiquette, and local power structures.",
-      "moduleType": "skillIncrease",
-      "targetSkill": "culture",
-      "targetApproach": ""
-    }
-  },
-  "Tactics Flash Training": {
-    "type": "module",
-    "system": {
-      "urncCredits": 6000,
-      "description": "Real-time battlefield reasoning models are reinforced. This training improves threat evaluation, squad positioning logic, and rapid reprioritization when plans collapse or objectives shift.",
-      "moduleType": "skillIncrease",
-      "targetSkill": "tactics",
-      "targetApproach": ""
+  "items": {
+    "Enhanced Hearing Package": {
+      "type": "module",
+      "system": {
+        "urncCredits": 12000,
+        "description": "Directional microphones and vibration pickup nodes are installed with improved filtering for echoes, wind shear, and machine noise. The Doll can isolate relevant audio signatures faster and with higher confidence.\n\nEffect: When attempting a perception check where hearing is useful, add one kept die.",
+        "moduleType": "passive",
+        "targetSkill": "",
+        "targetApproach": ""
+      },
+      "folder": null
+    },
+    "Blades Flash Training": {
+      "type": "module",
+      "system": {
+        "urncCredits": 6000,
+        "description": "Rapid implantation of close-quarters engagement heuristics for edged weapons. The Neural Cloud is loaded with optimized distance control, strike sequencing, and pressure-maintenance routines derived from recorded combat data.",
+        "moduleType": "skillIncrease",
+        "targetSkill": "blades",
+        "targetApproach": ""
+      },
+      "folder": "Flash Training"
+    },
+    "Stealth Flash Training": {
+      "type": "module",
+      "system": {
+        "urncCredits": 6000,
+        "description": "Movement optimization and concealment heuristics are refined. The Neural Cloud emphasizes noise discipline, exposure timing, and pathing that minimizes silhouettes and sensor signatures.",
+        "moduleType": "skillIncrease",
+        "targetSkill": "stealth",
+        "targetApproach": ""
+      },
+      "folder": "Flash Training"
+    },
+    "Combat Subroutines": {
+      "type": "module",
+      "system": {
+        "urncCredits": 12000,
+        "description": "A hardened package of combat routines is written into fast-access Neural Cloud partitions. When a firing solution or strike sequence fails, the subroutines trigger an immediate corrective pass, rebuilding the action with updated micro-telemetry.\n\nEffect: Once per scene, reroll a failed Firearms or Blades attack roll.",
+        "moduleType": "passive",
+        "targetSkill": "",
+        "targetApproach": ""
+      },
+      "folder": null
+    },
+    "Arts Flash Training": {
+      "type": "module",
+      "system": {
+        "urncCredits": 6000,
+        "description": "Creative process frameworks and stylistic references are integrated. This training improves the Doll\u2019s ability to produce, interpret, and adapt artistic works that influence morale and identity.",
+        "moduleType": "skillIncrease",
+        "targetSkill": "arts",
+        "targetApproach": ""
+      },
+      "folder": "Flash Training"
+    },
+    "Swiftness Augmentation": {
+      "type": "module",
+      "system": {
+        "urncCredits": 12000,
+        "description": "Nonessential mass is removed and motion systems are refined, enabling faster transitions between movement states without compromising structural integrity.",
+        "moduleType": "approachIncrease",
+        "targetSkill": "",
+        "targetApproach": "swiftness"
+      },
+      "folder": "Augmentations"
+    },
+    "Electronic Warfare Suite": {
+      "type": "module",
+      "system": {
+        "urncCredits": 12000,
+        "description": "A modular EW stack is integrated into the Doll\u2019s comms spine and signal processing hardware. It provides intrusion support, traffic shaping, and countermeasure timing, allowing allied operators to push through hostile security layers with stronger execution windows.\n\nEffect: When you or an ally is attempting a Computers check against a hostile force, add a number of kept dice equal to your Fortification rank.",
+        "moduleType": "passive",
+        "targetSkill": "",
+        "targetApproach": ""
+      },
+      "folder": null
+    },
+    "Conditioning Flash Training": {
+      "type": "module",
+      "system": {
+        "urncCredits": 6000,
+        "description": "Physical performance profiles are recalibrated in the Neural Cloud. This training optimizes stamina budgeting, movement efficiency, and exertion pacing across climbs, sprints, and sustained load-bearing work.",
+        "moduleType": "skillIncrease",
+        "targetSkill": "conditioning",
+        "targetApproach": ""
+      },
+      "folder": "Flash Training"
+    },
+    "Resolve Flash Training": {
+      "type": "module",
+      "system": {
+        "urncCredits": 6000,
+        "description": "Stability frameworks are reinforced through stress-response conditioning. The Doll gains improved resistance to panic spirals, coercive interrogation patterns, and hostile signal traffic intended to destabilize the Neural Cloud.",
+        "moduleType": "skillIncrease",
+        "targetSkill": "resolve",
+        "targetApproach": ""
+      },
+      "folder": "Flash Training"
+    },
+    "Precision Augmentation": {
+      "type": "module",
+      "system": {
+        "urncCredits": 12000,
+        "description": "Micro-adjustments to balance points, joint tolerances, and targeting hardware reduce mechanical drift, ensuring consistent alignment during fine motor tasks and weapon operation.",
+        "moduleType": "approachIncrease",
+        "targetSkill": "",
+        "targetApproach": "precision"
+      },
+      "folder": "Augmentations"
+    },
+    "Reinforced Frame": {
+      "type": "module",
+      "system": {
+        "urncCredits": 12000,
+        "description": "Additional armor bracing and hardened component housings are integrated into vulnerable load paths. The frame is designed to keep operating under sustained fire by preventing cascading damage from reaching critical assemblies.\n\nEffect: When taking fire, increase your Resistance by an amount equal to your Fortification rank.",
+        "moduleType": "passive",
+        "targetSkill": "",
+        "targetApproach": ""
+      },
+      "folder": null
+    },
+    "Culture Flash Training": {
+      "type": "module",
+      "system": {
+        "urncCredits": 6000,
+        "description": "Linguistic, historical, and social-context datasets are integrated. This training improves navigation of unfamiliar communities and interpretation of symbolic behavior, etiquette, and local power structures.",
+        "moduleType": "skillIncrease",
+        "targetSkill": "culture",
+        "targetApproach": ""
+      },
+      "folder": "Flash Training"
+    },
+    "Crafting Flash Training": {
+      "type": "module",
+      "system": {
+        "urncCredits": 6000,
+        "description": "Procedural knowledge for repair, modification, and improvisation is implanted. The Doll gains immediate familiarity with tool discipline, material substitution, and field-expedient construction under limited resupply conditions.",
+        "moduleType": "skillIncrease",
+        "targetSkill": "crafting",
+        "targetApproach": ""
+      },
+      "folder": "Flash Training"
+    },
+    "Fortune Augmentation": {
+      "type": "module",
+      "system": {
+        "urncCredits": 12000,
+        "description": "The frame is retrofitted with predictive microcontrollers and contingency-routing hardware. These systems subtly adjust timing, load distribution, and execution order during high-variance situations, increasing the likelihood that actions resolve favorably when outcomes are uncertain.",
+        "moduleType": "approachIncrease",
+        "targetSkill": "",
+        "targetApproach": "fortune"
+      },
+      "folder": "Augmentations"
+    },
+    "Firearms Flash Training": {
+      "type": "module",
+      "system": {
+        "urncCredits": 6000,
+        "description": "Marksmanship routines are reinforced through recoil compensation patterns, reload sequencing, and threat-priority targeting logic. Performance remains stable under stress, poor visibility, and degraded comms.",
+        "moduleType": "skillIncrease",
+        "targetSkill": "firearms",
+        "targetApproach": ""
+      },
+      "folder": "Flash Training"
+    },
+    "Piloting Flash Training": {
+      "type": "module",
+      "system": {
+        "urncCredits": 6000,
+        "description": "Vehicle control models and emergency response routines are loaded. This training improves handling precision, recovery from loss-of-traction events, and awareness during transport under fire.",
+        "moduleType": "skillIncrease",
+        "targetSkill": "piloting",
+        "targetApproach": ""
+      },
+      "folder": "Flash Training"
+    },
+    "Mechanics Flash Training": {
+      "type": "module",
+      "system": {
+        "urncCredits": 6000,
+        "description": "Mechanical schematics and repair workflows are integrated. The Doll gains improved diagnostic speed, calibration intuition, and reliable restoration procedures for field-worn hardware.",
+        "moduleType": "skillIncrease",
+        "targetSkill": "mechanics",
+        "targetApproach": ""
+      },
+      "folder": "Flash Training"
+    },
+    "Medicine Flash Training": {
+      "type": "module",
+      "system": {
+        "urncCredits": 6000,
+        "description": "Medical assessment and treatment protocols are reinforced. This training improves triage speed, stabilization technique, and efficient use of limited supplies during extended operations.",
+        "moduleType": "skillIncrease",
+        "targetSkill": "medicine",
+        "targetApproach": ""
+      },
+      "folder": "Flash Training"
+    },
+    "Tactics Flash Training": {
+      "type": "module",
+      "system": {
+        "urncCredits": 6000,
+        "description": "Real-time battlefield reasoning models are reinforced. This training improves threat evaluation, squad positioning logic, and rapid reprioritization when plans collapse or objectives shift.",
+        "moduleType": "skillIncrease",
+        "targetSkill": "tactics",
+        "targetApproach": ""
+      },
+      "folder": "Flash Training"
+    },
+    "Insight Flash Training": {
+      "type": "module",
+      "system": {
+        "urncCredits": 6000,
+        "description": "Behavioral analysis patterns are reinforced, improving recognition of subtle shifts in tone, posture, and intent. The Doll processes social micro-signals faster and flags inconsistencies with greater confidence.",
+        "moduleType": "skillIncrease",
+        "targetSkill": "insight",
+        "targetApproach": ""
+      },
+      "folder": "Flash Training"
+    },
+    "Emergency Override": {
+      "type": "module",
+      "system": {
+        "urncCredits": 12000,
+        "description": "A controlled fail-operational mode is added to the Doll\u2019s safety architecture. When the frame hits shutdown thresholds, noncritical subsystems are cut and power is redirected to minimal locomotion and combat output, delaying collapse long enough to complete a final action cycle.\n\nEffect: When reduced to 0 Endurance, remain active for one more round before shutting down.",
+        "moduleType": "passive",
+        "targetSkill": "",
+        "targetApproach": ""
+      },
+      "folder": null
+    },
+    "Exotic Weapons Flash Training": {
+      "type": "module",
+      "system": {
+        "urncCredits": 6000,
+        "description": "Specialized handling schemas for unconventional weapon systems are integrated into the Neural Cloud. This training focuses on safe operation, activation timing, and compensating for nonstandard balance or recoil profiles.",
+        "moduleType": "skillIncrease",
+        "targetSkill": "exoticWeapons",
+        "targetApproach": ""
+      },
+      "folder": "Flash Training"
+    },
+    "Explosives Flash Training": {
+      "type": "module",
+      "system": {
+        "urncCredits": 6000,
+        "description": "The Neural Cloud receives calibrated models for blast radius prediction, fuse timing, and placement logic. This enables precise use of explosive devices with reduced setup errors and improved control over enemy movement.",
+        "moduleType": "skillIncrease",
+        "targetSkill": "explosives",
+        "targetApproach": ""
+      },
+      "folder": "Flash Training"
+    },
+    "Night Vision Array": {
+      "type": "module",
+      "system": {
+        "urncCredits": 12000,
+        "description": "A low-light optical stack is installed with IR sensitivity and adaptive exposure control, allowing the Doll\u2019s vision system to maintain useful detail in darkness without relying on external illumination.\n\nEffect: Vigilance in dark areas does not decrease.",
+        "moduleType": "passive",
+        "targetSkill": "",
+        "targetApproach": ""
+      },
+      "folder": null
+    },
+    "Computers Flash Training": {
+      "type": "module",
+      "system": {
+        "urncCredits": 6000,
+        "description": "Digital access and intrusion routines are implanted. This training covers encryption handling, credential exploitation, safe traversal of hostile networks, and rapid comprehension of unfamiliar interfaces.",
+        "moduleType": "skillIncrease",
+        "targetSkill": "computers",
+        "targetApproach": ""
+      },
+      "folder": "Flash Training"
+    },
+    "Power Augmentation": {
+      "type": "module",
+      "system": {
+        "urncCredits": 12000,
+        "description": "Structural supports and actuators are strengthened, allowing the frame to safely handle greater force output during attacks.",
+        "moduleType": "approachIncrease",
+        "targetSkill": "",
+        "targetApproach": "power"
+      },
+      "folder": "Augmentations"
+    },
+    "Survival Flash Training": {
+      "type": "module",
+      "system": {
+        "urncCredits": 6000,
+        "description": "Environmental adaptation models are loaded, covering hazard recognition, scavenging priorities, and shelter logic. The Doll improves route choices and resource discipline in unstable terrain and compromised urban zones.",
+        "moduleType": "skillIncrease",
+        "targetSkill": "survival",
+        "targetApproach": ""
+      },
+      "folder": "Flash Training"
+    },
+    "Impact Compensation System": {
+      "type": "module",
+      "system": {
+        "urncCredits": 12000,
+        "description": "Shock-management hardware is layered throughout the frame: damped mounts, adaptive load routing, and rapid posture correction when the Doll experiences sudden deceleration. The system is tuned for survivability in chaotic environments where impact is unavoidable.\n\nEffect: Reduce all falling damage you take by half.\nEffect: Once per scene, when you would take damage from a collision, explosion, or crash, reduce it by an amount equal to your Fortification rank.",
+        "moduleType": "passive",
+        "targetSkill": "",
+        "targetApproach": ""
+      },
+      "folder": null
+    },
+    "Emotive Coprocessor": {
+      "type": "module",
+      "system": {
+        "urncCredits": 12000,
+        "description": "A dedicated social-processing coprocessor is installed to handle facial micro-expressions, cadence control, and context-sensitive affect generation. It reduces latency between perception and response, improving the Doll\u2019s ability to simulate human nuance under scrutiny.\n\nEffect: When attempting to pass as human or emulate nuanced social behavior, add a number of kept dice equal to your Fortification rank.\nEffect: Once per scene, you may reroll a failed Insight test made to read another person\u2019s emotions.",
+        "moduleType": "passive",
+        "targetSkill": "",
+        "targetApproach": ""
+      },
+      "folder": null
+    },
+    "Motion Predictor Suite": {
+      "type": "module",
+      "system": {
+        "urncCredits": 12000,
+        "description": "A predictive tracking layer is added to the Doll\u2019s sensor fusion stack, using micro-movement cues and pattern inference to flag incoming approach vectors before they become obvious.\n\nEffect: Treat your Vigilance as 1 higher for the purpose of spotting anything trying to sneak up on you.",
+        "moduleType": "passive",
+        "targetSkill": "",
+        "targetApproach": ""
+      },
+      "folder": null
+    },
+    "Auxiliary Actuators": {
+      "type": "module",
+      "system": {
+        "urncCredits": 12000,
+        "description": "Secondary actuator bundles are installed along major joints and load paths, providing short-burst torque support when the primary drives approach tolerance limits. The system stays idle most of the time to reduce wear, then engages in a controlled surge during demanding maneuvers.\n\nEffect: Once per scene, add one kept die to a Conditioning or Hand-to-Hand test.",
+        "moduleType": "passive",
+        "targetSkill": "",
+        "targetApproach": ""
+      },
+      "folder": null
+    },
+    "Resilience Augmentation": {
+      "type": "module",
+      "system": {
+        "urncCredits": 12000,
+        "description": "Critical components are shielded with upgraded materials and mounted with impact-absorbing systems, increasing the frame\u2019s tolerance to sustained damage and mechanical stress.",
+        "moduleType": "approachIncrease",
+        "targetSkill": "",
+        "targetApproach": "resilience"
+      },
+      "folder": "Augmentations"
+    },
+    "Kinetic Dampeners": {
+      "type": "module",
+      "system": {
+        "urncCredits": 12000,
+        "description": "Anchored damping assemblies are installed across the Doll\u2019s core frame, stabilizing against external force. When an impact tries to shove the Doll off position, the system bleeds momentum into controlled flex and friction, preserving footing and orientation.\n\nEffect: When forced to move against your will, reduce the distance moved by half.",
+        "moduleType": "passive",
+        "targetSkill": "",
+        "targetApproach": ""
+      },
+      "folder": null
+    },
+    "Subterfuge Flash Training": {
+      "type": "module",
+      "system": {
+        "urncCredits": 6000,
+        "description": "Covert mechanical manipulation routines are reinforced. The Doll gains improved control over locks, traps, and sabotage tasks while minimizing telltale noise, delay, and visible disturbance.",
+        "moduleType": "skillIncrease",
+        "targetSkill": "subterfuge",
+        "targetApproach": ""
+      },
+      "folder": "Flash Training"
+    },
+    "Command Flash Training": {
+      "type": "module",
+      "system": {
+        "urncCredits": 6000,
+        "description": "Authority projection and directive framing routines are reinforced. This training improves compliance generation, clarity under pressure, and unit cohesion when a firm voice is required.",
+        "moduleType": "skillIncrease",
+        "targetSkill": "command",
+        "targetApproach": ""
+      },
+      "folder": "Flash Training"
+    },
+    "Hand-To-Hand Flash Training": {
+      "type": "module",
+      "system": {
+        "urncCredits": 6000,
+        "description": "Close-combat movement libraries and response trees are implanted. The Doll gains refined balance control, leverage timing, and counter sequences suited for confined spaces and emergency engagements.",
+        "moduleType": "skillIncrease",
+        "targetSkill": "handToHand",
+        "targetApproach": ""
+      },
+      "folder": "Flash Training"
+    },
+    "Improved Reaction Suite": {
+      "type": "module",
+      "system": {
+        "urncCredits": 12000,
+        "description": "A low-latency reaction package upgrades the Doll\u2019s perception-to-action pipeline. It prioritizes threat cues, accelerates decision gating, and reduces mechanical delay between intent and motion, improving readiness at the start of engagement.\n\nEffect: When rolling Initiative, add a number of kept dice equal to your Fortification rank.",
+        "moduleType": "passive",
+        "targetSkill": "",
+        "targetApproach": ""
+      },
+      "folder": null
+    },
+    "Telescopic Sight Module": {
+      "type": "module",
+      "system": {
+        "urncCredits": 12000,
+        "description": "A magnification and stabilization package is integrated into the Doll\u2019s targeting optics. It improves distant sightlines, reduces jitter, and extends practical engagement clarity beyond standard limits.\n\nEffect: Treat Ideal range of all weapons as 1 range band further, when active.",
+        "moduleType": "passive",
+        "targetSkill": "",
+        "targetApproach": ""
+      },
+      "folder": null
+    },
+    "Negotiation Flash Training": {
+      "type": "module",
+      "system": {
+        "urncCredits": 6000,
+        "description": "Dialogue optimization frameworks are reinforced. This training improves bargaining assessment, concession timing, and de-escalation strategies for securing cooperation without resorting to force.",
+        "moduleType": "skillIncrease",
+        "targetSkill": "negotiation",
+        "targetApproach": ""
+      },
+      "folder": "Flash Training"
+    },
+    "Deception Flash Training": {
+      "type": "module",
+      "system": {
+        "urncCredits": 6000,
+        "description": "Misleading communication models are implanted. This training improves consistency in false narratives, controlled omissions, and signal misdirection while maintaining plausible emotional and situational congruence.",
+        "moduleType": "skillIncrease",
+        "targetSkill": "deception",
+        "targetApproach": ""
+      },
+      "folder": "Flash Training"
+    },
+    "Science Flash Training": {
+      "type": "module",
+      "system": {
+        "urncCredits": 6000,
+        "description": "Analytical frameworks for experimentation and data interpretation are implanted. This training improves hazard analysis, material identification, and the ability to draw useful conclusions from incomplete sensor data.",
+        "moduleType": "skillIncrease",
+        "targetSkill": "science",
+        "targetApproach": ""
+      },
+      "folder": "Flash Training"
+    },
+    "Performance Flash Training": {
+      "type": "module",
+      "system": {
+        "urncCredits": 6000,
+        "description": "Persona maintenance and behavioral consistency routines are implanted. This training improves disguise discipline, controlled affect, and the ability to hold a role under scrutiny without slipping.",
+        "moduleType": "skillIncrease",
+        "targetSkill": "performance",
+        "targetApproach": ""
+      },
+      "folder": "Flash Training"
+    },
+    "Bond Anchor": {
+      "type": "module",
+      "system": {
+        "urncCredits": 12000,
+        "description": "This module establishes a persistent anchor within the Neural Cloud, keyed to the Commander\u2019s tactical authority signature. The moment the Commander accepts uncertainty or risk, the Doll\u2019s systems align instinctively, capitalizing on the same opening.\n\nEffect: Whenever your Commander spends a Fortune Point, you immediately gain one yourself.",
+        "moduleType": "passive",
+        "targetSkill": "",
+        "targetApproach": ""
+      },
+      "folder": null
+    },
+    "Redundant Systems": {
+      "type": "module",
+      "system": {
+        "urncCredits": 12000,
+        "description": "Critical subsystems receive parallel backups and automatic failover routing. The first time the Doll takes catastrophic damage, the redundant architecture absorbs the disruption, keeping function stable while the primary system isolates and locks down.\n\nEffect: Ignore the effects of the first Critical Hit you take in an engagement.\nEffect: This system must be repaired during downtime before it can be used again.",
+        "moduleType": "passive",
+        "targetSkill": "",
+        "targetApproach": ""
+      },
+      "folder": null
     }
   }
 }
