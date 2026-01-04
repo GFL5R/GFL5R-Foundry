@@ -74,33 +74,48 @@
         <div class="card-header fw-semibold text-end">State</div>
         <div class="card-body">
           <div class="d-flex flex-column gap-2 align-items-end">
-            <div class="d-flex align-items-center gap-2">
-              <label class="form-label mb-0" for="fatigue">Fatigue</label>
-              <input id="fatigue" class="form-control form-control-sm text-end w-80" type="number" name="system.resources.fatigue" value="{{actor.system.resources.fatigue}}" min="0" aria-label="Fatigue"/>
-              <span>/</span>
-              <label class="form-label mb-0" for="endurance">Endurance</label>
-              <input id="endurance" class="form-control form-control-sm text-end w-80" type="text" value="{{derived.endurance}}" disabled aria-label="Endurance"/>
+            <div class="w-100">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <div class="pill-muted">Fatigue</div>
+                <div class="fw-semibold">
+                  <div class="d-flex gap-1 align-items-end">
+                    <input id="fatigue" class="form-control form-control-sm text-end w-90" type="number" name="system.resources.fatigue" value="{{actor.system.resources.fatigue}}" min="0" aria-label="Fatigue"/>
+                    <span class="align-self-center fs-4">/</span>
+                    <input id="fatigue-capacity" class="form-control form-control-sm text-end w-90" type="text" value="{{fatigue.capacity}}" disabled aria-label="Fatigue"/></div>
+                  </div>
+              </div>
+              <progress class="fatigue-bar" style="accent-color: {{fatigue.barColor}}" value="{{fatigue.current}}" max="{{fatigue.capacity}}" aria-valuetext="{{fatigue.current}} of {{fatigue.capacity}}"></progress>
             </div>
-            <div class="d-flex align-items-center gap-2">
-              <label class="form-label mb-0" for="strife">Strife</label>
-              <input id="strife" class="form-control form-control-sm text-end w-80" type="number" name="system.resources.strife" value="{{actor.system.resources.strife}}" min="0" aria-label="Strife"/>
-              <span>/</span>
-              <label class="form-label mb-0" for="composure">Composure</label>
-              <input id="composure" class="form-control form-control-sm text-end w-80" type="text" value="{{derived.composure}}" disabled aria-label="Composure"/>
+            <div class="w-100">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <div class="pill-muted">Strife</div>
+                <div class="fw-semibold">
+                  <div class="d-flex gap-1 align-items-end">
+                    <input id="strife" class="form-control form-control-sm text-end w-90" type="number" name="system.resources.strife" value="{{actor.system.resources.strife}}" min="0" aria-label="Strife"/>
+                    <span class="align-self-center fs-4">/</span>
+                    <input id="strife-capacity" class="form-control form-control-sm text-end w-90" type="text" value="{{strife.capacity}}" disabled aria-label="Strife capacity"/>
+                  </div>
+                </div>
+              </div>
+              <progress class="strife-bar" style="accent-color: {{strife.barColor}}" value="{{strife.current}}" max="{{strife.capacity}}" aria-valuetext="{{strife.current}} of {{strife.capacity}}"></progress>
             </div>
-            <div class="d-flex align-items-center gap-2">
-              <label class="form-label mb-0" for="vigilance">Vigilance</label>
-              <input id="vigilance" class="form-control form-control-sm text-end w-90" type="text" value="{{derived.vigilance}}" disabled aria-label="Vigilance"/>
-            </div>
-            <div class="d-flex align-items-center gap-2">
-              <label class="form-label mb-0" for="focus">Focus</label>
-              <input id="focus" class="form-control form-control-sm text-end w-90" type="text" value="{{derived.focus}}" disabled aria-label="Focus"/>
-            </div>
-            <div class="d-flex align-items-center gap-2">
-              <label class="form-label mb-0" for="fortune-current">Fortune Points</label>
-              <input id="fortune-current" class="form-control form-control-sm text-end w-80" type="number" name="system.resources.fortunePoints" value="{{actor.system.resources.fortunePoints}}" min="0" aria-label="Fortune points current"/>
-              <span>/</span>
-              <input id="fortune-max" class="form-control form-control-sm text-end w-80" type="text" value="{{derived.fortunePointsMax}}" disabled aria-label="Fortune points maximum"/>
+            <div class="d-flex flex-row gap-3 align-items-end">
+              <div>
+                <label class="form-label mb-1" for="vigilance">Vigilance</label>
+                <input id="vigilance" class="form-control form-control-sm text-end" type="text" value="{{derived.vigilance}}" disabled aria-label="Vigilance"/>
+              </div>
+              <div>
+                <label class="form-label mb-1" for="focus">Focus</label>
+                <input id="focus" class="form-control form-control-sm text-end" type="text" value="{{derived.focus}}" disabled aria-label="Focus"/>
+              </div>
+              <div>
+                <label class="form-label mb-1" for="fortune-current">Fortune Points</label>
+                <div class="d-flex align-items-center gap-1">
+                  <input id="fortune-current" class="form-control form-control-sm text-end w-80" type="number" name="system.resources.fortunePoints" value="{{actor.system.resources.fortunePoints}}" min="0" aria-label="Fortune points current"/>
+                  <span class="align-self-center fs-4">/</span>
+                  <input id="fortune-max" class="form-control form-control-sm text-end w-80" type="text" value="{{derived.fortunePointsMax}}" disabled aria-label="Fortune points maximum"/>
+                </div>
+              </div>
             </div>
           </div>
         </div>

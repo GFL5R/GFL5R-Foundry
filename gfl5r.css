@@ -62,6 +62,16 @@ button[class*="fa-"]::before,
   accent-color: var(--heat-bar-color, #6c757d);
 }
 
+.fatigue-bar {
+  width: 100%;
+  accent-color: var(--fatigue-bar-color, #6c757d);
+}
+
+.strife-bar {
+  width: 100%;
+  accent-color: var(--strife-bar-color, #6c757d);
+}
+
 /* Skill cards */
 .skill-card.skill-roll {
   flex: 1 1 240px;

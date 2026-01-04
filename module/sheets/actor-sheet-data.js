@@ -30,6 +30,34 @@ export function buildHeat(data) {
   };
 }
 
+export function buildFatigue(data, derived) {
+  const fatigueCurrent = Number(data.resources?.fatigue ?? 0);
+  const fatigueCapacity = Number(derived.endurance ?? 10);
+  const fatiguePercent = fatigueCapacity > 0 ? Math.min(1, Math.max(0, fatigueCurrent / fatigueCapacity)) : 0;
+  const fatigueHue = 120 - fatiguePercent * 120;
+  return {
+    current: fatigueCurrent,
+    capacity: fatigueCapacity,
+    percent: fatiguePercent,
+    barWidth: `${(fatiguePercent * 100).toFixed(1)}%`,
+    barColor: `hsl(${fatigueHue}, 70%, 45%)`,
+  };
+}
+
+export function buildStrife(data, derived) {
+  const strifeCurrent = Number(data.resources?.strife ?? 0);
+  const strifeCapacity = Number(derived.composure ?? 10);
+  const strifePercent = strifeCapacity > 0 ? Math.min(1, Math.max(0, strifeCurrent / strifeCapacity)) : 0;
+  const strifeHue = 120 - strifePercent * 120;
+  return {
+    current: strifeCurrent,
+    capacity: strifeCapacity,
+    percent: strifePercent,
+    barWidth: `${(strifePercent * 100).toFixed(1)}%`,
+    barColor: `hsl(${strifeHue}, 70%, 45%)`,
+  };
+}
+
 export function resolvePreparedState(preparedFlag) {
   const preparedDefaultSetting = game.settings.get("gfl5r", "initiative-prepared-character") || "true";
   if (typeof preparedFlag === "boolean") return preparedFlag;
