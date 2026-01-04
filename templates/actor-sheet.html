@@ -84,6 +84,7 @@
                     <input id="fatigue-capacity" class="form-control form-control-sm text-end w-90" type="text" value="{{fatigue.capacity}}" disabled aria-label="Fatigue"/></div>
                   </div>
               </div>
+              <!-- Intentional: Handlebars variables in style attribute are valid for templating -->
               <progress class="fatigue-bar" style="accent-color: {{fatigue.barColor}}" value="{{fatigue.current}}" max="{{fatigue.capacity}}" aria-valuetext="{{fatigue.current}} of {{fatigue.capacity}}"></progress>
             </div>
             <div class="w-100">
@@ -97,6 +98,7 @@
                   </div>
                 </div>
               </div>
+              <!-- Intentional: Handlebars variables in style attribute are valid for templating -->
               <progress class="strife-bar" style="accent-color: {{strife.barColor}}" value="{{strife.current}}" max="{{strife.capacity}}" aria-valuetext="{{strife.current}} of {{strife.capacity}}"></progress>
             </div>
             <div class="d-flex flex-row gap-3 align-items-end">

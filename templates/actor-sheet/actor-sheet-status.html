@@ -9,6 +9,7 @@
             <div class="fw-semibold">{{heat.current}} / {{heat.capacity}}</div>
           </div>
           <div class="heat-progress mb-2">
+            <!-- Intentional: Handlebars variables in style attribute are valid for templating -->
             <progress class="heat-bar" style="accent-color: {{heat.barColor}}" aria-labelledby="heat-exposure-label" value="{{heat.current}}" max="{{heat.capacity}}" aria-valuetext="{{heat.current}} of {{heat.capacity}}"></progress>
           </div>
           <div class="small text-muted mb-3">Maximum heat is 16.</div>
@@ -28,6 +29,7 @@
             <div class="fw-semibold">{{collapse.current}} / {{collapse.capacity}}</div>
           </div>
           <div class="collapse-progress mb-2">
+            <!-- Intentional: Handlebars variables in style attribute are valid for templating -->
             <progress class="collapse-bar" style="accent-color: {{collapse.barColor}}" aria-labelledby="collapse-exposure-label" value="{{collapse.current}}" max="{{collapse.capacity}}" aria-valuetext="{{collapse.current}} of {{collapse.capacity}}"></progress>
           </div>
           <div class="small text-muted mb-3">Maximum collapse equals the sum of all approaches times 5.</div>
