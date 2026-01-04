@@ -16,6 +16,20 @@ export function buildCollapse(approachesList, data) {
   };
 }
 
+export function buildHeat(data) {
+  const heatCurrent = Number(data.resources?.heat ?? 0);
+  const heatCapacity = 16;
+  const heatPercent = Math.min(1, Math.max(0, heatCurrent / heatCapacity));
+  const heatHue = 120 - heatPercent * 120;
+  return {
+    current: heatCurrent,
+    capacity: heatCapacity,
+    percent: heatPercent,
+    barWidth: `${(heatPercent * 100).toFixed(1)}%`,
+    barColor: `hsl(${heatHue}, 70%, 45%)`,
+  };
+}
+
 export function resolvePreparedState(preparedFlag) {
   const preparedDefaultSetting = game.settings.get("gfl5r", "initiative-prepared-character") || "true";
   if (typeof preparedFlag === "boolean") return preparedFlag;

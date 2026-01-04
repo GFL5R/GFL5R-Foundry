@@ -1,7 +1,26 @@
 <section class="tab-pane tab p-3" data-group="primary" data-tab="status">
   <div class="row g-3">
     <div class="col-lg-6">
-      <div class="card h-100">
+      <div class="card mb-3">
+        <div class="card-header fw-semibold">Heat</div>
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="pill-muted" id="heat-exposure-label">Heat Level</div>
+            <div class="fw-semibold">{{heat.current}} / {{heat.capacity}}</div>
+          </div>
+          <div class="heat-progress mb-2">
+            <progress class="heat-bar" style="accent-color: {{heat.barColor}}" aria-labelledby="heat-exposure-label" value="{{heat.current}}" max="{{heat.capacity}}" aria-valuetext="{{heat.current}} of {{heat.capacity}}"></progress>
+          </div>
+          <div class="small text-muted mb-3">Maximum heat is 16.</div>
+          <div class="d-flex align-items-center gap-2">
+            <label class="form-label mb-0" for="heat-current">Current Heat</label>
+            <input id="heat-current" class="form-control form-control-sm text-end w-110" type="number" name="system.resources.heat" value="{{actor.system.resources.heat}}" min="0" max="16" aria-label="Current heat" />
+          </div>
+        </div>
+      </div>
+
+      {{#unless (eq characterType "doll")}}
+      <div class="card">
         <div class="card-header fw-semibold">Collapse</div>
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-2">
@@ -9,7 +28,7 @@
             <div class="fw-semibold">{{collapse.current}} / {{collapse.capacity}}</div>
           </div>
           <div class="collapse-progress mb-2">
-            <progress class="collapse-bar" aria-labelledby="collapse-exposure-label" value="{{collapse.current}}" max="{{collapse.capacity}}" aria-valuetext="{{collapse.current}} of {{collapse.capacity}}"></progress>
+            <progress class="collapse-bar" style="accent-color: {{collapse.barColor}}" aria-labelledby="collapse-exposure-label" value="{{collapse.current}}" max="{{collapse.capacity}}" aria-valuetext="{{collapse.current}} of {{collapse.capacity}}"></progress>
           </div>
           <div class="small text-muted mb-3">Maximum collapse equals the sum of all approaches times 5.</div>
           <div class="d-flex align-items-center gap-2">
@@ -18,6 +37,7 @@
           </div>
         </div>
       </div>
+      {{/unless}}
     </div>
 
     <div class="col-lg-6">

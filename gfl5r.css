@@ -57,6 +57,11 @@ button[class*="fa-"]::before,
   accent-color: var(--collapse-bar-color, #6c757d);
 }
 
+.heat-bar {
+  width: 100%;
+  accent-color: var(--heat-bar-color, #6c757d);
+}
+
 /* Skill cards */
 .skill-card.skill-roll {
   flex: 1 1 240px;

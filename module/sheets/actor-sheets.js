@@ -3,7 +3,7 @@ import { GFL5R_CONFIG } from "../config.js";
 import { computeDerivedStats } from "../utils/derived.js";
 import { resolveItemFromDropData, getDragEventDataSafe } from "../utils/drop.js";
 import { CharacterBuilderApp } from "../character-builder.js";
-import { buildCollapse, resolvePreparedState, buildOriginDisplay, buildDisciplineSlots, buildItemCollections } from "./actor-sheet-data.js";
+import { buildCollapse, buildHeat, resolvePreparedState, buildOriginDisplay, buildDisciplineSlots, buildItemCollections } from "./actor-sheet-data.js";
 import {
   resolveDropTarget,
   handleDisciplineDrop,
@@ -176,6 +176,7 @@ export class GFL5RActorSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     ];
 
     context.collapse = buildCollapse(context.approachesList, data);
+    context.heat = buildHeat(data);
     context.preparedState = resolvePreparedState(data.prepared);
 
     context.characterType = data.characterType ?? "human";

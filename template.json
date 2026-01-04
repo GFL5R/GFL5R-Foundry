@@ -18,7 +18,8 @@
         "fatigue": 0,
         "strife": 0,
         "fortunePoints": 0,
-        "collapse": 0
+        "collapse": 0,
+        "heat": 0
       },
       "humanity": 0,
       "fame": 0,
@@ -74,7 +75,8 @@
         "fatigue": 0,
         "strife": 0,
         "fortunePoints": 0,
-        "collapse": 0
+        "collapse": 0,
+        "heat": 0
       },
       "prepared": true,
       "skills": {
