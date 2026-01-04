@@ -55,6 +55,10 @@ jobs:
             echo "Packing: $pack from $f"
             python pack_tool.py --import --pack "$pack" --json "$f"
           done
+      
+      - name: Clean up Pack Tool
+        run: |
+          rm pack_tool.py
 
       - name: Remove compendia folder
         run: |
